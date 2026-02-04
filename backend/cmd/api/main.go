@@ -95,7 +95,8 @@ func main() {
 	leagueSubRepo := repositories.NewLeagueSubscriptionRepository(database.Pool)
 	leagueMatchRepo := repositories.NewLeagueMatchRepository(database.Pool)
 	leagueService := leaguesusecase.NewService(leagueRepo, leagueSubRepo, leagueMatchRepo, fighterRepo, time.Now)
-	leagueJob := jobs.NewLeagueJob(matchService, leagueRepo, leagueSubRepo, leagueMatchRepo, fighterRepo)
+	leagueJob := jobs.NewLeagueJob(matchService, leagueRepo, leagueSubRepo, leagueMatchRepo, fighterRepo, 4*time.Hour)
+	leagueJob.Start()
 
 	lobbyCleanupJob := jobs.NewLobbyCleanupJob(matchService, 60, 5*time.Minute)
 	lobbyCleanupJob.Start()

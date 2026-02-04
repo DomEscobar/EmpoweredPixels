@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"empoweredpixels/internal/infra/db/repositories"
 	matchesusecase "empoweredpixels/internal/usecase/matches"
@@ -15,11 +16,12 @@ var (
 )
 
 type LeagueJob struct {
-	matchService   *matchesusecase.Service
-	leagueRepo     *repositories.LeagueRepository
-	subRepo        *repositories.LeagueSubscriptionRepository
+	matchService    *matchesusecase.Service
+	leagueRepo      *repositories.LeagueRepository
+	subRepo         *repositories.LeagueSubscriptionRepository
 	leagueMatchRepo *repositories.LeagueMatchRepository
-	fighterRepo    *repositories.FighterRepository
+	fighterRepo     *repositories.FighterRepository
+	interval        time.Duration
 }
 
 func NewLeagueJob(
@@ -28,13 +30,45 @@ func NewLeagueJob(
 	subRepo *repositories.LeagueSubscriptionRepository,
 	leagueMatchRepo *repositories.LeagueMatchRepository,
 	fighterRepo *repositories.FighterRepository,
+	interval time.Duration,
 ) *LeagueJob {
 	return &LeagueJob{
 		matchService:    matchService,
-		leagueRepo:     leagueRepo,
-		subRepo:        subRepo,
+		leagueRepo:      leagueRepo,
+		subRepo:         subRepo,
 		leagueMatchRepo: leagueMatchRepo,
-		fighterRepo:    fighterRepo,
+		fighterRepo:     fighterRepo,
+		interval:        interval,
+	}
+}
+
+func (j *LeagueJob) Start() {
+	if j.interval <= 0 {
+		return
+	}
+
+	go func() {
+		ticker := time.NewTicker(j.interval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ticker.C:
+				j.runAllActiveLeagues()
+			}
+		}
+	}()
+}
+
+func (j *LeagueJob) runAllActiveLeagues() {
+	ctx := context.Background()
+	leagues, err := j.leagueRepo.List(ctx)
+	if err != nil {
+		return
+	}
+
+	for _, league := range leagues {
+		_ = j.RunLeague(ctx, league.ID)
 	}
 }
 
