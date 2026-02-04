@@ -6,6 +6,7 @@ import (
 	"math/rand"
 
 	"empoweredpixels/internal/domain/combat"
+	"empoweredpixels/internal/domain/inventory"
 	"empoweredpixels/internal/domain/roster"
 	"github.com/google/uuid"
 )
@@ -17,7 +18,7 @@ func NewSimulator() *Simulator {
 	return &Simulator{}
 }
 
-func (s *Simulator) Run(matchID string, fighters []roster.Fighter, options MatchOptions) (*combat.MatchResult, error) {
+func (s *Simulator) Run(matchID string, fighters []roster.Fighter, equipment map[string][]inventory.Equipment, options MatchOptions) (*combat.MatchResult, error) {
 	entities := make([]*combat.Entity, 0, len(fighters)+(func() int {
 		if options.BotCount != nil {
 			return *options.BotCount
@@ -27,7 +28,29 @@ func (s *Simulator) Run(matchID string, fighters []roster.Fighter, options Match
 	scores := make(map[string]*combat.FighterScore)
 
 	for _, f := range fighters {
-		maxHP := 100 + (f.Vitality * 10)
+		stats := combat.Stats{
+			Power:          f.Power,
+			ConditionPower: f.ConditionPower,
+			Precision:      f.Precision,
+			Ferocity:       f.Ferocity,
+			Accuracy:       f.Accuracy,
+			Agility:        f.Agility,
+			Armor:          f.Armor,
+			Vitality:       f.Vitality,
+			ParryChance:    f.ParryChance,
+			HealingPower:   f.HealingPower,
+			Speed:          f.Speed,
+			Vision:         f.Vision,
+		}
+
+		// Apply Equipment Stats
+		if items, ok := equipment[f.ID]; ok {
+			for _, item := range items {
+				applyItemStats(&stats, item)
+			}
+		}
+
+		maxHP := 100 + (stats.Vitality * 10)
 		entities = append(entities, &combat.Entity{
 			ID:           f.ID,
 			Name:         f.Name,
@@ -35,20 +58,7 @@ func (s *Simulator) Run(matchID string, fighters []roster.Fighter, options Match
 			MaxHP:        maxHP,
 			CurrentHP:    maxHP,
 			AttunementID: f.AttunementID,
-			Stats: combat.Stats{
-				Power:          f.Power,
-				ConditionPower: f.ConditionPower,
-				Precision:      f.Precision,
-				Ferocity:       f.Ferocity,
-				Accuracy:       f.Accuracy,
-				Agility:        f.Agility,
-				Armor:          f.Armor,
-				Vitality:       f.Vitality,
-				ParryChance:    f.ParryChance,
-				HealingPower:   f.HealingPower,
-				Speed:          f.Speed,
-				Vision:         f.Vision,
-			},
+			Stats:        stats,
 		})
 		scores[f.ID] = &combat.FighterScore{FighterID: f.ID}
 	}
@@ -224,5 +234,45 @@ func getAttunement(id *string) combat.Attunement {
 		return combat.NewFireAttunement()
 	default:
 		return nil
+	}
+}
+
+func applyItemStats(stats *combat.Stats, item inventory.Equipment) {
+	// Base Stats by Item Type (ItemID)
+	switch item.ItemID {
+	case "sword_01", "iron_sword":
+		stats.Power += 5 + item.Enhancement
+		stats.Accuracy += 2
+	case "greatsword_01":
+		stats.Power += 12 + (item.Enhancement * 2)
+		stats.Speed -= 2
+	case "dagger_01":
+		stats.Power += 3 + item.Enhancement
+		stats.Agility += 4
+		stats.Speed += 2
+	case "armor_01", "iron_armor":
+		stats.Armor += 8 + item.Enhancement
+		stats.Vitality += 2
+	case "leather_armor":
+		stats.Armor += 3 + item.Enhancement
+		stats.Agility += 2
+	case "shield_01":
+		stats.Armor += 4
+		stats.ParryChance += 10 + item.Enhancement
+	}
+
+	// Rarity Multiplier
+	multiplier := 1.0
+	switch item.Rarity {
+	case 1: multiplier = 1.1
+	case 2: multiplier = 1.25
+	case 3: multiplier = 1.5
+	case 4: multiplier = 2.0
+	}
+
+	if multiplier > 1.0 {
+		stats.Power = int(float64(stats.Power) * multiplier)
+		stats.Armor = int(float64(stats.Armor) * multiplier)
+		stats.Vitality = int(float64(stats.Vitality) * multiplier)
 	}
 }

@@ -7,8 +7,10 @@ import (
 	"time"
 
 	"empoweredpixels/internal/domain/combat"
+	"empoweredpixels/internal/domain/inventory"
 	"empoweredpixels/internal/domain/matches"
 	"empoweredpixels/internal/infra/engine"
+	inventoryusecase "empoweredpixels/internal/usecase/inventory"
 	"empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 
@@ -37,6 +39,7 @@ type Service struct {
 	results       ResultRepository
 	scores        ScoreRepository
 	fighters      FighterRepository
+	inventory     inventoryusecase.Service
 	rewards       *rewards.Service
 	roster        *rosterusecase.Service
 	engine        *engine.Client
@@ -51,6 +54,7 @@ func NewService(
 	results ResultRepository,
 	scores ScoreRepository,
 	fighters FighterRepository,
+	inventory inventoryusecase.Service,
 	rewards *rewards.Service,
 	roster *rosterusecase.Service,
 	engineClient *engine.Client,
@@ -384,8 +388,19 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		s.hub.Broadcast(matchID, map[string]any{"type": "matchStatus", "status": matches.MatchStatusRunning, "matchId": matchID})
 	}
 
+	// Load equipment for all participants
+	fighterEquipment := make(map[string][]inventory.Equipment)
+	if s.inventory != nil {
+		for _, f := range fighters {
+			items, err := s.inventory.ListByFighter(ctx, f.UserID, f.ID)
+			if err == nil {
+				fighterEquipment[f.ID] = items
+			}
+		}
+	}
+
 	simulator := NewSimulator()
-	result, err := simulator.Run(matchID, fighters, options)
+	result, err := simulator.Run(matchID, fighters, fighterEquipment, options)
 	if err != nil {
 		match.Status = matches.MatchStatusLobby
 		match.Started = nil

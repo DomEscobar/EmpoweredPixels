@@ -84,6 +84,7 @@ func main() {
 		matchResultRepo,
 		matchScoreRepo,
 		fighterRepo,
+		inventoryService,
 		rewardService,
 		rosterService,
 		engineClient,
