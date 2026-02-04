@@ -7,8 +7,10 @@ import (
 	"time"
 
 	"empoweredpixels/internal/domain/matches"
+	"empoweredpixels/internal/domain/roster"
 	"empoweredpixels/internal/infra/engine"
 	"empoweredpixels/internal/usecase/rewards"
+	rosterusecase "empoweredpixels/internal/usecase/roster"
 
 	"github.com/google/uuid"
 )
@@ -36,6 +38,7 @@ type Service struct {
 	scores        ScoreRepository
 	fighters      FighterRepository
 	rewards       *rewards.Service
+	roster        *rosterusecase.Service
 	engine        *engine.Client
 	hub           Hub
 	now           func() time.Time
@@ -49,6 +52,7 @@ func NewService(
 	scores ScoreRepository,
 	fighters FighterRepository,
 	rewards *rewards.Service,
+	roster *rosterusecase.Service,
 	engineClient *engine.Client,
 	hub Hub,
 	now func() time.Time,
@@ -65,6 +69,7 @@ func NewService(
 		scores:        scores,
 		fighters:      fighters,
 		rewards:       rewards,
+		roster:        roster,
 		engine:        engineClient,
 		hub:           hub,
 		now:           now,
@@ -398,6 +403,11 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		return err
 	}
 
+	scoresMapping := make(map[string]SimulatorScore)
+	for _, score := range result.Scores {
+		scoresMapping[score.FighterID] = score
+	}
+
 	scores := make([]matches.MatchScoreFighter, 0, len(result.Scores))
 	for _, score := range result.Scores {
 		scores = append(scores, matches.MatchScoreFighter{
@@ -421,16 +431,31 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		return err
 	}
 
-	// Award rewards to all participants
+	// Award rewards and experience to all participants
 	if s.rewards != nil {
-		// Use a map to track users we've already rewarded for this match
 		rewardedUsers := make(map[int64]bool)
 		for _, f := range fighters {
+			// Award Loot (per User)
 			if !rewardedUsers[f.UserID] {
-				if _, err := s.rewards.IssueReward(ctx, f.UserID, "match_win"); err != nil {
+				if _, err := s.rewards.IssueReward(ctx, f.UserID, "match_participation"); err != nil {
 					// log error but don't fail the match execution
 				}
 				rewardedUsers[f.UserID] = true
+			}
+
+			// Award Experience (per Fighter)
+			if s.roster != nil {
+				score, ok := scoresMapping[f.ID]
+				expAmount := 10 // Base EXP
+				if ok {
+					expAmount += score.Kills * 5
+				}
+
+				currentExp, err := s.roster.GetExperience(ctx, f.ID)
+				if err == nil {
+					currentExp.Experience += expAmount
+					_ = s.roster.UpdateExperience(ctx, currentExp)
+				}
 			}
 		}
 	}
@@ -441,6 +466,7 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 
 	return nil
 }
+
 
 func (s *Service) tryAutoStart(matchID string, options MatchOptions) {
 	go func() {

@@ -85,6 +85,7 @@ func main() {
 		matchScoreRepo,
 		fighterRepo,
 		rewardService,
+		rosterService,
 		engineClient,
 		matchHub,
 		time.Now,

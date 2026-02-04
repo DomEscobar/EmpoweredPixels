@@ -123,3 +123,7 @@ func (s *Service) GetConfiguration(ctx context.Context, fighterID string) (*rost
 func (s *Service) UpdateConfiguration(ctx context.Context, configuration *roster.FighterConfiguration) error {
 	return s.configurations.Upsert(ctx, configuration)
 }
+
+func (s *Service) UpdateExperience(ctx context.Context, experience *roster.FighterExperience) error {
+	return s.experiences.Upsert(ctx, experience)
+}
