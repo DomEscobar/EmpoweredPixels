@@ -250,6 +250,7 @@ import { endpoints } from '@/shared/api/endpoints';
 import { useAuthStore } from '@/features/auth/store';
 import BaseButton from '@/shared/ui/BaseButton.vue';
 import { useRosterStore } from '@/features/roster/store';
+import { useRewardsStore } from '@/features/rewards/store';
 
 // Pixel Assets Definition
 const PIXEL_ASSETS = {
@@ -266,6 +267,7 @@ const PIXEL_ASSETS = {
 
 const auth = useAuthStore();
 const roster = useRosterStore();
+const rewardsStore = useRewardsStore();
 const route = useRoute();
 const matchId = ref(route.params.id as string);
 const matchStatus = ref<string | null>(null);
@@ -1406,6 +1408,7 @@ function stopLivePoll() {
 
 onMounted(async () => {
   await roster.fetchFighters();
+  await rewardsStore.fetchRewards();
   loadAssets(); // Start loading sprites
   await fetchMatchStatus();
   await fetchLogs();
