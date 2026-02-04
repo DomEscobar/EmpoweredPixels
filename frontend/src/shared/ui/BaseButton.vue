@@ -1,0 +1,30 @@
+<template>
+  <button
+    :class="[
+      'inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-50',
+      variant === 'primary' ? 'bg-indigo-600 text-white hover:bg-indigo-700' : '',
+      variant === 'secondary' ? 'bg-slate-800 text-slate-100 hover:bg-slate-700 border border-slate-700' : '',
+      variant === 'outline' ? 'border border-slate-700 bg-transparent hover:bg-slate-800 text-slate-300' : '',
+      variant === 'ghost' ? 'bg-transparent hover:bg-slate-800 text-slate-300' : '',
+      size === 'sm' ? 'h-8 px-3' : 'h-10 px-4',
+      className
+    ]"
+    v-bind="$attrs"
+  >
+    <slot />
+  </button>
+</template>
+
+<script setup lang="ts">
+interface Props {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+withDefaults(defineProps<Props>(), {
+  variant: 'primary',
+  size: 'md',
+  className: '',
+});
+</script>

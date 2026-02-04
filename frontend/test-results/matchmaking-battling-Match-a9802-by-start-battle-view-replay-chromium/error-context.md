@@ -1,0 +1,59 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "EP EmpoweredPixels" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]: EP
+        - text: EmpoweredPixels
+      - generic [ref=e9]:
+        - link "Sign in" [ref=e10] [cursor=pointer]:
+          - /url: /login
+          - button "Sign in" [ref=e11]
+        - link "Get Started" [ref=e12] [cursor=pointer]:
+          - /url: /register
+          - button "Get Started" [ref=e13]
+  - main [ref=e14]:
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - heading "Matches" [level=1] [ref=e17]
+        - paragraph [ref=e18]: Browse lobbies or create your own. Leagues run on a schedule.
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - generic [ref=e22]:
+              - combobox [ref=e23]:
+                - option "Lobbies (open)" [selected]
+                - option "Running"
+                - option "Completed"
+              - textbox "Search..." [ref=e24]
+            - button "Create Lobby" [ref=e25]
+          - paragraph [ref=e27]: No open lobbies. Create one.
+        - generic [ref=e29]:
+          - heading "Your status" [level=3] [ref=e31]
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - paragraph [ref=e34]: Not in a match
+              - paragraph [ref=e35]: Create or join a lobby to start.
+            - paragraph [ref=e37]: "Lobbies: create or join, then start when ready. Leagues run on a schedule; check Leagues for next match."
+      - generic [ref=e39]:
+        - heading "Create lobby" [level=2] [ref=e41]
+        - generic [ref=e42]:
+          - generic [ref=e43] [cursor=pointer]:
+            - checkbox "Private Only visible via link" [ref=e44]
+            - generic [ref=e45]:
+              - generic [ref=e46]: Private
+              - generic [ref=e47]: Only visible via link
+          - generic [ref=e48]:
+            - generic [ref=e49]:
+              - text: Bot count
+              - spinbutton "Bot count" [ref=e50]: "1"
+            - generic [ref=e51]:
+              - text: Bot level
+              - spinbutton "Bot level" [ref=e52]: "10"
+          - generic [ref=e53]:
+            - button "Cancel" [ref=e54]
+            - button "Create" [active] [ref=e55]
+```
