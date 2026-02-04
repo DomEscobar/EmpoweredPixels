@@ -73,8 +73,11 @@
             <div v-if="matchStatus === 'completed' && orderedRounds.length && selectedRound === orderedRounds[orderedRounds.length-1]" 
                 class="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
               <div class="max-w-md w-full text-center border-4 border-amber-500 bg-slate-900 p-6 shadow-2xl pixel-box animate-in zoom-in duration-300">
-                <img :src="PIXEL_ASSETS.ICON_TROPHY" class="w-16 h-16 mx-auto mb-2 pixelated animate-bounce-slow" />
-                <h2 class="text-3xl font-black text-amber-500 tracking-widest uppercase text-shadow-retro">BATTLE ENDED</h2>
+                <img v-if="isWinner" :src="PIXEL_ASSETS.ICON_TROPHY" class="w-16 h-16 mx-auto mb-2 pixelated animate-bounce-slow" />
+                <img v-else :src="PIXEL_ASSETS.ICON_SKULL" class="w-16 h-16 mx-auto mb-2 pixelated opacity-50" />
+                
+                <h2 v-if="isWinner" class="text-3xl font-black text-amber-500 tracking-widest uppercase text-shadow-retro">VICTORY</h2>
+                <h2 v-else class="text-3xl font-black text-rose-500 tracking-widest uppercase text-shadow-retro">DEFEAT</h2>
                 
                 <!-- Rewards Preview Section -->
                 <div class="mt-4 p-4 bg-slate-950/50 border-2 border-slate-800">
@@ -1283,6 +1286,16 @@ const togglePlayback = () => {
     segmentStart = 0; // Will be reset in loop
   }
 };
+
+const isWinner = computed(() => {
+  if (!roster.fighters.length) return false;
+  const playerIds = new Set(roster.fighters.map(f => f.id));
+  const finalState = roundStateMap.value[orderedRounds.value[orderedRounds.value.length - 1]];
+  if (!finalState) return false;
+  
+  // Check if any of our fighters are still alive in the final state
+  return Object.values(finalState.entities).some(e => playerIds.has(e.id) && e.alive);
+});
 
 const claimAndExit = async () => {
    try {
