@@ -6,8 +6,8 @@ import (
 	"errors"
 	"time"
 
+	"empoweredpixels/internal/domain/combat"
 	"empoweredpixels/internal/domain/matches"
-	"empoweredpixels/internal/domain/roster"
 	"empoweredpixels/internal/infra/engine"
 	"empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
@@ -403,7 +403,7 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		return err
 	}
 
-	scoresMapping := make(map[string]SimulatorScore)
+	scoresMapping := make(map[string]combat.FighterScore)
 	for _, score := range result.Scores {
 		scoresMapping[score.FighterID] = score
 	}
