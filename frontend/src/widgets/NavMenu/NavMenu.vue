@@ -37,6 +37,15 @@
         <!-- Right Side -->
         <div class="flex items-center gap-3">
           <template v-if="auth.token">
+            <button @click="logout" class="footer-logout-btn group p-1.5" title="Logout">
+              <div class="pixel-box-sm bg-slate-800/80 p-1 group-hover:bg-red-900/50 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 group-hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </div>
+            </button>
             <!-- User Badge -->
             <div class="pixel-box-sm bg-slate-800/80 px-3 py-1.5 hidden sm:flex items-center gap-2">
               <div class="w-6 h-6 pixel-box-sm bg-indigo-900/50 border-indigo-500/50 flex items-center justify-center">
@@ -44,9 +53,6 @@
               </div>
               <span class="text-xs text-slate-300 font-bold uppercase">Commander</span>
             </div>
-            <button @click="logout" class="rpg-btn-small text-xs">
-              LOGOUT
-            </button>
           </template>
           <template v-else>
             <router-link to="/login">
