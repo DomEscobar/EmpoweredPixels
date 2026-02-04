@@ -71,11 +71,33 @@
           <!-- Victory / End Overlay -->
           <transition name="fade">
             <div v-if="matchStatus === 'completed' && orderedRounds.length && selectedRound === orderedRounds[orderedRounds.length-1]" 
-                class="absolute inset-0 pointer-events-none flex items-center justify-center bg-black/70 backdrop-blur-[2px]">
-              <div class="text-center transform scale-100 animate-in zoom-in duration-500 border-4 border-amber-500 bg-slate-900 p-8 pixel-box">
-                <img :src="PIXEL_ASSETS.ICON_TROPHY" class="w-16 h-16 mx-auto mb-4 pixelated animate-bounce-slow" />
-                <h2 class="text-4xl font-black text-amber-500 tracking-widest uppercase text-shadow-retro">VICTORY</h2>
-                <p class="text-amber-200 mt-2 font-bold text-sm tracking-wide uppercase">Quest Complete</p>
+                class="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+              <div class="max-w-md w-full text-center border-4 border-amber-500 bg-slate-900 p-6 shadow-2xl pixel-box animate-in zoom-in duration-300">
+                <img :src="PIXEL_ASSETS.ICON_TROPHY" class="w-16 h-16 mx-auto mb-2 pixelated animate-bounce-slow" />
+                <h2 class="text-3xl font-black text-amber-500 tracking-widest uppercase text-shadow-retro">BATTLE ENDED</h2>
+                
+                <!-- Rewards Preview Section -->
+                <div class="mt-4 p-4 bg-slate-950/50 border-2 border-slate-800">
+                  <h3 class="text-xs font-bold text-slate-500 uppercase mb-3 text-shadow-retro">Rewards available to claim</h3>
+                  
+                  <div v-if="rewardsStore.rewardCount > 0" class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="text-slate-400">Match Bonus:</span>
+                      <span class="text-amber-400 font-bold">+ {{ rewardsStore.rewardCount * 20 }} Particles</span>
+                    </div>
+                    <button 
+                      class="rpg-btn-small mt-2 w-full !bg-amber-600 !text-slate-900 border-amber-800 hover:!bg-amber-500 font-bold"
+                      @click="claimAndExit"
+                      :disabled="rewardsStore.isLoading"
+                    >
+                      {{ rewardsStore.isLoading ? 'CLAIMING...' : 'CLAIM & EXIT' }}
+                    </button>
+                  </div>
+                  <div v-else class="py-4">
+                    <p class="text-slate-500 text-xs italic">All rewards claimed or none earned.</p>
+                    <button class="rpg-btn-small mt-3 w-full font-bold" @click="$router.push('/matches')">EXIT TO MAP</button>
+                  </div>
+                </div>
               </div>
             </div>
           </transition>
@@ -1258,6 +1280,15 @@ const togglePlayback = () => {
     isPlaying.value = true;
     segmentStart = 0; // Will be reset in loop
   }
+};
+
+const claimAndExit = async () => {
+   try {
+     await rewardsStore.claimAll();
+     window.location.href = '/matches';
+   } catch (e) {
+     console.error("Failed to claim rewards:", e);
+   }
 };
 
 // Data Fetching
