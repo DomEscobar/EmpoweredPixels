@@ -434,10 +434,29 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 	// Award rewards and experience to all participants
 	if s.rewards != nil {
 		rewardedUsers := make(map[int64]bool)
+
+		// Determine the winner (the last one standing or highest score if time limit reached)
+		// For now, based on simulation results, we'll check who has 0 deaths if others have > 0, 
+		// but a more robust way is needed from combat result.
+		// Simplified: Person with the most kills and 0 deaths or just most kills as winner.
+		var winnerID string
+		maxKills := -1
+		for _, score := range result.Scores {
+			if score.Deaths == 0 && score.Kills > maxKills {
+				maxKills = score.Kills
+				winnerID = score.FighterID
+			}
+		}
+
 		for _, f := range fighters {
 			// Award Loot (per User)
 			if !rewardedUsers[f.UserID] {
-				if _, err := s.rewards.IssueReward(ctx, f.UserID, "match_participation"); err != nil {
+				pool := "match_participation"
+				if f.ID == winnerID {
+					pool = "match_win"
+				}
+
+				if _, err := s.rewards.IssueReward(ctx, f.UserID, pool); err != nil {
 					// log error but don't fail the match execution
 				}
 				rewardedUsers[f.UserID] = true
@@ -449,6 +468,9 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 				expAmount := 10 // Base EXP
 				if ok {
 					expAmount += score.Kills * 5
+					if f.ID == winnerID {
+						expAmount += 20 // Winner bonus EXP
+					}
 				}
 
 				currentExp, err := s.roster.GetExperience(ctx, f.ID)

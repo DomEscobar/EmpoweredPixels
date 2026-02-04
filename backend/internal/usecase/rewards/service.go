@@ -3,6 +3,7 @@ package rewards
 import (
 	"context"
 	"errors"
+	"math/rand"
 	"time"
 
 	"empoweredpixels/internal/domain/inventory"
@@ -117,8 +118,8 @@ func (s *Service) ClaimAll(ctx context.Context, userID int64) (*RewardContent, e
 
 func (s *Service) generateRewards(userID int64, poolID string) RewardContent {
 	items := make([]inventory.Item, 0, 10)
-	// Base reward: 10 particles
-	for i := 0; i < 10; i++ {
+	// Base reward for everyone: 20 particles
+	for i := 0; i < 20; i++ {
 		items = append(items, inventory.Item{
 			ID:      uuid.NewString(),
 			UserID:  userID,
@@ -128,10 +129,10 @@ func (s *Service) generateRewards(userID int64, poolID string) RewardContent {
 		})
 	}
 
-	// Winner bonus (simple pool check for now, can be elaborated)
+	// Winner bonus
 	if poolID == "match_win" {
-		// 50 more particles
-		for i := 0; i < 50; i++ {
+		// 100 more particles for the winner
+		for i := 0; i < 100; i++ {
 			items = append(items, inventory.Item{
 				ID:      uuid.NewString(),
 				UserID:  userID,
@@ -140,7 +141,7 @@ func (s *Service) generateRewards(userID int64, poolID string) RewardContent {
 				Created: s.now(),
 			})
 		}
-		// Chance for a token
+		// Guaranteed Common Token for a win
 		items = append(items, inventory.Item{
 			ID:      uuid.NewString(),
 			UserID:  userID,
@@ -148,6 +149,17 @@ func (s *Service) generateRewards(userID int64, poolID string) RewardContent {
 			Rarity:  inventory.ItemRarityCommon,
 			Created: s.now(),
 		})
+	} else if poolID == "match_participation" {
+		// Small chance (20%) for a Common Token even if you lose
+		if rand.Float32() < 0.2 {
+			items = append(items, inventory.Item{
+				ID:      uuid.NewString(),
+				UserID:  userID,
+				ItemID:  inventory.EquipmentTokenCommonID,
+				Rarity:  inventory.ItemRarityCommon,
+				Created: s.now(),
+			})
+		}
 	}
 
 	return RewardContent{
