@@ -435,10 +435,6 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 	if s.rewards != nil {
 		rewardedUsers := make(map[int64]bool)
 
-		// Determine the winner (the last one standing or highest score if time limit reached)
-		// For now, based on simulation results, we'll check who has 0 deaths if others have > 0, 
-		// but a more robust way is needed from combat result.
-		// Simplified: Person with the most kills and 0 deaths or just most kills as winner.
 		var winnerID string
 		maxKills := -1
 		for _, score := range result.Scores {
@@ -446,6 +442,13 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 				maxKills = score.Kills
 				winnerID = score.FighterID
 			}
+		}
+
+		// Calculate Bot difficulty bonus
+		botBonusExp := 0
+		if options.BotCount != nil && options.BotPowerlevel != nil {
+			// +1 EXP for every 5 powerlevels of bots, scaled by bot count
+			botBonusExp = (*options.BotPowerlevel / 5) * (*options.BotCount / 2)
 		}
 
 		for _, f := range fighters {
@@ -465,7 +468,7 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 			// Award Experience (per Fighter)
 			if s.roster != nil {
 				score, ok := scoresMapping[f.ID]
-				expAmount := 10 // Base EXP
+				expAmount := 10 + botBonusExp // Base EXP + difficulty bonus
 				if ok {
 					expAmount += score.Kills * 5
 					if f.ID == winnerID {

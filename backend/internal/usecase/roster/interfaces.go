@@ -13,6 +13,7 @@ type FighterRepository interface {
 	NameExists(ctx context.Context, name string) (bool, error)
 	UserHasFighter(ctx context.Context, userID int64) (bool, error)
 	Create(ctx context.Context, fighter *roster.Fighter) error
+	Update(ctx context.Context, fighter *roster.Fighter) error
 	SoftDelete(ctx context.Context, userID int64, id string) error
 }
 

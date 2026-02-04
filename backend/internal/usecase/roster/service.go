@@ -125,5 +125,38 @@ func (s *Service) UpdateConfiguration(ctx context.Context, configuration *roster
 }
 
 func (s *Service) UpdateExperience(ctx context.Context, experience *roster.FighterExperience) error {
-	return s.experiences.Upsert(ctx, experience)
+	if err := s.experiences.Upsert(ctx, experience); err != nil {
+		return err
+	}
+
+	// Check for Level Up
+	fighter, err := s.fighters.GetByID(ctx, experience.FighterID)
+	if err != nil || fighter == nil {
+		return err
+	}
+
+	newLevel := 1
+	// Simple progressive leveling: level 2 at 100 exp, level 3 at 300, 4 at 600, etc. (Level * Level * 50)
+	for {
+		nextLevelExp := newLevel * newLevel * 50
+		if experience.Experience < nextLevelExp {
+			break
+		}
+		newLevel++
+	}
+
+	if newLevel > fighter.Level {
+		levelsGained := newLevel - fighter.Level
+		fighter.Level = newLevel
+		// Basic stat growth: +2 to all main combat stats per level
+		fighter.Power += levelsGained * 2
+		fighter.Vitality += levelsGained * 2
+		fighter.Accuracy += levelsGained * 2
+		fighter.Agility += levelsGained * 2
+		fighter.Armor += levelsGained * 1
+
+		return s.fighters.Update(ctx, fighter)
+	}
+
+	return nil
 }

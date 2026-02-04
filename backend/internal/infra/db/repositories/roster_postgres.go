@@ -205,6 +205,23 @@ func (r *FighterRepository) SoftDelete(ctx context.Context, userID int64, id str
 	return err
 }
 
+func (r *FighterRepository) Update(ctx context.Context, fighter *roster.Fighter) error {
+	const query = `
+		update fighters
+		set level = $1, power = $2, condition_power = $3, precision = $4, ferocity = $5,
+		    accuracy = $6, agility = $7, armor = $8, vitality = $9, parry_chance = $10,
+		    healing_power = $11, speed = $12, vision = $13
+		where id = $14`
+
+	_, err := r.pool.Exec(ctx, query,
+		fighter.Level, fighter.Power, fighter.ConditionPower, fighter.Precision, fighter.Ferocity,
+		fighter.Accuracy, fighter.Agility, fighter.Armor, fighter.Vitality, fighter.ParryChance,
+		fighter.HealingPower, fighter.Speed, fighter.Vision,
+		fighter.ID,
+	)
+	return err
+}
+
 func (r *ExperienceRepository) GetByFighterID(ctx context.Context, fighterID string) (*roster.FighterExperience, error) {
 	const query = `
 		select id, fighter_id, experience
