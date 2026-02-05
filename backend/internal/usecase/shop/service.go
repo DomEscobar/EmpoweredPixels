@@ -45,6 +45,11 @@ func (s *Service) GetShopItems(ctx context.Context) ([]shop.ShopItem, error) {
 	return s.shopRepo.GetShopItems(ctx, nil, nil)
 }
 
+// GetShopItemByID returns a shop item by ID
+func (s *Service) GetShopItemByID(ctx context.Context, id int) (*shop.ShopItem, error) {
+	return s.shopRepo.GetShopItemByID(ctx, id)
+}
+
 // GetPlayerGold returns a player's gold balance
 func (s *Service) GetPlayerGold(ctx context.Context, userID int) (*shop.PlayerGold, error) {
 	return s.goldRepo.GetPlayerGold(ctx, userID)

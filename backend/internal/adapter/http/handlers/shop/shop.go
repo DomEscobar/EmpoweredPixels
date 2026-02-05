@@ -34,9 +34,17 @@ func NewHandler(service ShopService) *Handler {
 	return &Handler{service: service}
 }
 
+func getUserID(r *http.Request) int {
+	userID, ok := middleware.UserID(r.Context())
+	if !ok {
+		return 0
+	}
+	return int(userID)
+}
+
 // GetGoldPackages handles GET /api/shop/gold
 func (h *Handler) GetGoldPackages(w http.ResponseWriter, r *http.Request) {
-	userID := middleware.GetUserID(r)
+	userID := getUserID(r)
 	if userID == 0 {
 		responses.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
@@ -53,7 +61,7 @@ func (h *Handler) GetGoldPackages(w http.ResponseWriter, r *http.Request) {
 
 // GetBundles handles GET /api/shop/bundles
 func (h *Handler) GetBundles(w http.ResponseWriter, r *http.Request) {
-	userID := middleware.GetUserID(r)
+	userID := getUserID(r)
 	if userID == 0 {
 		responses.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
@@ -70,7 +78,7 @@ func (h *Handler) GetBundles(w http.ResponseWriter, r *http.Request) {
 
 // GetShopItems handles GET /api/shop/items
 func (h *Handler) GetShopItems(w http.ResponseWriter, r *http.Request) {
-	userID := middleware.GetUserID(r)
+	userID := getUserID(r)
 	if userID == 0 {
 		responses.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
@@ -87,7 +95,7 @@ func (h *Handler) GetShopItems(w http.ResponseWriter, r *http.Request) {
 
 // GetShopItem handles GET /api/shop/item/{id}
 func (h *Handler) GetShopItem(w http.ResponseWriter, r *http.Request) {
-	userID := middleware.GetUserID(r)
+	userID := getUserID(r)
 	if userID == 0 {
 		responses.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
@@ -117,7 +125,7 @@ func (h *Handler) GetShopItem(w http.ResponseWriter, r *http.Request) {
 
 // Purchase handles POST /api/shop/purchase
 func (h *Handler) Purchase(w http.ResponseWriter, r *http.Request) {
-	userID := middleware.GetUserID(r)
+	userID := getUserID(r)
 	if userID == 0 {
 		responses.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
@@ -150,7 +158,7 @@ func (h *Handler) Purchase(w http.ResponseWriter, r *http.Request) {
 
 // GetPlayerGold handles GET /api/player/gold
 func (h *Handler) GetPlayerGold(w http.ResponseWriter, r *http.Request) {
-	userID := middleware.GetUserID(r)
+	userID := getUserID(r)
 	if userID == 0 {
 		responses.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
@@ -167,7 +175,7 @@ func (h *Handler) GetPlayerGold(w http.ResponseWriter, r *http.Request) {
 
 // GetTransactions handles GET /api/player/transactions
 func (h *Handler) GetTransactions(w http.ResponseWriter, r *http.Request) {
-	userID := middleware.GetUserID(r)
+	userID := getUserID(r)
 	if userID == 0 {
 		responses.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
