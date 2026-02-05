@@ -1,154 +1,319 @@
-# Agents
+# 🤖 AI Agency - Agent Definitions
 
-This file captures agent conventions and a running log of AI-driven changes.
+**System:** EmpoweredPixels Autonomous Pipeline  
+**Controller:** DiaDome  
+**Mode:** Lights-Out (Autonomous)  
 
-## Agent Loop Architecture (v2 - Self-Healing)
+---
 
-**Current System:** 3-Agent Minimal Core with Heartbeat & Auto-Recovery
+## 🎭 Agent Roster
 
-### Core Team
-| Agent | Role | Responsibility |
-|-------|------|----------------|
-| **PO-Lead** | Product Owner | Prioritize tasks, assign to Architect, update KANBAN, manage Roadmap |
-| **Architect-Lead** | Senior Code Architect | Implement features, commit code, signal QA |
-| **QA-Lead** | QA Specialist | Verify implementations, test builds, report PASS/FAIL |
-| **Senior-Game-Designer** | Game Design | Evaluate features, define mechanics, create user stories |
+### 1. 🧠 Orchestrator (Chief Coordinator)
 
-### Feature Development Workflow
+**Model:** `openrouter/moonshotai/kimi-k2.5`  
+**Heartbeat:** 120 seconds (2 minutes)  
+**Priority:** CRITICAL  
+**Max Tasks:** 10 concurrent  
 
-```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│  Game Designer  │───→│    PO-Lead       │───→│  Architect-Lead │
-│ (Feature Ideas) │    │ (Roadmap/Specs)  │    │  (Implement)    │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-                                                         │
-        ┌──────────────────────────────────────────────────┘
-        ▼
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   QA-Lead       │───→│  MCP-Live-Test   │───→│   Production    │
-│ (Unit/Int/E2E)  │    │  (Final Verify)  │    │   Deploy        │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-```
+**Responsibilities:**
+- Continuously monitors `KANBAN.md`
+- Prioritizes tasks (P0 > P1 > P2)
+- Creates feature branches via `git-safety.sh`
+- Spawns appropriate agents based on task type
+- Enforces workflow gates (tests → merge)
+- Reports critical blockers to DiaDome
 
-#### 1. Feature Definition (PO-Lead)
-- **New features** are transferred from Design into the **Roadmap** by PO-Lead
-- Every feature has:
-  - Clear user stories
-  - Technical acceptance criteria
-  - Definition of Done (DoD)
-  - Estimated effort
+**Decision Matrix:**
+| Task Type | Assigned Agent | Trigger |
+|-----------|---------------|---------|
+| Implementation | Coder | Code needed |
+| Testing/Coverage | QA | Tests needed |
+| Pattern/Skill | Foundry | Repetition detected |
+| Complex Logic | Orchestrator | Multi-agent coordination |
 
-#### 2. Test Coverage Requirements (QA-Lead)
-Every new feature MUST have:
-| Test Type | Coverage | Validated By |
-|-----------|----------|--------------|
-| **Unit Tests** | Core business logic | QA-Lead |
-| **Integration Tests** | API endpoints, DB operations | QA-Lead |
-| **E2E Tests** | Full user flows | QA-Lead |
-| **MCP Live Tests** | External AI agent compatibility | QA-Lead via MCP |
-
-**MCP Testing:** After implementation, QA-Lead tests the feature via MCP endpoints to ensure external AI agents can interact with it correctly.
-
-### Workflow (PO → Architect → QA → PO)
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   PO-Lead   │────→│ Architect   │────→│   QA-Lead   │
-│  (Assign)   │     │ (Implement) │     │ (Verify)    │
-└──────▲──────┘     └─────────────┘     └──────┬──────┘
-       └─────────────────────────────────────────┘
-                    (Report PASS/FAIL)
-```
-
-### Heartbeat Protocol
-All agents MUST send heartbeat every 2-5 minutes:
+**Commands:**
 ```bash
-/root/agent_heartbeat.sh "<Agent-Name>" "<current-task-status>"
+# Manual trigger
+/root/EmpoweredPixels/scripts/orchestrator.sh
+
+# Check status
+tail -f /var/log/agency/orchestrator.log
 ```
 
-### Persistent Loop Mode (Option D - Revised)
-Agents run in **25-minute cycles** (1500s timeout) due to system 30min hard limit:
-- **Cycle:** Work → Sleep 60s → Check for new tasks → Exit cleanly at 25min
-- **Auto-respawn:** Watchdog respawns every 25min if heartbeats stale
-- **Continuous:** Agents always alive via respawn cycles
-- **Checkpoint:** State in heartbeat/task files survives respawn
+---
 
-### Git Push Safety (Anti-Stall)
-**Problem:** Agent dies after commit but before push.
-**Solutions:**
-1. **Immediate Push:** Agent runs `git commit && git push` atomically
-2. **Auto-Push Cron:** `/root/autopush_watchdog.sh` runs every 5min
-3. **Exit Hook:** Agent ALWAYS pushes before `exit 0`
-4. **Mama Monitor:** Main agent detects unpushed commits via `git log origin/main..HEAD`
+### 2. 💻 Coder (Full-Stack Developer)
 
-**Rule:** Never leave commits unpushed >5 minutes.
+**Model:** `openrouter/moonshotai/kimi-k2.5`  
+**Heartbeat:** 300 seconds (5 minutes)  
+**Priority:** HIGH  
+**Max Tasks:** 5 concurrent  
 
-### Auto-Recovery
-- **Monitor:** `/root/agent_loop_monitor.sh` runs every 5 minutes
-- **Detection:** Agent stale after 10 minutes → marked dead
-- **Action:** Auto-respawn dead agents with last known task
-- **Alert:** Telegram notification on recovery events
+**Responsibilities:**
+- Implements features in feature branches
+- Writes clean, documented code
+- Go backend development (APIs, DB)
+- Frontend development (Vue/TypeScript)
+- Database migrations
+- Integration with existing systems
 
-### State Files
-- `/root/.openclaw/agent_state/*.heartbeat` - Last ping timestamp
-- `/root/.openclaw/agent_state/*.task` - Current task description
+**Stack:**
+- **Backend:** Go 1.22, Gorilla Mux, PostgreSQL
+- **Frontend:** Vue 3, TypeScript, Vite
+- **Testing:** Go testing, Playwright
 
-## Conventions
+**Workflow:**
+1. Receive task from Orchestrator
+2. Create implementation plan
+3. Write code with tests
+4. Commit with `[Coder]` prefix
+5. Request QA review
 
-- Keep changes incremental and clean-architecture aligned.
-- Prefer explicit boundaries over implicit coupling.
-- Record each change with date, scope, and files touched.
-- **Branch-based Development**: All agents work on specialized branches; NO direct pushes to `main`.
-- **Automated PR Review & Testing**: The `Senior-Code-Architect` merges PRs via `gh pr merge` ONLY after a successful `go test ./...` and local build verification. This ensures `main` never breaks.
-- **Epic-based Planning**: The `Senior-Product-Owner` manages requirements in Epics within `KANBAN.md`.
-- **The Essence Rule**: All features must align with the core Web3-RPG Indie vibe (approved by PO).
-- **Test-Driven Delivery**: Every feature implementation must include a verification step or unit test.
-- **Commit Rule**: I'll build the project before committing. I must verify that the code compiles successfully in the local environment.
-- **Heartbeat Rule**: All persistent agents must heartbeat every 2-5 minutes or be considered dead.
-- **Push Rule**: Agent MUST run `git push origin main` immediately after EVERY commit, before any other action.
-- **Exit Rule**: Before exit, agent checks `git log origin/main..HEAD` and pushes if commits pending.
+**Safety:**
+- No direct commits to `main`
+- All code in feature branches
+- Minimum 80% test coverage
 
-### Feature Development Rules
+---
 
-1. **PO-Lead owns the Roadmap**
-   - New features come from Game Designer evaluation
-   - PO-Lead transfers approved features to Roadmap/KANBAN
-   - Features must have clear acceptance criteria before implementation
+### 3. 🔍 QA-Auditor (Quality Assurance)
 
-2. **Insufficient Specification Protocol**
-   - If a feature lacks clarity or UX definition, **Game Designer + PO-Lead collaborate**
-   - Game Designer provides: mechanics, balancing, user experience flow
-   - PO-Lead provides: business value, priority, scope constraints
-   - Together they refine until acceptance criteria are crystal clear
-   - **Rule:** No feature moves to Architect until both agree it's ready
+**Model:** `openrouter/moonshotai/kimi-k2.5`  
+**Heartbeat:** 600 seconds (10 minutes)  
+**Priority:** HIGH  
+**Max Tasks:** 3 concurrent  
 
-3. **Complete Test Coverage Required**
-   - Unit Tests: Every function with business logic
-   - Integration Tests: Every API endpoint
-   - E2E Tests: Every user-facing flow
-   - MCP Tests: Live verification via AI agent interface
+**Responsibilities:**
+- Writes unit tests
+- Writes integration tests
+- Runs test suites: `go test ./...`
+- Measures code coverage
+- Blocks merges on red tests
+- Creates E2E tests with Playwright
 
-4. **No Feature without Tests**
-   - Architect implements feature + tests together
-   - QA-Lead validates all test levels
-   - MCP-Live-Test is the final gate before production
+**Test Strategy:**
+| Type | Scope | Tool |
+|------|-------|------|
+| Unit | Functions | Go test |
+| Integration | APIs + DB | Testcontainers |
+| E2E | User flows | Playwright |
 
-## Change Log
+**Coverage Gates:**
+- **Minimum:** 80% overall
+- **Critical paths:** 100%
+- **New code:** 90%
 
-### 2026-02-05
+**Commands:**
+```bash
+# Run all tests
+cd /root/EmpoweredPixels/backend && go test ./... -cover
 
-- **Feature Development Workflow**: Added Senior-Game-Designer agent to core team. Defined complete workflow: Game Designer evaluates features → PO-Lead transfers to Roadmap → Architect implements with tests → QA validates (Unit/Integration/E2E/MCP) → Production.
-- **Test Coverage Requirements**: All new features require Unit, Integration, E2E tests PLUS MCP live testing by QA-Lead before production.
-- **Git Push Safety System**: Implemented 4-layer protection against unpushed commits - Immediate Push rule, Auto-Push Watchdog (5min cron), Exit Hook enforcement, and Mama Monitor detection. Prevents commit-without-push stall scenario.
-- **Agent Loop v2 - Self-Healing System**: Implemented persistent 3-agent core (PO-Lead, Architect-Lead, QA-Lead) with heartbeat protocol and auto-recovery. Agents respawn automatically if stale >10min. Loop monitor runs every 5min.
-- **Backend Recovery & Hardening**: Fixed Git history corruption, restored core logic, and implemented security hardening (Auth, PWM Hashing).
-- **Mobile UX Sprint**: Implemented Sticky Bottom Nav and compact mobile UI.
-- **MCP Integration**: Added MCP server for AI player interaction (REST endpoints, rate limiting, audit logging).
+# Check coverage
+go tool cover -func=coverage.out
+```
 
-### 2026-02-04
+---
 
-- Docker VPS deployment: backend and frontend Dockerfiles, Nginx for static frontend, docker-compose with Postgres; ports 49100 (frontend) and 49101 (backend); deployment docs.
-- Tightened Match Viewer layout for viewport fit and mobile stacking.
+### 4. 🛠️ Foundry (Skill Generator)
 
-### 2026-02-03
+**Model:** `openrouter/moonshotai/kimi-k2.5`  
+**Heartbeat:** 900 seconds (15 minutes)  
+**Priority:** MEDIUM  
+**Max Tasks:** 2 concurrent  
 
-- Overhauled Dashboard with "War Room" aesthetic.
+**Responsibilities:**
+- Detects repetitive patterns
+- Creates reusable OpenClaw skills
+- Refactors legacy code
+- Documents best practices
+- Optimizes performance
+
+**Triggers:**
+- Same error pattern ×3
+- Same code structure in 3+ files
+- New external API integration
+- Performance bottleneck identified
+
+**Output:**
+- New skill files in `/root/.openclaw/skills/`
+- Refactoring PRs
+- Documentation updates
+
+---
+
+## 🔄 Workflow Loop
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    KANBAN.md                         │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │
+│  │  TO DO   │→ │IN PROGRESS│→ │      DONE       │   │
+│  └──────────┘  └──────────┘  └──────────────────┘   │
+└─────────────────────────────────────────────────────┘
+           ↑                           │
+           │                           ↓
+    ┌──────────────┐         ┌──────────────────┐
+    │ Orchestrator │←────────│  Git Merge       │
+    │ (every 2min) │         │  (main branch)   │
+    └──────┬───────┘         └──────────────────┘
+           │
+     ┌─────┴─────┐
+     ↓           ↓
+┌─────────┐  ┌─────────┐  ┌─────────┐
+│  Coder  │  │   QA    │  │ Foundry │
+└────┬────┘  └────┬────┘  └────┬────┘
+     │            │            │
+     └────────────┴────────────┘
+                  ↓
+        ┌──────────────────┐
+        │  Feature Branch  │
+        │  Tests + Commit  │
+        └──────────────────┘
+```
+
+---
+
+## 🛡️ Safety & Governance
+
+### Git Strategy: Branch-per-Task
+
+```
+main (protected)
+  └── feature/shop-mvp-abc123
+      ├── [Coder] Implementation
+      ├── [QA] Tests added
+      └── → Merge to main
+```
+
+### Test Gate
+- **Red Tests** = NO MERGE
+- **Coverage < 80%** = NO MERGE
+- **No Review** = NO MERGE
+
+### Protected Paths
+Agents CANNOT modify:
+- `/etc/` (System config)
+- `/usr/` (System binaries)
+- `/var/` (System data)
+- `/root/.ssh/` (SSH keys)
+- Any path outside `/root/EmpoweredPixels`
+
+### Max Concurrent Agents
+- **Limit:** 4 agents simultaneously
+- **Reason:** Resource protection
+- **Overflow:** Queue tasks for next cycle
+
+---
+
+## 📡 Communication Protocol
+
+### Status Updates (Telegram)
+
+**Orchestrator:**
+> 🎯 Task `[shop-mvp]` assigned to Coder
+> Branch: `feature/shop-mvp-abc123`
+
+**Coder:**
+> 💻 `[shop-mvp]` implemented
+> Coverage: 85%
+> → Awaiting QA
+
+**QA:**
+> 🔍 Tests `[shop-mvp]`: PASS ✅
+> Coverage: 87%
+> → Ready for merge
+
+**Foundry:**
+> 🛠️ New skill created: `shop-pattern`
+> Extracted from 3 implementations
+
+### Critical Blocker Format
+
+```
+🚨 BLOCKER: [Agent-Type]
+Task: [task-id]
+Problem: [description]
+Suggested Fix: [solution]
+Branch: [feature/xxx]
+```
+
+---
+
+## 🎮 Active Sprint
+
+**Sprint Goal:** Shop MVP (Alex Priority)  
+**Deadline:** 24 hours  
+**Current Status:** 🟡 In Progress  
+
+### Task Pipeline
+
+| ID | Task | Agent | Status | Est |
+|----|------|-------|--------|-----|
+| shop-mvp | Shop Implementation | Coder | 🟡 | 4h |
+| attunement | Attunement System | Coder | 🟢 | 3h |
+| daily-quests | Daily Quests | Coder | 🟢 | 4h |
+
+---
+
+## 🔧 Agent Commands
+
+### Manual Agent Spawn
+```bash
+# Spawn specific agent
+openclaw agent spawn \
+  --role coder \
+  --task "Implement shop API" \
+  --model "openrouter/moonshotai/kimi-k2.5"
+```
+
+### Check Agent Status
+```bash
+# List active agents
+pgrep -f "openclaw.*agent" | wc -l
+
+# View agent logs
+tail -f /var/log/agency/orchestrator.log
+```
+
+### Emergency Stop
+```bash
+# Kill all agents
+pkill -f "openclaw.*agent"
+
+# Stop orchestrator
+systemctl stop ai-agency-orchestrator.timer
+```
+
+---
+
+## 📊 Monitoring
+
+### Health Checks
+- **Orchestrator:** `systemctl status ai-agency-orchestrator.timer`
+- **Git Safety:** `/root/EmpoweredPixels/scripts/git-safety.sh status`
+- **Coverage:** `cd backend && go test ./... -cover`
+
+### Logs
+- **Orchestrator:** `/var/log/agency/orchestrator.log`
+- **Git Safety:** `/var/log/agency/git-safety.log`
+- **System:** `journalctl -u ai-agency-orchestrator -f`
+
+---
+
+## 🎯 Success Metrics
+
+| Metric | Target | Current |
+|--------|--------|---------|
+| Tasks Completed/Day | 5 | N/A |
+| Test Coverage | 80%+ | N/A |
+| Merge Success Rate | 95%+ | N/A |
+| Avg Cycle Time | <4h | N/A |
+| Critical Blockers | 0 | 0 |
+
+---
+
+**Agency Status:** 🟢 OPERATIONAL  
+**Orchestrator:** Active (2min interval)  
+**Mode:** Autonomous (DiaDome override enabled)  
+
+*Last Updated: 2026-02-05*

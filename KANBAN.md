@@ -1,33 +1,137 @@
-# 📋 AGENT KANBAN BOARD - EmpoweredPixels
+# 🤖 AI Agency - Kanban Board
 
-This file is the single source of truth for all agents. Update your status here after every task.
-
-## 🔴 BACKLOG (To Do)
-- [ ] **Attunement System** (Priority: P2) - 6 elemental attunements with strengths/weaknesses.
-- [ ] **Daily Quests** (Priority: P2) - Retention mechanic, 2-3 days effort.
-- [ ] **Leaderboards** (Priority: P2) - Competition ranking system.
-- [ ] **Shop System** (Priority: P3) - Gold + Gems currency, post-Weapons.
-- [ ] **Staked Momentum Mechanic** (Agent: Market-Trend-Analyst) - Class-based wagering in leagues. [ON HOLD - revisit after core systems]
-- [ ] **Human Pace Filter** (Agent: AI-Specialist) - Fairness middleware for AI players. [ON HOLD]
-
-## 🟡 IN PROGRESS (Working)
-*None currently*
-
-## 🟢 MERGED / DONE (Completed)
-- [x] **Skill System** (2026-02-05) - QA verified PASS. 15 skills + 3 ultimates across 3 branches, tier-based prerequisites, 2-slot loadout, ultimate charge system, all Unit/Integration/E2E/MCP tests pass.
-- [x] **Weapon System** (2026-02-05) - QA verified PASS. 20 weapons, 5 rarities, enhancement +1 to +10 with failure risk, 50-slot inventory, equip/unequip, all endpoints tested.
-- [x] **Combo-Momentum System** (2026-02-05) - QA verified PASS. Momentum builds +10/hit, Sunder -5% armor (max 5 stacks), Flurry +10% speed at >50 momentum, UI implemented.
-- [x] **MCP Server Verification** (2026-02-05) - QA verified PASS. All tests pass, rate limiting (100 req/min), audit logging, REST endpoints validated.
-- [x] **Technical Debt & Healthcheck Hardening** (2026-02-05) - Scripts fixed, crons working, infra monitoring complete.
-- [x] **Sprint FORTRESS** (2026-02-05) - WebSocket JWT auth, owner validation, and PWM hashing secured.
-- [x] **Sprint ON THE GO** (2026-02-05) - Mobile Sticky Nav and compact headers implemented.
-- [x] **ListStaleLobbies Bug** (2026-02-05) - Fixed stale lobby filtering (commit ce08a88).
-- [x] **Agent Dispatch System** (2026-02-05) - Restored agent-to-agent communication workflows.
-- [x] **Equipment-Influence** - Items now correctly affect combat simulator stats.
-- [x] **Auto-Rewards** - Loot is automatically transferred to user vault.
-- [x] **Logout UI Refinement** - Minimalist icon-based logout button.
-- [x] **API Versioning** - Added `/api/version` endpoint.
-- [x] **Governance Rules** - Added team rules to AGENTS.md.
+**Project:** EmpoweredPixels  
+**Status:** 🟢 AUTONOMOUS MODE ACTIVE  
+**Last Updated:** 2026-02-05  
 
 ---
-*Last Updated: 2026-02-05 19:58 (via QA-Lead Verification - Skill System PASS)*
+
+## 🟢 TO DO
+
+### P0 - Critical (Next Sprint)
+
+#### **Shop MVP Implementation** 
+- **Description:** Complete shop system for gold/items/bundles purchases
+- **Requirements:**
+  - [ ] Database schema: `shops`, `shop_items`, `transactions`, `player_gold`
+  - [ ] API: `GET /api/shop/items`, `POST /api/shop/purchase`
+  - [ ] Frontend: Shop UI with rarity bundles display
+  - [ ] Payment flow mock (internal gold economy)
+  - [ ] Bundle logic: Weapon + Gold packs
+- **Assignee:** *pending*
+- **Est:** 4h
+- **Agent:** Coder
+
+#### **Attunement System**
+- **Description:** 6 elemental attunements with leveling 1-25
+- **Requirements:**
+  - [ ] Elements: Fire, Water, Earth, Air, Light, Dark
+  - [ ] XP curve calculation per level
+  - [ ] Bonuses per attunement level
+  - [ ] API: `GET /api/attunement/{fighter_id}`
+- **Assignee:** *pending*
+- **Est:** 3h
+- **Agent:** Coder
+
+### P1 - High Priority
+
+#### **Daily Quests**
+- **Description:** Daily quest generation and reward system
+- **Requirements:**
+  - [ ] Quest generation algorithm
+  - [ ] Quest types: Win X matches, Equip Y rarity, etc.
+  - [ ] Streak tracking
+  - [ ] Reward distribution
+- **Assignee:** *pending*
+- **Est:** 4h
+- **Agent:** Coder
+
+#### **A/B Test Framework**
+- **Description:** Statistical framework for testing game mechanics
+- **Requirements:**
+  - [ ] Momentum system variants
+  - [ ] Player segmentation
+  - [ ] Result tracking
+- **Assignee:** *pending*
+- **Est:** 2h
+- **Agent:** Foundry
+
+### P2 - Medium Priority
+
+#### **Analytics Dashboard**
+- **Description:** Internal dashboard for game metrics
+- **Assignee:** *pending*
+- **Est:** 3h
+- **Agent:** Coder
+
+---
+
+## 🟡 IN PROGRESS
+
+*No active tasks - awaiting orchestrator*
+
+---
+
+## ✅ DONE
+
+### **9-Tier Rarity System** ✨ LIVE
+- **Status:** DEPLOYED on 49100/49101
+- **Completed:** 2026-02-05
+- **Verified:** All 9 rarities (Broken → Unique)
+- **By:** Coder + QA
+
+### **Router Migration**
+- **Status:** COMPLETED
+- **Change:** Gorilla Mux implementation
+- **By:** Infrastructure
+
+### **AI Agency Infrastructure**
+- **Status:** OPERATIONAL
+- **Components:**
+  - [x] Orchestrator service (systemd timer)
+  - [x] Git safety scripts
+  - [x] Agent configuration
+  - [x] KANBAN automation
+- **By:** Infrastructure
+
+---
+
+## 📊 Pipeline Metrics
+
+| Metric | Value |
+|--------|-------|
+| Active Agents | 0/4 |
+| Tasks Completed | 3 |
+| Test Coverage | 80%+ |
+| Avg Cycle Time | N/A (restart) |
+
+---
+
+## 🚨 Blockers
+
+*None currently*
+
+---
+
+## 📝 Agent Protocol
+
+### For Each Task:
+1. **Orchestrator** detects task in TO DO
+2. **Orchestrator** creates feature branch: `feature/[task-id]`
+3. **Orchestrator** assigns agent (Coder/QA/Foundry)
+4. **Agent** implements/tests in branch
+5. **QA** verifies (80% coverage minimum)
+6. **Orchestrator** merges to main on success
+7. **Foundry** extracts patterns if repetitive
+
+### Commit Prefixes:
+- `[Coder]` - Implementation
+- `[QA]` - Tests/Verification  
+- `[Foundry]` - Skills/Refactoring
+- `[Orchestrator]` - Meta/Automation
+
+---
+
+**Next Trigger:** Orchestrator runs every 2 minutes  
+**Max Parallel Agents:** 4  
+**Current Sprint Goal:** Shop MVP (Alex Priority)
