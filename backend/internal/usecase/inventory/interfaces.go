@@ -25,6 +25,7 @@ type EquipmentRepository interface {
 type Service interface {
 	Balance(ctx context.Context, userID int64, itemID string) (int, error)
 	GetEquipment(ctx context.Context, userID int64, id string) (*inventory.Equipment, *inventory.EquipmentOption, error)
+	EnhancementCost(current int, desired int) int
 	Enhance(ctx context.Context, userID int64, equipmentID string, desired int) (*inventory.Equipment, error)
 	Salvage(ctx context.Context, userID int64, equipmentID string) ([]inventory.Item, error)
 	SalvageInventory(ctx context.Context, userID int64) ([]inventory.Item, error)

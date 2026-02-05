@@ -12,10 +12,10 @@ import (
 )
 
 type Handler struct {
-	service *inventoryusecase.Service
+	service inventoryusecase.Service
 }
 
-func NewHandler(service *inventoryusecase.Service) *Handler {
+func NewHandler(service inventoryusecase.Service) *Handler {
 	return &Handler{service: service}
 }
 

@@ -33,7 +33,7 @@ type Dependencies struct {
 	IdentityService  *identity.Service
 	RosterService    *rosterusecase.Service
 	MatchService     *matchesusecase.Service
-	InventoryService *inventoryusecase.Service
+	InventoryService inventoryusecase.Service
 	LeagueService    *leaguesusecase.Service
 	LeagueJob        *jobs.LeagueJob
 	RewardService    *rewardsusecase.Service
