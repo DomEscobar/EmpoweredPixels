@@ -14,12 +14,18 @@ type FairnessFilter struct {
 	windowSize    time.Duration
 }
 
+// NewFairnessFilter creates a new rate limiter with specified limits
 func NewFairnessFilter(limit int, window time.Duration) *FairnessFilter {
 	return &FairnessFilter{
 		lastActions:   make(map[string][]time.Time),
 		limitRequests: limit,
 		windowSize:    window,
 	}
+}
+
+// DefaultFairnessFilter creates a rate limiter with 100 requests per minute
+func DefaultFairnessFilter() *FairnessFilter {
+	return NewFairnessFilter(100, 1*time.Minute)
 }
 
 // Allow checks if the AI-Key is within the APM limits

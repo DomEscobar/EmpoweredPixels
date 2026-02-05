@@ -4,7 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
+	"empoweredpixels/internal/domain/inventory"
+	"empoweredpixels/internal/domain/matches"
+	"empoweredpixels/internal/domain/roster"
 	"empoweredpixels/internal/usecase/identity"
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
 	leaguesusecase "empoweredpixels/internal/usecase/leagues"
@@ -173,7 +177,197 @@ func (h *MCPHandler) handleIssueStarterLoot(ctx context.Context, userID int64) (
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Also claim all immediately
 	return h.rewardService.ClaimAll(ctx, userID)
+}
+
+// GameState represents the current game state for MCP agents
+type GameState struct {
+	Matches       []MatchSummary `json:"matches"`
+	CurrentMatch  *MatchDetail   `json:"current_match,omitempty"`
+	TotalLobbies  int            `json:"total_lobbies"`
+	ActiveMatches int            `json:"active_matches"`
+}
+
+type MatchSummary struct {
+	ID            string    `json:"id"`
+	Status        string    `json:"status"`
+	Created       time.Time `json:"created"`
+	FighterCount  int       `json:"fighter_count"`
+	IsJoinable    bool      `json:"is_joinable"`
+}
+
+type MatchDetail struct {
+	ID            string                `json:"id"`
+	Status        string                `json:"status"`
+	Created       time.Time             `json:"created"`
+	Teams         []matches.MatchTeam   `json:"teams,omitempty"`
+	Registrations []matches.MatchRegistration `json:"registrations,omitempty"`
+}
+
+// GetGameState returns the current game state (lobbies and active matches)
+func (h *MCPHandler) GetGameState(ctx context.Context, userID int64) (*GameState, error) {
+	// Get lobby matches
+	lobbies, err := h.matchService.BrowseByStatus(ctx, matches.MatchStatusLobby, 1, 20)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get active matches
+	active, err := h.matchService.BrowseByStatus(ctx, matches.MatchStatusRunning, 1, 20)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get user's current match
+	currentMatch, err := h.matchService.GetCurrentMatch(ctx, userID)
+	if err != nil {
+		currentMatch = nil
+	}
+
+	// Build match summaries
+	var summaries []MatchSummary
+	for _, m := range lobbies {
+		regs, _ := h.matchService.GetRegistrations(ctx, m.ID)
+		summaries = append(summaries, MatchSummary{
+			ID:           m.ID,
+			Status:       m.Status,
+			Created:      m.Created,
+			FighterCount: len(regs),
+			IsJoinable:   m.Status == matches.MatchStatusLobby,
+		})
+	}
+
+	state := &GameState{
+		Matches:       summaries,
+		TotalLobbies:  len(lobbies),
+		ActiveMatches: len(active),
+	}
+
+	// Add current match details if exists
+	if currentMatch != nil {
+		teams, _ := h.matchService.GetTeams(ctx, currentMatch.ID)
+		regs, _ := h.matchService.GetRegistrations(ctx, currentMatch.ID)
+		state.CurrentMatch = &MatchDetail{
+			ID:            currentMatch.ID,
+			Status:        currentMatch.Status,
+			Created:       currentMatch.Created,
+			Teams:         teams,
+			Registrations: regs,
+		}
+	}
+
+	return state, nil
+}
+
+// PlayerStats represents comprehensive player/fighter statistics
+type PlayerStats struct {
+	FighterID      string                 `json:"fighter_id"`
+	Name           string                 `json:"name"`
+	Level          int                    `json:"level"`
+	Power          int                    `json:"power"`
+	Attributes     map[string]int         `json:"attributes"`
+	Experience     *roster.FighterExperience `json:"experience,omitempty"`
+	Equipment      []inventory.Equipment  `json:"equipment,omitempty"`
+	MatchStats     *MatchStatistics       `json:"match_stats,omitempty"`
+}
+
+type MatchStatistics struct {
+	TotalKills   int `json:"total_kills"`
+	TotalDeaths  int `json:"total_deaths"`
+	TotalAssists int `json:"total_assists"`
+	MatchesPlayed int `json:"matches_played"`
+}
+
+// GetPlayerStats returns comprehensive stats for a fighter
+func (h *MCPHandler) GetPlayerStats(ctx context.Context, userID int64, fighterID string) (*PlayerStats, error) {
+	// Verify fighter belongs to user
+	fighter, err := h.rosterService.Get(ctx, userID, fighterID)
+	if err != nil {
+		return nil, err
+	}
+	if fighter == nil {
+		return nil, errors.New("fighter not found")
+	}
+
+	// Get experience
+	exp, _ := h.rosterService.GetExperience(ctx, fighterID)
+
+	// Get equipment
+	equipment, _ := h.inventoryService.ListByFighter(ctx, userID, fighterID)
+
+	stats := &PlayerStats{
+		FighterID:  fighter.ID,
+		Name:       fighter.Name,
+		Level:      fighter.Level,
+		Power:      fighter.Power,
+		Attributes: map[string]int{
+			"condition_power": fighter.ConditionPower,
+			"precision":       fighter.Precision,
+			"ferocity":        fighter.Ferocity,
+			"accuracy":        fighter.Accuracy,
+			"agility":         fighter.Agility,
+			"armor":           fighter.Armor,
+			"vitality":        fighter.Vitality,
+			"parry_chance":    fighter.ParryChance,
+			"healing_power":   fighter.HealingPower,
+			"speed":           fighter.Speed,
+			"vision":          fighter.Vision,
+		},
+		Experience: exp,
+		Equipment:  equipment,
+	}
+
+	return stats, nil
+}
+
+// SubmitActionRequest represents an action to be submitted by an agent
+type SubmitActionRequest struct {
+	ActionType string                 `json:"action_type"`
+	MatchID    string                 `json:"match_id,omitempty"`
+	FighterID  string                 `json:"fighter_id,omitempty"`
+	Parameters map[string]interface{} `json:"parameters,omitempty"`
+}
+
+// SubmitActionResult represents the result of an action submission
+type SubmitActionResult struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
+}
+
+// SubmitAction handles agent-submitted actions
+func (h *MCPHandler) SubmitAction(ctx context.Context, userID int64, req SubmitActionRequest) (*SubmitActionResult, error) {
+	switch req.ActionType {
+	case "join_match":
+		if req.MatchID == "" || req.FighterID == "" {
+			return nil, errors.New("match_id and fighter_id required")
+		}
+		err := h.matchService.Join(ctx, userID, req.MatchID, req.FighterID)
+		if err != nil {
+			return &SubmitActionResult{Success: false, Message: err.Error()}, nil
+		}
+		return &SubmitActionResult{Success: true, Message: "Joined match successfully"}, nil
+
+	case "create_match":
+		match, err := h.matchService.CreateMatch(ctx, userID, h.matchService.DefaultOptions())
+		if err != nil {
+			return &SubmitActionResult{Success: false, Message: err.Error()}, nil
+		}
+		return &SubmitActionResult{Success: true, Message: "Match created", Data: match}, nil
+
+	case "leave_match":
+		if req.MatchID == "" || req.FighterID == "" {
+			return nil, errors.New("match_id and fighter_id required")
+		}
+		err := h.matchService.Leave(ctx, userID, req.MatchID, req.FighterID)
+		if err != nil {
+			return &SubmitActionResult{Success: false, Message: err.Error()}, nil
+		}
+		return &SubmitActionResult{Success: true, Message: "Left match"}, nil
+
+	default:
+		return nil, fmt.Errorf("unknown action type: %s", req.ActionType)
+	}
 }

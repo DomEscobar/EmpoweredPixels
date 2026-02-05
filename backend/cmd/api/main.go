@@ -106,12 +106,31 @@ func main() {
 	seasonSummaryRepo := repositories.NewSeasonSummaryRepository(database.Pool)
 	seasonService := seasonsusecase.NewService(seasonSummaryRepo)
 
-	mcpFilter := mcp.NewFairnessFilter(60, 1*time.Minute)
+	mcpFilter := mcp.NewFairnessFilter(100, 1*time.Minute)
 	mcpHandler := mcp.NewMCPHandler(mcpFilter, identityService, rosterService, inventoryService, leagueService, matchService, rewardService)
+	mcpAuditLogger, err := mcp.NewAuditLogger("")
+	if err != nil {
+		log.Printf("mcp audit logger error: %v", err)
+		os.Exit(1)
+	}
 
 	server := &http.Server{
-		Addr:              cfg.HTTPAddress,
-		Handler:           httpadapter.NewRouter(httpadapter.Dependencies{Config: cfg, IdentityService: identityService, RosterService: rosterService, MatchService: matchService, InventoryService: inventoryService, LeagueService: leagueService, LeagueJob: leagueJob, RewardService: rewardService, SeasonService: seasonService, MatchHub: matchHub, MCPHandler: mcpHandler}),
+		Addr: cfg.HTTPAddress,
+		Handler: httpadapter.NewRouter(httpadapter.Dependencies{
+			Config:          cfg,
+			IdentityService: identityService,
+			RosterService:   rosterService,
+			MatchService:    matchService,
+			InventoryService: inventoryService,
+			LeagueService:   leagueService,
+			LeagueJob:       leagueJob,
+			RewardService:   rewardService,
+			SeasonService:   seasonService,
+			MatchHub:        matchHub,
+			MCPHandler:      mcpHandler,
+			MCPAuditLogger:  mcpAuditLogger,
+			MCPFilter:       mcpFilter,
+		}),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 

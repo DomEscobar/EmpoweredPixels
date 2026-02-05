@@ -40,6 +40,8 @@ type Dependencies struct {
 	SeasonService    *seasonsusecase.Service
 	MatchHub         *ws.MatchHub
 	MCPHandler       *mcp.MCPHandler
+	MCPAuditLogger   *mcp.AuditLogger
+	MCPFilter        *mcp.FairnessFilter
 }
 
 func NewRouter(deps Dependencies) http.Handler {
@@ -197,6 +199,14 @@ func NewRouter(deps Dependencies) http.Handler {
 	if deps.MCPHandler != nil {
 		mcpHandler := mcphandlers.NewMCPHandler(deps.MCPHandler)
 		mux.Handle("POST /api/mcp/tool", http.HandlerFunc(mcpHandler.Call))
+
+		// REST endpoints for MCP agents
+		if deps.MCPAuditLogger != nil && deps.MCPFilter != nil {
+			mcpRESTHandler := mcphandlers.NewMCPRESTHandler(deps.MCPHandler, deps.MCPAuditLogger, deps.MCPFilter)
+			mux.Handle("GET /mcp/game-state", http.HandlerFunc(mcpRESTHandler.GameState))
+			mux.Handle("POST /mcp/action", http.HandlerFunc(mcpRESTHandler.SubmitAction))
+			mux.Handle("GET /mcp/player/stats", http.HandlerFunc(mcpRESTHandler.PlayerStats))
+		}
 	}
 
 	return middleware.WithCORS(mux)
