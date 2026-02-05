@@ -15,6 +15,7 @@ import (
 	rewardhandlers "empoweredpixels/internal/adapter/http/handlers/rewards"
 	rosterhandlers "empoweredpixels/internal/adapter/http/handlers/roster"
 	seasonhandlers "empoweredpixels/internal/adapter/http/handlers/seasons"
+	shophandlers "empoweredpixels/internal/adapter/http/handlers/shop"
 	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
 	"empoweredpixels/internal/adapter/http/middleware"
@@ -30,6 +31,7 @@ import (
 	rewardsusecase "empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
+	shopusecase "empoweredpixels/internal/usecase/shop"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	skillsusecase "empoweredpixels/internal/usecase/skills"
 )
@@ -46,6 +48,7 @@ type Dependencies struct {
 	LeagueJob        *jobs.LeagueJob
 	RewardService    *rewardsusecase.Service
 	SeasonService    *seasonsusecase.Service
+	ShopService      *shopusecase.Service
 	MatchHub         *ws.MatchHub
 	MCPHandler       *mcp.MCPHandler
 	MCPAuditLogger   *mcp.AuditLogger
@@ -237,6 +240,17 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/skills/reset-cost/{id}", func(w http.ResponseWriter, r *http.Request) {
 			h.GetResetCost(w, r, mux.Vars(r)["id"])
 		}).Methods("GET")
+	}
+
+	if deps.ShopService != nil {
+		h := shophandlers.NewHandler(deps.ShopService)
+		api.HandleFunc("/shop/items", h.GetShopItems).Methods("GET")
+		api.HandleFunc("/shop/gold", h.GetGoldPackages).Methods("GET")
+		api.HandleFunc("/shop/bundles", h.GetBundles).Methods("GET")
+		api.HandleFunc("/shop/item/{id}", h.GetShopItem).Methods("GET")
+		api.HandleFunc("/shop/purchase", h.Purchase).Methods("POST")
+		api.HandleFunc("/player/gold", h.GetPlayerGold).Methods("GET")
+		api.HandleFunc("/player/transactions", h.GetTransactions).Methods("GET")
 	}
 
 	if deps.MatchHub != nil {
