@@ -22,6 +22,7 @@ import (
 	rewardsusecase "empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
+	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	"empoweredpixels/internal/mcp"
 )
 
@@ -106,30 +107,31 @@ func main() {
 	seasonSummaryRepo := repositories.NewSeasonSummaryRepository(database.Pool)
 	seasonService := seasonsusecase.NewService(seasonSummaryRepo)
 
+	weaponRepo := repositories.NewWeaponRepository(database.Pool)
+	weaponService := weaponsusecase.NewService(weaponRepo)
+
 	mcpFilter := mcp.NewFairnessFilter(100, 1*time.Minute)
 	mcpHandler := mcp.NewMCPHandler(mcpFilter, identityService, rosterService, inventoryService, leagueService, matchService, rewardService)
-	mcpAuditLogger, err := mcp.NewAuditLogger("")
-	if err != nil {
-		log.Printf("mcp audit logger error: %v", err)
-		os.Exit(1)
-	}
+	mcpAuditLogger, _ := mcp.NewAuditLogger("")
 
 	server := &http.Server{
 		Addr: cfg.HTTPAddress,
 		Handler: httpadapter.NewRouter(httpadapter.Dependencies{
-			Config:          cfg,
-			IdentityService: identityService,
-			RosterService:   rosterService,
-			MatchService:    matchService,
+			Config:           cfg,
+			IdentityService:  identityService,
+			RosterService:    rosterService,
+			MatchService:     matchService,
 			InventoryService: inventoryService,
-			LeagueService:   leagueService,
-			LeagueJob:       leagueJob,
-			RewardService:   rewardService,
-			SeasonService:   seasonService,
-			MatchHub:        matchHub,
-			MCPHandler:      mcpHandler,
-			MCPAuditLogger:  mcpAuditLogger,
-			MCPFilter:       mcpFilter,
+			WeaponService:    weaponService,
+			SkillService:     nil,
+			LeagueService:    leagueService,
+			LeagueJob:        leagueJob,
+			RewardService:    rewardService,
+			SeasonService:    seasonService,
+			MatchHub:         matchHub,
+			MCPHandler:       mcpHandler,
+			MCPAuditLogger:   mcpAuditLogger,
+			MCPFilter:        mcpFilter,
 		}),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
