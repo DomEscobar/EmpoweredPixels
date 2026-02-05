@@ -14,6 +14,7 @@ import (
 	rosterhandlers "empoweredpixels/internal/adapter/http/handlers/roster"
 	seasonhandlers "empoweredpixels/internal/adapter/http/handlers/seasons"
 	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
+	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
 	"empoweredpixels/internal/adapter/http/middleware"
 	"empoweredpixels/internal/adapter/http/responses"
 	"empoweredpixels/internal/adapter/ws"
@@ -28,6 +29,7 @@ import (
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
+	skillsusecase "empoweredpixels/internal/usecase/skills"
 )
 
 type Dependencies struct {
@@ -37,6 +39,7 @@ type Dependencies struct {
 	MatchService     *matchesusecase.Service
 	InventoryService inventoryusecase.Service
 	WeaponService    *weaponsusecase.Service
+	SkillService     *skillsusecase.Service
 	LeagueService    *leaguesusecase.Service
 	LeagueJob        *jobs.LeagueJob
 	RewardService    *rewardsusecase.Service
@@ -209,6 +212,24 @@ func NewRouter(deps Dependencies) http.Handler {
 		})))
 		mux.Handle("POST /api/weapons/enhance", authMiddleware(http.HandlerFunc(weaponHandler.Enhance)))
 		mux.Handle("POST /api/weapons/forge", authMiddleware(http.HandlerFunc(weaponHandler.ForgePreview)))
+	}
+
+	if deps.SkillService != nil {
+		skillHandler := skillhandlers.NewHandler(deps.SkillService)
+
+		mux.Handle("GET /api/skills/tree", authMiddleware(http.HandlerFunc(skillHandler.GetSkillTree)))
+		mux.Handle("GET /api/skills/fighter/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			skillHandler.GetFighterSkills(w, r, r.PathValue("id"))
+		})))
+		mux.Handle("POST /api/skills/allocate", authMiddleware(http.HandlerFunc(skillHandler.AllocateSkill)))
+		mux.Handle("GET /api/skills/loadout/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			skillHandler.GetLoadout(w, r, r.PathValue("id"))
+		})))
+		mux.Handle("POST /api/skills/loadout", authMiddleware(http.HandlerFunc(skillHandler.SetLoadout)))
+		mux.Handle("POST /api/skills/reset", authMiddleware(http.HandlerFunc(skillHandler.ResetSkills)))
+		mux.Handle("GET /api/skills/reset-cost/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			skillHandler.GetResetCost(w, r, r.PathValue("id"))
+		})))
 	}
 
 	if deps.MatchHub != nil {
