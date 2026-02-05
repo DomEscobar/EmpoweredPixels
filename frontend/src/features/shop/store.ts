@@ -1,149 +1,145 @@
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import { useAuthStore } from "@/features/auth/store";
-import * as api from "./api";
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import { shopApi, rarityColors, rarityNames, formatPrice } from './api'
+import type { ShopItem, PlayerGold, Transaction, PurchaseResponse } from './types'
 
-export const useShopStore = defineStore("shop", () => {
-  const auth = useAuthStore();
-
+export const useShopStore = defineStore('shop', () => {
   // State
-  const goldPackages = ref<api.ShopItem[]>([]);
-  const bundles = ref<api.ShopItem[]>([]);
-  const playerGold = ref<api.PlayerGold | null>(null);
-  const transactions = ref<api.Transaction[]>([]);
-  const loading = ref(false);
-  const error = ref<string | null>(null);
-  const purchaseLoading = ref(false);
-  const purchaseResult = ref<api.PurchaseResponse | null>(null);
+  const items = ref<ShopItem[]>([])
+  const goldPackages = ref<ShopItem[]>([])
+  const bundles = ref<ShopItem[]>([])
+  const goldBalance = ref<PlayerGold | null>(null)
+  const transactions = ref<Transaction[]>([])
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  const purchaseInProgress = ref(false)
 
   // Getters
-  const goldBalance = computed(() => playerGold.value?.balance ?? 0);
-  const hasGold = computed(() => goldBalance.value > 0);
+  const goldItems = computed(() => 
+    items.value.filter(item => item.item_type === 'gold_package')
+  )
+  
+  const bundleItems = computed(() => 
+    items.value.filter(item => item.item_type === 'bundle')
+  )
+
+  const hasInsufficientGold = computed(() => (item: ShopItem) => {
+    if (item.price_currency !== 'gold') return false
+    return (goldBalance.value?.balance || 0) < item.price_amount
+  })
 
   // Actions
-  async function fetchGoldPackages() {
-    if (!auth.token) return;
+  async function fetchItems() {
+    loading.value = true
+    error.value = null
     try {
-      loading.value = true;
-      error.value = null;
-      goldPackages.value = await api.getGoldPackages(auth.token);
-    } catch (e) {
-      error.value = e instanceof Error ? e.message : "Failed to load gold packages";
-      console.error("Failed to fetch gold packages:", e);
+      items.value = await shopApi.getItems()
+    } catch (err: any) {
+      error.value = err.message || 'Failed to load shop items'
     } finally {
-      loading.value = false;
+      loading.value = false
+    }
+  }
+
+  async function fetchGoldPackages() {
+    loading.value = true
+    error.value = null
+    try {
+      goldPackages.value = await shopApi.getGoldPackages()
+    } catch (err: any) {
+      error.value = err.message || 'Failed to load gold packages'
+    } finally {
+      loading.value = false
     }
   }
 
   async function fetchBundles() {
-    if (!auth.token) return;
+    loading.value = true
+    error.value = null
     try {
-      loading.value = true;
-      error.value = null;
-      bundles.value = await api.getBundles(auth.token);
-    } catch (e) {
-      error.value = e instanceof Error ? e.message : "Failed to load bundles";
-      console.error("Failed to fetch bundles:", e);
+      bundles.value = await shopApi.getBundles()
+    } catch (err: any) {
+      error.value = err.message || 'Failed to load bundles'
     } finally {
-      loading.value = false;
+      loading.value = false
     }
   }
 
-  async function fetchPlayerGold() {
-    if (!auth.token) return;
+  async function fetchGoldBalance() {
     try {
-      playerGold.value = await api.getPlayerGold(auth.token);
-    } catch (e) {
-      console.error("Failed to fetch player gold:", e);
-      // Initialize with 0 on error
-      playerGold.value = { balance: 0, lifetime_earned: 0, lifetime_spent: 0 };
+      goldBalance.value = await shopApi.getGoldBalance()
+    } catch (err: any) {
+      console.error('Failed to fetch gold balance:', err)
     }
   }
 
-  async function fetchTransactions() {
-    if (!auth.token) return;
+  async function fetchTransactions(limit = 50) {
     try {
-      loading.value = true;
-      error.value = null;
-      transactions.value = await api.getTransactions(auth.token);
-    } catch (e) {
-      error.value = e instanceof Error ? e.message : "Failed to load transactions";
-      console.error("Failed to fetch transactions:", e);
-    } finally {
-      loading.value = false;
+      transactions.value = await shopApi.getTransactions(limit)
+    } catch (err: any) {
+      console.error('Failed to fetch transactions:', err)
     }
   }
 
-  async function purchase(itemId: string): Promise<boolean> {
-    if (!auth.token) return false;
+  async function purchaseItem(itemId: number): Promise<PurchaseResponse> {
+    purchaseInProgress.value = true
+    error.value = null
     try {
-      purchaseLoading.value = true;
-      purchaseResult.value = null;
-      error.value = null;
-
-      const result = await api.purchaseItem(auth.token, itemId);
-      purchaseResult.value = result;
-
-      // Update local gold balance
-      if (playerGold.value) {
-        playerGold.value.balance = result.new_balance;
+      const result = await shopApi.purchase(itemId)
+      if (result.success) {
+        // Refresh balance after successful purchase
+        await fetchGoldBalance()
+        await fetchTransactions()
       }
-
-      return result.success;
-    } catch (e) {
-      error.value = e instanceof Error ? e.message : "Purchase failed";
-      console.error("Purchase failed:", e);
-      return false;
+      return result
+    } catch (err: any) {
+      error.value = err.message || 'Purchase failed'
+      return {
+        success: false,
+        transaction_id: 0,
+        new_balance: goldBalance.value?.balance || 0,
+        message: error.value
+      }
     } finally {
-      purchaseLoading.value = false;
+      purchaseInProgress.value = false
     }
   }
 
-  async function loadShopData() {
-    await Promise.all([
-      fetchGoldPackages(),
-      fetchBundles(),
-      fetchPlayerGold(),
-    ]);
+  function getRarityColor(rarity: number): string {
+    return rarityColors[rarity] || '#9ca3af'
   }
 
-  function canAfford(item: api.ShopItem): boolean {
-    if (item.price_currency !== 'gold') return true; // USD purchases handled separately
-    return goldBalance.value >= item.price_amount;
+  function getRarityName(rarity: number): string {
+    return rarityNames[rarity] || 'Unknown'
   }
 
-  function clearError() {
-    error.value = null;
-  }
-
-  function clearPurchaseResult() {
-    purchaseResult.value = null;
+  function formatItemPrice(item: ShopItem): string {
+    return formatPrice(item.price_amount, item.price_currency)
   }
 
   return {
     // State
+    items,
     goldPackages,
     bundles,
-    playerGold,
+    goldBalance,
     transactions,
     loading,
     error,
-    purchaseLoading,
-    purchaseResult,
-
+    purchaseInProgress,
     // Getters
-    goldBalance,
-    hasGold,
-
+    goldItems,
+    bundleItems,
+    hasInsufficientGold,
     // Actions
+    fetchItems,
     fetchGoldPackages,
     fetchBundles,
-    fetchPlayerGold,
+    fetchGoldBalance,
     fetchTransactions,
-    purchase,
-    loadShopData,
-    canAfford,
-    clearError,
-    clearPurchaseResult,
-  };
-});
+    purchaseItem,
+    getRarityColor,
+    getRarityName,
+    formatItemPrice
+  }
+})
