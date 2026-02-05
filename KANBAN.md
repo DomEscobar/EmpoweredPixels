@@ -3,7 +3,6 @@
 This file is the single source of truth for all agents. Update your status here after every task.
 
 ## 🔴 BACKLOG (To Do)
-- [ ] **Skill System** (Priority: P2) - 30 skills across 3 branches with loadout system.
 - [ ] **Attunement System** (Priority: P2) - 6 elemental attunements with strengths/weaknesses.
 - [ ] **Daily Quests** (Priority: P2) - Retention mechanic, 2-3 days effort.
 - [ ] **Leaderboards** (Priority: P2) - Competition ranking system.
@@ -15,6 +14,7 @@ This file is the single source of truth for all agents. Update your status here 
 *None currently*
 
 ## 🟢 MERGED / DONE (Completed)
+- [x] **Skill System** (2026-02-05) - QA verified PASS. 15 skills + 3 ultimates across 3 branches, tier-based prerequisites, 2-slot loadout, ultimate charge system, all Unit/Integration/E2E/MCP tests pass.
 - [x] **Weapon System** (2026-02-05) - QA verified PASS. 20 weapons, 5 rarities, enhancement +1 to +10 with failure risk, 50-slot inventory, equip/unequip, all endpoints tested.
 - [x] **Combo-Momentum System** (2026-02-05) - QA verified PASS. Momentum builds +10/hit, Sunder -5% armor (max 5 stacks), Flurry +10% speed at >50 momentum, UI implemented.
 - [x] **MCP Server Verification** (2026-02-05) - QA verified PASS. All tests pass, rate limiting (100 req/min), audit logging, REST endpoints validated.
@@ -30,4 +30,4 @@ This file is the single source of truth for all agents. Update your status here 
 - [x] **Governance Rules** - Added team rules to AGENTS.md.
 
 ---
-*Last Updated: 2026-02-05 19:38 (via QA-Lead Verification - Weapon System PASS)*
+*Last Updated: 2026-02-05 19:58 (via QA-Lead Verification - Skill System PASS)*
