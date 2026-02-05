@@ -1,0 +1,11 @@
+{
+  "task_id": "shop-mvp-implementation",
+  "task_name": "Shop MVP Implementation",
+  "priority": "P0",
+  "agent_type": "coder",
+  "branch": "feature/shop-mvp-implementation",
+  "created_at": "2026-02-05T22:36:37+01:00",
+  "expires_at": "2026-02-06T22:36:37+01:00",
+  "status": "in_progress",
+  "manifest_version": "1.0"
+}
