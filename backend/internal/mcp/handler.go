@@ -4,16 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
-	"empoweredpixels/internal/domain/inventory"
 	"empoweredpixels/internal/usecase/identity"
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
 	leaguesusecase "empoweredpixels/internal/usecase/leagues"
 	matchesusecase "empoweredpixels/internal/usecase/matches"
 	"empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
-	"github.com/google/uuid"
 )
 
 // MCPHandler handles the core logic for the Model Context Protocol server
@@ -21,7 +18,7 @@ type MCPHandler struct {
 	filter           *FairnessFilter
 	identityService  *identity.Service
 	rosterService    *rosterusecase.Service
-	inventoryService *inventoryusecase.Service
+	inventoryService inventoryusecase.Service
 	leagueService    *leaguesusecase.Service
 	matchService     *matchesusecase.Service
 	rewardService    *rewards.Service
@@ -31,7 +28,7 @@ func NewMCPHandler(
 	filter *FairnessFilter,
 	identityService *identity.Service,
 	rosterService *rosterusecase.Service,
-	inventoryService *inventoryusecase.Service,
+	inventoryService inventoryusecase.Service,
 	leagueService *leaguesusecase.Service,
 	matchService *matchesusecase.Service,
 	rewardService *rewards.Service,

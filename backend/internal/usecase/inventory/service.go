@@ -14,19 +14,19 @@ var (
 	ErrInvalidEquipment = errors.New("invalid equipment")
 )
 
-type Service struct {
+type ServiceImpl struct {
 	items     ItemRepository
 	equipment EquipmentRepository
 	options   EquipmentOptionRepository
 	now       func() time.Time
 }
 
-func NewService(items ItemRepository, equipment EquipmentRepository, options EquipmentOptionRepository, now func() time.Time) *Service {
+func NewService(items ItemRepository, equipment EquipmentRepository, options EquipmentOptionRepository, now func() time.Time) *ServiceImpl {
 	if now == nil {
 		now = time.Now
 	}
 
-	return &Service{
+	return &ServiceImpl{
 		items:     items,
 		equipment: equipment,
 		options:   options,
@@ -34,11 +34,11 @@ func NewService(items ItemRepository, equipment EquipmentRepository, options Equ
 	}
 }
 
-func (s *Service) Balance(ctx context.Context, userID int64, itemID string) (int, error) {
+func (s *ServiceImpl) Balance(ctx context.Context, userID int64, itemID string) (int, error) {
 	return s.items.CountByUserAndItemID(ctx, userID, itemID)
 }
 
-func (s *Service) GetEquipment(ctx context.Context, userID int64, id string) (*inventory.Equipment, *inventory.EquipmentOption, error) {
+func (s *ServiceImpl) GetEquipment(ctx context.Context, userID int64, id string) (*inventory.Equipment, *inventory.EquipmentOption, error) {
 	equip, err := s.equipment.GetByID(ctx, userID, id)
 	if err != nil {
 		return nil, nil, err
@@ -61,7 +61,7 @@ func (s *Service) GetEquipment(ctx context.Context, userID int64, id string) (*i
 	return equip, option, nil
 }
 
-func (s *Service) EnhancementCost(current int, desired int) int {
+func (s *ServiceImpl) EnhancementCost(current int, desired int) int {
 	if desired <= current {
 		return 0
 	}
@@ -69,7 +69,7 @@ func (s *Service) EnhancementCost(current int, desired int) int {
 	return sum * 25
 }
 
-func (s *Service) Enhance(ctx context.Context, userID int64, equipmentID string, desired int) (*inventory.Equipment, error) {
+func (s *ServiceImpl) Enhance(ctx context.Context, userID int64, equipmentID string, desired int) (*inventory.Equipment, error) {
 	equip, err := s.equipment.GetByID(ctx, userID, equipmentID)
 	if err != nil {
 		return nil, err
@@ -99,7 +99,7 @@ func (s *Service) Enhance(ctx context.Context, userID int64, equipmentID string,
 	return equip, nil
 }
 
-func (s *Service) Salvage(ctx context.Context, userID int64, equipmentID string) ([]inventory.Item, error) {
+func (s *ServiceImpl) Salvage(ctx context.Context, userID int64, equipmentID string) ([]inventory.Item, error) {
 	equip, err := s.equipment.GetByID(ctx, userID, equipmentID)
 	if err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func (s *Service) Salvage(ctx context.Context, userID int64, equipmentID string)
 	return items, nil
 }
 
-func (s *Service) SalvageInventory(ctx context.Context, userID int64) ([]inventory.Item, error) {
+func (s *ServiceImpl) SalvageInventory(ctx context.Context, userID int64) ([]inventory.Item, error) {
 	equipmentList, err := s.equipment.ListInventoryAll(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -142,7 +142,7 @@ func (s *Service) SalvageInventory(ctx context.Context, userID int64) ([]invento
 	return items, nil
 }
 
-func (s *Service) InventoryPage(ctx context.Context, userID int64, page int, pageSize int) ([]inventory.Equipment, error) {
+func (s *ServiceImpl) InventoryPage(ctx context.Context, userID int64, page int, pageSize int) ([]inventory.Equipment, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -153,23 +153,11 @@ func (s *Service) InventoryPage(ctx context.Context, userID int64, page int, pag
 	return s.equipment.ListInventory(ctx, userID, pageSize, offset)
 }
 
-func (s *Service) ListByFighter(ctx context.Context, userID int64, fighterID string) ([]inventory.Equipment, error) {
+func (s *ServiceImpl) ListByFighter(ctx context.Context, userID int64, fighterID string) ([]inventory.Equipment, error) {
 	return s.equipment.ListByFighter(ctx, userID, fighterID)
 }
 
-func (s *Service) Equip(ctx context.Context, userID int64, equipmentID string, fighterID *string) error {
-	equip, err := s.equipment.GetByID(ctx, userID, equipmentID)
-	if err != nil {
-		return err
-	}
-	if equip == nil {
-		return ErrInvalidEquipment
-	}
-
-	return s.equipment.UpdateFighter(ctx, equipmentID, fighterID)
-}
-
-func (s *Service) SetFavorite(ctx context.Context, userID int64, equipmentID string, favorite bool) (*inventory.EquipmentOption, error) {
+func (s *ServiceImpl) SetFavorite(ctx context.Context, userID int64, equipmentID string, favorite bool) (*inventory.EquipmentOption, error) {
 	equip, err := s.equipment.GetByID(ctx, userID, equipmentID)
 	if err != nil {
 		return nil, err
@@ -188,7 +176,18 @@ func (s *Service) SetFavorite(ctx context.Context, userID int64, equipmentID str
 	return option, nil
 }
 
-func (s *Service) buildSalvageItems(userID int64, rarity int) []inventory.Item {
+func (s *ServiceImpl) Equip(ctx context.Context, userID int64, equipmentID string, fighterID *string) error {
+	equip, err := s.equipment.GetByID(ctx, userID, equipmentID)
+	if err != nil {
+		return err
+	}
+	if equip == nil {
+		return ErrInvalidEquipment
+	}
+	return s.equipment.UpdateFighter(ctx, equipmentID, fighterID)
+}
+
+func (s *ServiceImpl) buildSalvageItems(userID int64, rarity int) []inventory.Item {
 	if rarity == inventory.ItemRarityBasic {
 		return []inventory.Item{}
 	}

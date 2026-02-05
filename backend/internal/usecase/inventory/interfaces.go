@@ -22,6 +22,18 @@ type EquipmentRepository interface {
 	Delete(ctx context.Context, equipmentID string) error
 }
 
+type Service interface {
+	Balance(ctx context.Context, userID int64, itemID string) (int, error)
+	GetEquipment(ctx context.Context, userID int64, id string) (*inventory.Equipment, *inventory.EquipmentOption, error)
+	Enhance(ctx context.Context, userID int64, equipmentID string, desired int) (*inventory.Equipment, error)
+	Salvage(ctx context.Context, userID int64, equipmentID string) ([]inventory.Item, error)
+	SalvageInventory(ctx context.Context, userID int64) ([]inventory.Item, error)
+	InventoryPage(ctx context.Context, userID int64, page int, pageSize int) ([]inventory.Equipment, error)
+	ListByFighter(ctx context.Context, userID int64, fighterID string) ([]inventory.Equipment, error)
+	SetFavorite(ctx context.Context, userID int64, equipmentID string, favorite bool) (*inventory.EquipmentOption, error)
+	Equip(ctx context.Context, userID int64, equipmentID string, fighterID *string) error
+}
+
 type EquipmentOptionRepository interface {
 	GetByEquipmentID(ctx context.Context, equipmentID string) (*inventory.EquipmentOption, error)
 	Upsert(ctx context.Context, option *inventory.EquipmentOption) error
