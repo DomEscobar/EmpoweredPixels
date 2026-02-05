@@ -37,6 +37,11 @@
         <!-- Right Side -->
         <div class="flex items-center gap-3">
           <template v-if="auth.token">
+            <!-- Gold Display -->
+            <router-link to="/shop" class="gold-display-nav pixel-box-sm bg-amber-900/30 border-amber-600/50 px-2 py-1 flex items-center gap-1.5 hover:bg-amber-900/50 transition-colors">
+              <img :src="PIXEL_ASSETS.ICON_GOLD" alt="Gold" class="w-4 h-4 pixelated" />
+              <span class="text-xs font-bold text-amber-400">{{ formattedGold() }}</span>
+            </router-link>
             <button @click="logout" class="footer-logout-btn group p-1.5" title="Logout">
               <div class="pixel-box-sm bg-slate-800/80 p-1 group-hover:bg-red-900/50 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 group-hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
@@ -107,9 +112,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/features/auth/store';
+import { useShopStore } from '@/features/shop/store';
 
 const PIXEL_ASSETS = {
   BG_NAV: 'https://vibemedia.space/bg_nav_wood_1x2y3z_v1.png?prompt=dark%20wood%20plank%20texture%20seamless%20horizontal&style=pixel_game_asset&key=NOGON',
@@ -120,9 +126,12 @@ const PIXEL_ASSETS = {
   ICON_MATCHES: 'https://vibemedia.space/icon_nav_swords_6m7n8o_v1.png?prompt=crossed%20swords%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
   ICON_INVENTORY: 'https://vibemedia.space/icon_nav_chest_9p0q1r_v1.png?prompt=treasure%20chest%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
   ICON_LEAGUES: 'https://vibemedia.space/icon_nav_trophy_2s3t4u_v1.png?prompt=golden%20trophy%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
+  ICON_SHOP: 'https://vibemedia.space/icon_nav_shop_5v6w7x_v1.png?prompt=gold%20coins%20pile%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
+  ICON_GOLD: 'https://vibemedia.space/icon_gold_coin_nav_8f7e6d.png?prompt=golden%20coin%20with%20shine%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
 };
 
 const auth = useAuthStore();
+const shop = useShopStore();
 const router = useRouter();
 const route = useRoute();
 const mobileMenuOpen = ref(false);
@@ -133,7 +142,27 @@ const navItems = [
   { name: 'Battle', path: '/matches', icon: PIXEL_ASSETS.ICON_MATCHES },
   { name: 'Vault', path: '/inventory', icon: PIXEL_ASSETS.ICON_INVENTORY },
   { name: 'Leagues', path: '/leagues', icon: PIXEL_ASSETS.ICON_LEAGUES },
+  { name: 'Shop', path: '/shop', icon: PIXEL_ASSETS.ICON_SHOP },
 ];
+
+// Fetch gold balance when logged in
+onMounted(() => {
+  if (auth.token) {
+    shop.fetchPlayerGold();
+  }
+});
+
+watch(() => auth.token, (newToken) => {
+  if (newToken) {
+    shop.fetchPlayerGold();
+  }
+});
+
+const formattedGold = () => {
+  const balance = shop.goldBalance;
+  if (balance >= 10000) return `${(balance / 1000).toFixed(1)}K`;
+  return balance.toLocaleString();
+};
 
 const isActive = (path: string) => {
   return route.path === path || route.path.startsWith(path + '/');

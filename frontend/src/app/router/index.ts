@@ -46,6 +46,11 @@ const routes: RouteRecordRaw[] = [
     name: "match-viewer",
     component: () => import("../../pages/MatchViewer.vue"),
   },
+  {
+    path: "/shop",
+    name: "shop",
+    component: () => import("../../pages/Shop.vue"),
+  },
 ];
 
 export const router = createRouter({

@@ -15,6 +15,7 @@ import (
 	rewardhandlers "empoweredpixels/internal/adapter/http/handlers/rewards"
 	rosterhandlers "empoweredpixels/internal/adapter/http/handlers/roster"
 	seasonhandlers "empoweredpixels/internal/adapter/http/handlers/seasons"
+	shophandlers "empoweredpixels/internal/adapter/http/handlers/shop"
 	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
 	"empoweredpixels/internal/adapter/http/middleware"
@@ -30,6 +31,7 @@ import (
 	rewardsusecase "empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
+	shopusecase "empoweredpixels/internal/usecase/shop"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	skillsusecase "empoweredpixels/internal/usecase/skills"
 )
@@ -46,6 +48,7 @@ type Dependencies struct {
 	LeagueJob        *jobs.LeagueJob
 	RewardService    *rewardsusecase.Service
 	SeasonService    *seasonsusecase.Service
+	ShopService      *shopusecase.Service
 	MatchHub         *ws.MatchHub
 	MCPHandler       *mcp.MCPHandler
 	MCPAuditLogger   *mcp.AuditLogger
@@ -237,6 +240,20 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/skills/reset-cost/{id}", func(w http.ResponseWriter, r *http.Request) {
 			h.GetResetCost(w, r, mux.Vars(r)["id"])
 		}).Methods("GET")
+	}
+
+	if deps.ShopService != nil {
+		shopHandler := shophandlers.NewHandler(deps.ShopService)
+
+		mux.Handle("GET /api/shop/items", authMiddleware(http.HandlerFunc(shopHandler.ListItems)))
+		mux.Handle("GET /api/shop/gold", authMiddleware(http.HandlerFunc(shopHandler.ListGoldPackages)))
+		mux.Handle("GET /api/shop/bundles", authMiddleware(http.HandlerFunc(shopHandler.ListBundles)))
+		mux.Handle("GET /api/shop/item/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			shopHandler.GetItem(w, r, pathValue(r, "id"))
+		})))
+		mux.Handle("POST /api/shop/purchase", authMiddleware(http.HandlerFunc(shopHandler.Purchase)))
+		mux.Handle("GET /api/player/gold", authMiddleware(http.HandlerFunc(shopHandler.GetPlayerGold)))
+		mux.Handle("GET /api/player/transactions", authMiddleware(http.HandlerFunc(shopHandler.GetTransactions)))
 	}
 
 	if deps.MatchHub != nil {

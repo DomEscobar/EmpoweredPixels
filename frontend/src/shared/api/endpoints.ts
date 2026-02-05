@@ -10,4 +10,7 @@ export const endpoints = {
   reward: "/api/reward",
   league: "/api/league",
   season: "/api/season",
+  shop: "/api/shop",
+  playerGold: "/api/player/gold",
+  playerTransactions: "/api/player/transactions",
 } as const;
