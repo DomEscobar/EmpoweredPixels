@@ -9,9 +9,45 @@ This file captures agent conventions and a running log of AI-driven changes.
 ### Core Team
 | Agent | Role | Responsibility |
 |-------|------|----------------|
-| **PO-Lead** | Product Owner | Prioritize tasks, assign to Architect, update KANBAN |
+| **PO-Lead** | Product Owner | Prioritize tasks, assign to Architect, update KANBAN, manage Roadmap |
 | **Architect-Lead** | Senior Code Architect | Implement features, commit code, signal QA |
 | **QA-Lead** | QA Specialist | Verify implementations, test builds, report PASS/FAIL |
+| **Senior-Game-Designer** | Game Design | Evaluate features, define mechanics, create user stories |
+
+### Feature Development Workflow
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│  Game Designer  │───→│    PO-Lead       │───→│  Architect-Lead │
+│ (Feature Ideas) │    │ (Roadmap/Specs)  │    │  (Implement)    │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+                                                         │
+        ┌──────────────────────────────────────────────────┘
+        ▼
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   QA-Lead       │───→│  MCP-Live-Test   │───→│   Production    │
+│ (Unit/Int/E2E)  │    │  (Final Verify)  │    │   Deploy        │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+```
+
+#### 1. Feature Definition (PO-Lead)
+- **New features** are transferred from Design into the **Roadmap** by PO-Lead
+- Every feature has:
+  - Clear user stories
+  - Technical acceptance criteria
+  - Definition of Done (DoD)
+  - Estimated effort
+
+#### 2. Test Coverage Requirements (QA-Lead)
+Every new feature MUST have:
+| Test Type | Coverage | Validated By |
+|-----------|----------|--------------|
+| **Unit Tests** | Core business logic | QA-Lead |
+| **Integration Tests** | API endpoints, DB operations | QA-Lead |
+| **E2E Tests** | Full user flows | QA-Lead |
+| **MCP Live Tests** | External AI agent compatibility | QA-Lead via MCP |
+
+**MCP Testing:** After implementation, QA-Lead tests the feature via MCP endpoints to ensure external AI agents can interact with it correctly.
 
 ### Workflow (PO → Architect → QA → PO)
 ```
@@ -71,10 +107,30 @@ Agents run in **25-minute cycles** (1500s timeout) due to system 30min hard limi
 - **Push Rule**: Agent MUST run `git push origin main` immediately after EVERY commit, before any other action.
 - **Exit Rule**: Before exit, agent checks `git log origin/main..HEAD` and pushes if commits pending.
 
+### Feature Development Rules
+
+1. **PO-Lead owns the Roadmap**
+   - New features come from Game Designer evaluation
+   - PO-Lead transfers approved features to Roadmap/KANBAN
+   - Features must have clear acceptance criteria before implementation
+
+2. **Complete Test Coverage Required**
+   - Unit Tests: Every function with business logic
+   - Integration Tests: Every API endpoint
+   - E2E Tests: Every user-facing flow
+   - MCP Tests: Live verification via AI agent interface
+
+3. **No Feature without Tests**
+   - Architect implements feature + tests together
+   - QA-Lead validates all test levels
+   - MCP-Live-Test is the final gate before production
+
 ## Change Log
 
 ### 2026-02-05
 
+- **Feature Development Workflow**: Added Senior-Game-Designer agent to core team. Defined complete workflow: Game Designer evaluates features → PO-Lead transfers to Roadmap → Architect implements with tests → QA validates (Unit/Integration/E2E/MCP) → Production.
+- **Test Coverage Requirements**: All new features require Unit, Integration, E2E tests PLUS MCP live testing by QA-Lead before production.
 - **Git Push Safety System**: Implemented 4-layer protection against unpushed commits - Immediate Push rule, Auto-Push Watchdog (5min cron), Exit Hook enforcement, and Mama Monitor detection. Prevents commit-without-push stall scenario.
 - **Agent Loop v2 - Self-Healing System**: Implemented persistent 3-agent core (PO-Lead, Architect-Lead, QA-Lead) with heartbeat protocol and auto-recovery. Agents respawn automatically if stale >10min. Loop monitor runs every 5min.
 - **Backend Recovery & Hardening**: Fixed Git history corruption, restored core logic, and implemented security hardening (Auth, PWM Hashing).
