@@ -36,6 +36,16 @@ Agents run in **25-minute cycles** (1500s timeout) due to system 30min hard limi
 - **Continuous:** Agents always alive via respawn cycles
 - **Checkpoint:** State in heartbeat/task files survives respawn
 
+### Git Push Safety (Anti-Stall)
+**Problem:** Agent dies after commit but before push.
+**Solutions:**
+1. **Immediate Push:** Agent runs `git commit && git push` atomically
+2. **Auto-Push Cron:** `/root/autopush_watchdog.sh` runs every 5min
+3. **Exit Hook:** Agent ALWAYS pushes before `exit 0`
+4. **Mama Monitor:** Main agent detects unpushed commits via `git log origin/main..HEAD`
+
+**Rule:** Never leave commits unpushed >5 minutes.
+
 ### Auto-Recovery
 - **Monitor:** `/root/agent_loop_monitor.sh` runs every 5 minutes
 - **Detection:** Agent stale after 10 minutes → marked dead
@@ -58,11 +68,14 @@ Agents run in **25-minute cycles** (1500s timeout) due to system 30min hard limi
 - **Test-Driven Delivery**: Every feature implementation must include a verification step or unit test.
 - **Commit Rule**: I'll build the project before committing. I must verify that the code compiles successfully in the local environment.
 - **Heartbeat Rule**: All persistent agents must heartbeat every 2-5 minutes or be considered dead.
+- **Push Rule**: Agent MUST run `git push origin main` immediately after EVERY commit, before any other action.
+- **Exit Rule**: Before exit, agent checks `git log origin/main..HEAD` and pushes if commits pending.
 
 ## Change Log
 
 ### 2026-02-05
 
+- **Git Push Safety System**: Implemented 4-layer protection against unpushed commits - Immediate Push rule, Auto-Push Watchdog (5min cron), Exit Hook enforcement, and Mama Monitor detection. Prevents commit-without-push stall scenario.
 - **Agent Loop v2 - Self-Healing System**: Implemented persistent 3-agent core (PO-Lead, Architect-Lead, QA-Lead) with heartbeat protocol and auto-recovery. Agents respawn automatically if stale >10min. Loop monitor runs every 5min.
 - **Backend Recovery & Hardening**: Fixed Git history corruption, restored core logic, and implemented security hardening (Auth, PWM Hashing).
 - **Mobile UX Sprint**: Implemented Sticky Bottom Nav and compact mobile UI.
