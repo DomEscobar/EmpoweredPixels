@@ -114,13 +114,20 @@ Agents run in **25-minute cycles** (1500s timeout) due to system 30min hard limi
    - PO-Lead transfers approved features to Roadmap/KANBAN
    - Features must have clear acceptance criteria before implementation
 
-2. **Complete Test Coverage Required**
+2. **Insufficient Specification Protocol**
+   - If a feature lacks clarity or UX definition, **Game Designer + PO-Lead collaborate**
+   - Game Designer provides: mechanics, balancing, user experience flow
+   - PO-Lead provides: business value, priority, scope constraints
+   - Together they refine until acceptance criteria are crystal clear
+   - **Rule:** No feature moves to Architect until both agree it's ready
+
+3. **Complete Test Coverage Required**
    - Unit Tests: Every function with business logic
    - Integration Tests: Every API endpoint
    - E2E Tests: Every user-facing flow
    - MCP Tests: Live verification via AI agent interface
 
-3. **No Feature without Tests**
+4. **No Feature without Tests**
    - Architect implements feature + tests together
    - QA-Lead validates all test levels
    - MCP-Live-Test is the final gate before production
