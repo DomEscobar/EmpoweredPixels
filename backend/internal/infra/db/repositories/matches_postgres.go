@@ -153,7 +153,7 @@ func (r *MatchRepository) ListStaleLobbies(ctx context.Context, olderThanMinutes
 	const query = `
 		select id, creator_user_id, created, started, completed_at, cancelled_at, status, options
 		from matches
-		where status = 'lobby' and created < now() - ($1 || ' minutes')::interval
+		where status = 'lobby' and created < now() - interval '1 minute' * $1
 		order by created asc`
 
 	rows, err := r.pool.Query(ctx, query, olderThanMinutes)
