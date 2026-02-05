@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"empoweredpixels/internal/adapter/http/handlers"
 	mcphandlers "empoweredpixels/internal/adapter/http/handlers"
@@ -31,6 +32,34 @@ import (
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	skillsusecase "empoweredpixels/internal/usecase/skills"
 )
+
+// pathValue extracts path parameters from URL for Go 1.19 compatibility
+func pathValue(r *http.Request, name string) string {
+	path := r.URL.Path
+	parts := strings.Split(path, "/")
+	
+	// Find ID in path - return last segment for "id" parameter
+	if name == "id" && len(parts) > 0 {
+		// Check if second-to-last segment is "id" keyword
+		for i, part := range parts {
+			if part == name && i+1 < len(parts) {
+				return parts[i+1]
+			}
+		}
+		// Return last segment as fallback
+		lastPart := parts[len(parts)-1]
+		// Skip if it's a known static path
+		if lastPart != "name" && lastPart != "experience" && lastPart != "configuration" && 
+		   lastPart != "teams" && lastPart != "start" && lastPart != "roundticks" && 
+		   lastPart != "fighterscores" && lastPart != "winner" && lastPart != "subscriptions" &&
+		   lastPart != "matches" && lastPart != "highscores" && lastPart != "run" &&
+		   lastPart != "unequip" && lastPart != "favorite" && lastPart != "reset-cost" {
+			return lastPart
+		}
+	}
+	
+	return ""
+}
 
 type Dependencies struct {
 	Config           config.Config
@@ -77,22 +106,22 @@ func NewRouter(deps Dependencies) http.Handler {
 		mux.Handle("GET /api/fighter", authMiddleware(http.HandlerFunc(fighterHandler.List)))
 		mux.Handle("PUT /api/fighter", authMiddleware(http.HandlerFunc(fighterHandler.Create)))
 		mux.Handle("GET /api/fighter/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fighterHandler.Get(w, r, r.PathValue("id"))
+			fighterHandler.Get(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("DELETE /api/fighter/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fighterHandler.Delete(w, r, r.PathValue("id"))
+			fighterHandler.Delete(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("GET /api/fighter/{id}/name", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fighterHandler.GetName(w, r, r.PathValue("id"))
+			fighterHandler.GetName(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("GET /api/fighter/{id}/experience", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fighterHandler.GetExperience(w, r, r.PathValue("id"))
+			fighterHandler.GetExperience(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("GET /api/fighter/{id}/configuration", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fighterHandler.GetConfiguration(w, r, r.PathValue("id"))
+			fighterHandler.GetConfiguration(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/fighter/{id}/configuration", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fighterHandler.UpdateConfiguration(w, r, r.PathValue("id"))
+			fighterHandler.UpdateConfiguration(w, r, pathValue(r, "id"))
 		})))
 	}
 
@@ -105,10 +134,10 @@ func NewRouter(deps Dependencies) http.Handler {
 		mux.Handle("PUT /api/match/create", authMiddleware(http.HandlerFunc(matchHandler.CreateMatch)))
 		mux.Handle("PUT /api/match/create/team", authMiddleware(http.HandlerFunc(matchHandler.CreateTeam)))
 		mux.Handle("GET /api/match/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			matchHandler.GetMatch(w, r, r.PathValue("id"))
+			matchHandler.GetMatch(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("GET /api/match/{id}/teams", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			matchHandler.GetTeams(w, r, r.PathValue("id"))
+			matchHandler.GetTeams(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/match/browse", authMiddleware(http.HandlerFunc(matchHandler.Browse)))
 		mux.Handle("POST /api/match/join", authMiddleware(http.HandlerFunc(matchHandler.Join)))
@@ -116,13 +145,13 @@ func NewRouter(deps Dependencies) http.Handler {
 		mux.Handle("POST /api/match/leave", authMiddleware(http.HandlerFunc(matchHandler.Leave)))
 		mux.Handle("POST /api/match/leave/team", authMiddleware(http.HandlerFunc(matchHandler.LeaveTeam)))
 		mux.Handle("POST /api/match/{id}/start", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			matchHandler.Start(w, r, r.PathValue("id"))
+			matchHandler.Start(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("GET /api/match/{id}/roundticks", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			matchHandler.RoundTicks(w, r, r.PathValue("id"))
+			matchHandler.RoundTicks(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("GET /api/match/{id}/fighterscores", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			matchHandler.FighterScores(w, r, r.PathValue("id"))
+			matchHandler.FighterScores(w, r, pathValue(r, "id"))
 		})))
 	}
 
@@ -136,7 +165,7 @@ func NewRouter(deps Dependencies) http.Handler {
 		mux.Handle("GET /api/inventory/balance/token/mythic", authMiddleware(http.HandlerFunc(inventoryHandler.BalanceTokenMythic)))
 
 		mux.Handle("GET /api/equipment/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			inventoryHandler.GetEquipment(w, r, r.PathValue("id"))
+			inventoryHandler.GetEquipment(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/equipment/enhance/cost", authMiddleware(http.HandlerFunc(inventoryHandler.EnhancementCost)))
 		mux.Handle("POST /api/equipment/enhance", authMiddleware(http.HandlerFunc(inventoryHandler.Enhance)))
@@ -144,13 +173,13 @@ func NewRouter(deps Dependencies) http.Handler {
 		mux.Handle("POST /api/equipment/salvage/inventory", authMiddleware(http.HandlerFunc(inventoryHandler.SalvageInventory)))
 		mux.Handle("POST /api/equipment/inventory", authMiddleware(http.HandlerFunc(inventoryHandler.InventoryPage)))
 		mux.Handle("GET /api/equipment/fighter/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			inventoryHandler.ListByFighter(w, r, r.PathValue("id"))
+			inventoryHandler.ListByFighter(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/equipment/{id}/favorite", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			inventoryHandler.SetFavorite(w, r, r.PathValue("id"), true)
+			inventoryHandler.SetFavorite(w, r, pathValue(r, "id"), true)
 		})))
 		mux.Handle("DELETE /api/equipment/{id}/favorite", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			inventoryHandler.SetFavorite(w, r, r.PathValue("id"), false)
+			inventoryHandler.SetFavorite(w, r, pathValue(r, "id"), false)
 		})))
 	}
 
@@ -159,28 +188,28 @@ func NewRouter(deps Dependencies) http.Handler {
 
 		mux.Handle("GET /api/league", authMiddleware(http.HandlerFunc(leagueHandler.List)))
 		mux.Handle("GET /api/league/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			leagueHandler.Get(w, r, r.PathValue("id"))
+			leagueHandler.Get(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("GET /api/league/{id}/winner", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			leagueHandler.LastWinner(w, r, r.PathValue("id"))
+			leagueHandler.LastWinner(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/league/subscribe", authMiddleware(http.HandlerFunc(leagueHandler.Subscribe)))
 		mux.Handle("POST /api/league/unsubscribe", authMiddleware(http.HandlerFunc(leagueHandler.Unsubscribe)))
 		mux.Handle("GET /api/league/{id}/subscriptions", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			leagueHandler.Subscriptions(w, r, r.PathValue("id"))
+			leagueHandler.Subscriptions(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("GET /api/league/{id}/subscriptions/user", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			leagueHandler.SubscriptionsForUser(w, r, r.PathValue("id"))
+			leagueHandler.SubscriptionsForUser(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/league/{id}/matches", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			leagueHandler.Matches(w, r, r.PathValue("id"))
+			leagueHandler.Matches(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/league/{id}/highscores", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			leagueHandler.Highscores(w, r, r.PathValue("id"))
+			leagueHandler.Highscores(w, r, pathValue(r, "id"))
 		})))
 		if deps.LeagueJob != nil {
 			mux.Handle("POST /api/league/{id}/run", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				runLeagueJob(w, r, r.PathValue("id"), deps.LeagueJob)
+				runLeagueJob(w, r, pathValue(r, "id"), deps.LeagueJob)
 			})))
 		}
 	}
@@ -204,11 +233,11 @@ func NewRouter(deps Dependencies) http.Handler {
 		mux.Handle("GET /api/weapons", authMiddleware(http.HandlerFunc(weaponHandler.List)))
 		mux.Handle("GET /api/weapons/database", authMiddleware(http.HandlerFunc(weaponHandler.Database)))
 		mux.Handle("GET /api/weapons/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			weaponHandler.Get(w, r, r.PathValue("id"))
+			weaponHandler.Get(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/weapons/equip", authMiddleware(http.HandlerFunc(weaponHandler.Equip)))
 		mux.Handle("POST /api/weapons/{id}/unequip", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			weaponHandler.Unequip(w, r, r.PathValue("id"))
+			weaponHandler.Unequip(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/weapons/enhance", authMiddleware(http.HandlerFunc(weaponHandler.Enhance)))
 		mux.Handle("POST /api/weapons/forge", authMiddleware(http.HandlerFunc(weaponHandler.ForgePreview)))
@@ -219,16 +248,16 @@ func NewRouter(deps Dependencies) http.Handler {
 
 		mux.Handle("GET /api/skills/tree", authMiddleware(http.HandlerFunc(skillHandler.GetSkillTree)))
 		mux.Handle("GET /api/skills/fighter/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			skillHandler.GetFighterSkills(w, r, r.PathValue("id"))
+			skillHandler.GetFighterSkills(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/skills/allocate", authMiddleware(http.HandlerFunc(skillHandler.AllocateSkill)))
 		mux.Handle("GET /api/skills/loadout/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			skillHandler.GetLoadout(w, r, r.PathValue("id"))
+			skillHandler.GetLoadout(w, r, pathValue(r, "id"))
 		})))
 		mux.Handle("POST /api/skills/loadout", authMiddleware(http.HandlerFunc(skillHandler.SetLoadout)))
 		mux.Handle("POST /api/skills/reset", authMiddleware(http.HandlerFunc(skillHandler.ResetSkills)))
 		mux.Handle("GET /api/skills/reset-cost/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			skillHandler.GetResetCost(w, r, r.PathValue("id"))
+			skillHandler.GetResetCost(w, r, pathValue(r, "id"))
 		})))
 	}
 
