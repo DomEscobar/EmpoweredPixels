@@ -123,7 +123,7 @@ func TestService_GetWeaponDetails(t *testing.T) {
 	repo.Create(context.Background(), &weapons.UserWeapon{
 		ID:       "w1",
 		UserID:   1,
-		WeaponID: "wpn_sword_excalibur_005",
+		WeaponID: "wpn_sword_excalibur_006",
 		Enhancement: 5,
 		Created:  time.Now(),
 	})
@@ -275,12 +275,12 @@ func TestService_AddWeaponToInventory(t *testing.T) {
 	repo := newMockRepo()
 	svc := NewService(repo)
 
-	uw, err := svc.AddWeaponToInventory(context.Background(), 1, "wpn_sword_excalibur_005")
+	uw, err := svc.AddWeaponToInventory(context.Background(), 1, "wpn_sword_excalibur_006")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if uw.WeaponID != "wpn_sword_excalibur_005" {
+	if uw.WeaponID != "wpn_sword_excalibur_006" {
 		t.Errorf("expected Excalibur ID, got %s", uw.WeaponID)
 	}
 	if uw.Enhancement != 0 {
