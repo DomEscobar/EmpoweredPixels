@@ -39,7 +39,7 @@ type Service struct {
 	results       ResultRepository
 	scores        ScoreRepository
 	fighters      FighterRepository
-	inventory     inventoryusecase.Service
+	inventory     *inventoryusecase.Service
 	rewards       *rewards.Service
 	roster        *rosterusecase.Service
 	engine        *engine.Client
@@ -54,7 +54,7 @@ func NewService(
 	results ResultRepository,
 	scores ScoreRepository,
 	fighters FighterRepository,
-	inventory inventoryusecase.Service,
+	inventory *inventoryusecase.Service,
 	rewards *rewards.Service,
 	roster *rosterusecase.Service,
 	engineClient *engine.Client,
@@ -72,6 +72,7 @@ func NewService(
 		results:       results,
 		scores:        scores,
 		fighters:      fighters,
+		inventory:     inventory,
 		rewards:       rewards,
 		roster:        roster,
 		engine:        engineClient,

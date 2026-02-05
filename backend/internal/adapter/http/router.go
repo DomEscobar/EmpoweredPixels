@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"empoweredpixels/internal/adapter/http/handlers"
+	mcphandlers "empoweredpixels/internal/adapter/http/handlers"
 	inventoryhandlers "empoweredpixels/internal/adapter/http/handlers/inventory"
 	leaguehandlers "empoweredpixels/internal/adapter/http/handlers/leagues"
 	matchhandlers "empoweredpixels/internal/adapter/http/handlers/matches"
@@ -17,6 +18,7 @@ import (
 	"empoweredpixels/internal/adapter/ws"
 	"empoweredpixels/internal/config"
 	"empoweredpixels/internal/infra/jobs"
+	"empoweredpixels/internal/mcp"
 	"empoweredpixels/internal/usecase/identity"
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
 	leaguesusecase "empoweredpixels/internal/usecase/leagues"
@@ -37,6 +39,7 @@ type Dependencies struct {
 	RewardService    *rewardsusecase.Service
 	SeasonService    *seasonsusecase.Service
 	MatchHub         *ws.MatchHub
+	MCPHandler       *mcp.MCPHandler
 }
 
 func NewRouter(deps Dependencies) http.Handler {
@@ -189,6 +192,11 @@ func NewRouter(deps Dependencies) http.Handler {
 
 	if deps.MatchHub != nil {
 		mux.Handle("GET /ws/match", deps.MatchHub)
+	}
+
+	if deps.MCPHandler != nil {
+		mcpHandler := mcphandlers.NewMCPHandler(deps.MCPHandler)
+		mux.Handle("POST /api/mcp/tool", http.HandlerFunc(mcpHandler.Call))
 	}
 
 	return middleware.WithCORS(mux)

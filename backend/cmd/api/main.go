@@ -22,6 +22,7 @@ import (
 	rewardsusecase "empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
+	"empoweredpixels/internal/mcp"
 )
 
 func main() {
@@ -105,9 +106,12 @@ func main() {
 	seasonSummaryRepo := repositories.NewSeasonSummaryRepository(database.Pool)
 	seasonService := seasonsusecase.NewService(seasonSummaryRepo)
 
+	mcpFilter := mcp.NewFairnessFilter(60, 1*time.Minute)
+	mcpHandler := mcp.NewMCPHandler(mcpFilter, identityService, rosterService, inventoryService, leagueService, matchService, rewardService)
+
 	server := &http.Server{
 		Addr:              cfg.HTTPAddress,
-		Handler:           httpadapter.NewRouter(httpadapter.Dependencies{Config: cfg, IdentityService: identityService, RosterService: rosterService, MatchService: matchService, InventoryService: inventoryService, LeagueService: leagueService, LeagueJob: leagueJob, RewardService: rewardService, SeasonService: seasonService, MatchHub: matchHub}),
+		Handler:           httpadapter.NewRouter(httpadapter.Dependencies{Config: cfg, IdentityService: identityService, RosterService: rosterService, MatchService: matchService, InventoryService: inventoryService, LeagueService: leagueService, LeagueJob: leagueJob, RewardService: rewardService, SeasonService: seasonService, MatchHub: matchHub, MCPHandler: mcpHandler}),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 

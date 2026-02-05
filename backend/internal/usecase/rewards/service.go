@@ -118,6 +118,8 @@ func (s *Service) ClaimAll(ctx context.Context, userID int64) (*RewardContent, e
 
 func (s *Service) generateRewards(userID int64, poolID string) RewardContent {
 	items := make([]inventory.Item, 0, 10)
+	equipment := make([]inventory.Equipment, 0)
+
 	// Base reward for everyone: 20 particles
 	for i := 0; i < 20; i++ {
 		items = append(items, inventory.Item{
@@ -160,10 +162,44 @@ func (s *Service) generateRewards(userID int64, poolID string) RewardContent {
 				Created: s.now(),
 			})
 		}
+	} else if poolID == "starter_pack" {
+		// Starter Pack: Guaranteed Weapon and Armor
+		equipment = append(equipment, inventory.Equipment{
+			ID:      uuid.NewString(),
+			UserID:  userID,
+			ItemID:  "9C46EB15-4D04-4F90-B8A1-D4BD0A5A82B1", // Basic Sword
+			Level:   1,
+			Rarity:  inventory.ItemRarityCommon,
+			Created: s.now(),
+		}, inventory.Equipment{
+			ID:      uuid.NewString(),
+			UserID:  userID,
+			ItemID:  "E98E3A82-C2B1-4A2D-A8C6-29BAE0D6A5A6", // Basic Vest
+			Level:   1,
+			Rarity:  inventory.ItemRarityCommon,
+			Created: s.now(),
+		})
 	}
 
 	return RewardContent{
 		Items:     items,
-		Equipment: []inventory.Equipment{},
+		Equipment: equipment,
+	}
+}
+
+func tokenIDForRarity(rarity int) string {
+	switch rarity {
+	case inventory.ItemRarityCommon:
+		return inventory.EquipmentTokenCommonID
+	case inventory.ItemRarityRare:
+		return inventory.EquipmentTokenRareID
+	case inventory.ItemRarityFabled:
+		return inventory.EquipmentTokenFabledID
+	case inventory.ItemRarityMythic:
+		return inventory.EquipmentTokenMythicID
+	case inventory.ItemRarityLegendary:
+		return inventory.EquipmentTokenLegendaryID
+	default:
+		return inventory.EquipmentTokenCommonID
 	}
 }

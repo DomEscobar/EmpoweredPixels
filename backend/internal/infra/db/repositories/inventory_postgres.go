@@ -183,6 +183,16 @@ func (r *EquipmentRepository) UpdateEnhancement(ctx context.Context, equipmentID
 	return err
 }
 
+func (r *EquipmentRepository) UpdateFighter(ctx context.Context, equipmentID string, fighterID *string) error {
+	const query = `
+		update equipment
+		set fighter_id = $1
+		where id = $2`
+
+	_, err := r.pool.Exec(ctx, query, fighterID, equipmentID)
+	return err
+}
+
 func (r *EquipmentRepository) Delete(ctx context.Context, equipmentID string) error {
 	const query = `
 		delete from equipment

@@ -18,6 +18,7 @@ type EquipmentRepository interface {
 	ListInventoryAll(ctx context.Context, userID int64) ([]inventory.Equipment, error)
 	ListByFighter(ctx context.Context, userID int64, fighterID string) ([]inventory.Equipment, error)
 	UpdateEnhancement(ctx context.Context, equipmentID string, enhancement int) error
+	UpdateFighter(ctx context.Context, equipmentID string, fighterID *string) error
 	Delete(ctx context.Context, equipmentID string) error
 }
 

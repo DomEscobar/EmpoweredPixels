@@ -157,6 +157,18 @@ func (s *Service) ListByFighter(ctx context.Context, userID int64, fighterID str
 	return s.equipment.ListByFighter(ctx, userID, fighterID)
 }
 
+func (s *Service) Equip(ctx context.Context, userID int64, equipmentID string, fighterID *string) error {
+	equip, err := s.equipment.GetByID(ctx, userID, equipmentID)
+	if err != nil {
+		return err
+	}
+	if equip == nil {
+		return ErrInvalidEquipment
+	}
+
+	return s.equipment.UpdateFighter(ctx, equipmentID, fighterID)
+}
+
 func (s *Service) SetFavorite(ctx context.Context, userID int64, equipmentID string, favorite bool) (*inventory.EquipmentOption, error) {
 	equip, err := s.equipment.GetByID(ctx, userID, equipmentID)
 	if err != nil {
