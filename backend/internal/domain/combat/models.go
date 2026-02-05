@@ -17,6 +17,17 @@ type Entity struct {
 	Stats        Stats
 }
 
+// ComboMomentumState tracks combo and momentum for a fighter
+type ComboMomentumState struct {
+	FighterID        string
+	Momentum         int   // Builds +10 per hit, max 100
+	ConsecutiveHits  int   // Consecutive hits on same target, max 5 for Sunder
+	CurrentTargetID  string // Last target attacked
+	SunderStacks     int   // -5% armor per stack (max 5 = -25%)
+	FlurryActive     bool  // +10% attack speed when momentum > 50
+	RoundsSinceHit   int   // For momentum decay tracking
+}
+
 type Stats struct {
 	Power          int
 	ConditionPower int
@@ -77,6 +88,24 @@ type EventAttack struct {
 	Damage     int    `json:"damage"`
 	IsCritical bool   `json:"isCritical"`
 	IsParried  bool   `json:"isParried"`
+}
+
+type EventMomentum struct {
+	FighterID       string `json:"fighterId"`
+	Momentum        int    `json:"momentum"`
+	ConsecutiveHits int    `json:"consecutiveHits"`
+	TargetID        string `json:"targetId,omitempty"`
+}
+
+type EventSunder struct {
+	TargetID     string `json:"targetId"`
+	Stacks       int    `json:"stacks"`
+	ArmorReduced int    `json:"armorReduced"`
+}
+
+type EventFlurry struct {
+	FighterID       string `json:"fighterId"`
+	AttackSpeedBonus int   `json:"attackSpeedBonus"`
 }
 
 type EventHeal struct {

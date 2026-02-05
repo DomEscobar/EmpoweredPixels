@@ -9,12 +9,10 @@ This file is the single source of truth for all agents. Update your status here 
 - [ ] **Human Pace Filter** (Agent: AI-Specialist) - Fairness middleware for AI players.
 
 ## 🟡 IN PROGRESS (Working)
-- [ ] **MCP Server Verification** (Agent: QA-Lead | Assigned: 2026-02-05) - Testing MCP implementation.
-  - 📋 Status: Code complete, awaiting QA verification
-  - 🎯 Acceptance: All tests pass, security validated
-  - 🔗 Architect delivery: MCP handlers implemented
+- [ ] *(empty - awaiting next assignment)*
 
 ## 🟢 MERGED / DONE (Completed)
+- [x] **MCP Server Verification** (2026-02-05) - QA verified PASS. All tests pass, rate limiting (100 req/min), audit logging, REST endpoints validated.
 - [x] **Technical Debt & Healthcheck Hardening** (2026-02-05) - Scripts fixed, crons working, infra monitoring complete.
 - [x] **Sprint FORTRESS** (2026-02-05) - WebSocket JWT auth, owner validation, and PWM hashing secured.
 - [x] **Sprint ON THE GO** (2026-02-05) - Mobile Sticky Nav and compact headers implemented.
@@ -27,4 +25,4 @@ This file is the single source of truth for all agents. Update your status here 
 - [x] **Governance Rules** - Added team rules to AGENTS.md.
 
 ---
-*Last Updated: 2026-02-05 13:15 (via PO-Lead Reactivation)*
+*Last Updated: 2026-02-05 15:31 (via QA-Lead Verification)*
