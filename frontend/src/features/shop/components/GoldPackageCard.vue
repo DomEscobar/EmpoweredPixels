@@ -1,195 +1,212 @@
 <template>
-  <div 
-    class="gold-package-card relative overflow-hidden rounded-lg border-3 transition-all duration-200 hover:scale-[1.02] cursor-pointer"
-    :class="cardClasses"
-    @click="$emit('select', item)"
-  >
-    <!-- Popular Badge -->
-    <div 
-      v-if="isPopular" 
-      class="absolute top-2 right-2 bg-amber-500 text-amber-950 text-xs font-bold px-2 py-1 rounded"
-    >
-      POPULAR
+  <div class="gold-package" :class="`tier-${tier}`">
+    <div class="package-header">
+      <span v-if="isPopular" class="popular-badge">Most Popular</span>
+      <span v-if="isBestValue" class="value-badge">Best Value</span>
+      <h3 class="package-name">{{ item.name }}</h3>
+    </div>
+    
+    <div class="gold-amount">
+      <span class="gold-icon">🪙</span>
+      <span class="amount">{{ item.gold_amount?.toLocaleString() }}</span>
+      <span class="gold-label">Gold</span>
     </div>
 
-    <!-- Best Value Badge -->
-    <div 
-      v-if="isBestValue" 
-      class="absolute top-2 right-2 bg-green-500 text-green-950 text-xs font-bold px-2 py-1 rounded"
-    >
-      BEST VALUE
+    <div v-if="bonusPercent > 0" class="bonus-badge">
+      +{{ bonusPercent }}% Bonus
     </div>
 
-    <!-- Content -->
-    <div class="p-4 space-y-3">
-      <!-- Icon & Name -->
-      <div class="flex items-center gap-3">
-        <div class="gold-icon-container w-14 h-14 rounded-lg flex items-center justify-center" :class="iconBgClass">
-          <img :src="goldIcon" alt="" class="w-10 h-10 pixelated animate-bounce-slow" />
-        </div>
-        <div>
-          <h3 class="font-bold text-lg">{{ item.name }}</h3>
-          <p class="text-xs opacity-70">{{ item.description }}</p>
-        </div>
-      </div>
-
-      <!-- Gold Amount -->
-      <div class="gold-amount text-center py-3 rounded-lg" :class="amountBgClass">
-        <div class="flex items-center justify-center gap-2">
-          <img :src="goldCoinIcon" alt="" class="w-6 h-6 pixelated" />
-          <span class="text-2xl font-bold text-amber-400">
-            {{ formattedGoldAmount }}
-          </span>
-        </div>
-        <p v-if="bonusPercent" class="text-xs text-green-400 mt-1">
-          +{{ bonusPercent }}% Bonus!
-        </p>
-      </div>
-
-      <!-- Price -->
-      <button
-        class="w-full py-3 rounded-lg font-bold text-lg uppercase tracking-wide transition-all bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white shadow-lg hover:shadow-indigo-500/30"
-        @click.stop="$emit('purchase', item)"
+    <div class="package-footer">
+      <span class="price">{{ formattedPrice }}</span>
+      <button 
+        class="buy-button"
+        :disabled="shopStore.purchaseInProgress"
+        @click="$emit('purchase', item.id)"
       >
-        {{ formattedPrice }}
+        {{ shopStore.purchaseInProgress ? 'Processing...' : 'Buy' }}
       </button>
-    </div>
-
-    <!-- Coin particles for larger packages -->
-    <div v-if="item.gold_amount && item.gold_amount >= 1000" class="absolute inset-0 pointer-events-none overflow-hidden">
-      <div 
-        v-for="i in 5" 
-        :key="i"
-        class="particle absolute w-2 h-2 bg-amber-400 rounded-full opacity-50"
-        :style="particleStyle(i)"
-      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { ShopItem, formatPrice } from '../api';
+import { computed } from 'vue'
+import type { ShopItem } from '../types'
+import { useShopStore } from '../store'
 
 const props = defineProps<{
-  item: ShopItem;
-}>();
+  item: ShopItem
+}>()
 
 defineEmits<{
-  select: [item: ShopItem];
-  purchase: [item: ShopItem];
-}>();
+  purchase: [id: number]
+}>()
 
-const ICONS = {
-  GOLD_SMALL: 'https://vibemedia.space/icon_gold_pile_small_3a4b5c.png?prompt=small%20pile%20of%20gold%20coins%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-  GOLD_MEDIUM: 'https://vibemedia.space/icon_gold_bag_6d7e8f.png?prompt=leather%20bag%20of%20gold%20coins%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-  GOLD_LARGE: 'https://vibemedia.space/icon_gold_chest_9g0h1i.png?prompt=open%20treasure%20chest%20full%20of%20gold%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-  GOLD_VAULT: 'https://vibemedia.space/icon_gold_vault_2j3k4l.png?prompt=overflowing%20vault%20of%20gold%20treasure%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-  GOLD_COIN: 'https://vibemedia.space/icon_gold_coin_nav_8f7e6d.png?prompt=golden%20coin%20with%20shine%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-};
+const shopStore = useShopStore()
 
-const goldIcon = computed(() => {
-  const amount = props.item.gold_amount ?? 0;
-  if (amount >= 5000) return ICONS.GOLD_VAULT;
-  if (amount >= 1000) return ICONS.GOLD_LARGE;
-  if (amount >= 500) return ICONS.GOLD_MEDIUM;
-  return ICONS.GOLD_SMALL;
-});
+const tier = computed(() => {
+  // Map gold amounts to tiers
+  const amount = props.item.gold_amount || 0
+  if (amount >= 6500) return 'legendary'
+  if (amount >= 1200) return 'epic'
+  if (amount >= 550) return 'rare'
+  return 'common'
+})
 
-const goldCoinIcon = ICONS.GOLD_COIN;
-
-const formattedGoldAmount = computed(() => {
-  const amount = props.item.gold_amount ?? 0;
-  return amount.toLocaleString();
-});
-
-const formattedPrice = computed(() => formatPrice(props.item.price_amount, props.item.price_currency));
+const isPopular = computed(() => props.item.name.includes('Satchel'))
+const isBestValue = computed(() => props.item.name.includes('Hoard'))
 
 const bonusPercent = computed(() => {
-  const amount = props.item.gold_amount ?? 0;
-  const basePrice = props.item.price_amount; // in cents
+  // Calculate bonus from metadata or hardcoded
+  const metadata = props.item.metadata || {}
+  if (metadata.bonus_percent) return metadata.bonus_percent
   
-  // Calculate base rate from smallest package (100 gold = $0.99)
-  const baseRate = 100 / 99; // gold per cent
-  const actualRate = amount / basePrice;
-  
-  if (actualRate > baseRate) {
-    const bonus = Math.round(((actualRate / baseRate) - 1) * 100);
-    return bonus > 0 ? bonus : null;
-  }
-  return null;
-});
+  // Hardcoded based on seed data
+  if (props.item.name.includes('Hoard')) return 30
+  if (props.item.name.includes('Chest')) return 20
+  if (props.item.name.includes('Satchel')) return 10
+  return 0
+})
 
-const isPopular = computed(() => {
-  const amount = props.item.gold_amount ?? 0;
-  return amount === 550;
-});
-
-const isBestValue = computed(() => {
-  const amount = props.item.gold_amount ?? 0;
-  return amount >= 6000;
-});
-
-const cardClasses = computed(() => {
-  if (isBestValue.value) {
-    return 'border-green-500 bg-gradient-to-br from-slate-900 to-green-950/50';
-  }
-  if (isPopular.value) {
-    return 'border-amber-500 bg-gradient-to-br from-slate-900 to-amber-950/50';
-  }
-  return 'border-slate-600 bg-gradient-to-br from-slate-900 to-slate-800';
-});
-
-const iconBgClass = computed(() => {
-  if (isBestValue.value) return 'bg-green-900/50';
-  if (isPopular.value) return 'bg-amber-900/50';
-  return 'bg-slate-800/50';
-});
-
-const amountBgClass = computed(() => {
-  return 'bg-slate-950/50';
-});
-
-const particleStyle = (index: number) => {
-  const delay = index * 0.5;
-  const left = 10 + (index * 18);
-  return {
-    left: `${left}%`,
-    animation: `float ${2 + index * 0.3}s ease-in-out ${delay}s infinite`,
-  };
-};
+const formattedPrice = computed(() => shopStore.formatItemPrice(props.item))
 </script>
 
 <style scoped>
-.pixelated {
-  image-rendering: pixelated;
+.gold-package {
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  border: 2px solid #4b5563;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
 }
 
-.border-3 {
-  border-width: 3px;
+.gold-package:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
-.animate-bounce-slow {
-  animation: bounce-slow 2s ease-in-out infinite;
+.tier-rare {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
 }
 
-@keyframes bounce-slow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+.tier-epic {
+  border-color: #a855f7;
+  background: linear-gradient(135deg, #581c87 0%, #7c3aed 100%);
 }
 
-@keyframes float {
-  0%, 100% { 
-    transform: translateY(100%) scale(0);
-    opacity: 0;
-  }
-  50% { 
-    transform: translateY(-50vh) scale(1);
-    opacity: 0.6;
-  }
+.tier-legendary {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #92400e 0%, #d97706 100%);
 }
 
-.particle {
-  bottom: 0;
+.popular-badge, .value-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.popular-badge {
+  background: #3b82f6;
+  color: white;
+}
+
+.value-badge {
+  background: #f59e0b;
+  color: white;
+}
+
+.package-header {
+  margin-bottom: 1rem;
+}
+
+.package-name {
+  margin: 0.5rem 0 0 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+}
+
+.gold-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 1.5rem 0;
+}
+
+.gold-icon {
+  font-size: 3rem;
+}
+
+.amount {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fbbf24;
+  line-height: 1;
+}
+
+.gold-label {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.bonus-badge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.package-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+.buy-button {
+  padding: 0.625rem 1.5rem;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.buy-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  transform: scale(1.05);
+}
+
+.buy-button:disabled {
+  background: #4b5563;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 </style>

@@ -1,184 +1,294 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div 
-        v-if="visible" 
-        class="fixed inset-0 z-50 flex items-center justify-center p-4"
-        @click.self="$emit('close')"
-      >
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+  <div v-if="isOpen" class="modal-overlay" @click.self="close">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Confirm Purchase</h2>
+        <button class="close-button" @click="close">&times;</button>
+      </div>
 
-        <!-- Modal -->
-        <div class="modal-content relative w-full max-w-md bg-slate-900 border-4 border-slate-700 rounded-lg shadow-2xl overflow-hidden">
-          <!-- Header -->
-          <div class="p-4 border-b border-slate-700 flex items-center justify-between">
-            <h2 class="text-xl font-bold">Confirm Purchase</h2>
-            <button 
-              class="text-slate-400 hover:text-white transition-colors"
-              @click="$emit('close')"
-            >
-              ✕
-            </button>
+      <div v-if="item" class="modal-body">
+        <div class="item-preview" :style="{ borderColor: rarityColor }">
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.description }}</p>
+          <div class="price-tag">{{ formattedPrice }}</div>
+        </div>
+
+        <div class="balance-info">
+          <div class="balance-row">
+            <span>Current Balance:</span>
+            <span class="balance">{{ currentBalance.toLocaleString() }} Gold</span>
           </div>
-
-          <!-- Content -->
-          <div class="p-6 space-y-4">
-            <!-- Item Preview -->
-            <div class="flex items-center gap-4 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-              <div class="w-16 h-16 rounded-lg flex items-center justify-center" :class="iconBgClass">
-                <img :src="itemIcon" alt="" class="w-12 h-12 pixelated" />
-              </div>
-              <div class="flex-1">
-                <h3 class="font-bold text-lg">{{ item?.name }}</h3>
-                <p class="text-sm text-slate-400">{{ item?.description }}</p>
-              </div>
-            </div>
-
-            <!-- Price Summary -->
-            <div class="space-y-2">
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-slate-400">Price</span>
-                <span class="font-bold">{{ formattedPrice }}</span>
-              </div>
-              <div v-if="isGoldPurchase" class="flex items-center justify-between text-sm">
-                <span class="text-slate-400">Current Balance</span>
-                <span class="font-bold text-amber-400">{{ currentBalance.toLocaleString() }} Gold</span>
-              </div>
-              <div v-if="isGoldPurchase" class="flex items-center justify-between text-sm border-t border-slate-700 pt-2">
-                <span class="text-slate-400">After Purchase</span>
-                <span class="font-bold" :class="canAfford ? 'text-green-400' : 'text-red-400'">
-                  {{ afterPurchaseBalance.toLocaleString() }} Gold
-                </span>
-              </div>
-              <div v-if="item?.gold_amount" class="flex items-center justify-between text-sm border-t border-slate-700 pt-2">
-                <span class="text-slate-400">You'll Receive</span>
-                <div class="flex items-center gap-1">
-                  <img :src="GOLD_ICON" alt="" class="w-4 h-4 pixelated" />
-                  <span class="font-bold text-amber-400">{{ item.gold_amount.toLocaleString() }} Gold</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Warning for insufficient funds -->
-            <div 
-              v-if="isGoldPurchase && !canAfford" 
-              class="p-3 bg-red-900/30 border border-red-600/50 rounded-lg text-sm text-red-400"
-            >
-              ⚠️ You don't have enough gold for this purchase.
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="p-4 border-t border-slate-700 flex gap-3">
-            <button 
-              class="flex-1 py-3 rounded-lg font-bold uppercase tracking-wide bg-slate-700 hover:bg-slate-600 transition-colors"
-              @click="$emit('close')"
-            >
-              Cancel
-            </button>
-            <button 
-              class="flex-1 py-3 rounded-lg font-bold uppercase tracking-wide transition-all"
-              :class="confirmButtonClass"
-              :disabled="isGoldPurchase && !canAfford || loading"
-              @click="handleConfirm"
-            >
-              <span v-if="loading" class="animate-spin">⏳</span>
-              <span v-else>{{ confirmText }}</span>
-            </button>
+          <div v-if="isGoldPurchase" class="balance-row">
+            <span>After Purchase:</span>
+            <span :class="['balance', isAffordable ? 'positive' : 'negative']">
+              {{ (currentBalance - item.price_amount).toLocaleString() }} Gold
+            </span>
           </div>
         </div>
+
+        <div v-if="result" :class="['result-message', result.success ? 'success' : 'error']">
+          {{ result.message }}
+        </div>
+
+        <div class="modal-actions">
+          <button class="cancel-button" @click="close">Cancel</button>
+          <button 
+            class="confirm-button"
+            :disabled="!canPurchase || shopStore.purchaseInProgress"
+            @click="confirmPurchase"
+          >
+            <span v-if="shopStore.purchaseInProgress">Processing...</span>
+            <span v-else>Confirm Purchase</span>
+          </button>
+        </div>
       </div>
-    </Transition>
-  </Teleport>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { ShopItem, formatPrice } from '../api';
-import { useShopStore } from '../store';
+import { computed, ref, watch } from 'vue'
+import type { ShopItem, PurchaseResponse } from '../types'
+import { useShopStore } from '../store'
 
 const props = defineProps<{
-  visible: boolean;
-  item: ShopItem | null;
-  loading?: boolean;
-}>();
+  isOpen: boolean
+  item: ShopItem | null
+}>()
 
 const emit = defineEmits<{
-  close: [];
-  confirm: [item: ShopItem];
-}>();
+  close: []
+  success: [result: PurchaseResponse]
+}>()
 
-const GOLD_ICON = 'https://vibemedia.space/icon_gold_coin_nav_8f7e6d.png?prompt=golden%20coin%20with%20shine%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON';
-const BUNDLE_ICON = 'https://vibemedia.space/icon_bundle_common_1a2b3c.png?prompt=wooden%20treasure%20chest%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON';
+const shopStore = useShopStore()
+const result = ref<PurchaseResponse | null>(null)
 
-const shop = useShopStore();
-
-const isGoldPurchase = computed(() => props.item?.price_currency === 'gold');
-const currentBalance = computed(() => shop.goldBalance);
-const afterPurchaseBalance = computed(() => {
-  if (!props.item || !isGoldPurchase.value) return currentBalance.value;
-  return currentBalance.value - props.item.price_amount;
-});
-const canAfford = computed(() => props.item ? shop.canAfford(props.item) : false);
+const rarityColor = computed(() => {
+  if (!props.item) return '#9ca3af'
+  return shopStore.getRarityColor(props.item.rarity)
+})
 
 const formattedPrice = computed(() => {
-  if (!props.item) return '';
-  return formatPrice(props.item.price_amount, props.item.price_currency);
-});
+  if (!props.item) return ''
+  return shopStore.formatItemPrice(props.item)
+})
 
-const itemIcon = computed(() => {
-  if (props.item?.item_type === 'gold_package') return GOLD_ICON;
-  return BUNDLE_ICON;
-});
+const currentBalance = computed(() => 
+  shopStore.goldBalance?.balance || 0
+)
 
-const iconBgClass = computed(() => {
-  if (props.item?.item_type === 'gold_package') return 'bg-amber-900/50';
-  return 'bg-indigo-900/50';
-});
+const isGoldPurchase = computed(() => 
+  props.item?.price_currency === 'gold'
+)
 
-const confirmButtonClass = computed(() => {
-  if (props.loading) return 'bg-slate-600 cursor-wait';
-  if (isGoldPurchase.value && !canAfford.value) {
-    return 'bg-slate-700 text-slate-500 cursor-not-allowed';
-  }
-  if (props.item?.item_type === 'gold_package') {
-    return 'bg-indigo-600 hover:bg-indigo-500 text-white';
-  }
-  return 'bg-amber-600 hover:bg-amber-500 text-white';
-});
+const isAffordable = computed(() => {
+  if (!isGoldPurchase.value || !props.item) return true
+  return currentBalance.value >= props.item.price_amount
+})
 
-const confirmText = computed(() => {
-  if (props.item?.price_currency === 'usd') {
-    return 'Purchase';
-  }
-  return 'Buy Now';
-});
+const canPurchase = computed(() => {
+  if (shopStore.purchaseInProgress) return false
+  if (isGoldPurchase.value) return isAffordable.value
+  return true // USD purchases always possible (mock)
+})
 
-function handleConfirm() {
-  if (props.item && (!isGoldPurchase.value || canAfford.value)) {
-    emit('confirm', props.item);
+async function confirmPurchase() {
+  if (!props.item || !canPurchase.value) return
+  
+  result.value = await shopStore.purchaseItem(props.item.id)
+  
+  if (result.value.success) {
+    setTimeout(() => {
+      emit('success', result.value!)
+      close()
+    }, 1500)
   }
 }
+
+function close() {
+  result.value = null
+  emit('close')
+}
+
+// Reset result when modal opens/closes
+watch(() => props.isOpen, (isOpen) => {
+  if (!isOpen) result.value = null
+})
 </script>
 
 <style scoped>
-.pixelated {
-  image-rendering: pixelated;
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
 }
 
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.2s ease;
+.modal-content {
+  background: #1f2937;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
 }
 
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.modal-enter-from .modal-content,
-.modal-leave-to .modal-content {
-  transform: scale(0.95) translateY(20px);
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: white;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.item-preview {
+  border: 2px solid;
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.item-preview h3 {
+  margin: 0 0 0.5rem 0;
+  color: white;
+  font-size: 1.125rem;
+}
+
+.item-preview p {
+  margin: 0 0 1rem 0;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.price-tag {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.balance-info {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.balance-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  color: #9ca3af;
+}
+
+.balance-row:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.balance {
+  font-weight: 600;
+  color: white;
+}
+
+.balance.positive {
+  color: #22c55e;
+}
+
+.balance.negative {
+  color: #ef4444;
+}
+
+.result-message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.result-message.success {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.result-message.error {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.cancel-button, .confirm-button {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+  border: none;
+}
+
+.cancel-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.confirm-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+}
+
+.confirm-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.confirm-button:disabled {
+  background: #4b5563;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 </style>

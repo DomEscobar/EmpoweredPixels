@@ -1,53 +1,64 @@
 <template>
-  <div 
-    class="gold-display flex items-center gap-2 px-3 py-1.5 rounded"
-    :class="displayClass"
-  >
-    <img 
-      :src="GOLD_ICON" 
-      alt="Gold" 
-      class="w-5 h-5 pixelated"
-    />
-    <span class="font-bold text-sm">
-      {{ formattedBalance }}
-    </span>
+  <div class="gold-display" :class="{ 'is-loading': loading }">
+    <div class="gold-icon">
+      <span class="icon">🪙</span>
+    </div>
+    <div class="gold-info">
+      <span class="gold-amount">{{ formattedBalance }}</span>
+      <span class="gold-label">Gold</span>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useShopStore } from '../store';
+import { computed } from 'vue'
+import { useShopStore } from '../store'
 
-const props = defineProps<{
-  compact?: boolean;
-}>();
-
-const GOLD_ICON = 'https://vibemedia.space/icon_gold_coin_nav_8f7e6d.png?prompt=golden%20coin%20with%20shine%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON';
-
-const shop = useShopStore();
+const shopStore = useShopStore()
 
 const formattedBalance = computed(() => {
-  const balance = shop.goldBalance;
-  if (balance >= 10000) {
-    return `${(balance / 1000).toFixed(1)}K`;
-  }
-  return balance.toLocaleString();
-});
+  const balance = shopStore.goldBalance?.balance || 0
+  return balance.toLocaleString()
+})
 
-const displayClass = computed(() => {
-  if (props.compact) {
-    return 'bg-amber-900/30 border border-amber-600/50';
-  }
-  return 'bg-gradient-to-r from-amber-900/40 to-yellow-900/40 border-2 border-amber-600/70 shadow-lg shadow-amber-500/10';
-});
+const loading = computed(() => shopStore.loading)
 </script>
 
 <style scoped>
-.pixelated {
-  image-rendering: pixelated;
+.gold-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-radius: 9999px;
+  color: white;
+  font-weight: 600;
+  transition: opacity 0.2s;
 }
 
-.gold-display {
-  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+.gold-display.is-loading {
+  opacity: 0.7;
+}
+
+.gold-icon {
+  font-size: 1.25rem;
+}
+
+.gold-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.gold-amount {
+  font-size: 1rem;
+}
+
+.gold-label {
+  font-size: 0.625rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 </style>

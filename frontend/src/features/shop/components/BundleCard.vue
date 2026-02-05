@@ -1,176 +1,179 @@
 <template>
-  <div 
-    class="bundle-card relative overflow-hidden rounded-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer"
-    :class="[rarityClasses, glowClasses]"
-    @click="$emit('select', item)"
-  >
-    <!-- Rarity Banner -->
-    <div 
-      class="absolute top-0 left-0 right-0 h-1"
-      :class="rarityBarClass"
-    />
-
-    <!-- Content -->
-    <div class="p-4 space-y-3">
-      <!-- Header -->
-      <div class="flex items-start justify-between">
-        <div>
-          <h3 class="font-bold text-lg">{{ item.name }}</h3>
-          <span class="text-xs uppercase tracking-wider opacity-70">
-            {{ rarityName }}
-          </span>
-        </div>
-        <div class="bundle-icon w-12 h-12 rounded flex items-center justify-center" :class="iconBgClass">
-          <img :src="bundleIcon" alt="" class="w-8 h-8 pixelated" />
-        </div>
+  <div class="bundle-card" :style="{ borderColor: rarityColor }">
+    <div class="bundle-header" :style="{ backgroundColor: rarityColor + '20' }">
+      <span class="rarity-badge" :style="{ backgroundColor: rarityColor }">
+        {{ rarityName }}
+      </span>
+      <h3 class="bundle-name">{{ item.name }}</h3>
+    </div>
+    
+    <div class="bundle-content">
+      <p class="bundle-description">{{ item.description }}</p>
+      
+      <div v-if="item.gold_amount" class="bonus-gold">
+        <span class="bonus-icon">+</span>
+        <span class="bonus-amount">{{ item.gold_amount.toLocaleString() }} Gold</span>
       </div>
 
-      <!-- Description -->
-      <p class="text-sm opacity-80 line-clamp-2">
-        {{ item.description }}
-      </p>
-
-      <!-- Metadata (equipment count, etc.) -->
-      <div v-if="equipmentCount" class="flex items-center gap-2 text-xs opacity-70">
-        <span>📦 {{ equipmentCount }} item{{ equipmentCount > 1 ? 's' : '' }}</span>
+      <div v-if="item.metadata?.drop_boosts" class="bonus-item">
+        <span class="bonus-icon">🎁</span>
+        <span>{{ item.metadata.drop_boosts }} Drop Boosts</span>
       </div>
 
-      <!-- Price -->
-      <div class="flex items-center justify-between pt-2 border-t border-current/20">
-        <div class="flex items-center gap-2">
-          <img :src="currencyIcon" alt="" class="w-5 h-5 pixelated" />
-          <span class="font-bold text-lg">{{ formattedPrice }}</span>
-        </div>
-        <button
-          class="purchase-btn px-4 py-2 rounded font-bold text-sm uppercase tracking-wide transition-all"
-          :class="buttonClasses"
-          :disabled="!canAfford"
-          @click.stop="$emit('purchase', item)"
-        >
-          {{ canAfford ? 'Buy' : 'Not Enough' }}
-        </button>
+      <div v-if="item.metadata?.equipment_count" class="bonus-item">
+        <span class="bonus-icon">⚔️</span>
+        <span>{{ item.metadata.equipment_count }} Equipment Items</span>
       </div>
     </div>
 
-    <!-- Shine effect for high rarity -->
-    <div 
-      v-if="item.rarity >= 3" 
-      class="absolute inset-0 pointer-events-none shine-effect"
-    />
+    <div class="bundle-footer">
+      <span class="price">{{ formattedPrice }}</span>
+      <button 
+        class="buy-button"
+        :disabled="isDisabled"
+        @click="$emit('purchase', item.id)"
+      >
+        {{ buttonText }}
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { ShopItem, Rarity, getRarityName, getRarityColor, getRarityGlow, formatPrice } from '../api';
-import { useShopStore } from '../store';
+import { computed } from 'vue'
+import type { ShopItem } from '../types'
+import { useShopStore } from '../store'
 
 const props = defineProps<{
-  item: ShopItem;
-}>();
+  item: ShopItem
+}>()
 
 defineEmits<{
-  select: [item: ShopItem];
-  purchase: [item: ShopItem];
-}>();
+  purchase: [id: number]
+}>()
 
-const ICONS = {
-  GOLD: 'https://vibemedia.space/icon_gold_coin_nav_8f7e6d.png?prompt=golden%20coin%20with%20shine%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-  BUNDLE_COMMON: 'https://vibemedia.space/icon_bundle_common_1a2b3c.png?prompt=wooden%20treasure%20chest%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-  BUNDLE_RARE: 'https://vibemedia.space/icon_bundle_rare_4d5e6f.png?prompt=silver%20treasure%20chest%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-  BUNDLE_FABLED: 'https://vibemedia.space/icon_bundle_fabled_7g8h9i.png?prompt=purple%20magic%20treasure%20chest%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-  BUNDLE_MYTHIC: 'https://vibemedia.space/icon_bundle_mythic_0j1k2l.png?prompt=golden%20ornate%20treasure%20chest%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-};
+const shopStore = useShopStore()
 
-const shop = useShopStore();
+const rarityColor = computed(() => shopStore.getRarityColor(props.item.rarity))
+const rarityName = computed(() => shopStore.getRarityName(props.item.rarity))
+const formattedPrice = computed(() => shopStore.formatItemPrice(props.item))
 
-const rarityName = computed(() => getRarityName(props.item.rarity));
-const rarityClasses = computed(() => getRarityColor(props.item.rarity));
-const glowClasses = computed(() => {
-  const glow = getRarityGlow(props.item.rarity);
-  return glow ? `shadow-xl ${glow}` : '';
-});
-
-const rarityBarClass = computed(() => {
-  switch (props.item.rarity) {
-    case Rarity.Common: return 'bg-green-500';
-    case Rarity.Rare: return 'bg-blue-500';
-    case Rarity.Fabled: return 'bg-purple-500';
-    case Rarity.Mythic: return 'bg-orange-500';
-    case Rarity.Legendary: return 'bg-yellow-500';
-    default: return 'bg-slate-500';
-  }
-});
-
-const iconBgClass = computed(() => {
-  switch (props.item.rarity) {
-    case Rarity.Common: return 'bg-green-900/50';
-    case Rarity.Rare: return 'bg-blue-900/50';
-    case Rarity.Fabled: return 'bg-purple-900/50';
-    case Rarity.Mythic: return 'bg-orange-900/50';
-    case Rarity.Legendary: return 'bg-yellow-900/50';
-    default: return 'bg-slate-900/50';
-  }
-});
-
-const bundleIcon = computed(() => {
-  switch (props.item.rarity) {
-    case Rarity.Rare: return ICONS.BUNDLE_RARE;
-    case Rarity.Fabled: return ICONS.BUNDLE_FABLED;
-    case Rarity.Mythic: return ICONS.BUNDLE_MYTHIC;
-    case Rarity.Legendary: return ICONS.BUNDLE_MYTHIC;
-    default: return ICONS.BUNDLE_COMMON;
-  }
-});
-
-const currencyIcon = computed(() => ICONS.GOLD);
-
-const formattedPrice = computed(() => {
+const isDisabled = computed(() => {
+  if (shopStore.purchaseInProgress) return true
   if (props.item.price_currency === 'gold') {
-    return props.item.price_amount.toLocaleString();
+    return shopStore.hasInsufficientGold(props.item)
   }
-  return formatPrice(props.item.price_amount, props.item.price_currency);
-});
+  return false
+})
 
-const canAfford = computed(() => shop.canAfford(props.item));
-
-const buttonClasses = computed(() => {
-  if (!canAfford.value) {
-    return 'bg-slate-700 text-slate-500 cursor-not-allowed';
+const buttonText = computed(() => {
+  if (shopStore.purchaseInProgress) return 'Processing...'
+  if (props.item.price_currency === 'gold' && shopStore.hasInsufficientGold(props.item)) {
+    return 'Insufficient Gold'
   }
-  return 'bg-amber-600 hover:bg-amber-500 text-white shadow-md hover:shadow-lg';
-});
-
-const equipmentCount = computed(() => {
-  return props.item.metadata?.equipment_count as number | undefined;
-});
+  return 'Buy Now'
+})
 </script>
 
 <style scoped>
-.pixelated {
-  image-rendering: pixelated;
-}
-
 .bundle-card {
-  border-width: 3px;
+  border: 2px solid;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #1f2937;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.shine-effect {
-  background: linear-gradient(
-    135deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 60%
-  );
-  animation: shine 3s infinite;
+.bundle-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes shine {
-  0% { transform: translateX(-100%) translateY(-100%); }
-  100% { transform: translateX(100%) translateY(100%); }
+.bundle-header {
+  padding: 1rem;
+  position: relative;
 }
 
-.purchase-btn:not(:disabled):active {
-  transform: translateY(1px);
+.rarity-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: white;
+}
+
+.bundle-name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  padding-right: 4rem;
+}
+
+.bundle-content {
+  padding: 1rem;
+}
+
+.bundle-description {
+  margin: 0 0 1rem 0;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.bonus-gold, .bonus-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.bonus-icon {
+  font-size: 1.25rem;
+}
+
+.bundle-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+.buy-button {
+  padding: 0.5rem 1.5rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.buy-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: scale(1.05);
+}
+
+.buy-button:disabled {
+  background: #4b5563;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 </style>
