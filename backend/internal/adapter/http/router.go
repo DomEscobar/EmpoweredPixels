@@ -16,6 +16,7 @@ import (
 	rosterhandlers "empoweredpixels/internal/adapter/http/handlers/roster"
 	seasonhandlers "empoweredpixels/internal/adapter/http/handlers/seasons"
 	shophandlers "empoweredpixels/internal/adapter/http/handlers/shop"
+	attunementhandlers "empoweredpixels/internal/adapter/http/handlers/attunement"
 	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
 	"empoweredpixels/internal/adapter/http/middleware"
@@ -32,6 +33,7 @@ import (
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
 	shopusecase "empoweredpixels/internal/usecase/shop"
+	attunementusecase "empoweredpixels/internal/usecase/attunement"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	skillsusecase "empoweredpixels/internal/usecase/skills"
 )
@@ -48,8 +50,9 @@ type Dependencies struct {
 	LeagueJob        *jobs.LeagueJob
 	RewardService    *rewardsusecase.Service
 	SeasonService    *seasonsusecase.Service
-	ShopService      *shopusecase.Service
-	MatchHub         *ws.MatchHub
+	ShopService         *shopusecase.Service
+	AttunementService   *attunementusecase.Service
+	MatchHub            *ws.MatchHub
 	MCPHandler       *mcp.MCPHandler
 	MCPAuditLogger   *mcp.AuditLogger
 	MCPFilter        *mcp.FairnessFilter
@@ -251,6 +254,14 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/shop/purchase", h.Purchase).Methods("POST")
 		api.HandleFunc("/player/gold", h.GetPlayerGold).Methods("GET")
 		api.HandleFunc("/player/transactions", h.GetTransactions).Methods("GET")
+	}
+
+	if deps.AttunementService != nil {
+		h := attunementhandlers.NewHandler(deps.AttunementService)
+		api.HandleFunc("/attunements", h.GetAttunements).Methods("GET")
+		api.HandleFunc("/attunements/bonuses", h.GetBonuses).Methods("GET")
+		api.HandleFunc("/attunement/{element}", h.GetAttunement).Methods("GET")
+		api.HandleFunc("/attunement/award-xp", h.AwardXP).Methods("POST")
 	}
 
 	if deps.MatchHub != nil {
