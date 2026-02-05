@@ -247,9 +247,7 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/shop/items", h.GetShopItems).Methods("GET")
 		api.HandleFunc("/shop/gold", h.GetGoldPackages).Methods("GET")
 		api.HandleFunc("/shop/bundles", h.GetBundles).Methods("GET")
-		api.HandleFunc("/shop/item/{id}", func(w http.ResponseWriter, r *http.Request) {
-			h.GetShopItem(w, r, mux.Vars(r)["id"])
-		}).Methods("GET")
+		api.HandleFunc("/shop/item/{id}", h.GetShopItem).Methods("GET")
 		api.HandleFunc("/shop/purchase", h.Purchase).Methods("POST")
 		api.HandleFunc("/player/gold", h.GetPlayerGold).Methods("GET")
 		api.HandleFunc("/player/transactions", h.GetTransactions).Methods("GET")

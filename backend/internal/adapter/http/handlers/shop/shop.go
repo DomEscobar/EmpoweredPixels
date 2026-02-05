@@ -1,12 +1,16 @@
 package shophandlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
 
 	"empoweredpixels/internal/domain/shop"
+	"empoweredpixels/internal/adapter/http/middleware"
 	"empoweredpixels/internal/adapter/http/responses"
+
+	"github.com/gorilla/mux"
 )
 
 // ShopService defines the shop service interface
@@ -14,6 +18,7 @@ type ShopService interface {
 	GetGoldPackages(ctx context.Context) ([]shop.ShopItem, error)
 	GetBundles(ctx context.Context) ([]shop.ShopItem, error)
 	GetShopItems(ctx context.Context) ([]shop.ShopItem, error)
+	GetShopItemByID(ctx context.Context, id int) (*shop.ShopItem, error)
 	GetPlayerGold(ctx context.Context, userID int) (*shop.PlayerGold, error)
 	GetTransactions(ctx context.Context, userID int, limit int) ([]shop.Transaction, error)
 	PurchaseItem(ctx context.Context, userID int, itemID int) (*shop.PurchaseResponse, error)
@@ -81,13 +86,15 @@ func (h *Handler) GetShopItems(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetShopItem handles GET /api/shop/item/{id}
-func (h *Handler) GetShopItem(w http.ResponseWriter, r *http.Request, idStr string) {
+func (h *Handler) GetShopItem(w http.ResponseWriter, r *http.Request) {
 	userID := middleware.GetUserID(r)
 	if userID == 0 {
 		responses.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
 
+	vars := mux.Vars(r)
+	idStr := vars["id"]
 	id, err := strconv.Atoi(idStr)
 	if err != nil || id <= 0 {
 		responses.Error(w, http.StatusBadRequest, "invalid item id")

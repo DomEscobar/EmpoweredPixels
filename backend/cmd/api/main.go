@@ -111,6 +111,12 @@ func main() {
 	weaponRepo := repositories.NewWeaponRepository(database.Pool)
 	weaponService := weaponsusecase.NewService(weaponRepo)
 
+	// Shop service initialization
+	shopRepo := repositories.NewShopRepository(database.Pool)
+	goldRepo := repositories.NewPlayerGoldRepository(database.Pool)
+	txRepo := repositories.NewTransactionRepository(database.Pool)
+	shopService := shopusecase.NewService(shopRepo, goldRepo, txRepo)
+
 	mcpFilter := mcp.NewFairnessFilter(100, 1*time.Minute)
 	mcpHandler := mcp.NewMCPHandler(mcpFilter, identityService, rosterService, inventoryService, leagueService, matchService, rewardService)
 	mcpAuditLogger, _ := mcp.NewAuditLogger("")
@@ -125,6 +131,7 @@ func main() {
 			InventoryService: inventoryService,
 			WeaponService:    weaponService,
 			SkillService:     nil,
+			ShopService:      shopService,
 			LeagueService:    leagueService,
 			LeagueJob:        leagueJob,
 			RewardService:    rewardService,
