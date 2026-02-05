@@ -122,6 +122,7 @@ func TestCalculateStats(t *testing.T) {
 		BaseDamage:  100,
 		AttackSpeed: 1.0,
 		CritChance:  10,
+		Rarity:      Common, // Set to Common for 1.0x multiplier
 	}
 
 	tests := []struct {

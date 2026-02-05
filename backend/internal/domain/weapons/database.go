@@ -2,7 +2,19 @@ package weapons
 
 // WeaponDatabase contains all static weapon definitions
 var WeaponDatabase = []Weapon{
-	// Swords (4 weapons)
+	// Swords (6 weapons - added Broken and Uncommon)
+	{
+		ID:          "wpn_sword_broken_000",
+		Name:        "Broken Sword",
+		Type:        Sword,
+		Rarity:      Broken,
+		BaseDamage:  8,
+		AttackSpeed: 0.9,
+		CritChance:  3,
+		Durability:  50,
+		IconURL:     "https://vibemedia.space/wpn_sword_broken_x1y2z3a4.png?prompt=broken%20sword%20with%20jagged%20cracked%20blade&style=pixel_game_asset&key=NOGON",
+		Description: "Barely usable. Might hurt you more than the enemy.",
+	},
 	{
 		ID:          "wpn_sword_rusty_001",
 		Name:        "Rusty Blade",
@@ -28,7 +40,19 @@ var WeaponDatabase = []Weapon{
 		Description: "A standard iron sword.",
 	},
 	{
-		ID:          "wpn_sword_steel_003",
+		ID:          "wpn_sword_sharpened_003",
+		Name:        "Sharpened Blade",
+		Type:        Sword,
+		Rarity:      Uncommon,
+		BaseDamage:  22,
+		AttackSpeed: 1.0,
+		CritChance:  7,
+		Durability:  110,
+		IconURL:     "https://vibemedia.space/wpn_sword_sharp_b2c3d4e5.png?prompt=sharpened%20blade%20with%20fine%20edge%20green%20glow&style=pixel_game_asset&key=NOGON",
+		Description: "Well-maintained with a keen edge.",
+	},
+	{
+		ID:          "wpn_sword_steel_004",
 		Name:        "Steel Saber",
 		Type:        Sword,
 		Rarity:      Rare,
@@ -40,7 +64,7 @@ var WeaponDatabase = []Weapon{
 		Description: "A finely crafted steel saber.",
 	},
 	{
-		ID:          "wpn_sword_knight_004",
+		ID:          "wpn_sword_knight_005",
 		Name:        "Knight's Blade",
 		Type:        Sword,
 		Rarity:      Epic,
@@ -52,7 +76,7 @@ var WeaponDatabase = []Weapon{
 		Description: "A blade worthy of a knight.",
 	},
 	{
-		ID:          "wpn_sword_excalibur_005",
+		ID:          "wpn_sword_excalibur_006",
 		Name:        "Excalibur",
 		Type:        Sword,
 		Rarity:      Legendary,
