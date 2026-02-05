@@ -13,6 +13,7 @@ import (
 	rewardhandlers "empoweredpixels/internal/adapter/http/handlers/rewards"
 	rosterhandlers "empoweredpixels/internal/adapter/http/handlers/roster"
 	seasonhandlers "empoweredpixels/internal/adapter/http/handlers/seasons"
+	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	"empoweredpixels/internal/adapter/http/middleware"
 	"empoweredpixels/internal/adapter/http/responses"
 	"empoweredpixels/internal/adapter/ws"
@@ -26,6 +27,7 @@ import (
 	rewardsusecase "empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
+	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 )
 
 type Dependencies struct {
@@ -34,6 +36,7 @@ type Dependencies struct {
 	RosterService    *rosterusecase.Service
 	MatchService     *matchesusecase.Service
 	InventoryService inventoryusecase.Service
+	WeaponService    *weaponsusecase.Service
 	LeagueService    *leaguesusecase.Service
 	LeagueJob        *jobs.LeagueJob
 	RewardService    *rewardsusecase.Service
@@ -190,6 +193,22 @@ func NewRouter(deps Dependencies) http.Handler {
 	if deps.SeasonService != nil {
 		seasonHandler := seasonhandlers.NewHandler(deps.SeasonService)
 		mux.Handle("POST /api/season/summary", authMiddleware(http.HandlerFunc(seasonHandler.Summary)))
+	}
+
+	if deps.WeaponService != nil {
+		weaponHandler := weaponhandlers.NewHandler(deps.WeaponService)
+
+		mux.Handle("GET /api/weapons", authMiddleware(http.HandlerFunc(weaponHandler.List)))
+		mux.Handle("GET /api/weapons/database", authMiddleware(http.HandlerFunc(weaponHandler.Database)))
+		mux.Handle("GET /api/weapons/{id}", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			weaponHandler.Get(w, r, r.PathValue("id"))
+		})))
+		mux.Handle("POST /api/weapons/equip", authMiddleware(http.HandlerFunc(weaponHandler.Equip)))
+		mux.Handle("POST /api/weapons/{id}/unequip", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			weaponHandler.Unequip(w, r, r.PathValue("id"))
+		})))
+		mux.Handle("POST /api/weapons/enhance", authMiddleware(http.HandlerFunc(weaponHandler.Enhance)))
+		mux.Handle("POST /api/weapons/forge", authMiddleware(http.HandlerFunc(weaponHandler.ForgePreview)))
 	}
 
 	if deps.MatchHub != nil {
