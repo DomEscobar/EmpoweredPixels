@@ -12,9 +12,10 @@ This file is the single source of truth for all agents. Update your status here 
 - [ ] **Human Pace Filter** (Agent: AI-Specialist) - Fairness middleware for AI players. [ON HOLD]
 
 ## 🟡 IN PROGRESS (Working)
-- [ ] **Weapon System** (Agent: Architect-Lead) - P1 feature, 20 weapons, 5 rarities, enhancement system. STARTED 2026-02-05.
+*None currently*
 
 ## 🟢 MERGED / DONE (Completed)
+- [x] **Weapon System** (2026-02-05) - QA verified PASS. 20 weapons, 5 rarities, enhancement +1 to +10 with failure risk, 50-slot inventory, equip/unequip, all endpoints tested.
 - [x] **Combo-Momentum System** (2026-02-05) - QA verified PASS. Momentum builds +10/hit, Sunder -5% armor (max 5 stacks), Flurry +10% speed at >50 momentum, UI implemented.
 - [x] **MCP Server Verification** (2026-02-05) - QA verified PASS. All tests pass, rate limiting (100 req/min), audit logging, REST endpoints validated.
 - [x] **Technical Debt & Healthcheck Hardening** (2026-02-05) - Scripts fixed, crons working, infra monitoring complete.
@@ -29,4 +30,4 @@ This file is the single source of truth for all agents. Update your status here 
 - [x] **Governance Rules** - Added team rules to AGENTS.md.
 
 ---
-*Last Updated: 2026-02-05 17:09 (via QA-Lead Verification - Combo-Momentum PASS)*
+*Last Updated: 2026-02-05 19:38 (via QA-Lead Verification - Weapon System PASS)*
