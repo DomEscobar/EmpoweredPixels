@@ -3,7 +3,6 @@
 This file is the single source of truth for all agents. Update your status here after every task.
 
 ## 🔴 BACKLOG (To Do)
-- [ ] **Combo-Momentum System** (Agent: Senior-Game-Designer) - Enhanced combat state machine.
 - [ ] **Staked Momentum Mechanic** (Agent: Market-Trend-Analyst) - Class-based wagering in leagues.
 - [ ] **Monetization Shop** (Agent: Monetization-Strategist) - Cosmetic item infrastructure.
 - [ ] **Human Pace Filter** (Agent: AI-Specialist) - Fairness middleware for AI players.
@@ -12,6 +11,7 @@ This file is the single source of truth for all agents. Update your status here 
 - [ ] *(empty - awaiting next assignment)*
 
 ## 🟢 MERGED / DONE (Completed)
+- [x] **Combo-Momentum System** (2026-02-05) - QA verified PASS. Momentum builds +10/hit, Sunder -5% armor (max 5 stacks), Flurry +10% speed at >50 momentum, UI implemented.
 - [x] **MCP Server Verification** (2026-02-05) - QA verified PASS. All tests pass, rate limiting (100 req/min), audit logging, REST endpoints validated.
 - [x] **Technical Debt & Healthcheck Hardening** (2026-02-05) - Scripts fixed, crons working, infra monitoring complete.
 - [x] **Sprint FORTRESS** (2026-02-05) - WebSocket JWT auth, owner validation, and PWM hashing secured.
@@ -25,4 +25,4 @@ This file is the single source of truth for all agents. Update your status here 
 - [x] **Governance Rules** - Added team rules to AGENTS.md.
 
 ---
-*Last Updated: 2026-02-05 15:31 (via QA-Lead Verification)*
+*Last Updated: 2026-02-05 17:09 (via QA-Lead Verification - Combo-Momentum PASS)*
