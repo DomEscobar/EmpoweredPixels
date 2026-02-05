@@ -3,12 +3,16 @@
 This file is the single source of truth for all agents. Update your status here after every task.
 
 ## 🔴 BACKLOG (To Do)
-- [ ] **Staked Momentum Mechanic** (Agent: Market-Trend-Analyst) - Class-based wagering in leagues.
-- [ ] **Monetization Shop** (Agent: Monetization-Strategist) - Cosmetic item infrastructure.
-- [ ] **Human Pace Filter** (Agent: AI-Specialist) - Fairness middleware for AI players.
+- [ ] **Skill System** (Priority: P2) - 30 skills across 3 branches with loadout system.
+- [ ] **Attunement System** (Priority: P2) - 6 elemental attunements with strengths/weaknesses.
+- [ ] **Daily Quests** (Priority: P2) - Retention mechanic, 2-3 days effort.
+- [ ] **Leaderboards** (Priority: P2) - Competition ranking system.
+- [ ] **Shop System** (Priority: P3) - Gold + Gems currency, post-Weapons.
+- [ ] **Staked Momentum Mechanic** (Agent: Market-Trend-Analyst) - Class-based wagering in leagues. [ON HOLD - revisit after core systems]
+- [ ] **Human Pace Filter** (Agent: AI-Specialist) - Fairness middleware for AI players. [ON HOLD]
 
 ## 🟡 IN PROGRESS (Working)
-- [ ] *(empty - awaiting next assignment)*
+- [ ] **Weapon System** (Agent: Architect-Lead) - P1 feature, 20 weapons, 5 rarities, enhancement system. STARTED 2026-02-05.
 
 ## 🟢 MERGED / DONE (Completed)
 - [x] **Combo-Momentum System** (2026-02-05) - QA verified PASS. Momentum builds +10/hit, Sunder -5% armor (max 5 stacks), Flurry +10% speed at >50 momentum, UI implemented.
