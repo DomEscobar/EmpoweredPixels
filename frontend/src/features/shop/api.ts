@@ -1,47 +1,46 @@
-import { api } from '@/shared/api'
+import { request } from "@/shared/api/http";
 import type { ShopItem, PlayerGold, Transaction, PurchaseResponse } from './types'
+
+const SHOP_BASE = "/api/shop";
+const PLAYER_BASE = "/api/player";
 
 export const shopApi = {
   // Get all shop items
   async getItems(): Promise<ShopItem[]> {
-    const response = await api.get('/shop/items')
-    return response.data
+    return request<ShopItem[]>(`${SHOP_BASE}/items`);
   },
 
   // Get gold packages only
   async getGoldPackages(): Promise<ShopItem[]> {
-    const response = await api.get('/shop/gold')
-    return response.data
+    return request<ShopItem[]>(`${SHOP_BASE}/gold`);
   },
 
   // Get bundles only
   async getBundles(): Promise<ShopItem[]> {
-    const response = await api.get('/shop/bundles')
-    return response.data
+    return request<ShopItem[]>(`${SHOP_BASE}/bundles`);
   },
 
   // Get single item details
   async getItem(id: number): Promise<ShopItem> {
-    const response = await api.get(`/shop/item/${id}`)
-    return response.data
+    return request<ShopItem>(`${SHOP_BASE}/item/${id}`);
   },
 
   // Purchase an item
   async purchase(itemId: number): Promise<PurchaseResponse> {
-    const response = await api.post('/shop/purchase', { item_id: itemId })
-    return response.data
+    return request<PurchaseResponse>(`${SHOP_BASE}/purchase`, {
+      method: "POST",
+      body: { item_id: itemId }
+    });
   },
 
   // Get player gold balance
   async getGoldBalance(): Promise<PlayerGold> {
-    const response = await api.get('/player/gold')
-    return response.data
+    return request<PlayerGold>(`${PLAYER_BASE}/gold`);
   },
 
   // Get transaction history
   async getTransactions(limit = 50): Promise<Transaction[]> {
-    const response = await api.get('/player/transactions', { params: { limit } })
-    return response.data
+    return request<Transaction[]>(`${PLAYER_BASE}/transactions?limit=${limit}`);
   }
 }
 

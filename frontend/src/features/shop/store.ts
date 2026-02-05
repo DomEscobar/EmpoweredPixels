@@ -93,12 +93,13 @@ export const useShopStore = defineStore('shop', () => {
       }
       return result
     } catch (err: any) {
-      error.value = err.message || 'Purchase failed'
+      const errorMsg = err.message || 'Purchase failed'
+      error.value = errorMsg
       return {
         success: false,
         transaction_id: 0,
         new_balance: goldBalance.value?.balance || 0,
-        message: error.value
+        message: errorMsg
       }
     } finally {
       purchaseInProgress.value = false

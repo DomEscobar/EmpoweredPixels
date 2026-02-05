@@ -148,18 +148,18 @@ const navItems = [
 // Fetch gold balance when logged in
 onMounted(() => {
   if (auth.token) {
-    shop.fetchPlayerGold();
+    shop.fetchGoldBalance();
   }
 });
 
 watch(() => auth.token, (newToken) => {
   if (newToken) {
-    shop.fetchPlayerGold();
+    shop.fetchGoldBalance();
   }
 });
 
 const formattedGold = () => {
-  const balance = shop.goldBalance;
+  const balance = shop.goldBalance?.balance ?? 0;
   if (balance >= 10000) return `${(balance / 1000).toFixed(1)}K`;
   return balance.toLocaleString();
 };
