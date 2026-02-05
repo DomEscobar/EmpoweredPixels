@@ -275,6 +275,34 @@ var WeaponDatabase = []Weapon{
 		IconURL:     "https://vibemedia.space/wpn_axe_worldender_3p4q5r6s.png?prompt=mythic%20world%20ender%20axe%20with%20cosmic%20energy%20and%20ancient%20runes&style=pixel_game_asset&key=NOGON",
 		Description: "A weapon of apocalyptic power.",
 	},
+
+	// Divine Weapon (Tier 8)
+	{
+		ID:          "wpn_sword_celestial_001",
+		Name:        "Celestial Blade",
+		Type:        Sword,
+		Rarity:      Divine,
+		BaseDamage:  150,
+		AttackSpeed: 1.4,
+		CritChance:  35,
+		Durability:  300,
+		IconURL:     "https://vibemedia.space/wpn_sword_celestial_7a8b9c0d.png?prompt=divine%20celestial%20blade%20with%20rainbow%20aura%20and%20holy%20light&style=pixel_game_asset&key=NOGON",
+		Description: "A blade blessed by the gods themselves.",
+	},
+
+	// Unique Weapon (Tier 9 - Event-only)
+	{
+		ID:          "wpn_staff_creator_001",
+		Name:        "Staff of the Creator",
+		Type:        Staff,
+		Rarity:      Unique,
+		BaseDamage:  300,
+		AttackSpeed: 1.5,
+		CritChance:  50,
+		Durability:  500,
+		IconURL:     "https://vibemedia.space/wpn_staff_creator_9e0f1a2b.png?prompt=unique%20creator%20staff%20with%20animated%20golden%20energy%20and%20cosmic%20power&style=pixel_game_asset&key=NOGON",
+		Description: "A weapon beyond comprehension. Event-exclusive.",
+	},
 }
 
 // GetWeaponByID retrieves a weapon definition by ID

@@ -208,7 +208,7 @@ func TestApplyEnhancement(t *testing.T) {
 
 func TestGetWeaponByID(t *testing.T) {
 	// Test with a known weapon from the database
-	weapon, found := GetWeaponByID("wpn_sword_excalibur_005")
+	weapon, found := GetWeaponByID("wpn_sword_excalibur_006")
 	if !found {
 		t.Error("Expected to find Excalibur")
 	}
@@ -228,8 +228,8 @@ func TestGetWeaponByID(t *testing.T) {
 
 func TestGetWeaponsByType(t *testing.T) {
 	swords := GetWeaponsByType(Sword)
-	if len(swords) != 5 {
-		t.Errorf("Expected 5 swords, got %d", len(swords))
+	if len(swords) != 8 {
+		t.Errorf("Expected 8 swords, got %d", len(swords))
 	}
 
 	bows := GetWeaponsByType(Bow)
@@ -256,7 +256,7 @@ func TestGetWeaponsByRarity(t *testing.T) {
 }
 
 func TestWeaponDatabase_Count(t *testing.T) {
-	if len(WeaponDatabase) != 20 {
-		t.Errorf("Expected 20 weapons in database, got %d", len(WeaponDatabase))
+	if len(WeaponDatabase) != 24 {
+		t.Errorf("Expected 24 weapons in database, got %d", len(WeaponDatabase))
 	}
 }

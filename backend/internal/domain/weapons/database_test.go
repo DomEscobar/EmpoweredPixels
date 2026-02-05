@@ -5,9 +5,9 @@ import (
 )
 
 func TestWeaponDatabase_Completeness(t *testing.T) {
-	// Verify we have exactly 22 weapons (added Broken and Uncommon)
-	if len(WeaponDatabase) != 22 {
-		t.Errorf("Expected 22 weapons, got %d", len(WeaponDatabase))
+	// Verify we have exactly 24 weapons (added Divine and Unique tiers)
+	if len(WeaponDatabase) != 24 {
+		t.Errorf("Expected 24 weapons, got %d", len(WeaponDatabase))
 	}
 
 	// Count by type
@@ -21,9 +21,9 @@ func TestWeaponDatabase_Completeness(t *testing.T) {
 
 	// Verify type distribution
 	expectedTypes := map[WeaponType]int{
-		Sword:  7,
+		Sword:  8,
 		Bow:    4,
-		Staff:  4,
+		Staff:  5,
 		Dagger: 3,
 		Axe:    4,
 	}
@@ -35,7 +35,7 @@ func TestWeaponDatabase_Completeness(t *testing.T) {
 	}
 
 	// Verify we have at least 1 of each rarity (including new ones)
-	expectedRarities := []Rarity{Broken, Common, Uncommon, Rare, Epic, Legendary, Mythic}
+	expectedRarities := []Rarity{Broken, Common, Uncommon, Rare, Epic, Legendary, Mythic, Divine, Unique}
 	for _, r := range expectedRarities {
 		if rarityCounts[r] == 0 {
 			t.Errorf("Expected at least 1 %s weapon", r.String())
