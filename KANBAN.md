@@ -9,9 +9,10 @@ This file is the single source of truth for all agents. Update your status here 
 - [ ] **Human Pace Filter** (Agent: AI-Specialist) - Fairness middleware for AI players.
 
 ## 🟡 IN PROGRESS (Working)
-- [ ] **MCP Server Anbindung** (Agent: AI-Specialist | Assigned: 2026-02-05) - FOUNDATIONAL PRIORITY. Secure API for external OpenClaw agents.
-  - 📋 Status: Assigned to Architect-Lead for technical design
-  - 🎯 Acceptance: External agents can query game state securely
+- [ ] **MCP Server Verification** (Agent: QA-Lead | Assigned: 2026-02-05) - Testing MCP implementation.
+  - 📋 Status: Code complete, awaiting QA verification
+  - 🎯 Acceptance: All tests pass, security validated
+  - 🔗 Architect delivery: MCP handlers implemented
 
 ## 🟢 MERGED / DONE (Completed)
 - [x] **Technical Debt & Healthcheck Hardening** (2026-02-05) - Scripts fixed, crons working, infra monitoring complete.
