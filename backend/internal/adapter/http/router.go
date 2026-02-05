@@ -30,6 +30,7 @@ import (
 	rewardsusecase "empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
+	shopusecase "empoweredpixels/internal/usecase/shop"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	skillsusecase "empoweredpixels/internal/usecase/skills"
 )
