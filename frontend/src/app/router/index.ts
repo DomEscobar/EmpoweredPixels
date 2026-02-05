@@ -51,6 +51,11 @@ const routes: RouteRecordRaw[] = [
     name: "shop",
     component: () => import("../../pages/Shop.vue"),
   },
+  {
+    path: "/attunement",
+    name: "attunement",
+    component: () => import("../../pages/Attunement.vue"),
+  },
 ];
 
 export const router = createRouter({

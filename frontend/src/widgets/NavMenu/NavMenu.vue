@@ -128,6 +128,7 @@ const PIXEL_ASSETS = {
   ICON_LEAGUES: 'https://vibemedia.space/icon_nav_trophy_2s3t4u_v1.png?prompt=golden%20trophy%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
   ICON_SHOP: 'https://vibemedia.space/icon_nav_shop_5v6w7x_v1.png?prompt=gold%20coins%20pile%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
   ICON_GOLD: 'https://vibemedia.space/icon_gold_coin_nav_8f7e6d.png?prompt=golden%20coin%20with%20shine%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
+  ICON_ATTUNEMENT: 'https://vibemedia.space/icon_nav_crystal_1a2b3c.png?prompt=magic%20crystal%20glowing%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
 };
 
 const auth = useAuthStore();
@@ -142,6 +143,7 @@ const navItems = [
   { name: 'Battle', path: '/matches', icon: PIXEL_ASSETS.ICON_MATCHES },
   { name: 'Vault', path: '/inventory', icon: PIXEL_ASSETS.ICON_INVENTORY },
   { name: 'Leagues', path: '/leagues', icon: PIXEL_ASSETS.ICON_LEAGUES },
+  { name: 'Attune', path: '/attunement', icon: PIXEL_ASSETS.ICON_ATTUNEMENT },
   { name: 'Shop', path: '/shop', icon: PIXEL_ASSETS.ICON_SHOP },
 ];
 
