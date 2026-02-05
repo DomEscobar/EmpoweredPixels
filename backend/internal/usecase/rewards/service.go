@@ -50,10 +50,22 @@ func (s *Service) IssueReward(ctx context.Context, userID int64, poolID string) 
 		UserID:       userID,
 		RewardPoolID: poolID,
 		Created:      s.now(),
+		Claimed:      func() *time.Time { t := s.now(); return &t }(),
 	}
 
 	if err := s.rewards.Create(ctx, reward); err != nil {
 		return nil, err
+	}
+
+	// Automatic Claim: Land directly in vault
+	content := s.generateRewards(userID, poolID)
+	if err := s.items.CreateMany(ctx, content.Items); err != nil {
+		return nil, err
+	}
+	for i := range content.Equipment {
+		if err := s.equipment.Create(ctx, &content.Equipment[i]); err != nil {
+			return nil, err
+		}
 	}
 
 	return reward, nil
@@ -148,6 +160,16 @@ func (s *Service) generateRewards(userID int64, poolID string) RewardContent {
 			ID:      uuid.NewString(),
 			UserID:  userID,
 			ItemID:  inventory.EquipmentTokenCommonID,
+			Rarity:  inventory.ItemRarityCommon,
+			Created: s.now(),
+		})
+		// [IMPROVEMENT] Guaranteed random basic equipment for the winner
+		randomEquip := []string{"sword_01", "armor_01", "iron_sword", "leather_armor"}
+		equipment = append(equipment, inventory.Equipment{
+			ID:      uuid.NewString(),
+			UserID:  userID,
+			ItemID:  randomEquip[rand.Intn(len(randomEquip))],
+			Level:   1,
 			Rarity:  inventory.ItemRarityCommon,
 			Created: s.now(),
 		})
