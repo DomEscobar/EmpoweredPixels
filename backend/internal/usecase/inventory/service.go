@@ -21,7 +21,7 @@ type ServiceImpl struct {
 	now       func() time.Time
 }
 
-func NewService(items ItemRepository, equipment EquipmentRepository, options EquipmentOptionRepository, now func() time.Time) *ServiceImpl {
+func NewService(items ItemRepository, equipment EquipmentRepository, options EquipmentOptionRepository, now func() time.Time) Service {
 	if now == nil {
 		now = time.Now
 	}
