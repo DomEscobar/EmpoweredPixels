@@ -222,8 +222,8 @@ const updateAttunement = async (id: string) => {
 };
 
 const getExpPercent = computed(() => {
-  if (!props.fighter.levelExp) return 0;
-  return Math.round((props.fighter.currentExp / props.fighter.levelExp) * 100);
+  if (!props.fighter.xpToNextLevel) return 0;
+  return Math.round((props.fighter.xp / props.fighter.xpToNextLevel) * 100);
 });
 
 const offenseStats = computed(() => [

@@ -7,6 +7,8 @@ type Fighter struct {
 	UserID         int64
 	Name           string
 	Level          int
+	XP             int
+	XPToNextLevel  int
 	Power          int
 	ConditionPower int
 	Precision      int
@@ -21,6 +23,12 @@ type Fighter struct {
 	Vision         int
 	WeaponID       *string
 	AttunementID   *string
+	// Match Statistics
+	MatchesWon     int
+	MatchesLost    int
+	TotalMatches   int
+	TotalDamageDealt int64
+	TotalDamageTaken int64
 	Created        time.Time
 	IsDeleted      bool
 }

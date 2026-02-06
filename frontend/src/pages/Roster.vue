@@ -117,13 +117,29 @@
                 <div class="mt-2">
                   <div class="mb-0.5 flex justify-between text-[10px]">
                     <span class="text-slate-500 uppercase">EXP</span>
-                    <span class="text-slate-400">{{ fighter.currentExp }}/{{ fighter.levelExp }}</span>
+                    <span class="text-slate-400">{{ fighter.xp }}/{{ fighter.xpToNextLevel }}</span>
                   </div>
                   <div class="h-1.5 pixel-box-sm bg-slate-800/80 overflow-hidden">
                     <div
-                      class="h-full bg-linear-to-r from-indigo-600 to-purple-500 transition-all"
+                      class="h-full bg-gradient-to-r from-indigo-600 to-purple-500 transition-all"
                       :style="{ width: `${getExpPercent(fighter)}%` }"
                     ></div>
+                  </div>
+                </div>
+
+                <!-- Match Stats -->
+                <div class="mt-2 flex items-center gap-3">
+                  <div class="flex items-center gap-1 text-[10px]">
+                    <span class="text-emerald-400 font-bold">{{ fighter.matchesWon || 0 }}</span>
+                    <span class="text-slate-500">W</span>
+                  </div>
+                  <div class="flex items-center gap-1 text-[10px]">
+                    <span class="text-red-400 font-bold">{{ fighter.matchesLost || 0 }}</span>
+                    <span class="text-slate-500">L</span>
+                  </div>
+                  <div class="flex items-center gap-1 text-[10px] ml-auto">
+                    <span class="text-amber-400 font-bold">{{ fighter.totalMatches || 0 }}</span>
+                    <span class="text-slate-500">Total</span>
                   </div>
                 </div>
               </div>
@@ -503,8 +519,8 @@ const getAttunementBarColor = (id: string) => {
 };
 
 const getExpPercent = (fighter: Fighter) => {
-  if (!fighter.levelExp) return 0;
-  return Math.min(100, (fighter.currentExp / fighter.levelExp) * 100);
+  if (!fighter.xpToNextLevel || fighter.xpToNextLevel === 0) return 0;
+  return Math.min(100, (fighter.xp / fighter.xpToNextLevel) * 100);
 };
 
 const getCoreStats = (fighter: Fighter) => [

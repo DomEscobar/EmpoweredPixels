@@ -5,8 +5,10 @@ export interface Fighter {
   id: string;
   name: string;
   level: number;
-  currentExp: number;
-  levelExp: number;
+  xp: number;
+  xpToNextLevel: number;
+  currentExp?: number;
+  levelExp?: number;
   power: number;
   conditionPower: number;
   precision: number;
@@ -23,6 +25,12 @@ export interface Fighter {
   attunementId?: string;
   class?: string;
   created: string;
+  // Match Statistics
+  matchesWon: number;
+  matchesLost: number;
+  totalMatches: number;
+  totalDamageDealt: number;
+  totalDamageTaken: number;
 }
 
 export async function getFighters(token: string) {
