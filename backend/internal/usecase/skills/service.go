@@ -16,6 +16,7 @@ var (
 	ErrLoadoutTooLarge     = errors.New("loadout exceeds maximum active skills")
 	ErrSkillNotAllocated   = errors.New("skill not allocated")
 	ErrNotActiveSkill      = errors.New("only active skills can be in loadout")
+	ErrInvalidData         = errors.New("invalid data provided for validation")
 )
 
 type SkillRepository interface {
@@ -28,12 +29,16 @@ type SkillRepository interface {
 }
 
 type Service struct {
-	skillRepo   SkillRepository
+	skillRepo           SkillRepository
+	allocationValidator Validator
+	loadoutValidator    Validator
 }
 
 func NewService(skillRepo SkillRepository) *Service {
 	return &Service{
-		skillRepo:   skillRepo,
+		skillRepo:           skillRepo,
+		allocationValidator: &AllocationValidator{},
+		loadoutValidator:    &LoadoutValidator{},
 	}
 }
 
