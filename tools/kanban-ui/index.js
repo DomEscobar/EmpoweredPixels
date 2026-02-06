@@ -125,7 +125,7 @@ app.get('/', (req, res) => {
     <div id="board" class="board"></div>
 
     <script>
-        const columns = { todo: 'Backlog', in_progress: 'Active', done: 'Completed' };
+        const columns = { backlog: 'Backlog', todo: 'Todo', in_progress: 'In Progress', review: 'Review', done: 'Done' };
         
         async function update() {
             try {
