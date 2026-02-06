@@ -4,7 +4,7 @@
 -- Shops table (shop categories)
 CREATE TABLE IF NOT EXISTS shops (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
     description TEXT,
     shop_type VARCHAR(50) NOT NULL DEFAULT 'bundles',
     currency VARCHAR(20) NOT NULL DEFAULT 'gold',
@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS shop_items (
     CONSTRAINT chk_item_type CHECK (item_type IN ('gold_package', 'bundle', 'equipment', 'consumable')),
     CONSTRAINT chk_price_currency CHECK (price_currency IN ('usd', 'gold', 'particles')),
     CONSTRAINT chk_rarity CHECK (rarity >= 0 AND rarity <= 5),
-    CONSTRAINT chk_price_positive CHECK (price_amount >= 0)
+    CONSTRAINT chk_price_positive CHECK (price_amount >= 0),
+    UNIQUE (name, shop_id)
 );
 
 -- Player gold balance table
@@ -79,23 +80,23 @@ INSERT INTO shops (name, description, shop_type, currency, is_active, sort_order
 ('Gold Emporium', 'Purchase gold for upgrades and items', 'gold', 'usd', true, 1),
 ('Equipment Bundles', 'Curated bundles with guaranteed rarity items', 'bundles', 'gold', true, 2),
 ('Premium Store', 'Exclusive items and cosmetics', 'premium', 'usd', true, 3)
-ON CONFLICT DO NOTHING;
+ON CONFLICT (name) DO NOTHING;
 
 -- Seed data: Gold Packages (prices in cents)
 INSERT INTO shop_items (shop_id, name, description, item_type, price_amount, price_currency, gold_amount, rarity, is_active, sort_order) VALUES
-(1, 'Small Pouch', '100 Gold for small upgrades', 'gold_package', 99, 'usd', 100, 0, true, 1),
-(1, 'Merchant Satchel', '550 Gold with 10% bonus - Most Popular!', 'gold_package', 499, 'usd', 550, 1, true, 2),
-(1, 'Treasure Chest', '1,200 Gold with 20% bonus', 'gold_package', 999, 'usd', 1200, 2, true, 3),
-(1, 'Dragon Hoard', '6,500 Gold with 30% bonus - Best Value!', 'gold_package', 4999, 'usd', 6500, 4, true, 4)
-ON CONFLICT DO NOTHING;
+((SELECT id FROM shops WHERE name = 'Gold Emporium'), 'Small Pouch', '100 Gold for small upgrades', 'gold_package', 99, 'usd', 100, 0, true, 1),
+((SELECT id FROM shops WHERE name = 'Gold Emporium'), 'Merchant Satchel', '550 Gold with 10% bonus - Most Popular!', 'gold_package', 499, 'usd', 550, 1, true, 2),
+((SELECT id FROM shops WHERE name = 'Gold Emporium'), 'Treasure Chest', '1,200 Gold with 20% bonus', 'gold_package', 999, 'usd', 1200, 2, true, 3),
+((SELECT id FROM shops WHERE name = 'Gold Emporium'), 'Dragon Hoard', '6,500 Gold with 30% bonus - Best Value!', 'gold_package', 4999, 'usd', 6500, 4, true, 4)
+ON CONFLICT (name, shop_id) DO NOTHING;
 
 -- Seed data: Equipment Bundles
 INSERT INTO shop_items (shop_id, name, description, item_type, price_amount, price_currency, rarity, metadata, is_active, sort_order) VALUES
-(2, 'Starter Bundle', 'Common weapon + 200 Gold for new fighters', 'bundle', 299, 'usd', 1, '{"equipment_count": 1, "gold_bonus": 200}', true, 1),
-(2, 'Epic Hunter Pack', '5 Epic Drop Boosts + 500 Gold', 'bundle', 999, 'usd', 3, '{"drop_boosts": 5, "gold_bonus": 500}', true, 2),
-(2, 'Legendary Crate', 'Guaranteed Legendary Weapon', 'bundle', 1999, 'usd', 5, '{"equipment_count": 1, "guaranteed_rarity": 5}', true, 3),
-(2, 'Mythic Ascension', 'Mythic Weapon of Choice + 2,000 Gold', 'bundle', 4999, 'usd', 4, '{"equipment_count": 1, "guaranteed_rarity": 4, "gold_bonus": 2000}', true, 4)
-ON CONFLICT DO NOTHING;
+((SELECT id FROM shops WHERE name = 'Equipment Bundles'), 'Starter Bundle', 'Common weapon + 200 Gold for new fighters', 'bundle', 299, 'usd', 1, '{"equipment_count": 1, "gold_bonus": 200}', true, 1),
+((SELECT id FROM shops WHERE name = 'Equipment Bundles'), 'Epic Hunter Pack', '5 Epic Drop Boosts + 500 Gold', 'bundle', 999, 'usd', 3, '{"drop_boosts": 5, "gold_bonus": 500}', true, 2),
+((SELECT id FROM shops WHERE name = 'Equipment Bundles'), 'Legendary Crate', 'Guaranteed Legendary Weapon', 'bundle', 1999, 'usd', 5, '{"equipment_count": 1, "guaranteed_rarity": 5}', true, 3),
+((SELECT id FROM shops WHERE name = 'Equipment Bundles'), 'Mythic Ascension', 'Mythic Weapon of Choice + 2,000 Gold', 'bundle', 4999, 'usd', 4, '{"equipment_count": 1, "guaranteed_rarity": 4, "gold_bonus": 2000}', true, 4)
+ON CONFLICT (name, shop_id) DO NOTHING;
 
 -- Initialize player_gold for existing users (optional migration helper)
 -- INSERT INTO player_gold (user_id, balance, lifetime_earned, lifetime_spent)

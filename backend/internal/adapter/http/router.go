@@ -127,11 +127,8 @@ func NewRouter(deps Dependencies) http.Handler {
 
 	if deps.MatchService != nil {
 		h := matchhandlers.NewHandler(deps.MatchService)
-		api.HandleFunc("/match/options/default", h.GetDefaultOptions).Methods("GET")
-		api.HandleFunc("/match/options/sizes", h.GetBattlefieldSizes).Methods("GET")
-		api.HandleFunc("/match/current", h.GetCurrentMatch).Methods("GET")
-		api.HandleFunc("/match/create", h.CreateMatch).Methods("PUT")
-		api.HandleFunc("/match/create/team", h.CreateTeam).Methods("PUT")
+		api.HandleFunc("/match/quick-join", h.QuickJoin).Methods("POST")
+		api.HandleFunc("/match/online-players", h.GetOnlinePlayers).Methods("GET")
 		api.HandleFunc("/match/{id}", func(w http.ResponseWriter, r *http.Request) {
 			h.GetMatch(w, r, mux.Vars(r)["id"])
 		}).Methods("GET")
@@ -153,7 +150,6 @@ func NewRouter(deps Dependencies) http.Handler {
 			h.FighterScores(w, r, mux.Vars(r)["id"])
 		}).Methods("GET")
 		api.HandleFunc("/match/quick-join", h.QuickJoin).Methods("POST")
-		api.HandleFunc("/match/online-players", h.GetOnlinePlayers).Methods("GET")
 	}
 
 	if deps.InventoryService != nil {

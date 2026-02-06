@@ -48,12 +48,12 @@
       "title": "Shop: Bundle purchase doesn't grant equipment",
       "description": "In service.go PurchaseItem(), bundle purchases add gold bonus but equipment delivery is TODO ('Equipment would be added to inventory here'). Implement actual equipment grant from bundle metadata.",
       "assignee": "coder",
-      "column": "in_progress",
+      "column": "done",
       "priority": "high",
       "labels": ["bug", "shop", "backend"],
       "createdAt": "2026-02-06T21:41:00Z",
-      "updatedAt": "2026-02-06T22:15:00Z",
-      "comments": []
+      "updatedAt": "2026-02-06T23:15:00Z",
+      "comments": ["Implemented equipment grant and rarity rolling. Verified with unit tests."]
     },
     {
       "id": "TASK-004",
