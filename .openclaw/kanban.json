@@ -60,24 +60,24 @@
       "title": "Shop: Add USD payment integration stub",
       "description": "The PurchaseItem service for USD currency is a mock ('would integrate with payment provider'). Implement Stripe or placeholder payment flow for USD purchases. Currently blocks real-money purchases.",
       "assignee": "coder",
-      "column": "in_progress",
+      "column": "done",
       "priority": "medium",
       "labels": ["feature", "shop", "payments"],
       "createdAt": "2026-02-06T21:41:00Z",
-      "updatedAt": "2026-02-06T23:18:00Z",
-      "comments": []
+      "updatedAt": "2026-02-06T23:25:00Z",
+      "comments": ["Implemented simulated provider and integrated with main server. Branch merged to main."]
     },
     {
       "id": "TASK-006",
       "title": "Shop: Add missing shop UI components",
       "description": "Shop page exists but may need: 1) Loading skeleton states, 2) Error retry button, 3) Success toast notifications, 4) Empty state for no items. Review UX completeness.",
       "assignee": "foundry",
-      "column": "in_progress",
+      "column": "done",
       "priority": "low",
       "labels": ["enhancement", "frontend", "shop"],
       "createdAt": "2026-02-06T21:41:00Z",
-      "updatedAt": "2026-02-06T23:18:00Z",
-      "comments": []
+      "updatedAt": "2026-02-06T23:25:00Z",
+      "comments": ["Added skeletons, toasts, and empty state support. Branch merged to main."]
     },
     {
       "id": "TASK-007",
@@ -185,6 +185,18 @@
       "labels": ["design", "concept", "modes"],
       "createdAt": "2026-02-06T23:15:00Z",
       "updatedAt": "2026-02-06T23:15:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-016",
+      "title": "UI: Weapon Integration in Fighter Stats",
+      "description": "Fighter management panel only shows secondary equipment. Integrate user_weapons selection so players can equip primary weapons (Axe/Sword/Staff).",
+      "assignee": "foundry",
+      "column": "in_progress",
+      "priority": "high",
+      "labels": ["feature", "frontend", "roster"],
+      "createdAt": "2026-02-06T23:30:00Z",
+      "updatedAt": "2026-02-06T23:30:00Z",
       "comments": []
     }
   ]
