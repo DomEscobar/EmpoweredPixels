@@ -24,21 +24,16 @@ type SkillRepository interface {
 	SetLoadout(ctx context.Context, fighterID string, loadout []string) error
 	ResetSkills(ctx context.Context, fighterID string) error
 	UpdateUltimateCharge(ctx context.Context, fighterID string, charge int) error
-}
-
-type FighterRepository interface {
-	GetFighterLevel(ctx context.Context, fighterID string) (int, error)
+	GetFighterLevel(ctx context.Context, fighterID string) (int, error) // Renaming/consolidating if possible
 }
 
 type Service struct {
 	skillRepo   SkillRepository
-	fighterRepo FighterRepository
 }
 
-func NewService(skillRepo SkillRepository, fighterRepo FighterRepository) *Service {
+func NewService(skillRepo SkillRepository) *Service {
 	return &Service{
 		skillRepo:   skillRepo,
-		fighterRepo: fighterRepo,
 	}
 }
 
@@ -59,7 +54,7 @@ func (s *Service) GetFighterSkillState(ctx context.Context, fighterID string) (*
 		return nil, err
 	}
 
-	level, err := s.fighterRepo.GetFighterLevel(ctx, fighterID)
+	level, err := s.skillRepo.GetFighterLevel(ctx, fighterID)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +130,7 @@ func (s *Service) AllocateSkillPoint(ctx context.Context, fighterID string, skil
 	}
 
 	// Get fighter level
-	level, err := s.fighterRepo.GetFighterLevel(ctx, fighterID)
+	level, err := s.skillRepo.GetFighterLevel(ctx, fighterID)
 	if err != nil {
 		return err
 	}
@@ -204,7 +199,7 @@ func (s *Service) ResetSkills(ctx context.Context, fighterID string) error {
 
 // GetResetCost returns the gold cost to reset skills
 func (s *Service) GetResetCost(ctx context.Context, fighterID string) (int, error) {
-	level, err := s.fighterRepo.GetFighterLevel(ctx, fighterID)
+	level, err := s.skillRepo.GetFighterLevel(ctx, fighterID)
 	if err != nil {
 		return 0, err
 	}

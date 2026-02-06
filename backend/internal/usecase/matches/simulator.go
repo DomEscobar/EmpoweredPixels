@@ -137,6 +137,12 @@ func (s *Simulator) Run(matchID string, fighters []roster.Fighter, options Match
 				}
 			} else {
 				// Move towards target
+				attacker.Momentum -= 0.1
+				if attacker.Momentum < 0 {
+					attacker.Momentum = 0
+				}
+				attacker.Combo = 0
+
 				fromX, fromY := attacker.X, attacker.Y
 				moveDist := 2.0 + (float64(attacker.Stats.Speed) / 10.0)
 				angle := math.Atan2(target.Y-attacker.Y, target.X-attacker.X)

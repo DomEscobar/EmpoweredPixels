@@ -15,6 +15,8 @@ type Entity struct {
 	TeamID       *string
 	AttunementID *string
 	Stats        Stats
+	Combo        int
+	Momentum     float64
 }
 
 type Stats struct {
@@ -71,12 +73,14 @@ type EventMove struct {
 }
 
 type EventAttack struct {
-	AttackerID string `json:"attackerId"`
-	TargetID   string `json:"targetId"`
-	SkillID    string `json:"skillId"`
-	Damage     int    `json:"damage"`
-	IsCritical bool   `json:"isCritical"`
-	IsParried  bool   `json:"isParried"`
+	AttackerID string  `json:"attackerId"`
+	TargetID   string  `json:"targetId"`
+	SkillID    string  `json:"skillId"`
+	Damage     int     `json:"damage"`
+	IsCritical bool    `json:"isCritical"`
+	IsParried  bool    `json:"isParried"`
+	Combo      int     `json:"combo"`
+	Momentum   float64 `json:"momentum"`
 }
 
 type EventHeal struct {
