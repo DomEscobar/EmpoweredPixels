@@ -17,6 +17,7 @@ import (
 	seasonhandlers "empoweredpixels/internal/adapter/http/handlers/seasons"
 	shophandlers "empoweredpixels/internal/adapter/http/handlers/shop"
 	attunementhandlers "empoweredpixels/internal/adapter/http/handlers/attunement"
+	dailyhandlers "empoweredpixels/internal/adapter/http/handlers/daily"
 	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
 	"empoweredpixels/internal/adapter/http/middleware"
@@ -36,6 +37,7 @@ import (
 	attunementusecase "empoweredpixels/internal/usecase/attunement"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	skillsusecase "empoweredpixels/internal/usecase/skills"
+	dailyusecase "empoweredpixels/internal/usecase/daily"
 )
 
 type Dependencies struct {
@@ -52,6 +54,7 @@ type Dependencies struct {
 	SeasonService    *seasonsusecase.Service
 	ShopService         *shopusecase.Service
 	AttunementService   *attunementusecase.Service
+	DailyService        *dailyusecase.Service
 	MatchHub            *ws.MatchHub
 	MCPHandler       *mcp.MCPHandler
 	MCPAuditLogger   *mcp.AuditLogger
@@ -262,6 +265,12 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/attunements/bonuses", h.GetBonuses).Methods("GET")
 		api.HandleFunc("/attunement/{element}", h.GetAttunement).Methods("GET")
 		api.HandleFunc("/attunement/award-xp", h.AwardXP).Methods("POST")
+	}
+
+	if deps.DailyService != nil {
+		h := dailyhandlers.NewHandler(deps.DailyService)
+		api.HandleFunc("/daily-reward", h.GetStatus).Methods("GET")
+		api.HandleFunc("/daily-reward/claim", h.Claim).Methods("POST")
 	}
 
 	if deps.MatchHub != nil {

@@ -37,6 +37,19 @@
         <!-- Right Side -->
         <div class="flex items-center gap-3">
           <template v-if="auth.token">
+            <!-- Daily Reward Button -->
+            <button 
+              @click="showDailyModal = true"
+              class="pixel-box-sm px-2 py-1 flex items-center gap-1.5 transition-all relative"
+              :class="dailyStore.canClaim ? 'bg-amber-600 border-amber-400 animate-pulse' : 'bg-slate-800/80 border-slate-600 hover:border-amber-500/50'"
+              title="Daily Reward"
+            >
+              <span class="text-sm">{{ dailyStore.nextReward?.icon || '🎁' }}</span>
+              <span v-if="dailyStore.canClaim" class="text-xs font-bold text-white">CLAIM!</span>
+              <span v-else class="text-xs text-slate-400 hidden sm:inline">{{ dailyStore.currentStreak }}d</span>
+              <span v-if="dailyStore.canClaim" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
+            </button>
+
             <!-- Gold Display -->
             <router-link to="/shop" class="gold-display-nav pixel-box-sm bg-amber-900/30 border-amber-600/50 px-2 py-1 flex items-center gap-1.5 hover:bg-amber-900/50 transition-colors">
               <img :src="PIXEL_ASSETS.ICON_GOLD" alt="Gold" class="w-4 h-4 pixelated" />
@@ -108,6 +121,9 @@
         </div>
       </div>
     </Transition>
+
+    <!-- Daily Reward Modal -->
+    <DailyRewardModal :show="showDailyModal" @close="showDailyModal = false" />
   </nav>
 </template>
 
@@ -116,6 +132,8 @@ import { ref, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/features/auth/store';
 import { useShopStore } from '@/features/shop/store';
+import { useDailyStore } from '@/features/daily/store';
+import DailyRewardModal from '@/features/daily/components/DailyRewardModal.vue';
 
 const PIXEL_ASSETS = {
   BG_NAV: 'https://vibemedia.space/bg_nav_wood_1x2y3z_v1.png?prompt=dark%20wood%20plank%20texture%20seamless%20horizontal&style=pixel_game_asset&key=NOGON',
@@ -133,9 +151,11 @@ const PIXEL_ASSETS = {
 
 const auth = useAuthStore();
 const shop = useShopStore();
+const dailyStore = useDailyStore();
 const router = useRouter();
 const route = useRoute();
 const mobileMenuOpen = ref(false);
+const showDailyModal = ref(false);
 
 const navItems = [
   { name: 'Command', path: '/dashboard', icon: PIXEL_ASSETS.ICON_DASHBOARD },
@@ -147,16 +167,18 @@ const navItems = [
   { name: 'Shop', path: '/shop', icon: PIXEL_ASSETS.ICON_SHOP },
 ];
 
-// Fetch gold balance when logged in
+// Fetch gold balance and daily rewards when logged in
 onMounted(() => {
   if (auth.token) {
     shop.fetchGoldBalance();
+    dailyStore.fetchStatus();
   }
 });
 
 watch(() => auth.token, (newToken) => {
   if (newToken) {
     shop.fetchGoldBalance();
+    dailyStore.fetchStatus();
   }
 });
 

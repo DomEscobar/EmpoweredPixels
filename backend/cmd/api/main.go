@@ -25,6 +25,7 @@ import (
 	shopusecase "empoweredpixels/internal/usecase/shop"
 	attunementusecase "empoweredpixels/internal/usecase/attunement"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
+	dailyusecase "empoweredpixels/internal/usecase/daily"
 	"empoweredpixels/internal/mcp"
 )
 
@@ -122,6 +123,10 @@ func main() {
 	attunementRepo := repositories.NewAttunementRepository(database.Pool)
 	attunementService := attunementusecase.NewService(attunementRepo)
 
+	// Daily reward service initialization
+	dailyRepo := repositories.NewDailyRewardRepository(database.Pool)
+	dailyService := dailyusecase.NewService(dailyRepo, goldRepo)
+
 	mcpFilter := mcp.NewFairnessFilter(100, 1*time.Minute)
 	mcpHandler := mcp.NewMCPHandler(mcpFilter, identityService, rosterService, inventoryService, leagueService, matchService, rewardService)
 	mcpAuditLogger, _ := mcp.NewAuditLogger("")
@@ -138,6 +143,7 @@ func main() {
 			SkillService:        nil,
 			ShopService:         shopService,
 			AttunementService:   attunementService,
+			DailyService:        dailyService,
 			LeagueService:       leagueService,
 			LeagueJob:        leagueJob,
 			RewardService:    rewardService,
