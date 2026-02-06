@@ -45,6 +45,12 @@
       <!-- Event Banner -->
       <EventBanner />
 
+      <!-- Daily Reward Modal -->
+      <DailyRewardModal 
+        :show="showDailyReward" 
+        @close="showDailyReward = false" 
+      />
+
       <!-- KPI Grid -->
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         
@@ -276,12 +282,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from "vue";
+import { onMounted, computed, ref } from "vue";
 import { useRosterStore } from "@/features/roster/store";
 import { useMatchesStore } from "@/features/matches/store";
 import { useRewardsStore } from "@/features/rewards/store";
 import { useLeaguesStore } from "@/features/leagues/store";
+import { useDailyStore } from "@/features/daily/store";
 import EventBanner from "@/features/events/components/EventBanner.vue";
+import DailyRewardModal from "@/features/daily/components/DailyRewardModal.vue";
 
 const PIXEL_ASSETS = {
   BG_DUNGEON: 'https://vibemedia.space/bg_dungeon_dash_5y6t7u_v1.png?prompt=dark%20dungeon%20stone%20floor%20tile%20texture%20seamless&style=pixel_game_asset&key=NOGON',
@@ -301,6 +309,9 @@ const rosterStore = useRosterStore();
 const matchesStore = useMatchesStore();
 const rewardsStore = useRewardsStore();
 const leaguesStore = useLeaguesStore();
+const dailyStore = useDailyStore();
+
+const showDailyReward = ref(false);
 
 const topFighter = computed(() => {
   if (!rosterStore.fighters.length) return null;
@@ -320,7 +331,12 @@ const claimAllRewards = async () => {
    await rewardsStore.claimAll();
 };
 
-onMounted(() => {
+onMounted(async () => {
+  await dailyStore.fetchStatus();
+  if (dailyStore.canClaim) {
+    showDailyReward.value = true;
+  }
+
   Promise.all([
     rosterStore.fetchFighters(),
     matchesStore.fetchRecentMatches(),
