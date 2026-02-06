@@ -34,6 +34,80 @@
         Combat Attributes
       </h4>
       
+      <!-- Weapons Section -->
+      <div class="mb-6">
+        <div class="mb-2 text-xs font-medium uppercase tracking-wider text-purple-400">Primary Weapon</div>
+        <div v-if="equippedWeapon" class="rounded-xl border border-purple-500/30 bg-purple-950/30 p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-800 to-purple-900 text-2xl shadow-lg">
+                        {{ getWeaponIcon(equippedWeapon.type) }}
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-purple-400">{{ equippedWeapon.name }}</span>
+                            <span v-if="equippedWeapon.enhancement" class="rounded bg-purple-500/20 px-1.5 py-0.5 text-xs font-bold text-purple-400">
+                                +{{ equippedWeapon.enhancement }}
+                            </span>
+                        </div>
+                        <div class="text-xs text-slate-500">
+                            {{ equippedWeapon.type }} • {{ equippedWeapon.rarity }}
+                        </div>
+                    </div>
+                </div>
+                <button 
+                  @click="handleUnequipWeapon"
+                  class="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-bold text-slate-400 hover:bg-red-900/40 hover:text-red-400"
+                >
+                    Unequip
+                </button>
+            </div>
+            <div class="mt-3 grid grid-cols-3 gap-2 border-t border-purple-500/10 pt-3">
+                <div class="text-center">
+                    <div class="text-xs text-slate-500">Damage</div>
+                    <div class="text-sm font-bold text-white">{{ equippedWeapon.damage }}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-xs text-slate-500">Speed</div>
+                    <div class="text-sm font-bold text-white">{{ equippedWeapon.attackSpeed }}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-xs text-slate-500">Crit</div>
+                    <div class="text-sm font-bold text-white">{{ equippedWeapon.critChance }}%</div>
+                </div>
+            </div>
+        </div>
+        <div v-else class="space-y-4">
+            <div class="rounded-xl border-2 border-dashed border-slate-800 p-4 text-center">
+                <p class="text-sm text-slate-500">No primary weapon equipped</p>
+            </div>
+            <div v-if="availableWeapons.length" class="space-y-2">
+                 <div class="text-xs font-medium text-slate-500">Available in Armory:</div>
+                 <div class="grid grid-cols-1 gap-2">
+                    <div 
+                      v-for="weapon in availableWeapons" 
+                      :key="weapon.id"
+                      class="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900/50 p-2 pl-3"
+                    >
+                        <div class="flex items-center gap-3">
+                            <span class="text-lg">{{ getWeaponIcon(weapon.type) }}</span>
+                            <div>
+                                <span class="text-sm font-bold text-white">{{ weapon.name }}</span>
+                                <span class="ml-2 text-[10px] uppercase text-slate-500">{{ weapon.rarity }}</span>
+                            </div>
+                        </div>
+                        <button 
+                          @click="handleEquipWeapon(weapon.id)"
+                          class="rounded bg-indigo-600 px-3 py-1 text-xs font-bold text-white hover:bg-indigo-500"
+                        >
+                            Equip
+                        </button>
+                    </div>
+                 </div>
+            </div>
+        </div>
+      </div>
+
       <!-- Offense Stats -->
       <div class="mb-6">
         <div class="mb-2 text-xs font-medium uppercase tracking-wider text-red-400">Offense</div>
@@ -186,8 +260,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRosterStore } from '@/features/roster/store';
+import { useWeaponsStore } from '@/features/weapons/store';
 import type { Fighter, Equipment } from '@/features/roster/api';
 
 const props = defineProps<{
@@ -196,6 +271,47 @@ const props = defineProps<{
 }>();
 
 const roster = useRosterStore();
+const weaponsStore = useWeaponsStore();
+
+onMounted(() => {
+    weaponsStore.fetchWeapons();
+});
+
+const equippedWeapon = computed(() => {
+    return weaponsStore.weapons.find(w => w.fighterId === props.fighter.id);
+});
+
+const availableWeapons = computed(() => {
+    return weaponsStore.weapons.filter(w => !w.isEquipped);
+});
+
+const handleEquipWeapon = async (weaponId: string) => {
+    try {
+        await weaponsStore.equipWeapon(weaponId, props.fighter.id);
+    } catch (e) {
+        console.error("Failed to equip weapon", e);
+    }
+}
+
+const handleUnequipWeapon = async () => {
+    if (equippedWeapon.value) {
+        try {
+            await weaponsStore.unequipWeapon(equippedWeapon.value.id);
+        } catch (e) {
+            console.error("Failed to unequip weapon", e);
+        }
+    }
+}
+
+const getWeaponIcon = (type: string) => {
+  const lower = type.toLowerCase();
+  if (lower.includes('sword')) return '⚔️';
+  if (lower.includes('axe')) return '🪓';
+  if (lower.includes('staff')) return '🪄';
+  if (lower.includes('dagger')) return '🗡️';
+  if (lower.includes('bow')) return '🏹';
+  return '⚔️';
+};
 
 const attunementTypes = [
   { id: 'Fire', name: 'Fire', icon: '🔥', bgActive: 'bg-orange-900/50', ring: 'ring-orange-500', shadow: 'shadow-orange-500/30' },
