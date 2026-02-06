@@ -203,6 +203,168 @@ Match Win → XP Gained → Level Up → New Title → Visual Change
 
 ---
 
+---
+
+### 🎁 DAILY REWARDS System (P0 - CRITICAL)
+**Psychology Driver:** Variable Reward Schedule (Skinner Box)  
+**Business Impact:** +40% D1 Retention
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  DAILY REWARD FLOW                                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Day 1: Small Pouch        (100 Gold)                          │
+│  Day 2: Common Chest       (250 Gold + Common Item)            │
+│  Day 3: Rare Cache         (500 Gold + Rare Item)              │
+│  Day 4: Energy Boost       (2x XP for 1h)                      │
+│  Day 5: Mystery Box        (Random rarity 1-4)                 │
+│  Day 6: Fabled Vault       (1000 Gold + Fabled Item)           │
+│  Day 7: LEGENDARY CRATE    (Guaranteed Legendary + 2000 Gold)  │
+│                                                                 │
+│  BREAK STREAK = RESET TO DAY 1                                  │
+│  (Loss Aversion drives daily login)                             │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**API Design:**
+```
+GET /api/daily-reward
+Response: {
+  "can_claim": true,
+  "streak": 3,
+  "day": 3,
+  "next_reward": {
+    "name": "Rare Cache",
+    "description": "500 Gold + Rare Item",
+    "icon": "📦"
+  },
+  "time_until_reset": "14:32:15"
+}
+
+POST /api/daily-reward/claim
+Response: {
+  "reward": {
+    "type": "gold",
+    "amount": 500
+  },
+  "new_streak": 4,
+  "next_reward_preview": { ... }
+}
+```
+
+**Database Schema:**
+```sql
+CREATE TABLE daily_rewards (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id),
+    streak INTEGER DEFAULT 0,
+    last_claimed DATE,
+    total_claimed INTEGER DEFAULT 0
+);
+```
+
+**Frontend Component:**
+- Modal popup on login (if can_claim)
+- Visual calendar showing 7-day track
+- Progress to next streak milestone
+- "Come back tomorrow for LEGENDARY!" teaser
+
+**Implementation Time:** 2-3 hours
+**Priority:** P0 - HIGHEST
+
+---
+
+### 🏆 LEADERBOARD System (P1 - HIGH)
+**Psychology Driver:** Social Status Competition  
+**Business Impact:** +300% Virality, +engagement
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  LEADERBOARD CATEGORIES                                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  💪 POWER RANKING                                               │
+│     - Based on: Total Fighter Power (all fighters summed)      │
+│     - Updates: Real-time                                        │
+│     - Reward: Weekly Top 10 get exclusive title/frame          │
+│                                                                 │
+│  💰 WEALTH RANKING                                              │
+│     - Based on: Total Gold + Inventory Value                    │
+│     - Updates: Daily                                            │
+│     - Reward: "Tycoon" title, shop discounts                   │
+│                                                                 │
+│  ⚔️ COMBAT RANKING (ELO)                                        │
+│     - Based on: Match wins/losses with skill-based algo        │
+│     - Updates: After each match                                 │
+│     - Reward: Rank badges (Bronze/Silver/Gold/Platinum/Diamond)│
+│                                                                 │
+│  🏅 ACHIEVEMENT RANKING                                         │
+│     - Based on: Total achievement points                        │
+│     - Updates: Real-time                                        │
+│     - Reward: "Completionist" cosmetic rewards                 │
+│                                                                 │
+│  🔥 WIN STREAK RANKING                                          │
+│     - Based on: Current consecutive wins                        │
+│     - Updates: Real-time                                        │
+│     - Reward: Streak flames on avatar                          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**API Design:**
+```
+GET /api/leaderboard/{type}?limit=10&page=1
+types: power, wealth, combat, achievements, streak
+
+Response: {
+  "type": "power",
+  "total_entries": 15420,
+  "user_rank": 145,      // Current user's position
+  "entries": [
+    {
+      "rank": 1,
+      "username": "DragonSlayer",
+      "avatar": "...",
+      "value": 45820,      // Power score
+      "trend": "up",       // up/down/same from yesterday
+      "is_user": false
+    },
+    { rank: 2, ... },
+    { rank: 3, ... },
+    { rank: 145, is_user: true, ... }  // Always include user
+  ]
+}
+
+GET /api/leaderboard/rankings/nearby?type=power
+Response: {
+  "user_rank": 145,
+  "nearby": [
+    { rank: 142, ... },
+    { rank: 143, ... },
+    { rank: 144, ... },
+    { rank: 145, is_user: true, ... },
+    { rank: 146, ... },
+    { rank: 147, ... },
+    { rank: 148, ... }
+  ]
+}
+```
+
+**Frontend Components:**
+1. **LeaderboardPage.vue** - Full page with tabs for each category
+2. **LeaderboardWidget.vue** - Mini version for dashboard (top 3)
+3. **RankBadge.vue** - Shows user's current rank with flair
+
+**Key Features:**
+- "Just 5 more power to reach rank #100!" - Proximity motivation
+- Weekly reset for competitive categories
+- "You beat 95% of players!" - Percentile framing
+- Top player spotlight on homepage
+
+**Implementation Time:** 4-6 hours
+**Priority:** P1 - HIGH
+
+---
+
 ### Leagues Flow Analysis
 **Status:** Core features complete, missing admin capabilities
 
