@@ -16,7 +16,7 @@
   {
     "id": "staked-momentum",
     "title": "Staked Momentum Mechanic",
-    "status": "in_progress",
+    "status": "done",
     "assignee": "foundry",
     "priority": "P2"
   },
