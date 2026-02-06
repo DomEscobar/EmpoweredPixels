@@ -1,0 +1,13 @@
+{
+  "todo": [],
+  "in_progress": [],
+  "done": [
+    {
+      "id": "fix-broken-backend",
+      "task": "Investigate and fix broken backend",
+      "status": "done",
+      "priority": "high",
+      "description": "Backend fixed: removed duplicate attunements implementation (attunements_postgres.go and associated folders) that was causing redeclaration errors."
+    }
+  ]
+}
