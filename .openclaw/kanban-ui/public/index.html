@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EmpoweredPixels Kanban</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a1a; color: #fff; margin: 0; padding: 20px; }
+        .board { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; }
+        .column { background: #2d2d2d; min-width: 300px; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .column h2 { text-transform: capitalize; border-bottom: 2px solid #444; padding-bottom: 5px; margin-top: 5px; color: #aaa; font-size: 1.1rem; }
+        .card { background: #3d3d3d; padding: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); border-left: 4px solid #666; }
+        .card.high { border-left-color: #ff4444; }
+        .card h3 { margin: 0 0 10px 0; font-size: 1rem; }
+        .card p { margin: 0 0 10px 0; font-size: 0.85rem; color: #bbb; line-height: 1.4; }
+        .card .meta { font-size: 0.75rem; color: #888; display: flex; justify-content: space-between; }
+        .assignee { font-weight: bold; color: #4CAF50; }
+    </style>
+</head>
+<body>
+    <h1 id="project-name">Kanban Board</h1>
+    <div class="board" id="board"></div>
+
+    <script>
+        async function loadBoard() {
+            const res = await fetch('/api/kanban');
+            const data = await res.json();
+            
+            document.getElementById('project-name').textContent = data.meta.project + ' Kanban';
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+
+            data.columns.forEach(colName => {
+                const col = document.createElement('div');
+                col.className = 'column';
+                col.innerHTML = `<h2>${colName.replace('_', ' ')}</h2>`;
+                
+                const tasks = data.tasks.filter(t => t.column === colName);
+                tasks.forEach(task => {
+                    const card = document.createElement('div');
+                    card.className = `card ${task.priority}`;
+                    card.innerHTML = `
+                        <h3>${task.title}</h3>
+                        <p>${task.description || ''}</p>
+                        <div class="meta">
+                            <span>${task.id}</span>
+                            <span class="assignee">${task.assignee || 'unassigned'}</span>
+                        </div>
+                    `;
+                    col.appendChild(card);
+                });
+                board.appendChild(col);
+            });
+        }
+        loadBoard();
+        setInterval(loadBoard, 30000);
+    </script>
+</body>
+</html>
