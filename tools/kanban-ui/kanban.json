@@ -1,0 +1,26 @@
+[
+  {
+    "id": "combo-momentum",
+    "title": "Combo-Momentum System",
+    "status": "in_progress",
+    "priority": "P0",
+    "assignee": "coder",
+    "task": "Implement battle momentum logic in the simulator and link it to UI animations."
+  },
+  {
+    "id": "skill-refactor",
+    "title": "Skill Service Refactor",
+    "status": "in_progress",
+    "priority": "P1",
+    "assignee": "foundry",
+    "task": "Resolve interface mismatch between *sql.DB and pgxpool."
+  },
+  {
+    "id": "guild-system-mvp",
+    "title": "Guild System MVP",
+    "status": "in_progress",
+    "priority": "P2",
+    "assignee": "coder",
+    "task": "Group players for social retention (Infrastructure only)."
+  }
+]
