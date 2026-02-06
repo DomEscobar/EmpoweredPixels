@@ -29,7 +29,7 @@ func (v *AllocationValidator) Validate(ctx context.Context, s *Service, fighterI
 	}
 
 	// Get fighter level
-	level, err := s.skillRepo.GetFighterLevel(ctx, fighterID)
+	level, err := s.fighterRepo.GetFighterLevel(ctx, fighterID)
 	if err != nil {
 		return ValidationResult{false, err}
 	}

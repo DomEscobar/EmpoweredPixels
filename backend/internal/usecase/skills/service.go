@@ -64,7 +64,7 @@ func (s *Service) GetFighterSkillState(ctx context.Context, fighterID string) (*
 		return nil, err
 	}
 
-	level, err := s.skillRepo.GetFighterLevel(ctx, fighterID)
+	level, err := s.fighterRepo.GetFighterLevel(ctx, fighterID)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +166,7 @@ func (s *Service) ResetSkills(ctx context.Context, fighterID string) error {
 
 // GetResetCost returns the gold cost to reset skills
 func (s *Service) GetResetCost(ctx context.Context, fighterID string) (int, error) {
-	level, err := s.skillRepo.GetFighterLevel(ctx, fighterID)
+	level, err := s.fighterRepo.GetFighterLevel(ctx, fighterID)
 	if err != nil {
 		return 0, err
 	}
