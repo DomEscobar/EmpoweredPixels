@@ -22,12 +22,26 @@
         <h2>Gold Emporium</h2>
         <p class="tab-description">Purchase gold for upgrades and items</p>
         
-        <div v-if="shopStore.loading" class="loading">
-          Loading...
+        <div v-if="shopStore.loading" class="gold-grid">
+          <div v-for="i in 4" :key="i" class="skeleton-card">
+            <Skeleton height="160px" border-radius="16px" />
+            <div class="skeleton-footer">
+              <Skeleton width="40%" height="24px" />
+              <Skeleton width="30%" height="32px" />
+            </div>
+          </div>
         </div>
         
         <div v-else-if="shopStore.error" class="error">
           {{ shopStore.error }}
+        </div>
+
+        <div v-else-if="shopStore.goldPackages.length === 0" class="empty-state-wrapper">
+          <EmptyState 
+            icon="🪙" 
+            title="No Gold Packages" 
+            message="The gold emporium is currently empty. Check back later!" 
+          />
         </div>
         
         <div v-else class="gold-grid">
@@ -45,12 +59,26 @@
         <h2>Equipment Bundles</h2>
         <p class="tab-description">Curated bundles with guaranteed rarity items</p>
         
-        <div v-if="shopStore.loading" class="loading">
-          Loading...
+        <div v-if="shopStore.loading" class="bundles-grid">
+          <div v-for="i in 3" :key="i" class="skeleton-card">
+            <Skeleton height="200px" border-radius="12px" />
+            <div class="skeleton-footer">
+              <Skeleton width="40%" height="24px" />
+              <Skeleton width="30%" height="32px" />
+            </div>
+          </div>
         </div>
         
         <div v-else-if="shopStore.error" class="error">
           {{ shopStore.error }}
+        </div>
+
+        <div v-else-if="shopStore.bundles.length === 0" class="empty-state-wrapper">
+          <EmptyState 
+            icon="📦" 
+            title="No Bundles Available" 
+            message="We're currently out of equipment bundles. Our blacksmith is working hard!" 
+          />
         </div>
         
         <div v-else class="bundles-grid">
@@ -68,8 +96,16 @@
         <h2>Purchase History</h2>
         <p class="tab-description">Your recent transactions</p>
         
-        <div v-if="shopStore.transactions.length === 0" class="empty">
-          No transactions yet
+        <div v-if="shopStore.loading" class="transactions-list">
+          <Skeleton v-for="i in 5" :key="i" height="64px" border-radius="8px" />
+        </div>
+
+        <div v-else-if="shopStore.transactions.length === 0" class="empty-state-wrapper">
+          <EmptyState 
+            icon="📜" 
+            title="No History" 
+            message="You haven't made any purchases yet." 
+          />
         </div>
         
         <div v-else class="transactions-list">
@@ -96,22 +132,28 @@
       @close="closeModal"
       @success="onPurchaseSuccess"
     />
+
+    <ToastManager ref="toastManager" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useShopStore } from '../features/shop/store'
 import GoldDisplay from '../features/shop/components/GoldDisplay.vue'
 import GoldPackageCard from '../features/shop/components/GoldPackageCard.vue'
 import BundleCard from '../features/shop/components/BundleCard.vue'
 import PurchaseModal from '../features/shop/components/PurchaseModal.vue'
+import Skeleton from '../shared/ui/Skeleton.vue'
+import ToastManager from '../shared/ui/ToastManager.vue'
+import EmptyState from '../shared/ui/EmptyState.vue'
 import type { ShopItem, PurchaseResponse } from '../features/shop/types'
 
 const shopStore = useShopStore()
 const activeTab = ref('gold')
 const isModalOpen = ref(false)
 const selectedItem = ref<ShopItem | null>(null)
+const toastManager = ref<any>(null)
 
 const tabs = [
   { id: 'gold', label: 'Gold' },
@@ -123,13 +165,18 @@ onMounted(() => {
   loadTabData()
 })
 
+// Watch tab changes to reload data
+watch(activeTab, () => {
+  loadTabData()
+})
+
 function loadTabData() {
   shopStore.fetchGoldBalance()
   
   if (activeTab.value === 'gold') {
-    shopStore.fetchGoldPackages()
+    if (shopStore.goldPackages.length === 0) shopStore.fetchGoldPackages()
   } else if (activeTab.value === 'bundles') {
-    shopStore.fetchBundles()
+    if (shopStore.bundles.length === 0) shopStore.fetchBundles()
   } else if (activeTab.value === 'history') {
     shopStore.fetchTransactions()
   }
@@ -141,6 +188,12 @@ function openPurchaseModal(itemId: number) {
     .find(i => i.id === itemId)
   
   if (item) {
+    // Client-side check for gold
+    if (item.price_currency === 'gold' && shopStore.hasInsufficientGold(item)) {
+      toastManager.value?.addToast(`Insufficient Gold to purchase ${item.name}`, 'error')
+      return
+    }
+
     selectedItem.value = item
     isModalOpen.value = true
   }
@@ -152,7 +205,7 @@ function closeModal() {
 }
 
 function onPurchaseSuccess(result: PurchaseResponse) {
-  // Could show toast notification here
+  toastManager.value?.addToast(result.message || 'Purchase successful!', 'success')
   console.log('Purchase successful:', result)
 }
 
@@ -237,6 +290,22 @@ function formatDate(dateStr: string): string {
   text-align: center;
   padding: 3rem;
   color: #9ca3af;
+}
+
+.empty-state-wrapper {
+  margin: 2rem 0;
+}
+
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeleton-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .error {

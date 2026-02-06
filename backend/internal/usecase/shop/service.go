@@ -197,6 +197,9 @@ func (s *Service) PurchaseItem(ctx context.Context, userID int, itemID int) (*sh
 				// Determine rarity for this drop
 				rarity := s.rollRarity(guaranteedRarity)
 
+				// Logging for debugging
+				fmt.Printf("Rolling for rarity: guaranteed=%v, rolled=%v\n", guaranteedRarity, rarity)
+
 				// Pick a random weapon of that rarity
 				weaponPool := weapons.GetWeaponsByRarity(rarity)
 				if len(weaponPool) == 0 {

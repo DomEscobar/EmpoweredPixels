@@ -16,6 +16,11 @@ type SimulatedPaymentProvider struct {
 	ShouldFail bool
 }
 
+// NewSimulatedPaymentProvider creates a new simulated payment provider
+func NewSimulatedPaymentProvider() *SimulatedPaymentProvider {
+	return &SimulatedPaymentProvider{}
+}
+
 // ProcessPayment implements the PaymentProvider interface
 func (p *SimulatedPaymentProvider) ProcessPayment(ctx context.Context, userID int, amount int, currency string) (string, error) {
 	if p.ShouldFail {
