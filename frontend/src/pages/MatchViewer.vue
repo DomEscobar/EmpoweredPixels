@@ -71,36 +71,11 @@
           <!-- Victory / End Overlay -->
           <transition name="fade">
             <div v-if="matchStatus === 'completed' && orderedRounds.length && selectedRound === orderedRounds[orderedRounds.length-1]" 
-                class="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-              <div class="max-w-md w-full text-center border-4 border-amber-500 bg-slate-900 p-6 shadow-2xl pixel-box animate-in zoom-in duration-300">
-                <img v-if="isWinner" :src="PIXEL_ASSETS.ICON_TROPHY" class="w-16 h-16 mx-auto mb-2 pixelated animate-bounce-slow" />
-                <img v-else :src="PIXEL_ASSETS.ICON_SKULL" class="w-16 h-16 mx-auto mb-2 pixelated opacity-50" />
-                
-                <h2 v-if="isWinner" class="text-3xl font-black text-amber-500 tracking-widest uppercase text-shadow-retro">VICTORY</h2>
-                <h2 v-else class="text-3xl font-black text-rose-500 tracking-widest uppercase text-shadow-retro">DEFEAT</h2>
-                
-                <!-- Rewards Preview Section -->
-                <div class="mt-4 p-4 bg-slate-950/50 border-2 border-slate-800">
-                  <h3 class="text-xs font-bold text-slate-500 uppercase mb-3 text-shadow-retro">Rewards available to claim</h3>
-                  
-                  <div v-if="rewardsStore.rewardCount > 0" class="flex flex-col gap-2">
-                    <div class="flex items-center justify-between text-sm">
-                      <span class="text-slate-400">Match Bonus:</span>
-                      <span class="text-amber-400 font-bold">+ {{ rewardsStore.rewardCount * 20 }} Particles</span>
-                    </div>
-                    <button 
-                      class="rpg-btn-small mt-2 w-full !bg-amber-600 !text-slate-900 border-amber-800 hover:!bg-amber-500 font-bold"
-                      @click="claimAndExit"
-                      :disabled="rewardsStore.isLoading"
-                    >
-                      {{ rewardsStore.isLoading ? 'CLAIMING...' : 'CLAIM & EXIT' }}
-                    </button>
-                  </div>
-                  <div v-else class="py-4">
-                    <p class="text-slate-500 text-xs italic">All rewards claimed or none earned.</p>
-                    <button class="rpg-btn-small mt-3 w-full font-bold" @click="$router.push('/matches')">EXIT TO MAP</button>
-                  </div>
-                </div>
+                class="absolute inset-0 pointer-events-none flex items-center justify-center bg-black/70 backdrop-blur-[2px]">
+              <div class="text-center transform scale-100 animate-in zoom-in duration-500 border-4 border-amber-500 bg-slate-900 p-8 pixel-box">
+                <img :src="PIXEL_ASSETS.ICON_TROPHY" class="w-16 h-16 mx-auto mb-4 pixelated animate-bounce-slow" />
+                <h2 class="text-4xl font-black text-amber-500 tracking-widest uppercase text-shadow-retro">VICTORY</h2>
+                <p class="text-amber-200 mt-2 font-bold text-sm tracking-wide uppercase">Quest Complete</p>
               </div>
             </div>
           </transition>
@@ -235,43 +210,6 @@
                           ✨ {{ formatFighterId(payloadValue(tick.payload, 'fighterId')) }} APPEARED
                        </div>
                     </template>
-                    <template v-else-if="tick.type === 'momentum'">
-                       <div class="flex items-center gap-1.5 text-[11px]">
-                          <span class="text-blue-400 font-bold">{{ formatFighterId(payloadValue(tick.payload, 'fighterId')) }}</span>
-                          <span class="text-slate-500 uppercase">MOMENTUM</span>
-                          <span class="font-mono font-bold" :class="payloadValue(tick.payload, 'momentum') > 50 ? 'text-amber-400' : 'text-blue-400'">
-                             {{ payloadValue(tick.payload, 'momentum') }}%
-                          </span>
-                          <span v-if="payloadValue(tick.payload, 'consecutiveHits') > 1" class="text-amber-500 font-bold">
-                             [{{ payloadValue(tick.payload, 'consecutiveHits') }}x]
-                          </span>
-                       </div>
-                    </template>
-                    <template v-else-if="tick.type === 'momentum_decay'">
-                       <div class="flex items-center gap-1.5 text-[10px] opacity-70">
-                          <span class="text-slate-400 font-bold">{{ formatFighterId(payloadValue(tick.payload, 'fighterId')) }}</span>
-                          <span class="text-slate-600 uppercase">DECAY</span>
-                          <span class="font-mono text-slate-500">{{ payloadValue(tick.payload, 'momentum') }}%</span>
-                       </div>
-                    </template>
-                    <template v-else-if="tick.type === 'sunder'">
-                       <div class="flex items-center gap-1.5 text-[11px]">
-                          <span class="text-rose-400 font-bold">SUNDER</span>
-                          <span class="text-slate-500">→</span>
-                          <span class="text-rose-300 font-bold">{{ formatFighterId(payloadValue(tick.payload, 'targetId')) }}</span>
-                          <span class="text-[9px] bg-rose-900/50 text-rose-400 px-1 border border-rose-700">
-                             -{{ payloadValue(tick.payload, 'armorReduced') }} ARMOR
-                          </span>
-                       </div>
-                    </template>
-                    <template v-else-if="tick.type === 'flurry'">
-                       <div class="flex items-center gap-1.5 p-1 bg-amber-950/30 border border-amber-900/50">
-                          <span class="text-amber-500">⚡</span>
-                          <span class="text-amber-400 font-bold">{{ formatFighterId(payloadValue(tick.payload, 'fighterId')) }}</span>
-                          <span class="text-amber-300 uppercase text-[10px] tracking-wider font-bold">FLURRY!</span>
-                          <span class="text-[9px] text-amber-500">+{{ payloadValue(tick.payload, 'attackSpeedBonus') }}% SPD</span>
-                       </div>
-                    </template>
                  </div>
               </div>
            </div>
@@ -290,7 +228,6 @@ import { endpoints } from '@/shared/api/endpoints';
 import { useAuthStore } from '@/features/auth/store';
 import BaseButton from '@/shared/ui/BaseButton.vue';
 import { useRosterStore } from '@/features/roster/store';
-import { useRewardsStore } from '@/features/rewards/store';
 
 // Pixel Assets Definition
 const PIXEL_ASSETS = {
@@ -307,7 +244,6 @@ const PIXEL_ASSETS = {
 
 const auth = useAuthStore();
 const roster = useRosterStore();
-const rewardsStore = useRewardsStore();
 const route = useRoute();
 const matchId = ref(route.params.id as string);
 const matchStatus = ref<string | null>(null);
@@ -391,11 +327,6 @@ type EntityState = {
   vy?: number;
   isMoving?: boolean;
   lastAngle?: number;
-  // Combo-Momentum state
-  momentum?: number;
-  consecutiveHits?: number;
-  sunderStacks?: number;
-  flurryActive?: boolean;
 };
 
 type AttackEvent = {
@@ -406,33 +337,12 @@ type AttackEvent = {
   damage?: number;
 };
 
-type MomentumEvent = {
-  fighterId: string;
-  momentum: number;
-  consecutiveHits: number;
-  targetId?: string;
-};
-
-type SunderEvent = {
-  targetId: string;
-  stacks: number;
-  armorReduced: number;
-};
-
-type FlurryEvent = {
-  fighterId: string;
-  attackSpeedBonus: number;
-};
-
 type RoundState = {
   round: number;
   entities: Record<string, EntityState>;
   events: {
     attacks: AttackEvent[];
     deaths: string[];
-    momentum: MomentumEvent[];
-    sunder: SunderEvent[];
-    flurry: FlurryEvent[];
   };
 };
 
@@ -833,7 +743,7 @@ const drawEntity = (
   x: number, y: number, 
   canvasW: number, canvasH: number,
   time: number,
-  visuals?: { hit?: boolean; attacking?: boolean; momentumEvent?: MomentumEvent; flurryActive?: boolean }
+  visuals?: { hit?: boolean; attacking?: boolean }
 ) => {
   const pos = toScreen(x, y, canvasW, canvasH);
   const zoom = camera.zoom;
@@ -889,69 +799,6 @@ const drawEntity = (
   // Fill
   ctx.fillStyle = hpPercent > 0.5 ? '#10b981' : (hpPercent > 0.25 ? '#f59e0b' : '#ef4444');
   ctx.fillRect(barX, barY, barW * hpPercent, barH);
-
-  // --- MOMENTUM BAR ---
-  const momentum = entity.momentum || 0;
-  const maxMomentum = 100;
-  const momentumPercent = momentum / maxMomentum;
-  const momBarW = 24 * zoom;
-  const momBarH = 3 * zoom;
-  const momBarX = centerX - momBarW / 2;
-  const momBarY = barY - momBarH - 3 * zoom;
-
-  // Momentum bar background
-  ctx.fillStyle = '#1e293b';
-  ctx.fillRect(momBarX, momBarY, momBarW, momBarH);
-  
-  // Momentum bar fill (gradient from blue to purple to gold)
-  let momentumColor = '#3b82f6'; // Blue
-  if (momentum > 30) momentumColor = '#8b5cf6'; // Purple
-  if (momentum > 60) momentumColor = '#f59e0b'; // Gold
-  if (momentum > 80) momentumColor = '#ef4444'; // Red
-  
-  ctx.fillStyle = momentumColor;
-  ctx.fillRect(momBarX, momBarY, momBarW * momentumPercent, momBarH);
-  
-  // Momentum border
-  ctx.strokeStyle = '#475569';
-  ctx.lineWidth = 0.5;
-  ctx.strokeRect(momBarX, momBarY, momBarW, momBarH);
-
-  // --- FLURRY INDICATOR ---
-  if (entity.flurryActive || visuals?.flurryActive) {
-    // Pulsing glow effect around character
-    const pulse = Math.sin(time / 100) * 0.3 + 0.7;
-    ctx.save();
-    ctx.globalAlpha = pulse * 0.5;
-    ctx.strokeStyle = '#f59e0b'; // Amber
-    ctx.lineWidth = 2 * zoom;
-    ctx.beginPath();
-    ctx.arc(centerX, charY - 20 * zoom, 15 * zoom, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  // --- SUNDER STACKS INDICATOR ---
-  const sunderStacks = entity.sunderStacks || 0;
-  if (sunderStacks > 0) {
-    const stackSize = 4 * zoom;
-    const startX = centerX - (sunderStacks * stackSize) / 2;
-    for (let i = 0; i < sunderStacks; i++) {
-      ctx.fillStyle = '#ef4444'; // Red
-      ctx.fillRect(startX + i * (stackSize + 1), momBarY - stackSize - 2, stackSize, stackSize);
-    }
-  }
-
-  // --- COMBO COUNTER ---
-  const combo = entity.consecutiveHits || 0;
-  if (combo > 1) {
-    ctx.save();
-    ctx.font = `bold ${Math.round(10 * zoom)}px 'Courier New', monospace`;
-    ctx.textAlign = 'center';
-    ctx.fillStyle = combo >= 5 ? '#ef4444' : (combo >= 3 ? '#f59e0b' : '#fbbf24');
-    ctx.fillText(`${combo}x`, centerX + barW / 2 + 10 * zoom, barY + barH);
-    ctx.restore();
-  }
 };
 
 const drawParticles = (ctx: CanvasRenderingContext2D, canvasW: number, canvasH: number, dt: number) => {
@@ -1256,8 +1103,6 @@ const drawScene = (time: number) => {
   // Detect Hit States
   const hitEntities = new Set<string>();
   const attackingEntities = new Set<string>();
-  const flurryEntities = new Set<string>();
-  const entityMomentumEvents: Record<string, MomentumEvent> = {};
   
   if (state.events?.attacks) {
      const IMPACT_TIME = 0.5;
@@ -1269,18 +1114,6 @@ const drawScene = (time: number) => {
         state.events.attacks.forEach(a => attackingEntities.add(a.attackerId));
      }
   }
-  
-  // Track momentum events
-  if (state.events?.momentum) {
-    state.events.momentum.forEach(m => {
-      entityMomentumEvents[m.fighterId] = m;
-    });
-  }
-  
-  // Track flurry activations
-  if (state.events?.flurry) {
-    state.events.flurry.forEach(f => flurryEntities.add(f.fighterId));
-  }
 
   const renderList = Object.values(interpolated).map(e => ({
     type: 'entity',
@@ -1289,21 +1122,14 @@ const drawScene = (time: number) => {
     x: e.x,
     y: e.y,
     hit: hitEntities.has(e.id),
-    attacking: attackingEntities.has(e.id),
-    momentumEvent: entityMomentumEvents[e.id],
-    flurryActive: flurryEntities.has(e.id)
+    attacking: attackingEntities.has(e.id)
   }));
 
   renderList.sort((a, b) => a.yDepth - b.yDepth);
 
   for (const item of renderList) {
     if (item.type === 'entity') {
-      drawEntity(ctx, item.entity, item.x, item.y, canvas.width, canvas.height, time, { 
-        hit: item.hit, 
-        attacking: item.attacking,
-        momentumEvent: item.momentumEvent,
-        flurryActive: item.flurryActive
-      });
+      drawEntity(ctx, item.entity, item.x, item.y, canvas.width, canvas.height, time, { hit: item.hit, attacking: item.attacking });
     }
   }
 
@@ -1434,25 +1260,6 @@ const togglePlayback = () => {
   }
 };
 
-const isWinner = computed(() => {
-  if (!roster.fighters.length) return false;
-  const playerIds = new Set(roster.fighters.map(f => f.id));
-  const finalState = roundStateMap.value[orderedRounds.value[orderedRounds.value.length - 1]];
-  if (!finalState) return false;
-  
-  // Check if any of our fighters are still alive in the final state
-  return Object.values(finalState.entities).some(e => playerIds.has(e.id) && e.alive);
-});
-
-const claimAndExit = async () => {
-   try {
-     await rewardsStore.claimAll();
-     window.location.href = '/matches';
-   } catch (e) {
-     console.error("Failed to claim rewards:", e);
-   }
-};
-
 // Data Fetching
 const fetchLogs = async () => {
   if (!auth.token || !matchId.value) return;
@@ -1494,14 +1301,7 @@ const refreshRoundStates = () => {
   const states: Record<number, RoundState> = {};
 
   for (const round of ticks.value) {
-    const events = { 
-      attacks: [] as AttackEvent[], 
-      deaths: [] as string[],
-      momentum: [] as MomentumEvent[],
-      sunder: [] as SunderEvent[],
-      flurry: [] as FlurryEvent[]
-    };
-    
+    const events = { attacks: [] as AttackEvent[], deaths: [] as string[] };
     for (const tick of round.ticks || []) {
       const payload = tick.payload as Record<string, any> | undefined;
       if (!payload) continue;
@@ -1516,11 +1316,7 @@ const refreshRoundStates = () => {
           maxHp: payload.hp ?? 100,
           alive: true,
           isPlayer: playerIds.has(id),
-          floatOffset: Math.random() * Math.PI * 2, // Random idle phase
-          momentum: 0,
-          consecutiveHits: 0,
-          sunderStacks: 0,
-          flurryActive: false
+          floatOffset: Math.random() * Math.PI * 2 // Random idle phase
         });
       } else if (tick.type === 'move') {
         const id = payload.fighterId as string;
@@ -1549,46 +1345,6 @@ const refreshRoundStates = () => {
           existing.hp = 0;
         }
         events.deaths.push(id);
-      } else if (tick.type === 'momentum' || tick.type === 'momentum_decay') {
-        const event: MomentumEvent = {
-          fighterId: payload.fighterId,
-          momentum: payload.momentum,
-          consecutiveHits: payload.consecutiveHits,
-          targetId: payload.targetId
-        };
-        events.momentum.push(event);
-        
-        // Update entity state
-        const entity = entityMap.get(payload.fighterId);
-        if (entity) {
-          entity.momentum = payload.momentum;
-          entity.consecutiveHits = payload.consecutiveHits;
-        }
-      } else if (tick.type === 'sunder') {
-        const event: SunderEvent = {
-          targetId: payload.targetId,
-          stacks: payload.stacks,
-          armorReduced: payload.armorReduced
-        };
-        events.sunder.push(event);
-        
-        // Update target's sunder stacks
-        const target = entityMap.get(payload.targetId);
-        if (target) {
-          target.sunderStacks = payload.stacks;
-        }
-      } else if (tick.type === 'flurry') {
-        const event: FlurryEvent = {
-          fighterId: payload.fighterId,
-          attackSpeedBonus: payload.attackSpeedBonus
-        };
-        events.flurry.push(event);
-        
-        // Activate flurry on entity
-        const entity = entityMap.get(payload.fighterId);
-        if (entity) {
-          entity.flurryActive = true;
-        }
       }
     }
     
@@ -1619,7 +1375,6 @@ function stopLivePoll() {
 
 onMounted(async () => {
   await roster.fetchFighters();
-  await rewardsStore.fetchRewards();
   loadAssets(); // Start loading sprites
   await fetchMatchStatus();
   await fetchLogs();
