@@ -19,6 +19,7 @@ import (
 	attunementhandlers "empoweredpixels/internal/adapter/http/handlers/attunement"
 	dailyhandlers "empoweredpixels/internal/adapter/http/handlers/daily"
 	leaderboardhandlers "empoweredpixels/internal/adapter/http/handlers/leaderboard"
+	eventhandlers "empoweredpixels/internal/adapter/http/handlers/events"
 	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
 	"empoweredpixels/internal/adapter/http/middleware"
@@ -40,6 +41,7 @@ import (
 	skillsusecase "empoweredpixels/internal/usecase/skills"
 	dailyusecase "empoweredpixels/internal/usecase/daily"
 	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
+	eventsusecase "empoweredpixels/internal/usecase/events"
 )
 
 type Dependencies struct {
@@ -58,6 +60,7 @@ type Dependencies struct {
 	AttunementService   *attunementusecase.Service
 	DailyService        *dailyusecase.Service
 	LeaderboardService  *leaderboardusecase.Service
+	EventService        *eventsusecase.Service
 	MatchHub            *ws.MatchHub
 	MCPHandler       *mcp.MCPHandler
 	MCPAuditLogger   *mcp.AuditLogger
@@ -276,6 +279,13 @@ func NewRouter(deps Dependencies) http.Handler {
 		h := dailyhandlers.NewHandler(deps.DailyService)
 		api.HandleFunc("/daily-reward", h.GetStatus).Methods("GET")
 		api.HandleFunc("/daily-reward/claim", h.Claim).Methods("POST")
+	}
+
+	if deps.EventService != nil {
+		h := eventhandlers.NewHandler(deps.EventService)
+		api.HandleFunc("/events/current", h.GetCurrentEvents).Methods("GET")
+		api.HandleFunc("/events/status", h.GetEventStatus).Methods("GET")
+		api.HandleFunc("/events/next", h.GetNextEvent).Methods("GET")
 	}
 
 	if deps.LeaderboardService != nil {

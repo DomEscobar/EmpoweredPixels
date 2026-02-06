@@ -23,6 +23,9 @@ Last Updated: 2026-02-06
 
 ## 🟡 IN PROGRESS / ANALYSIS
 
+- [x] **Weekend Events** (IN PROGRESS)
+  Assignee: coder @ feature/weekend-events
+
 ### 🔥 ROSTER Flow Analysis (DEEP)
 **Status:** Core system exists, CRITICAL gaps for engagement
 
