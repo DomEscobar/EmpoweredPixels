@@ -2,22 +2,29 @@
   {
     "id": "combo-momentum",
     "title": "Combo-Momentum System",
-    "status": "in_progress",
-    "priority": "P0",
-    "assignee": "coder"
+    "status": "done",
+    "assignee": "coder",
+    "priority": "P0"
   },
   {
     "id": "skill-refactor",
     "title": "Skill Service Refactor",
+    "status": "done",
+    "assignee": "foundry",
+    "priority": "P1"
+  },
+  {
+    "id": "staked-momentum",
+    "title": "Staked Momentum Mechanic",
     "status": "in_progress",
-    "priority": "P1",
-    "assignee": "foundry"
+    "assignee": "foundry",
+    "priority": "P2"
   },
   {
     "id": "guild-system-mvp",
     "title": "Guild System MVP",
-    "status": "in_progress",
-    "priority": "P2",
-    "assignee": "coder"
+    "status": "done",
+    "assignee": "coder",
+    "priority": "P2"
   }
 ]
