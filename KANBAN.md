@@ -23,6 +23,186 @@ Last Updated: 2026-02-06
 
 ## 🟡 IN PROGRESS / ANALYSIS
 
+### 🔥 ROSTER Flow Analysis (DEEP)
+**Status:** Core system exists, CRITICAL gaps for engagement
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  CURRENT ROSTER FLOW                                            │
+├─────────────────────────────────────────────────────────────────┤
+│  User Journey:                                                  │
+│  1. Create Fighter (Name only) → 2. View Stats → 3. Equip       │
+│                                                                 │
+│  Frontend (Roster.vue)          Backend                         │
+│  ─────────────────────          ────────                        │
+│  ✅ List Fighters    ───────►  ✅ GET /fighters                │
+│  ✅ Create Fighter   ───────►  ✅ POST /fighters               │
+│  ✅ Delete Fighter   ───────►  ✅ DELETE /fighters/{id}        │
+│  ✅ View Equipment   ───────►  ✅ GET /fighters/{id}/equipment │
+│  ✅ Set Attunement   ───────►  ✅ POST /fighter/config         │
+│                                                                 │
+│  ❌ Fighter Progression         ❌ No XP system                 │
+│  ❌ Level Up Animation          ❌ No visual feedback           │
+│  ❌ Stats Comparison            ❌ No side-by-side view         │
+│  ❌ Fighter Customization       ❌ Only name, no visuals        │
+│  ❌ Fighter History             ❌ No match history             │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**PSYCHOLOGICAL GAPS:**
+
+| Gap | Impact | Why It Hurts |
+|-----|--------|--------------|
+| **No Fighter Progression** | CRITICAL | Players see static numbers - no growth = no attachment |
+| **No Level Up Moments** | HIGH | Missing dopamine hit from progression |
+| **No Fighter Identity** | HIGH | Can't customize appearance = no emotional bond |
+| **No Match History** | MEDIUM | Can't see fighter's legacy = no pride |
+| **No Stats Visualization** | MEDIUM | Raw numbers are boring, charts are engaging |
+
+**MISSING MECHANICS:**
+
+1. **XP/Leveling System**
+   - Fighter gains XP from matches
+   - Visual level-up animation
+   - Stat increases on level up
+   - Current: Fighter created at level 1, stays level 1 forever
+
+2. **Fighter Customization**
+   - Appearance (colors, accessories)
+   - Titles ("Dragon Slayer", "Veteran")
+   - Background story/bio
+   - Current: Only name can be set
+
+3. **Match History & Stats**
+   - Wins/losses per fighter
+   - Favorite weapons
+   - Total damage dealt
+   - Current: No historical data tracked
+
+4. **Fighter Evolution**
+   - Prestige system (reset for bonuses)
+   - Class specialization at level 10
+   - Current: Static forever
+
+**Quick Fixes (1-2h each):**
+- Add XP column to fighters table
+- Show match count in roster
+- Add fighter "bio" field
+- Visual stat bars instead of raw numbers
+
+---
+
+### ⚔️ MATCHES Flow Analysis (DEEP)
+**Status:** Complex system, UI/UX friction points
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  CURRENT MATCH FLOW                                             │
+├─────────────────────────────────────────────────────────────────┤
+│  User Journey:                                                  │
+│  Create Match → Wait Lobby → Start → Watch Combat → Results     │
+│                                                                 │
+│  Frontend (Matches.vue)         Backend                         │
+│  ─────────────────────          ────────                        │
+│  ✅ Create Match     ───────►  ✅ POST /matches                │
+│  ✅ Join Lobby       ───────►  ✅ POST /matches/{id}/register  │
+│  ✅ Start Match      ───────►  ✅ POST /matches/{id}/start     │
+│  ✅ Spectate         ───────►  ✅ WebSocket /ws/match          │
+│  ✅ View Results     ───────►  ✅ GET /matches/{id}/results    │
+│                                                                 │
+│  ❌ Pre-Match Strategy          ❌ No team formation phase      │
+│  ❌ Real-time Chat              ❌ No lobby communication       │
+│  ❌ Match Replay                ❌ No replay storage            │
+│  ❌ Bet/Wager System            ❌ No spectator engagement      │
+│  ❌ Ranked Mode                 ❌ No skill-based matchmaking   │
+│  ❌ Tournament Brackets         ❌ Single matches only          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**PSYCHOLOGICAL FRICTION POINTS:**
+
+| Problem | Severity | Psychology Impact |
+|---------|----------|-------------------|
+| **Empty Lobbies** | CRITICAL | Waiting alone = boredom = quit |
+| **No Pre-Combat** | HIGH | No strategy = random = less investment |
+| **Passive Spectating** | HIGH | Watching ≠ Playing = disengagement |
+| **No Replay Value** | MEDIUM | Can't relive victories = lost memories |
+| **No Stakes** | MEDIUM | No risk/reward = no excitement |
+
+**MISSING MECHANICS:**
+
+1. **Quick Match / Matchmaking**
+   - Join random lobby instantly
+   - Skill-based matching
+   - Current: Must create or find lobby manually
+
+2. **Pre-Combat Strategy Phase**
+   - Position fighters on grid
+   - Set formation (aggressive/defensive)
+   - Choose opening move
+   - Current: Immediate combat start
+
+3. **Spectator Engagement**
+   - Betting on matches (virtual currency)
+   - Reactions/emotes during combat
+   - Commentator system
+   - Current: Pure passive watching
+
+4. **Match Replay & Highlights**
+   - Save interesting matches
+   - Share replays
+   - "Play of the Game" moments
+   - Current: Gone forever after match
+
+5. **Ranked & Casual Split**
+   - Ranked with ELO/MMR
+   - Casual for fun/testing
+   - Current: All matches same
+
+6. **Match History Dashboard**
+   - Recent matches list
+   - Performance trends
+   - Win rate by fighter
+   - Current: No persistence
+
+**Quick Fixes (2-4h each):**
+- Add "Quick Join" button (join random open lobby)
+- Show "Players Online" count
+- Save last 10 matches to history
+- Add "Rematch" button after combat
+
+---
+
+### 🏆 ROSTER + MATCHES INTEGRATION GAPS
+
+**The Big Picture Problem:**
+
+```
+Roster fighters feel DISCONNECTED from matches:
+
+Roster          Match            Result
+──────          ─────            ──────
+Static Stats →  Combat Happens → Rewards?
+     ↑              ↓                ↓
+  No growth    No fighter         No fighter
+  visible      progression        identity
+```
+
+**Missing Connection:**
+- Fighter doesn't visibly level up from matches
+- No "Fighter of the Match" recognition
+- No fighter-specific achievements
+- No rivalry history between fighters
+
+**SOLUTION: Fighter Career System**
+```
+Match Win → XP Gained → Level Up → New Title → Visual Change
+    ↓          ↓           ↓            ↓            ↓
+  Stats     History    Animation    "Veteran"    New Color
+```
+
+---
+
 ### Leagues Flow Analysis
 **Status:** Core features complete, missing admin capabilities
 
