@@ -6,6 +6,7 @@ import (
 	"math/rand"
 
 	"empoweredpixels/internal/domain/combat"
+	"empoweredpixels/internal/domain/inventory"
 	"empoweredpixels/internal/domain/roster"
 	"github.com/google/uuid"
 )
@@ -17,7 +18,7 @@ func NewSimulator() *Simulator {
 	return &Simulator{}
 }
 
-func (s *Simulator) Run(matchID string, fighters []roster.Fighter, options MatchOptions) (*combat.MatchResult, error) {
+func (s *Simulator) Run(matchID string, fighters []roster.Fighter, fighterEquipment map[string][]inventory.Equipment, options MatchOptions) (*combat.MatchResult, error) {
 	entities := make([]*combat.Entity, 0, len(fighters)+(func() int {
 		if options.BotCount != nil {
 			return *options.BotCount

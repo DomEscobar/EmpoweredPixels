@@ -138,6 +138,10 @@ func main() {
 	eventRepo := repositories.NewEventRepository(database.Pool)
 	eventService := eventsusecase.NewService(eventRepo)
 
+	// Guild service initialization
+	guildRepo := repositories.NewGuildRepository(database.Pool)
+	guildService := guildsusecase.NewService(guildRepo)
+
 	mcpFilter := mcp.NewFairnessFilter(100, 1*time.Minute)
 	mcpHandler := mcp.NewMCPHandler(mcpFilter, identityService, rosterService, inventoryService, leagueService, matchService, rewardService)
 	mcpAuditLogger, _ := mcp.NewAuditLogger("")
@@ -165,6 +169,7 @@ func main() {
 			MCPFilter:          mcpFilter,
 			LeaderboardService: leaderboardService,
 			EventService:       eventService,
+			GuildService:       guildService,
 		}),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
