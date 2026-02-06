@@ -31,7 +31,7 @@
     "assignee": "coder",
     "id": "guild-api-implementation",
     "priority": "P1",
-    "status": "todo",
+    "status": "in_progress",
     "title": "Guild API Implementation"
   }
 ]
