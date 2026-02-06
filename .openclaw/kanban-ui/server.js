@@ -8,8 +8,6 @@ const KANBAN_PATH = path.join(__dirname, '../kanban.json');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
-
 app.get('/', (req, res) => {
     try {
         const data = JSON.parse(fs.readFileSync(KANBAN_PATH, 'utf8'));
@@ -21,12 +19,14 @@ app.get('/', (req, res) => {
             columnTasks[col] = tasks.filter(task => task.column === col);
         });
 
-        res.render('index', { columns, columnTasks, project: data.meta.project });
+        res.render('index', { columns, columnTasks, project: data.meta.project, meta: data.meta });
     } catch (err) {
         console.error('Error reading kanban.json:', err);
         res.status(500).send('Error reading kanban data');
     }
 });
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.listen(PORT, () => {
     console.log(`Kanban UI running at http://localhost:${PORT}`);
