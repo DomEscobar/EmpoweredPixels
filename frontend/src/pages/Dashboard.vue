@@ -42,6 +42,9 @@
         </div>
       </header>
 
+      <!-- Event Banner -->
+      <EventBanner />
+
       <!-- KPI Grid -->
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         
@@ -278,6 +281,7 @@ import { useRosterStore } from "@/features/roster/store";
 import { useMatchesStore } from "@/features/matches/store";
 import { useRewardsStore } from "@/features/rewards/store";
 import { useLeaguesStore } from "@/features/leagues/store";
+import EventBanner from "@/features/events/components/EventBanner.vue";
 
 const PIXEL_ASSETS = {
   BG_DUNGEON: 'https://vibemedia.space/bg_dungeon_dash_5y6t7u_v1.png?prompt=dark%20dungeon%20stone%20floor%20tile%20texture%20seamless&style=pixel_game_asset&key=NOGON',
