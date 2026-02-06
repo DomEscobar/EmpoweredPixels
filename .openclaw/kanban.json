@@ -1,0 +1,8 @@
+{
+  "meta": {
+    "project": "EmpoweredPixels",
+    "currentSprint": 1
+  },
+  "columns": ["backlog", "todo", "in_progress", "review", "done"],
+  "tasks": []
+}
