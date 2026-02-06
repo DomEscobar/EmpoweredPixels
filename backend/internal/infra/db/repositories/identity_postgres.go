@@ -119,6 +119,30 @@ func (r *UserRepository) UpdateLastLogin(ctx context.Context, userID int64) erro
 	return err
 }
 
+func (r *UserRepository) ListAll(ctx context.Context) ([]identity.User, error) {
+	const query = `
+		select id, name, email, password, salt, is_verified, created, last_login, banned
+		from users
+		where banned = false`
+
+	rows, err := r.pool.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []identity.User
+	for rows.Next() {
+		var u identity.User
+		if err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.Password, &u.Salt, &u.IsVerified, &u.Created, &u.LastLogin, &u.Banned); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+
+	return users, rows.Err()
+}
+
 func (r *TokenRepository) FindByUserID(ctx context.Context, userID int64) (*identity.Token, error) {
 	const query = `
 		select id, user_id, value, refresh_value, issued

@@ -26,6 +26,7 @@ import (
 	attunementusecase "empoweredpixels/internal/usecase/attunement"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	dailyusecase "empoweredpixels/internal/usecase/daily"
+	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
 	"empoweredpixels/internal/mcp"
 )
 
@@ -127,6 +128,11 @@ func main() {
 	dailyRepo := repositories.NewDailyRewardRepository(database.Pool)
 	dailyService := dailyusecase.NewService(dailyRepo, goldRepo)
 
+	// Leaderboard service initialization
+	leaderboardRepo := repositories.NewLeaderboardRepository(database.Pool)
+	achievementRepo := repositories.NewAchievementRepository(database.Pool)
+	leaderboardService := leaderboardusecase.NewService(leaderboardRepo, achievementRepo, userRepo, fighterRepo, goldRepo)
+
 	mcpFilter := mcp.NewFairnessFilter(100, 1*time.Minute)
 	mcpHandler := mcp.NewMCPHandler(mcpFilter, identityService, rosterService, inventoryService, leagueService, matchService, rewardService)
 	mcpAuditLogger, _ := mcp.NewAuditLogger("")
@@ -149,9 +155,10 @@ func main() {
 			RewardService:    rewardService,
 			SeasonService:    seasonService,
 			MatchHub:         matchHub,
-			MCPHandler:       mcpHandler,
-			MCPAuditLogger:   mcpAuditLogger,
-			MCPFilter:        mcpFilter,
+			MCPHandler:         mcpHandler,
+			MCPAuditLogger:     mcpAuditLogger,
+			MCPFilter:          mcpFilter,
+			LeaderboardService: leaderboardService,
 		}),
 		ReadHeaderTimeout: 5 * time.Second,
 	}

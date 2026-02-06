@@ -18,6 +18,7 @@ import (
 	shophandlers "empoweredpixels/internal/adapter/http/handlers/shop"
 	attunementhandlers "empoweredpixels/internal/adapter/http/handlers/attunement"
 	dailyhandlers "empoweredpixels/internal/adapter/http/handlers/daily"
+	leaderboardhandlers "empoweredpixels/internal/adapter/http/handlers/leaderboard"
 	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
 	"empoweredpixels/internal/adapter/http/middleware"
@@ -38,6 +39,7 @@ import (
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	skillsusecase "empoweredpixels/internal/usecase/skills"
 	dailyusecase "empoweredpixels/internal/usecase/daily"
+	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
 )
 
 type Dependencies struct {
@@ -51,10 +53,11 @@ type Dependencies struct {
 	LeagueService    *leaguesusecase.Service
 	LeagueJob        *jobs.LeagueJob
 	RewardService    *rewardsusecase.Service
-	SeasonService    *seasonsusecase.Service
+	SeasonService       *seasonsusecase.Service
 	ShopService         *shopusecase.Service
 	AttunementService   *attunementusecase.Service
 	DailyService        *dailyusecase.Service
+	LeaderboardService  *leaderboardusecase.Service
 	MatchHub            *ws.MatchHub
 	MCPHandler       *mcp.MCPHandler
 	MCPAuditLogger   *mcp.AuditLogger
@@ -273,6 +276,15 @@ func NewRouter(deps Dependencies) http.Handler {
 		h := dailyhandlers.NewHandler(deps.DailyService)
 		api.HandleFunc("/daily-reward", h.GetStatus).Methods("GET")
 		api.HandleFunc("/daily-reward/claim", h.Claim).Methods("POST")
+	}
+
+	if deps.LeaderboardService != nil {
+		h := leaderboardhandlers.NewHandler(deps.LeaderboardService)
+		api.HandleFunc("/leaderboard/{category}", h.GetLeaderboard).Methods("GET")
+		api.HandleFunc("/leaderboard/{category}/nearby", h.GetNearbyRanks).Methods("GET")
+		api.HandleFunc("/achievements", h.GetAchievements).Methods("GET")
+		api.HandleFunc("/player/achievements", h.GetPlayerAchievements).Methods("GET")
+		api.HandleFunc("/achievement/{id}/claim", h.ClaimAchievement).Methods("POST")
 	}
 
 	if deps.MatchHub != nil {

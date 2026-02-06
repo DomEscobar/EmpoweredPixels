@@ -25,6 +25,7 @@ type PlayerGoldRepository interface {
 	AddGold(ctx context.Context, userID int, amount int) error
 	SpendGold(ctx context.Context, userID int, amount int) error
 	CreatePlayerGold(ctx context.Context, userID int) error
+	ListAllBalances(ctx context.Context) ([]shop.PlayerGold, error)
 }
 
 // TransactionRepository defines transaction operations
@@ -269,6 +270,33 @@ func (r *PlayerGoldPostgres) CreatePlayerGold(ctx context.Context, userID int) e
 	}
 
 	return nil
+}
+
+// ListAllBalances retrieves all player gold balances
+func (r *PlayerGoldPostgres) ListAllBalances(ctx context.Context) ([]shop.PlayerGold, error) {
+	query := `
+		SELECT user_id, balance, lifetime_earned, lifetime_spent, updated
+		FROM player_gold
+		WHERE balance > 0
+		ORDER BY balance DESC
+	`
+
+	rows, err := r.db.Query(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list gold balances: %w", err)
+	}
+	defer rows.Close()
+
+	var balances []shop.PlayerGold
+	for rows.Next() {
+		var g shop.PlayerGold
+		if err := rows.Scan(&g.UserID, &g.Balance, &g.LifetimeEarned, &g.LifetimeSpent, &g.Updated); err != nil {
+			return nil, err
+		}
+		balances = append(balances, g)
+	}
+
+	return balances, rows.Err()
 }
 
 // TransactionPostgres implements TransactionRepository
