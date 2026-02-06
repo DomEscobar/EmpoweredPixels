@@ -18,6 +18,174 @@
       "comments": [
         "Root cause: conflicting migration 0011_attunements.sql referenced column 'created_at' but table had 'created'. Disabled duplicate migration, rebuilt container. Backend now live at :49101"
       ]
+    },
+    {
+      "id": "TASK-002",
+      "title": "Fix route ordering: /match/online-players caught by /match/{id}",
+      "description": "The route /api/match/online-players is being matched by /api/match/{id} because Gorilla mux matches in order. Move /match/online-players BEFORE /match/{id} in router.go to fix. Currently causes 'invalid input syntax for type uuid: online-players' error.",
+      "assignee": "coder",
+      "column": "done",
+      "priority": "high",
+      "labels": ["bug", "backend", "routing"],
+      "createdAt": "2026-02-06T21:41:00Z",
+      "updatedAt": "2026-02-06T21:51:00Z",
+      "comments": ["Fixed by Coder in task/TASK-002. Verified via curl."]
+    },
+    {
+      "id": "TASK-003",
+      "title": "Shop: Duplicate shops/shop_items in database",
+      "description": "Database has duplicate entries (shops id 1-3 duplicated as 4-6). Run cleanup SQL: DELETE FROM shops WHERE id > 3; This causes potential issues with item references.",
+      "assignee": "foundry",
+      "column": "done",
+      "priority": "medium",
+      "labels": ["bug", "database", "shop"],
+      "createdAt": "2026-02-06T21:41:00Z",
+      "updatedAt": "2026-02-06T21:51:00Z",
+      "comments": ["Fixed by Foundry in task/TASK-003. Wiped and re-seeded, added UNIQUE constraints."]
+    },
+    {
+      "id": "TASK-005",
+      "title": "Shop: Bundle purchase doesn't grant equipment",
+      "description": "In service.go PurchaseItem(), bundle purchases add gold bonus but equipment delivery is TODO ('Equipment would be added to inventory here'). Implement actual equipment grant from bundle metadata.",
+      "assignee": "coder",
+      "column": "in_progress",
+      "priority": "high",
+      "labels": ["bug", "shop", "backend"],
+      "createdAt": "2026-02-06T21:41:00Z",
+      "updatedAt": "2026-02-06T22:15:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-004",
+      "title": "Shop: Add USD payment integration stub",
+      "description": "The PurchaseItem service for USD currency is a mock ('would integrate with payment provider'). Implement Stripe or placeholder payment flow for USD purchases. Currently blocks real-money purchases.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "medium",
+      "labels": ["feature", "shop", "payments"],
+      "createdAt": "2026-02-06T21:41:00Z",
+      "updatedAt": "2026-02-06T21:41:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-006",
+      "title": "Shop: Add missing shop UI components",
+      "description": "Shop page exists but may need: 1) Loading skeleton states, 2) Error retry button, 3) Success toast notifications, 4) Empty state for no items. Review UX completeness.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "low",
+      "labels": ["enhancement", "frontend", "shop"],
+      "createdAt": "2026-02-06T21:41:00Z",
+      "updatedAt": "2026-02-06T21:41:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-007",
+      "title": "Shop: gold_amount nullable but displayed unconditionally",
+      "description": "GoldPackageCard.vue displays item.gold_amount?.toLocaleString() - if gold_amount is null for bundles, this shows nothing. Verify bundles have gold_amount or handle null case in UI.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "low",
+      "labels": ["bug", "frontend", "shop"],
+      "createdAt": "2026-02-06T21:41:00Z",
+      "updatedAt": "2026-02-06T21:41:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-008",
+      "title": "[DESIGN] Elemental Overload System",
+      "description": "Concept: Introduce elemental reactions when multiple attunements interact in combat. Example: Fire + Wind = Firestorm (AoE burning). Adds a strategic layer for team composition and LLM bot coordination.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "low",
+      "labels": ["design", "concept", "combat"],
+      "createdAt": "2026-02-06T22:55:00Z",
+      "updatedAt": "2026-02-06T22:55:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-009",
+      "title": "[DESIGN] Tactical Terrain Traits",
+      "description": "Concept: Implement map attributes (cover, high ground, hazardous zones) that interact with fighter stats. High Agility lets you bipass hazards; High Vision lets you see units in cover. Forces movement strategy beyond pure DPS.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "low",
+      "labels": ["design", "concept", "combat"],
+      "createdAt": "2026-02-06T22:55:00Z",
+      "updatedAt": "2026-02-06T22:55:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-010",
+      "title": "[DESIGN] Weapon Affix System: Legendary Abilities",
+      "description": "Concept: Beyond base damage, weapons Tier 5+ (Epic) receive unique combat affixes. Examples: 'The Bleeding Edge' (Anti-heal on high momentum), 'Arcane Static' (Skill-triggered chain lightning). This expands the strategic depth for LLM bot loadouts.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "low",
+      "labels": ["design", "concept", "weapons"],
+      "createdAt": "2026-02-06T22:58:00Z",
+      "updatedAt": "2026-02-06T22:58:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-011",
+      "title": "[DESIGN] 4+1 Skill System & Smart AI Logic",
+      "description": "Concept: Expand fighter logic to include 'Reactive Decision Trees' (Threat Assessment, Self-Preservation). Implement a 4-slot standard skill loadout + 1 Ultimate slot. Ultimate is charged via combat actions. High-level strategic depth for LLM commanders.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "low",
+      "labels": ["design", "concept", "logic", "skills"],
+      "createdAt": "2026-02-06T23:05:00Z",
+      "updatedAt": "2026-02-06T23:05:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-012",
+      "title": "[DESIGN] Ethereal Forgery (Affix Crafting)",
+      "description": "Concept: Allow players to dismantle legendary weapons to extract affixes and fuse them into others. Includes 'Resonance' RNG for bonus stats. Creates a deep resource sink and endless min-maxing loop.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "low",
+      "labels": ["design", "concept", "crafting"],
+      "createdAt": "2026-02-06T23:10:00Z",
+      "updatedAt": "2026-02-06T23:10:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-013",
+      "title": "[DESIGN] Dynamic Season Arenas (Meta Rotations)",
+      "description": "Concept: Weekly rotating battlefield modifiers that buff/nerf specific elements or weapons. Keeps the meta fresh and forces LLM commanders to adapt their 4+1 loadouts constantly for leaderboard rewards.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "low",
+      "labels": ["design", "concept", "seasons"],
+      "createdAt": "2026-02-06T23:10:00Z",
+      "updatedAt": "2026-02-06T23:10:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-014",
+      "title": "[DESIGN] Mode: The Ascendance Pillar (Royale)",
+      "description": "Concept: Vertical Battle Royale where 'high ground' provides massive buffs. Forces tactical movement and territorial control using smart fighter AI and terrain traits.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "low",
+      "labels": ["design", "concept", "modes"],
+      "createdAt": "2026-02-06T23:15:00Z",
+      "updatedAt": "2026-02-06T23:15:00Z",
+      "comments": []
+    },
+    {
+      "id": "TASK-015",
+      "title": "[DESIGN] Mode: Ethereal Echoes (TDM)",
+      "description": "Concept: Team Deathmatch where fallen fighters leave 'Echos' that repeat their last skill periodically. Deaths become tactical static defenses or area denial points.",
+      "assignee": null,
+      "column": "backlog",
+      "priority": "low",
+      "labels": ["design", "concept", "modes"],
+      "createdAt": "2026-02-06T23:15:00Z",
+      "updatedAt": "2026-02-06T23:15:00Z",
+      "comments": []
     }
   ]
 }
