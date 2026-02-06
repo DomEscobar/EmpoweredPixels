@@ -56,6 +56,11 @@ const routes: RouteRecordRaw[] = [
     name: "attunement",
     component: () => import("../../pages/Attunement.vue"),
   },
+  {
+    path: "/leaderboard",
+    name: "leaderboard",
+    component: () => import("../../pages/Leaderboard.vue"),
+  },
 ];
 
 export const router = createRouter({
