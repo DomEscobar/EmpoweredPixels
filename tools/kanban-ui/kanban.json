@@ -1,23 +1,23 @@
 [
-  {
-    "id": "combo-momentum",
-    "title": "Combo-Momentum System",
-    "status": "in_progress",
-    "priority": "P0",
-    "assignee": "coder"
-  },
-  {
-    "id": "skill-refactor",
-    "title": "Skill Service Refactor",
-    "status": "in_progress",
-    "priority": "P1",
-    "assignee": "foundry"
-  },
-  {
-    "id": "guild-system-mvp",
-    "title": "Guild System MVP",
-    "status": "in_progress",
-    "priority": "P2",
-    "assignee": "coder"
-  }
+    {
+        "assignee": "coder",
+        "id": "combo-momentum",
+        "priority": "P0",
+        "status": "in_progress",
+        "title": "Combo-Momentum System"
+    },
+    {
+        "assignee": "foundry",
+        "id": "skill-refactor",
+        "priority": "P1",
+        "status": "done",
+        "title": "Skill Service Refactor"
+    },
+    {
+        "assignee": "coder",
+        "id": "guild-system-mvp",
+        "priority": "P2",
+        "status": "in_progress",
+        "title": "Guild System MVP"
+    }
 ]
