@@ -16,6 +16,7 @@ type Service struct {
 	goldRepo        repositories.PlayerGoldRepository
 	transactionRepo repositories.TransactionRepository
 	weaponService   WeaponService
+	paymentProvider PaymentProvider
 }
 
 // WeaponService defines the required interface for weapon delivery
@@ -29,12 +30,14 @@ func NewService(
 	goldRepo repositories.PlayerGoldRepository,
 	transactionRepo repositories.TransactionRepository,
 	weaponService WeaponService,
+	paymentProvider PaymentProvider,
 ) *Service {
 	return &Service{
 		shopRepo:        shopRepo,
 		goldRepo:        goldRepo,
 		transactionRepo: transactionRepo,
 		weaponService:   weaponService,
+		paymentProvider: paymentProvider,
 	}
 }
 
@@ -129,9 +132,20 @@ func (s *Service) PurchaseItem(ctx context.Context, userID int, itemID int) (*sh
 		tx.GoldChange = -item.PriceAmount
 
 	case shop.CurrencyUSD:
-		// For USD purchases (mock for now - would integrate with payment provider)
-		// In production, this would create a payment intent and wait for webhook
+		// Process payment through the provider
+		providerTxID, err := s.paymentProvider.ProcessPayment(ctx, userID, item.PriceAmount, item.PriceCurrency)
+		if err != nil {
+			return &shop.PurchaseResponse{
+				Success: false,
+				Message: fmt.Sprintf("Payment failed: %v", err),
+			}, nil
+		}
+
 		tx.GoldChange = 0 // USD purchases don't change gold directly
+		if tx.Metadata == nil {
+			tx.Metadata = make(map[string]interface{})
+		}
+		tx.Metadata["provider_transaction_id"] = providerTxID
 
 	default:
 		return &shop.PurchaseResponse{

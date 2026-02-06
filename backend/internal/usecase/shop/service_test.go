@@ -105,13 +105,23 @@ func (m *mockTxRepo) UpdateTransactionStatus(ctx context.Context, id int, status
 	return args.Error(0)
 }
 
+type mockPaymentProvider struct {
+	mock.Mock
+}
+
+func (m *mockPaymentProvider) ProcessPayment(ctx context.Context, userID int, amount int, currency string) (string, error) {
+	args := m.Called(ctx, userID, amount, currency)
+	return args.String(0), args.Error(1)
+}
+
 func TestService_GetGoldPackages(t *testing.T) {
 	shopRepo := new(mockShopRepo)
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
 	weaponService := new(mockWeaponService)
+	paymentProvider := new(mockPaymentProvider)
 
-	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService, paymentProvider)
 
 	expected := []shop.ShopItem{
 		{ID: 1, Name: "Small Pouch", ItemType: "gold_package", PriceAmount: 99},
@@ -134,8 +144,9 @@ func TestService_PurchaseItem_Success(t *testing.T) {
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
 	weaponService := new(mockWeaponService)
+	paymentProvider := new(mockPaymentProvider)
 
-	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService, paymentProvider)
 
 	itemID := 1
 	userID := 123
@@ -171,8 +182,9 @@ func TestService_PurchaseItem_InsufficientGold(t *testing.T) {
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
 	weaponService := new(mockWeaponService)
+	paymentProvider := new(mockPaymentProvider)
 
-	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService, paymentProvider)
 
 	itemID := 1
 	userID := 123
@@ -202,8 +214,9 @@ func TestService_PurchaseItem_ItemNotFound(t *testing.T) {
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
 	weaponService := new(mockWeaponService)
+	paymentProvider := new(mockPaymentProvider)
 
-	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService, paymentProvider)
 
 	shopRepo.On("GetShopItemByID", mock.Anything, 999).Return(nil, nil)
 
@@ -219,8 +232,9 @@ func TestService_PurchaseItem_InactiveItem(t *testing.T) {
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
 	weaponService := new(mockWeaponService)
+	paymentProvider := new(mockPaymentProvider)
 
-	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService, paymentProvider)
 
 	item := &shop.ShopItem{
 		ID:       1,
@@ -242,8 +256,9 @@ func TestService_GetPlayerGold(t *testing.T) {
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
 	weaponService := new(mockWeaponService)
+	paymentProvider := new(mockPaymentProvider)
 
-	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService, paymentProvider)
 
 	expected := &shop.PlayerGold{
 		UserID:  123,
@@ -264,8 +279,9 @@ func TestService_GetTransactions(t *testing.T) {
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
 	weaponService := new(mockWeaponService)
+	paymentProvider := new(mockPaymentProvider)
 
-	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService, paymentProvider)
 
 	expected := []shop.Transaction{
 		{ID: 1, ItemName: "Item 1"},
@@ -286,8 +302,9 @@ func TestService_PurchaseItem_BundleEquipment(t *testing.T) {
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
 	weaponService := new(mockWeaponService)
+	paymentProvider := new(mockPaymentProvider)
 
-	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService, paymentProvider)
 
 	itemID := 1
 	userID := 123
@@ -325,3 +342,78 @@ func TestService_PurchaseItem_BundleEquipment(t *testing.T) {
 	assert.Len(t, result.ItemsReceived, 2)
 	weaponService.AssertExpectations(t)
 }
+
+func TestService_PurchaseItem_USD_Success(t *testing.T) {
+	shopRepo := new(mockShopRepo)
+	goldRepo := new(mockGoldRepo)
+	txRepo := new(mockTxRepo)
+	weaponService := new(mockWeaponService)
+	paymentProvider := new(mockPaymentProvider)
+
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService, paymentProvider)
+
+	itemID := 1
+	userID := 123
+	price := 999
+	goldAmount := 1000
+
+	item := &shop.ShopItem{
+		ID:            itemID,
+		Name:          "USD Gold Package",
+		ItemType:      shop.ItemTypeGoldPackage,
+		PriceAmount:   price,
+		PriceCurrency: shop.CurrencyUSD,
+		GoldAmount:    &goldAmount,
+		IsActive:      true,
+	}
+
+	shopRepo.On("GetShopItemByID", mock.Anything, itemID).Return(item, nil)
+	paymentProvider.On("ProcessPayment", mock.Anything, userID, price, shop.CurrencyUSD).Return("test_provider_id", nil)
+	txRepo.On("CreateTransaction", mock.Anything, mock.MatchedBy(func(tx *shop.Transaction) bool {
+		return tx.Metadata["provider_transaction_id"] == "test_provider_id" && tx.Status == "pending"
+	})).Return(1, nil)
+	goldRepo.On("AddGold", mock.Anything, userID, goldAmount).Return(nil)
+	txRepo.On("UpdateTransactionStatus", mock.Anything, 1, "completed").Return(nil)
+	goldRepo.On("GetPlayerGold", mock.Anything, userID).Return(&shop.PlayerGold{Balance: 1000}, nil)
+
+	result, err := service.PurchaseItem(context.Background(), userID, itemID)
+
+	assert.NoError(t, err)
+	assert.True(t, result.Success)
+	assert.Contains(t, result.ItemsReceived, "1000 Gold")
+	paymentProvider.AssertExpectations(t)
+}
+
+func TestService_PurchaseItem_USD_PaymentFailure(t *testing.T) {
+	shopRepo := new(mockShopRepo)
+	goldRepo := new(mockGoldRepo)
+	txRepo := new(mockTxRepo)
+	weaponService := new(mockWeaponService)
+	paymentProvider := new(mockPaymentProvider)
+
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService, paymentProvider)
+
+	itemID := 1
+	userID := 123
+	price := 999
+
+	item := &shop.ShopItem{
+		ID:            itemID,
+		Name:          "Premium Package",
+		ItemType:      shop.ItemTypeGoldPackage,
+		PriceAmount:   price,
+		PriceCurrency: shop.CurrencyUSD,
+		IsActive:      true,
+	}
+
+	shopRepo.On("GetShopItemByID", mock.Anything, itemID).Return(item, nil)
+	paymentProvider.On("ProcessPayment", mock.Anything, userID, price, shop.CurrencyUSD).Return("", assert.AnError)
+
+	result, err := service.PurchaseItem(context.Background(), userID, itemID)
+
+	assert.NoError(t, err)
+	assert.False(t, result.Success)
+	assert.Contains(t, result.Message, "Payment failed")
+	paymentProvider.AssertExpectations(t)
+}
+
