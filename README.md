@@ -1,69 +1,56 @@
-# Empowered Pixels
+# Empowered Pixels - Current State
 
-A monorepo containing the Go backend and Vue frontend for Empowered Pixels.
+Empowered Pixels is a game project featuring a Go backend and a Vue 3 frontend. It uses a clean architecture approach for both components.
 
-## Project Structure
+## 🏗️ Architecture Overview
 
-- **`backend/`**: Go API following Clean Architecture conventions.
-  - Entry point: `cmd/api/main.go`
-  - Runs on port `:54321` by default.
-- **`frontend/`**: Vue 3 + TypeScript + Tailwind CSS application.
-  - Runs on port `:5173` (Vite default).
-- **`EP_OLD/`**: Legacy codebase (reference).
+### Backend (Go)
+- **Architecture**: Clean Architecture (Domain, Usecase, Adapter, Infra).
+- **Core Features**:
+    - **Identity/Auth**: Registration, login, and password management.
+    - **Roster/Fighters**: Fighter management, stats, and XP.
+    - **Combat/Matches**: Match history, simulator, and real-time (WS) hub.
+    - **Progression**: Seasons, leagues, leaderboard, and rewards (daily/weekend).
+    - **Economy**: Shop with gold packages, bundles, and purchase flows.
+    - **Inventory**: Weapon and equipment management.
+    - **Customization**: Attunements and skills.
+- **Tech Stack**:
+    - Go (Golang)
+    - PostgreSQL (DB)
+    - WebSocket (Match notifications)
 
-## Getting Started
+### Frontend (Vue 3)
+- **Tech Stack**: Vue 3, Pinia, TypeScript, Tailwind CSS, Vite.
+- **Pages/Views**:
+    - `Register.vue` / `Login.vue`: User onboarding.
+    - `Dashboard.vue` / `Home.vue`: Main overview.
+    - `Roster.vue`: Fighter management.
+    - `Inventory.vue`: Equipment and weapons.
+    - `Matches.vue` / `MatchViewer.vue`: Matchmaking and battle replay.
+    - `Leagues.vue` / `Leaderboard.vue`: Competitive view.
+    - `Shop.vue`: Economy and purchases.
+    - `Attunement.vue`: Fighter customization.
+- **UI & Shared**:
+    - Voxel-based fighter generation (`voxelGenerator.ts`).
+    - Clean separation between features (api, store, components) and pages.
 
-### Prerequisites
+## 📁 Repository Structure
 
-- **Go** (1.22+)
-- **Node.js** (20+) & **npm**
-- **PostgreSQL** running locally on port `5432` with default credentials (`postgres`/`postgres`) or configured via environment variables.
+- `backend/`: Go source code, Dockerfile, migrations.
+- `frontend/`: Vue application, Vite config, E2E tests (Playwright).
+- `assets/`: Game assets (weapons, etc.).
+- `docs/`: Additional documentation.
 
-### Running the Project
+## 🛠️ Tech Stack & Dev Tools
 
-You can start both the backend and frontend services using the provided PowerShell script:
+- **Backend**: Go 1.22+, PostgreSQL.
+- **Frontend**: Node 20+, Vue 3 (Composition API), Pinia (State), Tailwind CSS (UI), Vite (Build).
+- **Automation/Dev**: `run-dev.ps1` (launcher), `docker-compose.yml`.
 
-```powershell
-.\run-dev.ps1
-```
-
-This script will:
-1. Check for required tools (Go, npm).
-2. Install frontend dependencies if missing.
-3. Launch the Backend and Frontend in separate terminal windows.
-
-### Docker (production / VPS)
-
-To run frontend, backend, and PostgreSQL together:
-
-```bash
-docker compose up -d --build
-```
-
-- Frontend: `http://<host>:49100`
-- Backend API: `http://<host>:49101`
-
-See [docs/docker-deploy.md](docs/docker-deploy.md) for ports, env vars, and options.
-
-### Manual Startup
-
-If you prefer running them manually:
-
-**Backend:**
-```bash
-cd backend
-go run ./cmd/api/main.go
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm install # first time only
-npm run dev
-```
-
-## Documentation
-
-- [Backend Readme](backend/README.md)
-- [Frontend Readme](frontend/README.md)
-- [Agent Conventions](AGENTS.md)
+## 📈 Recent Progress (from file structure)
+- Implemented **Shop** system with bundles and gold packages.
+- Added **Daily Rewards** and **Weekend Events**.
+- Built **Leagues** and **Seasons** logic.
+- Implemented **Fighter XP** and **Leaderboards**.
+- Integrated **Attunement** system.
+- E2E testing with Playwright for matchmaking and battling.
