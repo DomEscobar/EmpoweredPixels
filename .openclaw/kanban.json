@@ -3,7 +3,13 @@
     "project": "EmpoweredPixels",
     "currentSprint": 1
   },
-  "columns": ["backlog", "todo", "in_progress", "review", "done"],
+  "columns": [
+    "backlog",
+    "todo",
+    "in_progress",
+    "review",
+    "done"
+  ],
   "tasks": [
     {
       "id": "TASK-001",
@@ -12,11 +18,31 @@
       "assignee": "coder",
       "column": "done",
       "priority": "high",
-      "labels": ["bug", "backend"],
+      "labels": [
+        "bug",
+        "backend"
+      ],
       "createdAt": "2026-02-06T18:03:00Z",
       "updatedAt": "2026-02-06T20:10:00Z",
       "comments": [
         "Root cause: conflicting migration 0011_attunements.sql referenced column 'created_at' but table had 'created'. Disabled duplicate migration, rebuilt container. Backend now live at :49101"
+      ]
+    },
+    {
+      "id": "TASK-002",
+      "title": "Minimal Kanban UI",
+      "description": "Create a minimal kanban-ui that reads from kanban.json and runs via pm2 on port 8666.",
+      "assignee": "foundry",
+      "column": "done",
+      "priority": "high",
+      "labels": [
+        "feature",
+        "frontend"
+      ],
+      "createdAt": "2026-02-06T20:35:00Z",
+      "updatedAt": "2026-02-06T20:50:00Z",
+      "comments": [
+        "UI is live at http://localhost:8666. Managed by pm2 (kanban-ui)."
       ]
     }
   ]
