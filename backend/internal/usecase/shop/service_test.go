@@ -5,10 +5,23 @@ import (
 	"testing"
 
 	"empoweredpixels/internal/domain/shop"
+	"empoweredpixels/internal/domain/weapons"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
+
+type mockWeaponService struct {
+	mock.Mock
+}
+
+func (m *mockWeaponService) AddWeaponToInventory(ctx context.Context, userID int64, weaponDefID string) (*weapons.UserWeapon, error) {
+	args := m.Called(ctx, userID, weaponDefID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*weapons.UserWeapon), args.Error(1)
+}
 
 // Mock repositories
 type mockShopRepo struct {
@@ -96,8 +109,9 @@ func TestService_GetGoldPackages(t *testing.T) {
 	shopRepo := new(mockShopRepo)
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
+	weaponService := new(mockWeaponService)
 
-	service := NewService(shopRepo, goldRepo, txRepo)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
 
 	expected := []shop.ShopItem{
 		{ID: 1, Name: "Small Pouch", ItemType: "gold_package", PriceAmount: 99},
@@ -119,8 +133,9 @@ func TestService_PurchaseItem_Success(t *testing.T) {
 	shopRepo := new(mockShopRepo)
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
+	weaponService := new(mockWeaponService)
 
-	service := NewService(shopRepo, goldRepo, txRepo)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
 
 	itemID := 1
 	userID := 123
@@ -155,8 +170,9 @@ func TestService_PurchaseItem_InsufficientGold(t *testing.T) {
 	shopRepo := new(mockShopRepo)
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
+	weaponService := new(mockWeaponService)
 
-	service := NewService(shopRepo, goldRepo, txRepo)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
 
 	itemID := 1
 	userID := 123
@@ -185,8 +201,9 @@ func TestService_PurchaseItem_ItemNotFound(t *testing.T) {
 	shopRepo := new(mockShopRepo)
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
+	weaponService := new(mockWeaponService)
 
-	service := NewService(shopRepo, goldRepo, txRepo)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
 
 	shopRepo.On("GetShopItemByID", mock.Anything, 999).Return(nil, nil)
 
@@ -201,8 +218,9 @@ func TestService_PurchaseItem_InactiveItem(t *testing.T) {
 	shopRepo := new(mockShopRepo)
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
+	weaponService := new(mockWeaponService)
 
-	service := NewService(shopRepo, goldRepo, txRepo)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
 
 	item := &shop.ShopItem{
 		ID:       1,
@@ -223,8 +241,9 @@ func TestService_GetPlayerGold(t *testing.T) {
 	shopRepo := new(mockShopRepo)
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
+	weaponService := new(mockWeaponService)
 
-	service := NewService(shopRepo, goldRepo, txRepo)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
 
 	expected := &shop.PlayerGold{
 		UserID:  123,
@@ -244,8 +263,9 @@ func TestService_GetTransactions(t *testing.T) {
 	shopRepo := new(mockShopRepo)
 	goldRepo := new(mockGoldRepo)
 	txRepo := new(mockTxRepo)
+	weaponService := new(mockWeaponService)
 
-	service := NewService(shopRepo, goldRepo, txRepo)
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
 
 	expected := []shop.Transaction{
 		{ID: 1, ItemName: "Item 1"},
@@ -259,4 +279,49 @@ func TestService_GetTransactions(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, transactions, 2)
 	txRepo.AssertExpectations(t)
+}
+
+func TestService_PurchaseItem_BundleEquipment(t *testing.T) {
+	shopRepo := new(mockShopRepo)
+	goldRepo := new(mockGoldRepo)
+	txRepo := new(mockTxRepo)
+	weaponService := new(mockWeaponService)
+
+	service := NewService(shopRepo, goldRepo, txRepo, weaponService)
+
+	itemID := 1
+	userID := 123
+	price := 500
+
+	item := &shop.ShopItem{
+		ID:            itemID,
+		Name:          "Starter Bundle",
+		ItemType:      shop.ItemTypeBundle,
+		PriceAmount:   price,
+		PriceCurrency: shop.CurrencyGold,
+		IsActive:      true,
+		Metadata: map[string]interface{}{
+			"equipment_count":   2.0,
+			"guaranteed_rarity": float64(weapons.Rare),
+		},
+	}
+
+	shopRepo.On("GetShopItemByID", mock.Anything, itemID).Return(item, nil)
+	goldRepo.On("GetPlayerGold", mock.Anything, userID).Return(&shop.PlayerGold{Balance: 1000}, nil).Once()
+	goldRepo.On("SpendGold", mock.Anything, userID, price).Return(nil)
+	txRepo.On("CreateTransaction", mock.Anything, mock.AnythingOfType("*shop.Transaction")).Return(1, nil)
+
+	// Expect 2 weapons to be added
+	weaponService.On("AddWeaponToInventory", mock.Anything, int64(userID), mock.AnythingOfType("string")).
+		Return(&weapons.UserWeapon{}, nil).Times(2)
+
+	txRepo.On("UpdateTransactionStatus", mock.Anything, 1, "completed").Return(nil)
+	goldRepo.On("GetPlayerGold", mock.Anything, userID).Return(&shop.PlayerGold{Balance: 500}, nil).Once()
+
+	result, err := service.PurchaseItem(context.Background(), userID, itemID)
+
+	assert.NoError(t, err)
+	assert.True(t, result.Success)
+	assert.Len(t, result.ItemsReceived, 2)
+	weaponService.AssertExpectations(t)
 }

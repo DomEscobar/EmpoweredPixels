@@ -119,7 +119,7 @@ func main() {
 	shopRepo := repositories.NewShopRepository(database.Pool)
 	goldRepo := repositories.NewPlayerGoldRepository(database.Pool)
 	txRepo := repositories.NewTransactionRepository(database.Pool)
-	shopService := shopusecase.NewService(shopRepo, goldRepo, txRepo)
+	shopService := shopusecase.NewService(shopRepo, goldRepo, txRepo, weaponService)
 
 	// Attunement service initialization
 	attunementRepo := repositories.NewAttunementRepository(database.Pool)

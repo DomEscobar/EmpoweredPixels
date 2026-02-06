@@ -3,8 +3,10 @@ package shop
 import (
 	"context"
 	"fmt"
+	"math/rand"
 
 	"empoweredpixels/internal/domain/shop"
+	"empoweredpixels/internal/domain/weapons"
 	"empoweredpixels/internal/infra/db/repositories"
 )
 
@@ -13,6 +15,12 @@ type Service struct {
 	shopRepo        repositories.ShopRepository
 	goldRepo        repositories.PlayerGoldRepository
 	transactionRepo repositories.TransactionRepository
+	weaponService   WeaponService
+}
+
+// WeaponService defines the required interface for weapon delivery
+type WeaponService interface {
+	AddWeaponToInventory(ctx context.Context, userID int64, weaponDefID string) (*weapons.UserWeapon, error)
 }
 
 // NewService creates a new shop service
@@ -20,11 +28,13 @@ func NewService(
 	shopRepo repositories.ShopRepository,
 	goldRepo repositories.PlayerGoldRepository,
 	transactionRepo repositories.TransactionRepository,
+	weaponService WeaponService,
 ) *Service {
 	return &Service{
 		shopRepo:        shopRepo,
 		goldRepo:        goldRepo,
 		transactionRepo: transactionRepo,
+		weaponService:   weaponService,
 	}
 }
 
@@ -158,8 +168,37 @@ func (s *Service) PurchaseItem(ctx context.Context, userID int, itemID int) (*sh
 		}
 
 		// Equipment would be added to inventory here
-		if metadata, ok := item.Metadata["equipment_count"]; ok {
-			itemsReceived = append(itemsReceived, fmt.Sprintf("%v Equipment Items", metadata))
+		if countVal, ok := item.Metadata["equipment_count"]; ok {
+			count, _ := countVal.(float64) // JSON numbers are float64 in Go maps
+			if count == 0 {
+				count = 1 // Default to 1 if not specified
+			}
+
+			guaranteedRarity := weapons.Common
+			if rarityVal, ok := item.Metadata["guaranteed_rarity"]; ok {
+				guaranteedRarity = weapons.Rarity(int(rarityVal.(float64)))
+			}
+
+			for i := 0; i < int(count); i++ {
+				// Determine rarity for this drop
+				rarity := s.rollRarity(guaranteedRarity)
+
+				// Pick a random weapon of that rarity
+				weaponPool := weapons.GetWeaponsByRarity(rarity)
+				if len(weaponPool) == 0 {
+					// Fallback to common if no weapons found for rarity
+					weaponPool = weapons.GetWeaponsByRarity(weapons.Common)
+				}
+
+				if len(weaponPool) > 0 {
+					weapon := weaponPool[rand.Intn(len(weaponPool))]
+					_, err := s.weaponService.AddWeaponToInventory(ctx, int64(userID), weapon.ID)
+					if err != nil {
+						return nil, fmt.Errorf("failed to grant equipment: %w", err)
+					}
+					itemsReceived = append(itemsReceived, fmt.Sprintf("%s (%s)", weapon.Name, weapon.Rarity.String()))
+				}
+			}
 		}
 
 		// Drop boosts
@@ -186,4 +225,35 @@ func (s *Service) PurchaseItem(ctx context.Context, userID int, itemID int) (*sh
 		ItemsReceived:  itemsReceived,
 		Message:        fmt.Sprintf("Successfully purchased %s", item.Name),
 	}, nil
+}
+
+// rollRarity determines the rarity for a drop, respecting a minimum guaranteed rarity
+func (s *Service) rollRarity(guaranteed weapons.Rarity) weapons.Rarity {
+	roll := rand.Float64() * 100.0
+	cumulative := 0.0
+
+	// Order of rarities to check (highest to lowest)
+	rarities := []weapons.Rarity{
+		weapons.Unique,
+		weapons.Divine,
+		weapons.Mythic,
+		weapons.Legendary,
+		weapons.Epic,
+		weapons.Rare,
+		weapons.Uncommon,
+		weapons.Common,
+		weapons.Broken,
+	}
+
+	for _, r := range rarities {
+		cumulative += r.DropRate()
+		if roll <= cumulative {
+			if r < guaranteed {
+				return guaranteed
+			}
+			return r
+		}
+	}
+
+	return guaranteed
 }
