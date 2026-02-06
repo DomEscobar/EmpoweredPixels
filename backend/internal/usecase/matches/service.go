@@ -13,6 +13,7 @@ import (
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
 	"empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
+	momentumusecase "empoweredpixels/internal/usecase/momentum"
 
 	"github.com/google/uuid"
 )
@@ -42,6 +43,7 @@ type Service struct {
 	inventory     inventoryusecase.Service
 	rewards       *rewards.Service
 	roster        *rosterusecase.Service
+	momentum      *momentumusecase.Service
 	engine        *engine.Client
 	hub           Hub
 	now           func() time.Time
@@ -57,6 +59,7 @@ func NewService(
 	inventory inventoryusecase.Service,
 	rewards *rewards.Service,
 	roster *rosterusecase.Service,
+	momentum *momentumusecase.Service,
 	engineClient *engine.Client,
 	hub Hub,
 	now func() time.Time,
@@ -75,6 +78,7 @@ func NewService(
 		inventory:     inventory,
 		rewards:       rewards,
 		roster:        roster,
+		momentum:      momentum,
 		engine:        engineClient,
 		hub:           hub,
 		now:           now,
@@ -485,10 +489,13 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 			if s.roster != nil {
 				score, ok := scoresMapping[f.ID]
 				expAmount := 10 + botBonusExp // Base EXP + difficulty bonus
+				momentumEarned := 0.1         // Base small momentum gain
 				if ok {
 					expAmount += score.Kills * 5
+					momentumEarned += float64(score.Kills) * 0.5
 					if f.ID == winnerID {
-						expAmount += 20 // Winner bonus EXP
+						expAmount += 20         // Winner bonus EXP
+						momentumEarned += 1.0     // Winner bonus momentum
 					}
 				}
 
@@ -496,6 +503,11 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 				if err == nil {
 					currentExp.Experience += expAmount
 					_ = s.roster.UpdateExperience(ctx, currentExp)
+				}
+
+				// Stake earned momentum
+				if s.momentum != nil {
+					_ = s.momentum.StakeMomentum(ctx, f.ID, momentumEarned)
 				}
 			}
 		}
