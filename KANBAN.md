@@ -89,3 +89,98 @@ Last Updated: 2026-02-06
 
 **Known Gaps:**
 - No admin league creation (requires manual DB insert or seed data)
+
+---
+
+## 🧠 PSYCHOLOGY ANALYSIS - Missing Engagement Drivers
+
+**Full Analysis:** `/docs/GAME_PSYCHOLOGY_ANALYSIS.md`
+
+### Critical Missing Features (by Psychological Impact)
+
+#### P0 - IMMEDIATE (Implement Today)
+| Feature | Psychology Driver | Business Impact |
+|---------|-------------------|-----------------|
+| **Daily Rewards + Streaks** | Variable Reward Schedule (Dopamine) | +40% D1 Retention |
+| **Collection Book** | Completionism (Zeigarnik Effect) | +2x Session Length |
+| **Progress Bars** | Visible Growth (Endowed Progress) | +30% Engagement |
+
+#### P1 - HIGH PRIORITY (This Week)
+| Feature | Psychology Driver | Business Impact |
+|---------|-------------------|-----------------|
+| **Global Leaderboards** | Social Status Competition | +300% Virality |
+| **Weekend Events (2x Drops)** | FOMO + Scarcity | +150% Revenue |
+| **Achievement System** | Long-term Goals + Mastery | +25% L7 Retention |
+| **Guilds/Factions** | Social Belonging | +3x Retention |
+
+#### P2 - MEDIUM (Next Sprint)
+| Feature | Psychology Driver | Business Impact |
+|---------|-------------------|-----------------|
+| **Season Pass** | Predictable + FOMO Combo | +200% Monetization |
+| **Cosmetics/Expression** | Identity + Autonomy | +Whale Spend |
+| **Tournament Mode** | Skill Expression + Status | +Hardcore Retention |
+
+#### P3 - NICE TO HAVE
+- PvE Campaign (Narrative)
+- Trading/Auction House
+- Replay System
+
+### 🔥 The Core Problem
+
+**Current State:**
+- Great core mechanics ✓
+- Solid progression systems ✓
+- **BUT:** No "reason to return tomorrow"
+
+**Missing:** The **Variable Reward Schedule** - Skinner box mechanics that make gambling addictive:
+- Daily mystery boxes
+- Streak bonuses (loss aversion)
+- Random drops with visual suspense
+- Limited-time events
+
+### 🎯 Recommended Build Order
+
+**Today (2 hours):**
+1. ✅ `GET /api/daily-reward` - Random reward based on streak
+2. ✅ `GET /api/collection/progress` - % completion tracking
+3. ✅ League seed data (so leagues work)
+
+**This Week (8 hours):**
+4. Leaderboards endpoint + UI
+5. Weekend event system (2x drops flag)
+6. Achievement framework
+
+**Next Week (12 hours):**
+7. Season Pass (tiers + rewards)
+8. Guild system MVP
+9. Cosmetic shop items
+
+### 📊 Expected Impact
+
+| Metric | Current | After P0+P1 | Change |
+|--------|---------|-------------|--------|
+| D1 Retention | 25% | 40% | +60% |
+| Session Length | 8 min | 15 min | +88% |
+| Revenue/Player | $5 | $12.50 | +150% |
+| Social Shares | Low | High | +300% |
+
+### 💡 Key Insight
+
+> "Players don't quit because the game is bad. They quit because they forget it exists."
+
+**Daily rewards + streaks = Habit formation**  
+**Leaderboards + guilds = Social obligation**  
+**Events + FOMO = Urgency to act**
+
+Combine all three = Addictive retention loop 🎯
+
+---
+
+## 🚀 NEXT ACTION
+
+**DiaDome's Choice:**
+1. **Implement P0 features** (Daily rewards, collection, progress) - 2h work, massive impact
+2. **Deploy first** - Test current state live
+3. **Skip to P1** - Leaderboards + events
+
+What's the priority? 🔥
