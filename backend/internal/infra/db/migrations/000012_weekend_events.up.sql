@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS weekend_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(200) NOT NULL,
+    name VARCHAR(200) NOT NULL UNIQUE,
     description TEXT NOT NULL,
     event_type VARCHAR(50) NOT NULL, -- 'double_drops', 'double_xp', 'bonus_gold'
     multiplier DECIMAL(3,2) NOT NULL DEFAULT 2.00,

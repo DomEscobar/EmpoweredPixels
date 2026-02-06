@@ -4,5 +4,20 @@
     "currentSprint": 1
   },
   "columns": ["backlog", "todo", "in_progress", "review", "done"],
-  "tasks": []
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "title": "Fix broken backend",
+      "description": "Backend is completely broken. Needs verification and testing via browser.",
+      "assignee": "coder",
+      "column": "done",
+      "priority": "high",
+      "labels": ["bug", "backend"],
+      "createdAt": "2026-02-06T18:03:00Z",
+      "updatedAt": "2026-02-06T20:10:00Z",
+      "comments": [
+        "Root cause: conflicting migration 0011_attunements.sql referenced column 'created_at' but table had 'created'. Disabled duplicate migration, rebuilt container. Backend now live at :49101"
+      ]
+    }
+  ]
 }

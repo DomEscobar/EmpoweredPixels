@@ -2,7 +2,6 @@ package shop
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"empoweredpixels/internal/domain/shop"
@@ -69,6 +68,11 @@ func (m *mockGoldRepo) CreatePlayerGold(ctx context.Context, userID int) error {
 	return args.Error(0)
 }
 
+func (m *mockGoldRepo) ListAllBalances(ctx context.Context) ([]shop.PlayerGold, error) {
+	args := m.Called(ctx)
+	return args.Get(0).([]shop.PlayerGold), args.Error(1)
+}
+
 type mockTxRepo struct {
 	mock.Mock
 }
@@ -133,11 +137,11 @@ func TestService_PurchaseItem_Success(t *testing.T) {
 	}
 
 	shopRepo.On("GetShopItemByID", mock.Anything, itemID).Return(item, nil)
-	goldRepo.On("GetPlayerGold", mock.Anything, userID).Return(&shop.PlayerGold{Balance: 500}, nil)
+	goldRepo.On("GetPlayerGold", mock.Anything, userID).Return(&shop.PlayerGold{Balance: 500}, nil).Once()
 	goldRepo.On("SpendGold", mock.Anything, userID, price).Return(nil)
 	txRepo.On("CreateTransaction", mock.Anything, mock.AnythingOfType("*shop.Transaction")).Return(1, nil)
 	txRepo.On("UpdateTransactionStatus", mock.Anything, 1, "completed").Return(nil)
-	goldRepo.On("GetPlayerGold", mock.Anything, userID).Return(&shop.PlayerGold{Balance: 400}, nil)
+	goldRepo.On("GetPlayerGold", mock.Anything, userID).Return(&shop.PlayerGold{Balance: 400}, nil).Once()
 
 	result, err := service.PurchaseItem(context.Background(), userID, itemID)
 

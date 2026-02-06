@@ -5,8 +5,8 @@
 CREATE TABLE IF NOT EXISTS match_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    match_id TEXT NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
-    fighter_id TEXT NOT NULL REFERENCES fighters(id) ON DELETE CASCADE,
+    match_id UUID NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+    fighter_id UUID NOT NULL REFERENCES fighters(id) ON DELETE CASCADE,
     result TEXT NOT NULL CHECK (result IN ('win', 'loss', 'draw')),
     damage_dealt BIGINT NOT NULL DEFAULT 0,
     damage_taken BIGINT NOT NULL DEFAULT 0,
