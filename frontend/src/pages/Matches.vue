@@ -20,15 +20,32 @@
            </div>
         </div>
         
-        <div v-if="!currentMatchId" class="flex gap-4">
-          <button 
-            @click="showCreate = true"
-            class="rpg-btn bg-emerald-700 border-emerald-900 text-white hover:bg-emerald-600 group relative px-6 py-3 font-bold uppercase tracking-wider flex items-center gap-2"
-          >
-            <span class="absolute inset-0 border-2 border-white/20 pointer-events-none"></span>
-            <img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-5 h-5 pixelated" />
-            <span>New Contract</span>
-          </button>
+        <div v-if="!currentMatchId" class="flex flex-col gap-3">
+          <!-- Online Players Counter -->
+          <div class="pixel-box-sm bg-slate-800/80 px-3 py-1.5 flex items-center gap-2 self-end">
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            <span class="text-xs text-slate-400">Online:</span>
+            <span class="text-sm font-bold text-green-400">{{ onlinePlayers }}</span>
+          </div>
+          <div class="flex gap-3">
+            <!-- Quick Join Button -->
+            <button 
+              @click="handleQuickJoin"
+              :disabled="isQuickJoining || roster.fighters.length === 0"
+              class="rpg-btn bg-blue-600 border-blue-800 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed group relative px-4 py-3 font-bold uppercase tracking-wider flex items-center gap-2"
+            >
+              <span v-if="isQuickJoining" class="animate-spin">⚡</span>
+              <span v-else>⚡ Quick Join</span>
+            </button>
+            <button 
+              @click="showCreate = true"
+              class="rpg-btn bg-emerald-700 border-emerald-900 text-white hover:bg-emerald-600 group relative px-6 py-3 font-bold uppercase tracking-wider flex items-center gap-2"
+            >
+              <span class="absolute inset-0 border-2 border-white/20 pointer-events-none"></span>
+              <img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-5 h-5 pixelated" />
+              <span>New Contract</span>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -368,6 +385,11 @@ const currentMatch = ref<any>(null);
 const myFighterIdInMatch = ref<string | null>(null);
 const isStarting = ref(false);
 
+// Quick Join & Online Players
+const isQuickJoining = ref(false);
+const onlinePlayers = ref(0);
+const onlinePlayersPoll = ref<number | null>(null);
+
 // Feedback
 const statusMessage = ref('');
 const statusTone = ref<'info' | 'success' | 'warning' | 'error'>('info');
@@ -662,7 +684,59 @@ onMounted(async () => {
   }
 
   await fetchMatches();
+  startOnlinePlayersPolling();
 });
+
+// Online Players
+async function fetchOnlinePlayers() {
+  if (!auth.token) return;
+  try {
+    const data = await request<any>(endpoints.match + '/online-players', { token: auth.token });
+    onlinePlayers.value = data?.onlinePlayers ?? 0;
+  } catch (e) {
+    console.error('Failed to fetch online players', e);
+  }
+}
+
+function startOnlinePlayersPolling() {
+  fetchOnlinePlayers();
+  onlinePlayersPoll.value = window.setInterval(fetchOnlinePlayers, 30000); // Every 30s
+}
+
+function stopOnlinePlayersPolling() {
+  if (onlinePlayersPoll.value) {
+    clearInterval(onlinePlayersPoll.value);
+    onlinePlayersPoll.value = null;
+  }
+}
+
+// Quick Join
+async function handleQuickJoin() {
+  if (!auth.token || roster.fighters.length === 0) return;
+  isQuickJoining.value = true;
+  setStatus('FINDING BATTLE...', 'info');
+
+  try {
+    const fighter = roster.fighters[0];
+    const match = await request<any>(endpoints.match + '/quick-join', {
+      method: 'POST',
+      token: auth.token,
+      body: { fighterId: fighter.id }
+    });
+
+    currentMatchId.value = match.id;
+    myFighterIdInMatch.value = fighter.id;
+    currentMatch.value = match;
+    setStatus('JOINED BATTLE! PREPARE FOR COMBAT.', 'success');
+    connectWebSocket();
+    startPolling();
+    await fetchMatches();
+  } catch (e: any) {
+    setStatus(e?.message || 'NO OPEN LOBBIES AVAILABLE.', 'warning');
+  } finally {
+    isQuickJoining.value = false;
+  }
+}
 
 onUnmounted(() => {
   stopPolling();

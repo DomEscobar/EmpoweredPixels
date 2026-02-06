@@ -175,6 +175,20 @@ func (r *MatchRepository) ListStaleLobbies(ctx context.Context, olderThanMinutes
 	return result, rows.Err()
 }
 
+func (r *MatchRepository) CountRecentActiveUsers(ctx context.Context, minutes int) (int, error) {
+	const query = `
+		select count(distinct f.user_id)
+		from match_registrations mr
+		join fighters f on f.id = mr.fighter_id
+		join matches m on m.id = mr.match_id
+		where m.created > now() - interval '1 minute' * $1
+		   or m.started > now() - interval '1 minute' * $1`
+
+	var count int
+	err := r.pool.QueryRow(ctx, query, minutes).Scan(&count)
+	return count, err
+}
+
 func (r *MatchTeamRepository) Create(ctx context.Context, team *matches.MatchTeam) error {
 	const query = `
 		insert into match_teams (id, match_id, password)

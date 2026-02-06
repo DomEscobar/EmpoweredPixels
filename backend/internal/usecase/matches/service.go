@@ -570,3 +570,71 @@ func (s *Service) CleanupStaleLobbies(ctx context.Context, olderThanMinutes int)
 
 	return cancelled, nil
 }
+
+// QuickJoin finds an open lobby for the user to join
+func (s *Service) QuickJoin(ctx context.Context, userID int64, fighterID string) (*matches.Match, error) {
+	// Get user's fighter
+	fighter, err := s.fighters.GetByUserAndID(ctx, userID, fighterID)
+	if err != nil {
+		return nil, err
+	}
+	if fighter == nil {
+		return nil, ErrInvalidFighter
+	}
+
+	// Find open lobbies (not private, not full)
+	openMatches, err := s.matches.ListByStatus(ctx, matches.MatchStatusLobby, 10, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	// Filter to find a match that isn't full and user hasn't joined
+	for _, match := range openMatches {
+		// Check if user already registered in this match
+		count, err := s.registrations.CountByMatchAndUser(ctx, match.ID, userID)
+		if err != nil || count > 0 {
+			continue
+		}
+
+		var options MatchOptions
+		_ = json.Unmarshal(match.Options, &options)
+
+		// Skip private matches
+		if options.IsPrivate {
+			continue
+		}
+
+		// Check max fighters per user limit
+		if options.MaxFightersPerUser != nil && count >= *options.MaxFightersPerUser {
+			continue
+		}
+
+		// Check power level restriction
+		if options.MaxPowerlevel != nil && fighter.Power > *options.MaxPowerlevel {
+			continue
+		}
+
+		// Found a suitable match - auto-join
+		registration := &matches.MatchRegistration{
+			MatchID:   match.ID,
+			FighterID: fighterID,
+		}
+		if err := s.registrations.Upsert(ctx, registration); err != nil {
+			continue
+		}
+
+		return &match, nil
+	}
+
+	return nil, errors.New("no open lobbies available")
+}
+
+// GetOnlinePlayersCount returns the number of players currently online
+func (s *Service) GetOnlinePlayersCount(ctx context.Context) (int, error) {
+	// This is a simple implementation - count unique users with recent match activity (last 5 minutes)
+	count, err := s.matches.CountRecentActiveUsers(ctx, 5)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}

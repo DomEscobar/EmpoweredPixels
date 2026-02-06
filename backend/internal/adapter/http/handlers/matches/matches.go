@@ -466,3 +466,42 @@ func mapMatch(match *matches.Match, registrations []matches.MatchRegistration) m
 }
 
 const timeLayout = "2006-01-02T15:04:05Z07:00"
+
+// QuickJoin handles quick joining an open lobby
+func (h *Handler) QuickJoin(w http.ResponseWriter, r *http.Request) {
+	userID, ok := middleware.UserID(r.Context())
+	if !ok {
+		responses.Error(w, http.StatusUnauthorized, "unauthorized")
+		return
+	}
+
+	var req struct {
+		FighterID string `json:"fighterId"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		responses.Error(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	match, err := h.service.QuickJoin(r.Context(), int64(userID), req.FighterID)
+	if err != nil {
+		responses.Error(w, http.StatusNotFound, err.Error())
+		return
+	}
+
+	registrations, _ := h.service.GetRegistrations(r.Context(), match.ID)
+	responses.JSON(w, http.StatusOK, mapMatch(match, registrations))
+}
+
+// GetOnlinePlayers returns the count of online players
+func (h *Handler) GetOnlinePlayers(w http.ResponseWriter, r *http.Request) {
+	count, err := h.service.GetOnlinePlayersCount(r.Context())
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, "server error")
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, map[string]any{
+		"onlinePlayers": count,
+	})
+}

@@ -15,6 +15,7 @@ type MatchRepository interface {
 	ListByStatus(ctx context.Context, status string, limit int, offset int) ([]matches.Match, error)
 	GetCurrentMatch(ctx context.Context, userID int64) (*matches.Match, error)
 	ListStaleLobbies(ctx context.Context, olderThanMinutes int) ([]matches.Match, error)
+	CountRecentActiveUsers(ctx context.Context, minutes int) (int, error)
 }
 
 type TeamRepository interface {

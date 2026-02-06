@@ -146,6 +146,8 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/match/{id}/fighterscores", func(w http.ResponseWriter, r *http.Request) {
 			h.FighterScores(w, r, mux.Vars(r)["id"])
 		}).Methods("GET")
+		api.HandleFunc("/match/quick-join", h.QuickJoin).Methods("POST")
+		api.HandleFunc("/match/online-players", h.GetOnlinePlayers).Methods("GET")
 	}
 
 	if deps.InventoryService != nil {
