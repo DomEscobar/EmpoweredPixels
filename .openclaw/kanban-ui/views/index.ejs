@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban - <%= project %></title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f5f7;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #172b4d;
+            margin-bottom: 20px;
+        }
+        .kanban-board {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            align-items: flex-start;
+        }
+        .column {
+            background-color: #ebecf0;
+            border-radius: 3px;
+            width: 300px;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            max-height: 100%;
+        }
+        .column-header {
+            padding: 10px 12px;
+            font-weight: bold;
+            color: #5e6c84;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        .task-list {
+            padding: 8px;
+            flex-grow: 1;
+            min-height: 20px;
+        }
+        .task-card {
+            background-color: #fff;
+            border-radius: 3px;
+            box-shadow: 0 1px 0 rgba(9,30,66,.25);
+            margin-bottom: 8px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .task-card:hover {
+            background-color: #f4f5f7;
+        }
+        .task-id {
+            font-size: 10px;
+            color: #5e6c84;
+            margin-bottom: 4px;
+        }
+        .task-title {
+            font-size: 14px;
+            color: #172b4d;
+            font-weight: 500;
+        }
+        .task-labels {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        .label {
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: white;
+            background-color: #61bd4f;
+        }
+        .label.high { background-color: #eb5a46; }
+        .label.feature { background-color: #0079bf; }
+        .label.bug { background-color: #eb5a46; }
+    </style>
+</head>
+<body>
+    <h1><%= project %> Kanban</h1>
+    <div class="kanban-board">
+        <% columns.forEach(col => { %>
+            <div class="column">
+                <div class="column-header"><%= col.replace('_', ' ') %></div>
+                <div class="task-list">
+                    <% columnTasks[col].forEach(task => { %>
+                        <div class="task-card">
+                            <div class="task-id"><%= task.id %></div>
+                            <div class="task-title"><%= task.title %></div>
+                            <div class="task-labels">
+                                <% task.labels.forEach(label => { %>
+                                    <span class="label <%= label %>"><%= label %></span>
+                                <% }) %>
+                                <span class="label <%= task.priority %>"><%= task.priority %></span>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</body>
+</html>
