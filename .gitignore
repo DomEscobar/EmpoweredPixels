@@ -1,1 +1,13 @@
-.openclaw/
+# Keep OpenClaw system files tracked, ignore local-only assets
+.openclaw/kanban-ui/
+.openclaw/node_modules/
+# But keep core config files tracked (do not ignore these):
+!.openclaw/kanban.json
+!.openclaw/AGENTS.md
+!.openclaw/HEARTBEAT.md
+!.openclaw/PM_PROTOCOL.md
+!.openclaw/SOUL.md
+!.openclaw/TOOLS.md
+!.openclaw/USER.md
+!.openclaw/IDENTITY.md
+!.openclaw/MEMORY.md
