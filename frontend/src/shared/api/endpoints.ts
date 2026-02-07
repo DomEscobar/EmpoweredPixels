@@ -7,10 +7,11 @@ export const endpoints = {
   match: "/api/match",
   inventory: "/api/inventory",
   equipment: "/api/equipment",
-  reward: "/api/reward",
   league: "/api/league",
+  reward: "/api/reward",
   season: "/api/season",
   shop: "/api/shop",
   playerGold: "/api/player/gold",
   playerTransactions: "/api/player/transactions",
-} as const;
+  weapons: "/api/weapons",
+};

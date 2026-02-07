@@ -131,19 +131,19 @@ const weaponStats = computed(() => [
 
 const statGroups = computed(() => ({
   'Offense': [
-    { key: 'power', label: 'Combat Power', value: props.fighter.power },
-    { key: 'precision', label: 'Precision', value: props.fighter.precision },
-    { key: 'ferocity', label: 'Ferocity', value: props.fighter.ferocity },
+    { key: 'power', label: 'Combat Power', value: props.fighter.power, suffix: '' },
+    { key: 'precision', label: 'Precision', value: props.fighter.precision, suffix: '' },
+    { key: 'ferocity', label: 'Ferocity', value: props.fighter.ferocity, suffix: '' },
   ],
   'Defense': [
-    { key: 'vitality', label: 'Vitality Pool', value: props.fighter.vitality },
-    { key: 'armor', label: 'Iron Plating', value: props.fighter.armor },
+    { key: 'vitality', label: 'Vitality Pool', value: props.fighter.vitality, suffix: '' },
+    { key: 'armor', label: 'Iron Plating', value: props.fighter.armor, suffix: '' },
     { key: 'parry', label: 'Blade Parry', value: props.fighter.parryChance, suffix: '%' },
   ],
   'Precision': [
-    { key: 'speed', label: 'Movement', value: props.fighter.speed },
-    { key: 'accuracy', label: 'Strike Rating', value: props.fighter.accuracy },
-    { key: 'vision', label: 'Battle Awareness', value: props.fighter.vision },
+    { key: 'speed', label: 'Movement', value: props.fighter.speed, suffix: '' },
+    { key: 'accuracy', label: 'Strike Rating', value: props.fighter.accuracy, suffix: '' },
+    { key: 'vision', label: 'Battle Awareness', value: props.fighter.vision, suffix: '' },
   ]
 }));
 
