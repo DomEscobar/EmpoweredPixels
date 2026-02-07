@@ -4,6 +4,8 @@
   },
   "project": "EmpoweredPixels",
   "columns": [
+    "incubator",
+    "incubator",
     "backlog",
     "todo",
     "in_progress",
@@ -440,7 +442,7 @@
       "column": "in_progress",
       "description": "Implement GET /api/league/{id}/highscores (currently stub) to return ranked fighter scores within a league. Aggregate scores from match results and include fighterName and username by joining with fighters and users tables.",
       "id": "TASK-042",
-      "updatedAt": "2026-02-07T22:15:00Z",
+      "updatedAt": "2026-02-07T19:00:00Z",
       "labels": [
         "backend",
         "leagues",
@@ -448,8 +450,7 @@
         "api"
       ],
       "priority": "high",
-      "title": "[Backend] Implement League Highscores Endpoint",
-      "updatedAt": "2026-02-07T19:00:00Z"
+      "title": "[Backend] Implement League Highscores Endpoint"
     },
     {
       "acceptanceCriteria": [
@@ -508,7 +509,7 @@
       "column": "in_progress",
       "description": "To enable reliable Playwright E2E tests, add unique data-testid attributes to key elements in Leagues.vue: page container, league cards, subscribe/unsubscribe buttons, modal sections, tabs, participant list items, matches list, leaderboard entries.",
       "id": "TASK-045",
-      "updatedAt": "2026-02-07T22:15:00Z",
+      "updatedAt": "2026-02-07T19:00:00Z",
       "labels": [
         "frontend",
         "leagues",
@@ -516,8 +517,7 @@
         "e2e"
       ],
       "priority": "high",
-      "title": "[Frontend] Add data-testid to Leagues Page Components",
-      "updatedAt": "2026-02-07T19:00:00Z"
+      "title": "[Frontend] Add data-testid to Leagues Page Components"
     },
     {
       "acceptanceCriteria": [
@@ -542,6 +542,69 @@
       "priority": "high",
       "title": "[E2E] Leagues Page Tests",
       "updatedAt": "2026-02-07T19:00:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Guild creation and management UI",
+        "Guild chat channel (real-time)",
+        "Guild vs guild matchmaking",
+        "Guild progression and perks",
+        "E2E tests for guild workflows"
+      ],
+      "assignee": "",
+      "column": "incubator",
+      "description": "Add guild system: players can form/join guilds, chat, compete in guild vs guild events, and earn shared progression.",
+      "id": "TASK-900",
+      "labels": [
+        "feature",
+        "social",
+        "multiplayer"
+      ],
+      "priority": "high",
+      "title": "[FEAT] Guild System",
+      "updatedAt": "2026-02-07T22:59:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Deck builder interface (create/save/load decks)",
+        "Card collection management (acquire, upgrade)",
+        "Deck vs deck matchmaking",
+        "Synergy bonuses and combos",
+        "E2E tests for deck building flow"
+      ],
+      "assignee": "",
+      "column": "incubator",
+      "description": "Introduce deck-building mechanics: collect cards, build decks, compete in strategic auto-battles.",
+      "id": "TASK-901",
+      "labels": [
+        "feature",
+        "gameplay",
+        "strategy"
+      ],
+      "priority": "medium",
+      "title": "[FEAT] Deck-Building Mode",
+      "updatedAt": "2026-02-07T22:59:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Social raid dungeons (co-op PvE)",
+        "Reward sharing and contribution scoring",
+        "Raid leader tools (assign roles, set difficulty)",
+        "Weekly raid leaderboards",
+        "E2E tests for raid flow and rewards"
+      ],
+      "assignee": "",
+      "column": "incubator",
+      "description": "Add cooperative raids: guilds or groups team up to tackle challenging dungeons with exclusive loot.",
+      "id": "TASK-902",
+      "labels": [
+        "feature",
+        "coop",
+        "endgame"
+      ],
+      "priority": "high",
+      "title": "[FEAT] Social Raids",
+      "updatedAt": "2026-02-07T22:59:00Z"
     }
   ]
 }
