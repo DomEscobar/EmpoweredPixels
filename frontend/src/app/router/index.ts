@@ -61,6 +61,16 @@ const routes: RouteRecordRaw[] = [
     name: "leaderboard",
     component: () => import("../../pages/Leaderboard.vue"),
   },
+  {
+    path: "/squads",
+    name: "squads",
+    component: () => import("../../pages/Squads.vue"),
+  },
+  {
+    path: "/squads/edit",
+    name: "squards-edit",
+    component: () => import("../../pages/Squads.vue"),
+  },
 ];
 
 export const router = createRouter({

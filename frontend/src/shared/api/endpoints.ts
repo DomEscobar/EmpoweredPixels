@@ -14,4 +14,8 @@ export const endpoints = {
   playerGold: "/api/player/gold",
   playerTransactions: "/api/player/transactions",
   weapons: "/api/weapons",
+  squads: {
+    active: "/api/squads/active",
+    setActive: "/api/squads/set-active",
+  },
 } as const;
