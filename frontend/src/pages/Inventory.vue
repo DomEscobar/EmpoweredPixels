@@ -96,16 +96,13 @@
       </div>
 
       <!-- Equipment Grid -->
-      <div v-else class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        <EquipmentCard 
-          v-for="item in inventoryStore.equipment" 
-          :key="item.id" 
-          :item="item"
-          @enhance="openEnhanceModal"
-          @salvage="openSalvageModal"
-          @toggle-favorite="inventoryStore.toggleFavorite(item.id, !item.isFavorite)"
-        />
-      </div>
+      <InventoryGrid 
+        :equipment="inventoryStore.equipment"
+        :isLoading="inventoryStore.isLoading"
+        @enhance="openEnhanceModal"
+        @salvage="openSalvageModal"
+        @toggle-favorite="inventoryStore.toggleFavorite($event.id, !$event.isFavorite)"
+      />
 
       <!-- Enhance Modal -->
       <Teleport to="body">
@@ -237,7 +234,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useInventoryStore } from '@/features/inventory/store';
 import { getEnhanceCost, type Equipment } from '@/features/inventory/api';
 import { useAuthStore } from '@/features/auth/store';
-import EquipmentCard from '@/features/inventory/components/EquipmentCard.vue';
+import InventoryGrid from '@/features/inventory/components/InventoryGrid.vue';
 
 const PIXEL_ASSETS = {
   BG_DUNGEON: 'https://vibemedia.space/bg_dungeon_vault_8x9y0z_v1.png?prompt=dark%20dungeon%20stone%20floor%20tile%20texture%20seamless&style=pixel_game_asset&key=NOGON',
