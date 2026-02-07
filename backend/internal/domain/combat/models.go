@@ -15,17 +15,8 @@ type Entity struct {
 	TeamID       *string
 	AttunementID *string
 	Stats        Stats
-}
-
-// ComboMomentumState tracks combo and momentum for a fighter
-type ComboMomentumState struct {
-	FighterID        string
-	Momentum         int   // Builds +10 per hit, max 100
-	ConsecutiveHits  int   // Consecutive hits on same target, max 5 for Sunder
-	CurrentTargetID  string // Last target attacked
-	SunderStacks     int   // -5% armor per stack (max 5 = -25%)
-	FlurryActive     bool  // +10% attack speed when momentum > 50
-	RoundsSinceHit   int   // For momentum decay tracking
+	Combo        int
+	Momentum     float64
 }
 
 type Stats struct {
@@ -82,30 +73,14 @@ type EventMove struct {
 }
 
 type EventAttack struct {
-	AttackerID string `json:"attackerId"`
-	TargetID   string `json:"targetId"`
-	SkillID    string `json:"skillId"`
-	Damage     int    `json:"damage"`
-	IsCritical bool   `json:"isCritical"`
-	IsParried  bool   `json:"isParried"`
-}
-
-type EventMomentum struct {
-	FighterID       string `json:"fighterId"`
-	Momentum        int    `json:"momentum"`
-	ConsecutiveHits int    `json:"consecutiveHits"`
-	TargetID        string `json:"targetId,omitempty"`
-}
-
-type EventSunder struct {
-	TargetID     string `json:"targetId"`
-	Stacks       int    `json:"stacks"`
-	ArmorReduced int    `json:"armorReduced"`
-}
-
-type EventFlurry struct {
-	FighterID       string `json:"fighterId"`
-	AttackSpeedBonus int   `json:"attackSpeedBonus"`
+	AttackerID string  `json:"attackerId"`
+	TargetID   string  `json:"targetId"`
+	SkillID    string  `json:"skillId"`
+	Damage     int     `json:"damage"`
+	IsCritical bool    `json:"isCritical"`
+	IsParried  bool    `json:"isParried"`
+	Combo      int     `json:"combo"`
+	Momentum   float64 `json:"momentum"`
 }
 
 type EventHeal struct {

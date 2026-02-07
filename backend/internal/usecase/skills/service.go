@@ -16,6 +16,7 @@ var (
 	ErrLoadoutTooLarge     = errors.New("loadout exceeds maximum active skills")
 	ErrSkillNotAllocated   = errors.New("skill not allocated")
 	ErrNotActiveSkill      = errors.New("only active skills can be in loadout")
+	ErrInvalidData         = errors.New("invalid data provided for validation")
 )
 
 type SkillRepository interface {
@@ -31,14 +32,18 @@ type FighterRepository interface {
 }
 
 type Service struct {
-	skillRepo   SkillRepository
-	fighterRepo FighterRepository
+	skillRepo           SkillRepository
+	fighterRepo         FighterRepository
+	allocationValidator Validator
+	loadoutValidator    Validator
 }
 
 func NewService(skillRepo SkillRepository, fighterRepo FighterRepository) *Service {
 	return &Service{
-		skillRepo:   skillRepo,
-		fighterRepo: fighterRepo,
+		skillRepo:           skillRepo,
+		fighterRepo:         fighterRepo,
+		allocationValidator: &AllocationValidator{},
+		loadoutValidator:    &LoadoutValidator{},
 	}
 }
 
@@ -128,39 +133,15 @@ func (s *Service) GetFighterSkillState(ctx context.Context, fighterID string) (*
 
 // AllocateSkillPoint allocates a skill point to a skill
 func (s *Service) AllocateSkillPoint(ctx context.Context, fighterID string, skillID string) error {
-	// Verify skill exists
-	_, found := skills.GetSkillByID(skillID)
-	if !found {
-		return ErrSkillNotFound
-	}
-
-	// Get fighter level
-	level, err := s.fighterRepo.GetFighterLevel(ctx, fighterID)
-	if err != nil {
-		return err
+	res := s.allocationValidator.Validate(ctx, s, fighterID, skillID)
+	if !res.IsValid {
+		return res.Error
 	}
 
 	// Get current skills
 	fighterSkills, err := s.skillRepo.GetFighterSkills(ctx, fighterID)
 	if err != nil {
 		return err
-	}
-
-	// Check if can allocate
-	if !skills.CanAllocate(fighterSkills.AllocatedPoints, skillID, level) {
-		currentRank := fighterSkills.AllocatedPoints[skillID]
-		if currentRank >= 3 {
-			return ErrSkillMaxRank
-		}
-		maxPoints := level * skills.PointsPerLevel
-		totalAllocated := 0
-		for _, p := range fighterSkills.AllocatedPoints {
-			totalAllocated += p
-		}
-		if totalAllocated >= maxPoints {
-			return ErrNoSkillPoints
-		}
-		return ErrPrerequisitesNotMet
 	}
 
 	// Add point
@@ -170,28 +151,9 @@ func (s *Service) AllocateSkillPoint(ctx context.Context, fighterID string, skil
 
 // SetLoadout sets the active skills loadout
 func (s *Service) SetLoadout(ctx context.Context, fighterID string, loadout []string) error {
-	if len(loadout) > skills.MaxActiveSkills {
-		return ErrLoadoutTooLarge
-	}
-
-	// Get current skills
-	fighterSkills, err := s.skillRepo.GetFighterSkills(ctx, fighterID)
-	if err != nil {
-		return err
-	}
-
-	// Validate loadout
-	if !skills.CanSetLoadout(loadout, fighterSkills.AllocatedPoints) {
-		// Check which error to return
-		for _, skillID := range loadout {
-			if fighterSkills.AllocatedPoints[skillID] == 0 {
-				return ErrSkillNotAllocated
-			}
-			if skill, found := skills.GetSkillByID(skillID); found && skill.Type != skills.Active {
-				return ErrNotActiveSkill
-			}
-		}
-		return ErrInvalidLoadout
+	res := s.loadoutValidator.Validate(ctx, s, fighterID, loadout)
+	if !res.IsValid {
+		return res.Error
 	}
 
 	return s.skillRepo.SetLoadout(ctx, fighterID, loadout)

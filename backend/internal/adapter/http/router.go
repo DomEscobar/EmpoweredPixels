@@ -20,6 +20,7 @@ import (
 	dailyhandlers "empoweredpixels/internal/adapter/http/handlers/daily"
 	leaderboardhandlers "empoweredpixels/internal/adapter/http/handlers/leaderboard"
 	eventhandlers "empoweredpixels/internal/adapter/http/handlers/events"
+	guildhandlers "empoweredpixels/internal/adapter/http/handlers/guilds"
 	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
 	"empoweredpixels/internal/adapter/http/middleware"
@@ -40,6 +41,7 @@ import (
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	skillsusecase "empoweredpixels/internal/usecase/skills"
 	dailyusecase "empoweredpixels/internal/usecase/daily"
+	guildsusecase "empoweredpixels/internal/usecase/guilds"
 	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
 	eventsusecase "empoweredpixels/internal/usecase/events"
 )
@@ -61,6 +63,7 @@ type Dependencies struct {
 	DailyService        *dailyusecase.Service
 	LeaderboardService  *leaderboardusecase.Service
 	EventService        *eventsusecase.Service
+	GuildService        *guildsusecase.Service
 	MatchHub            *ws.MatchHub
 	MCPHandler       *mcp.MCPHandler
 	MCPAuditLogger   *mcp.AuditLogger
@@ -291,6 +294,14 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/achievements", h.GetAchievements).Methods("GET")
 		api.HandleFunc("/player/achievements", h.GetPlayerAchievements).Methods("GET")
 		api.HandleFunc("/achievement/{id}/claim", h.ClaimAchievement).Methods("POST")
+	}
+
+	if deps.GuildService != nil {
+		h := guildhandlers.NewHandler(deps.GuildService)
+		api.HandleFunc("/guilds", h.List).Methods("GET")
+		api.HandleFunc("/guilds", h.Create).Methods("POST")
+		api.HandleFunc("/guilds/{id}", h.Get).Methods("GET")
+		api.HandleFunc("/guilds/{id}/join", h.RequestJoin).Methods("POST")
 	}
 
 	if deps.MatchHub != nil {

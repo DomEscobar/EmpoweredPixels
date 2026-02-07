@@ -2,6 +2,7 @@ package combat
 
 import (
 	"encoding/json"
+	"math"
 	"math/rand"
 )
 
@@ -26,7 +27,23 @@ func (s *BaseDamageSkill) Range() float64 { return s.rng }
 
 func (s *BaseDamageSkill) Execute(attacker *Entity, target *Entity) ([]Tick, error) {
 	damage := rand.Intn(s.maxDamage-s.minDamage+1) + s.minDamage
+
+	// Apply Combo & Momentum Multipliers
+	// Each combo point adds 5% damage
+	// Each 1.0 momentum adds 10% damage
+	comboBonus := 1.0 + (float64(attacker.Combo) * 0.05)
+	momentumBonus := 1.0 + (attacker.Momentum * 0.1)
 	
+	finalDamage := float64(damage) * comboBonus * momentumBonus
+	damage = int(math.Floor(finalDamage))
+	
+	// Increment Combo and Momentum on hit
+	attacker.Combo++
+	attacker.Momentum += 0.2
+	if attacker.Momentum > 5.0 {
+		attacker.Momentum = 5.0
+	}
+
 	// Apply armor reduction (simple formula for now)
 	damage = damage - (target.Stats.Armor / 10)
 	if damage < 1 {
@@ -34,6 +51,14 @@ func (s *BaseDamageSkill) Execute(attacker *Entity, target *Entity) ([]Tick, err
 	}
 
 	target.CurrentHP -= damage
+	// Target loses momentum when hit
+	target.Momentum -= 0.5
+	if target.Momentum < 0 {
+		target.Momentum = 0
+	}
+	// Target combo breaks when hit
+	target.Combo = 0
+
 	if target.CurrentHP < 0 {
 		target.CurrentHP = 0
 	}
@@ -43,6 +68,8 @@ func (s *BaseDamageSkill) Execute(attacker *Entity, target *Entity) ([]Tick, err
 		TargetID:   target.ID,
 		SkillID:    s.id,
 		Damage:     damage,
+		Combo:      attacker.Combo,
+		Momentum:   attacker.Momentum,
 	}
 	
 	payload, _ := json.Marshal(attackEvent)

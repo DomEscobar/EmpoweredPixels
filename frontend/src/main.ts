@@ -3,7 +3,7 @@ import { createPinia } from "pinia";
 
 import App from "./App.vue";
 import { router } from "./app/router";
-import "./shared/styles/tailwind.css";
+import "./assets/overhaul.css";
 
 const app = createApp(App);
 
