@@ -300,5 +300,132 @@
       "title": "[EVENT] Hucki Shopping-Tour Audit",
       "updatedAt": "2026-02-06T23:55:00Z"
     }
+    {
+      "acceptanceCriteria": [
+        "Shop: Detailed item rendering and purchase flow",
+        "Gold transactions and inventory updates",
+        "USD payment stub integration",
+        "Shop item rarity and enhancement display",
+        "Playwright E2E tests covering browse, purchase, and validation"
+      ],
+      "assignee": "foundry",
+      "column": "backlog",
+      "description": "Add comprehensive Playwright E2E tests for the Shop system, including item display, purchase flow, and gold management. Ensure full coverage of the shop MVP.",
+      "id": "TASK-036",
+      "labels": [
+        "testing",
+        "e2e",
+        "shop"
+      ],
+      "priority": "high",
+      "title": "[E2E] Shop System Tests",
+      "updatedAt": "2026-02-07T15:14:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Roster: Fighter list display and navigation",
+        "Fighter stats breakdown (Power, Armor, Speed, etc.)",
+        "Weapon equipment integration",
+        "Mastery constellation access",
+        "Full E2E test coverage for fighter management"
+      ],
+      "assignee": "foundry",
+      "column": "backlog",
+      "description": "Add comprehensive Playwright E2E tests for the Roster system including fighter listing, detailed stats view, weapon integration, and navigation to Mastery.",
+      "id": "TASK-037",
+      "labels": [
+        "testing",
+        "e2e",
+        "roster"
+      ],
+      "priority": "high",
+      "title": "[E2E] Roster System Tests",
+      "updatedAt": "2026-02-07T15:14:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Matches: Match list and creation flow",
+        "Match viewer with tick-by-tick replay",
+        "Bot vs player match dynamics",
+        "Match status updates and results",
+        "Complete E2E tests for match lifecycle"
+      ],
+      "assignee": "foundry",
+      "column": "backlog",
+      "description": "Add comprehensive Playwright E2E tests for the Matches system, covering match creation, spectator view, and result display.",
+      "id": "TASK-038",
+      "labels": [
+        "testing",
+        "e2e",
+        "matches"
+      ],
+      "priority": "high",
+      "title": "[E2E] Matches System Tests",
+      "updatedAt": "2026-02-07T15:14:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Leaderboard: Ranking display and pagination",
+        "Player stats comparison",
+        "Season resets and historical data",
+        "League system integration",
+        "E2E tests for ranking and progression"
+      ],
+      "assignee": "foundry",
+      "column": "backlog",
+      "description": "Add comprehensive Playwright E2E tests for Leaderboard and League systems including ranking display, filtering, and historical views.",
+      "id": "TASK-039",
+      "labels": [
+        "testing",
+        "e2e",
+        "leaderboard"
+      ],
+      "priority": "medium",
+      "title": "[E2E] Leaderboard & Leagues Tests",
+      "updatedAt": "2026-02-07T15:14:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Home/Dashboard: Navigation and overview widgets",
+        "User profile and quick actions",
+        "Responsive layout and theme consistency",
+        "Quick match and squad shortcuts",
+        "E2E tests for main entry point"
+      ],
+      "assignee": "foundry",
+      "column": "backlog",
+      "description": "Add comprehensive Playwright E2E tests for Home and Dashboard pages, covering navigation, overview cards, and user profile interactions.",
+      "id": "TASK-040",
+      "labels": [
+        "testing",
+        "e2e",
+        "home",
+        "dashboard"
+      ],
+      "priority": "medium",
+      "title": "[E2E] Home & Dashboard Tests",
+      "updatedAt": "2026-02-07T15:14:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Authentication: Login flow with token handling",
+        "Registration: Account creation and validation",
+        "Session management and auto-login",
+        "Logout and session cleanup",
+        "Security and error handling in E2E"
+      ],
+      "assignee": "foundry",
+      "column": "backlog",
+      "description": "Add comprehensive Playwright E2E tests for Authentication system, covering login, registration, session management, and security scenarios.",
+      "id": "TASK-041",
+      "labels": [
+        "testing",
+        "e2e",
+        "auth"
+      ],
+      "priority": "high",
+      "title": "[E2E] Authentication Tests",
+      "updatedAt": "2026-02-07T15:14:00Z"
+    }
   ]
 }
