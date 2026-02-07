@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* D4 Moody/Gothic Palette */
+  --ep-bg-deep: #050505;
+  --ep-surface-obsidian: #0d0d12;
+  --ep-iron-steel: #2a2a35;
+  --ep-blood-red: #6e0000;
+  --ep-soul-blue: #3b82f6;
+  --ep-parchment: #d4c4a8;
+}
+
+body {
+  background-color: var(--ep-bg-deep);
+  color: var(--ep-parchment);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  @apply antialiased;
+}
+
+/* Base "Ethereal Iron" Component Styles */
+
+.ep-card-iron {
+  @apply relative overflow-hidden rounded-md border bg-opacity-90;
+  border-color: var(--ep-iron-steel);
+  background-color: var(--ep-surface-obsidian);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+}
+
+.ep-card-iron::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url('https://vibemedia.space/tex_iron_9a8f7b2c.png?prompt=weathered%20forged%20iron%20texture%20dark%20metallic%20surface&style=pixel_game_asset&key=NOGON');
+  background-size: 200px 200px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+/* GW2 Splatter Influence */
+.ep-splatter-ink {
+  mask-image: url('https://vibemedia.space/ui_splatter_5e6f7g8h.png?prompt=watercolor%20ink%20splatter%20silhouette%20abstract&style=pixel_game_asset&key=NOGON');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+}
+
+/* WoW Readable Header */
+.ep-header-gold {
+  @apply font-serif text-lg font-bold tracking-wide;
+  color: #e2b349; /* Classic WoW Gold */
+  border-bottom: 2px solid #e2b34933;
+}
+
+/* Mobile-First Adjustments */
+@media (max-width: 640px) {
+  .ep-card-iron {
+    @apply rounded-none border-x-0;
+  }
+}

@@ -1,0 +1,155 @@
+:root {
+    /* AAA RPG Color Palette */
+    --clr-ebony: #0a0b0d;
+    --clr-slate-stone: #1a1c1e;
+    --clr-deep-stone: #121417;
+    --clr-dark-accent: #0f1012;
+    --clr-blood-red: #8b0000;
+    --clr-blood-bright: #d32f2f;
+    --clr-worn-gold: #c5a059;
+    --clr-worn-gold-muted: #8e7345;
+    --clr-iron: #3a3a3a;
+    --clr-iron-light: #5a5a5a;
+    --clr-text: #d4d4d8;
+    --clr-text-muted: #71717a;
+
+    /* Theme Mapping */
+    --bg: var(--clr-ebony);
+    --surface: var(--clr-deep-stone);
+    --surface-hover: #16181b;
+    --border: var(--clr-iron);
+    --text: var(--clr-text);
+    --text-muted: var(--clr-text-muted);
+    --accent: var(--clr-blood-red);
+    --success: #2e7d32;
+    --warning: var(--clr-worn-gold);
+    --danger: var(--clr-blood-bright);
+    
+    /* RPG Element Variables */
+    --panel-border: 2px solid var(--clr-worn-gold-muted);
+    --panel-shadow: 0 10px 40px rgba(0,0,0,0.9);
+    --font-heading: 'Cinzel', serif;
+}
+
+/* Base Overhaul */
+body {
+    background-color: var(--clr-ebony);
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(139, 0, 0, 0.05) 0%, transparent 70%),
+        url('https://vibemedia.space/tex_stone_dark_9921.png?prompt=seamless%20dark%20ebony%20stone%20texture%20weathered%20rock&style=pixel_game_asset&key=NOGON');
+    background-size: cover, 400px;
+    background-attachment: fixed;
+    color: var(--clr-text);
+}
+
+.vignette-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%);
+    z-index: 9999;
+}
+
+/* Glassmorphism Cards */
+.rpg-card-glass {
+    background: rgba(30, 32, 35, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rpg-card-glass::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+/* Rarity Inner Glows */
+.rarity-common { box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.8); }
+.rarity-uncommon { box-shadow: inset 0 0 15px rgba(30, 255, 0, 0.2), 0 8px 32px 0 rgba(0, 0, 0, 0.8); border-color: rgba(30, 255, 0, 0.2); }
+.rarity-rare { box-shadow: inset 0 0 20px rgba(0, 112, 221, 0.3), 0 8px 32px 0 rgba(0, 0, 0, 0.8); border-color: rgba(0, 112, 221, 0.3); }
+.rarity-epic { box-shadow: inset 0 0 25px rgba(163, 53, 238, 0.4), 0 8px 32px 0 rgba(0, 0, 0, 0.8); border-color: rgba(163, 53, 238, 0.4); }
+.rarity-legendary { box-shadow: inset 0 0 30px rgba(255, 128, 0, 0.5), 0 8px 32px 0 rgba(0, 0, 0, 0.8); border-color: rgba(255, 128, 0, 0.5); }
+
+/* Forged Iron Button */
+.btn-forged {
+    background-image: url('https://vibemedia.space/tex_iron_9922.png?prompt=dark%20weathered%20iron%20texture%20seamless%20metal&style=pixel_game_asset&key=NOGON');
+    background-size: cover;
+    color: var(--clr-worn-gold);
+    border: 2px solid var(--clr-iron);
+    box-shadow: 0 4px 0 var(--clr-ebony), inset 0 1px 1px rgba(255,255,255,0.1);
+    padding: 8px 20px;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.btn-forged::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.2);
+    transition: opacity 0.2s;
+}
+
+.btn-forged:hover::before {
+    opacity: 0;
+}
+
+.btn-forged:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--clr-ebony), inset 0 1px 1px rgba(255,255,255,0.1);
+}
+
+/* Custom Tailwind-like Classes */
+.rpg-border-gold {
+    border: 2px solid;
+    border-image: linear-gradient(to bottom, #c5a059, #8e7345) 1;
+}
+
+/* Texture Overlays */
+.texture-iron {
+    background-image: url('https://vibemedia.space/tex_iron_9922.png?prompt=dark%20weathered%20iron%20texture%20seamless%20metal&style=pixel_game_asset&key=NOGON');
+    background-size: 64px;
+}
+
+.texture-skeleton {
+    background-image: url('https://vibemedia.space/tex_bone_s122.png?prompt=weathered%20bone%20skeleton%20texture%20dark&style=pixel_game_asset&key=NOGON');
+    background-size: 64px;
+}
+
+.splatter-accent {
+    position: relative;
+}
+
+.splatter-accent::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 50px;
+    height: 50px;
+    background-image: url('https://vibemedia.space/fx_splat_red_112.png?prompt=blood%20splatter%20red%20artistic%20ink%20leak&style=pixel_game_asset&key=NOGON');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 1;
+}
