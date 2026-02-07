@@ -351,7 +351,7 @@
         "Complete E2E tests for match lifecycle"
       ],
       "assignee": "foundry",
-      "column": "in_progress",
+      "column": "done",
       "description": "Add comprehensive Playwright E2E tests for the Matches system, covering match creation, spectator view, and result display.",
       "id": "TASK-038",
       "labels": [
@@ -372,7 +372,7 @@
         "E2E tests for ranking and progression"
       ],
       "assignee": "foundry",
-      "column": "backlog",
+      "column": "in_progress",
       "description": "Add comprehensive Playwright E2E tests for Leaderboard and League systems including ranking display, filtering, and historical views.",
       "id": "TASK-039",
       "labels": [
