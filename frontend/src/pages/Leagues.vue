@@ -2,7 +2,7 @@
   <div class="retro-rpg min-h-screen p-4 md:p-8 font-mono text-amber-100" :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_DUNGEON}')` }">
     <div class="fixed inset-0 bg-slate-950/80 pointer-events-none z-0"></div>
     
-    <div class="relative z-10 max-w-7xl mx-auto space-y-8">
+    <div class="relative z-10 max-w-7xl mx-auto space-y-8" data-testid="leagues-page">
       <!-- Title Section -->
       <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b-4 border-amber-900/50">
         <div class="flex items-center gap-4">
@@ -61,6 +61,7 @@
             ? 'border-emerald-600 hover:border-emerald-500 ring-2 ring-emerald-500/20' 
             : 'border-slate-800 hover:border-amber-600/50'"
           @click="openLeagueDetail(league)"
+          :data-testid="'league-card-' + league.id"
         >
           <!-- Active Subscription Badge -->
           <div v-if="isSubscribed(league.id)" class="absolute top-0 right-0 z-20">
@@ -138,6 +139,7 @@
                 v-if="!isSubscribed(league.id)"
                 @click.stop="openSubscribeModal(league)"
                 class="w-full rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase"
+                :data-testid="'subscribe-btn-' + league.id"
               >
                 Enlist Fighter
               </button>
@@ -145,6 +147,7 @@
                 v-else
                 @click.stop="openManageModal(league)"
                 class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600 font-bold uppercase"
+                :data-testid="'manage-btn-' + league.id"
               >
                 Manage Squad
               </button>
@@ -158,7 +161,7 @@
     </div>
 
     <!-- Subscribe Modal -->
-    <BaseModal :show="showSubscribeModal" @close="showSubscribeModal = false">
+    <BaseModal :show="showSubscribeModal" @close="showSubscribeModal = false" data-testid="subscribe-modal">
       <template #title>
         <div class="flex items-center gap-3 text-amber-500">
           <img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-6 h-6 pixelated" />
@@ -216,7 +219,7 @@
     </BaseModal>
 
     <!-- Manage Squad Modal -->
-    <BaseModal :show="showManageModal" @close="showManageModal = false">
+    <BaseModal :show="showManageModal" @close="showManageModal = false" data-testid="manage-modal">
       <template #title>
         <div class="flex items-center gap-3 text-emerald-400">
           <img :src="PIXEL_ASSETS.ICON_SHIELD" class="w-6 h-6 pixelated" />
@@ -283,7 +286,7 @@
     </BaseModal>
 
     <!-- League Detail Modal -->
-    <BaseModal :show="showDetailModal" @close="closeDetailModal">
+    <BaseModal :show="showDetailModal" @close="closeDetailModal" data-testid="detail-modal">
       <template #title>
         <div class="flex items-center gap-3 text-amber-500">
           <img :src="PIXEL_ASSETS.ICON_CROWN" class="w-6 h-6 pixelated" />
@@ -301,6 +304,7 @@
             :class="activeDetailTab === tab.id 
               ? 'text-amber-400 border-amber-500 bg-amber-900/10' 
               : 'text-slate-500 border-transparent hover:text-slate-300'"
+            :data-testid="'tab-' + tab.id"
           >
             {{ tab.label }}
           </button>
@@ -329,6 +333,7 @@
                 v-for="(sub, idx) in leaguesStore.selectedLeague.subscriptions" 
                 :key="sub.fighterId"
                 class="flex items-center gap-4 p-3 bg-slate-900 border border-slate-800"
+                :data-testid="'participant-' + sub.fighterId"
               >
                 <div class="w-8 h-8 bg-slate-950 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-500">
                   {{ idx + 1 }}
@@ -359,6 +364,7 @@
                 :key="match.matchId"
                 :to="'/matches/' + match.matchId"
                 class="flex items-center gap-4 p-3 bg-slate-900 border border-slate-800 hover:border-amber-600/50 transition-colors group"
+                :data-testid="'match-' + match.matchId"
               >
                 <div class="w-10 h-10 bg-slate-950 border-2 border-slate-700 flex items-center justify-center group-hover:border-amber-600">
                   <img :src="PIXEL_ASSETS.ICON_SWORDS" class="w-6 h-6 pixelated" />
@@ -386,6 +392,7 @@
                 :key="score.fighterId"
                 class="flex items-center gap-4 p-3 border"
                 :class="idx === 0 ? 'bg-amber-900/20 border-amber-700' : idx === 1 ? 'bg-slate-400/10 border-slate-600' : idx === 2 ? 'bg-orange-900/20 border-orange-800' : 'bg-slate-900 border-slate-800'"
+                :data-testid="'highscore-' + (idx + 1)"
               >
                 <div 
                   class="w-8 h-8 flex items-center justify-center text-sm font-black"

@@ -516,10 +516,10 @@
         "All testids are unique and semantic"
       ],
       "assignee": "forge",
-      "column": "in_progress",
+      "column": "done",
       "description": "To enable reliable Playwright E2E tests, add unique data-testid attributes to key elements in Leagues.vue: page container, league cards, subscribe/unsubscribe buttons, modal sections, tabs, participant list items, matches list, leaderboard entries.",
       "id": "TASK-045",
-      "updatedAt": "2026-02-07T19:00:00Z",
+      "updatedAt": "2026-02-07T23:26:00Z",
       "labels": [
         "frontend",
         "leagues",
