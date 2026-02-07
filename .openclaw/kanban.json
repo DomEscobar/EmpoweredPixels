@@ -437,9 +437,10 @@
         "Adds appropriate indexes (league_matches.league_id, matches.id, match_participants.fighter_id) for performance"
       ],
       "assignee": "coder",
-      "column": "backlog",
+      "column": "in_progress",
       "description": "Implement GET /api/league/{id}/highscores (currently stub) to return ranked fighter scores within a league. Aggregate scores from match results and include fighterName and username by joining with fighters and users tables.",
       "id": "TASK-042",
+      "updatedAt": "2026-02-07T22:15:00Z"
       "labels": [
         "backend",
         "leagues",
@@ -504,9 +505,10 @@
         "All testids are unique and semantic"
       ],
       "assignee": "foundry",
-      "column": "backlog",
+      "column": "in_progress",
       "description": "To enable reliable Playwright E2E tests, add unique data-testid attributes to key elements in Leagues.vue: page container, league cards, subscribe/unsubscribe buttons, modal sections, tabs, participant list items, matches list, leaderboard entries.",
       "id": "TASK-045",
+      "updatedAt": "2026-02-07T22:15:00Z"
       "labels": [
         "frontend",
         "leagues",
