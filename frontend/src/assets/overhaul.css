@@ -1,20 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  /* D4 Moody/Gothic Palette */
-  --ep-bg-deep: #050505;
-  --ep-surface-obsidian: #0d0d12;
-  --ep-iron-steel: #2a2a35;
-  --ep-blood-red: #6e0000;
-  --ep-soul-blue: #3b82f6;
-  --ep-parchment: #d4c4a8;
+@theme {
+  --color-ep-bg-deep: #050505;
+  --color-ep-surface-obsidian: #0d0d12;
+  --color-ep-iron-steel: #2a2a35;
+  --color-ep-blood-red: #6e0000;
+  --color-ep-soul-blue: #3b82f6;
+  --color-ep-parchment: #d4c4a8;
 }
 
 body {
-  background-color: var(--ep-bg-deep);
-  color: var(--ep-parchment);
+  background-color: var(--color-ep-bg-deep);
+  color: var(--color-ep-parchment);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   @apply antialiased;
 }
@@ -22,9 +19,9 @@ body {
 /* Base "Ethereal Iron" Component Styles */
 
 .ep-card-iron {
-  @apply relative overflow-hidden rounded-md border bg-opacity-90;
-  border-color: var(--ep-iron-steel);
-  background-color: var(--ep-surface-obsidian);
+  @apply relative overflow-hidden rounded-md border;
+  border-color: var(--color-ep-iron-steel);
+  background-color: var(--color-ep-surface-obsidian);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
 }
 

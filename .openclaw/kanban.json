@@ -1,141 +1,143 @@
 {
+  "project": "EmpoweredPixels",
   "meta": {
-    "project": "EmpoweredPixels",
     "currentSprint": 1
   },
-  "columns": ["backlog", "todo", "in_progress", "review", "done"],
+  "columns": [
+    "backlog",
+    "todo",
+    "in_progress",
+    "review",
+    "done"
+  ],
   "tasks": [
+    {
+      "id": "TASK-024",
+      "title": "Fix TypeScript build errors on main",
+      "description": "Resolve missing weapon endpoints and property errors in FighterStats.vue to fix the production build.",
+      "assignee": "foundry",
+      "column": "done",
+      "labels": ["bug", "critical"],
+      "priority": "high",
+      "updatedAt": "2026-02-07T08:26:00Z"
+    },
+    {
+      "id": "TASK-020",
+      "title": "[DESIGN] Mastery Constellation (Advanced Skill Trees)",
+      "description": "Design and implement the interactive Mastery Constellation UI using the Ethereal Iron theme.",
+      "assignee": "foundry",
+      "column": "done",
+      "labels": ["design", "concept", "skills", "frontend"],
+      "priority": "medium",
+      "acceptanceCriteria": [
+        "Interactive 3-branch skill tree (Weapon, Healing, Utility)",
+        "Unlock logic utilizing Soul-Shards (frontend mock/logic)",
+        "Ethereal Iron visual style (splatters + iron frames)",
+        "Mandatory Playwright E2E tests covering node unlocking and UI state changes",
+        "Updated ARCHITECTURE.md with skill system patterns"
+      ],
+      "updatedAt": "2026-02-07T09:42:00Z"
+    },
     {
       "id": "TASK-001",
       "title": "Fix broken backend",
       "column": "done",
-      "priority": "high",
       "labels": ["bug", "backend"],
+      "priority": "high",
       "updatedAt": "2026-02-06T20:10:00Z"
     },
     {
       "id": "TASK-002",
       "title": "Fix route ordering",
       "column": "done",
-      "priority": "high",
       "labels": ["bug", "backend"],
+      "priority": "high",
       "updatedAt": "2026-02-06T23:25:00Z"
     },
     {
       "id": "TASK-003",
       "title": "Shop: Duplicate shops cleanup",
       "column": "done",
-      "priority": "medium",
       "labels": ["bug", "database"],
+      "priority": "medium",
       "updatedAt": "2026-02-06T21:51:00Z"
-    },
-    {
-      "id": "TASK-005",
-      "title": "Shop: Bundle equipment delivery",
-      "column": "done",
-      "priority": "high",
-      "labels": ["bug", "shop"],
-      "updatedAt": "2026-02-06T23:15:00Z"
     },
     {
       "id": "TASK-004",
       "title": "Shop: Add USD payment integration stub",
       "column": "done",
-      "priority": "medium",
       "labels": ["feature", "payments"],
+      "priority": "medium",
       "updatedAt": "2026-02-06T23:25:00Z"
+    },
+    {
+      "id": "TASK-005",
+      "title": "Shop: Bundle equipment delivery",
+      "column": "done",
+      "labels": ["bug", "shop"],
+      "priority": "high",
+      "updatedAt": "2026-02-06T23:15:00Z"
     },
     {
       "id": "TASK-006",
       "title": "Shop: Add missing UI components",
       "column": "done",
-      "priority": "low",
       "labels": ["enhancement", "frontend"],
+      "priority": "low",
       "updatedAt": "2026-02-06T23:25:00Z"
     },
     {
       "id": "TASK-016",
       "title": "UI: Weapon Integration in Fighter Stats",
       "column": "done",
-      "priority": "high",
       "labels": ["feature", "frontend"],
+      "priority": "high",
       "updatedAt": "2026-02-06T23:45:00Z"
     },
     {
       "id": "TASK-017",
       "title": "[DESIGN] UI/UX Overhaul: WoW/GW2/D4 Fusion",
-      "description": "Visual rework based on AAA RPG styles. Skeleton/Iron textures (D4), Artistic splatters (GW2).",
-      "assignee": null,
-      "column": "backlog",
+      "column": "done",
+      "labels": ["design", "ux"],
       "priority": "high",
-      "labels": ["design", "ux"]
+      "updatedAt": "2026-02-07T01:32:00Z"
     },
     {
       "id": "TASK-018",
       "title": "[DESIGN] Mockup: Darkened Forge Inventory",
-      "description": "Create a Diablo-style grid inventory with high-res pixel art assets.",
-      "assignee": null,
-      "column": "backlog",
+      "column": "done",
+      "labels": ["design", "ux"],
       "priority": "medium",
-      "labels": ["design", "ux"]
+      "updatedAt": "2026-02-07T01:34:00Z"
+    },
+    {
+      "id": "TASK-019",
+      "title": "[EVENT] Hucki Shopping-Tour Audit",
+      "column": "done",
+      "labels": ["test", "bot"],
+      "priority": "medium",
+      "updatedAt": "2026-02-06T23:55:00Z"
     },
     {
       "id": "TASK-008",
       "title": "[DESIGN] Elemental Overload System",
       "column": "backlog",
-      "priority": "low",
-      "labels": ["design", "concept", "combat"]
+      "labels": ["design", "concept", "combat"],
+      "priority": "low"
     },
     {
       "id": "TASK-009",
       "title": "[DESIGN] Tactical Terrain Traits",
       "column": "backlog",
-      "priority": "low",
-      "labels": ["design", "concept", "combat"]
+      "labels": ["design", "concept", "combat"],
+      "priority": "low"
     },
     {
       "id": "TASK-011",
       "title": "[DESIGN] 4+1 Skill System & Smart AI Logic",
       "column": "backlog",
-      "priority": "low",
-      "labels": ["design", "concept", "logic"]
-    },
-    {
-      "id": "TASK-014",
-      "title": "[DESIGN] Mode: The Ascendance Pillar (Royale)",
-      "column": "backlog",
-      "priority": "low",
-      "labels": ["design", "concept", "modes"]
-    },
-    {
-      "id": "TASK-015",
-      "title": "[DESIGN] Mode: Ethereal Echoes (TDM)",
-      "column": "backlog",
-      "priority": "low",
-      "labels": ["design", "concept", "modes"]
-    },
-    {
-      "id": "TASK-019",
-      "title": "[EVENT] Hucki Shopping-Tour Audit",
-      "description": "Scheduled test for Hucki to buy a bundle and verify inventory flow.",
-      "assignee": "coder",
-      "column": "done",
-      "priority": "medium",
-      "labels": ["test", "bot"],
-      "updatedAt": "2026-02-06T23:55:00Z",
-      "comments": ["Tested with user ID 1 and Mythic Bundle. Verification successful."]
-    },
-    {
-      "id": "TASK-020",
-      "title": "[DESIGN] Mastery Constellation (Advanced Skill Trees)",
-      "description": "Define branching paths for Weapon Mastery, Healing/Support, and Utility. Implement prerequisites and 'End-Node' powerful abilities. Foundation for LLM strategic build diversity.",
-      "assignee": null,
-      "column": "backlog",
-      "priority": "medium",
-      "labels": ["design", "concept", "skills"],
-      "createdAt": "2026-02-06T23:55:00Z",
-      "updatedAt": "2026-02-06T23:55:00Z",
-      "comments": []
+      "labels": ["design", "concept", "logic"],
+      "priority": "low"
     }
   ]
 }
