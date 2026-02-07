@@ -330,7 +330,7 @@
         "Full E2E test coverage for fighter management"
       ],
       "assignee": "foundry",
-      "column": "backlog",
+      "column": "done",
       "description": "Add comprehensive Playwright E2E tests for the Roster system including fighter listing, detailed stats view, weapon integration, and navigation to Mastery.",
       "id": "TASK-037",
       "labels": [
@@ -340,7 +340,7 @@
       ],
       "priority": "high",
       "title": "[E2E] Roster System Tests",
-      "updatedAt": "2026-02-07T15:14:00Z"
+      "updatedAt": "2026-02-07T15:20:00Z"
     },
     {
       "acceptanceCriteria": [
@@ -351,7 +351,7 @@
         "Complete E2E tests for match lifecycle"
       ],
       "assignee": "foundry",
-      "column": "backlog",
+      "column": "in_progress",
       "description": "Add comprehensive Playwright E2E tests for the Matches system, covering match creation, spectator view, and result display.",
       "id": "TASK-038",
       "labels": [
