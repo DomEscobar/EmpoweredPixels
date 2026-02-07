@@ -49,6 +49,7 @@ This workspace is shared by agents: **PM** (`main`), **Coder**, **Foundry`, **Al
   - Approve → merge to main (`--no-ff`), delete branch, move task to `done`.
   - Reject → send detailed feedback via `sessions_send`.
 - Before merging any `done` task, verify:
+  - Run `scripts/pre-merge-check.sh` on the branch as an automated gate.
   - Branch is up-to-date with main.
   - Build passes and all tests green.
   - E2E tests exist and cover the feature.
@@ -56,6 +57,7 @@ This workspace is shared by agents: **PM** (`main`), **Coder**, **Foundry`, **Al
 - Spawn **Alex-Auditor** automatically during heartbeat for all `in_progress` tasks.
 - Escalate tasks stuck >3 days; reassign if dev unresponsive.
 - Post **Team Sync Pulse** to Telegram each heartbeat: per-dev status, blockers, metrics.
+  Generate the pulse by running `scripts/team-pulse.js` and send its output.
 - Read `PM_PROTOCOL.md` for kanban schema and assignment workflow.
 
 ## Coder (agent id: `coder`)
@@ -65,6 +67,7 @@ This workspace is shared by agents: **PM** (`main`), **Coder**, **Foundry`, **Al
 - Implement fully in a single agent turn; handle errors; write clean code (SOLID, KISS, DRY).
 - Write and run Playwright E2E tests for every feature. Include `data-testid` coverage in frontend components you touch.
 - Before reporting `done`:
+  - Run `scripts/pre-merge-check.sh` and confirm all checks pass.
   - Ensure `npm run build` passes in `backend/`.
   - All tests (unit, integration, E2E) pass.
   - Update `docs/ARCHITECTURE.md` if you change system design.
@@ -83,6 +86,7 @@ This workspace is shared by agents: **PM** (`main`), **Coder**, **Foundry`, **Al
 - Maintain UI style guide and component library; ensure consistency across pages.
 - Add `data-testid` attributes to all interactive elements; required for E2E stability.
 - Before reporting `done`:
+  - Run `scripts/pre-merge-check.sh` and confirm all checks pass.
   - `npm run build` passes in `frontend/`; assets optimized.
   - All Playwright E2E tests green; new tests added for the feature.
   - Update `docs/ARCHITECTURE.md` with frontend patterns.
@@ -104,6 +108,7 @@ This workspace is shared by agents: **PM** (`main`), **Coder**, **Foundry`, **Al
   6. **Repo Stats**: Commits, files changed, lines added/removed; compare to thresholds.
   7. **Kanban Health**: Detect tasks >3 days in `in_progress`; verify `done` tasks have merged branch + tests.
   8. **Dependency Radar**: If task touches shared modules (e.g., `backend/handlers/league.go`, `frontend/src/components/Leagues.vue`), flag coupling and notify related assignees.
+  9. **Pre-Merge Check**: Verify that `scripts/pre-merge-check.sh` was executed and passed for the task (check completion report for script output).
 - Report findings immediately to PM with: task id, assignee, severity, evidence.
 - Be skeptical — assume hallucination until proven. Do not let friendship or pressure bypass quality gates.
 
