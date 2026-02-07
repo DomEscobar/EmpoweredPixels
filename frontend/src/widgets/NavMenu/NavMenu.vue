@@ -55,7 +55,7 @@
               <img :src="PIXEL_ASSETS.ICON_GOLD" alt="Gold" class="w-4 h-4 pixelated" />
               <span class="text-xs font-bold text-amber-400">{{ formattedGold() }}</span>
             </router-link>
-            <button @click="logout" class="footer-logout-btn group p-1.5" title="Logout">
+            <button @click="logout" class="footer-logout-btn group p-1.5" title="Logout" data-testid="logout-btn">
               <div class="pixel-box-sm bg-slate-800/80 p-1 group-hover:bg-red-900/50 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 group-hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
