@@ -299,7 +299,7 @@
       "id": "TASK-019",
       "title": "[EVENT] Hucki Shopping-Tour Audit",
       "updatedAt": "2026-02-06T23:55:00Z"
-    }
+    },
     {
       "acceptanceCriteria": [
         "Shop: Detailed item rendering and purchase flow",
@@ -426,6 +426,120 @@
       "priority": "high",
       "title": "[E2E] Authentication Tests",
       "updatedAt": "2026-02-07T15:14:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Endpoint returns 200 with array of LeagueHighscore objects sorted by score descending",
+        "Only matches belonging to the league are considered",
+        "Scores are aggregated per fighter (sum of points)",
+        "Respects lastMatches parameter to limit to recent N matches (default 50)",
+        "Handles empty case (no matches) with empty array",
+        "Adds appropriate indexes (league_matches.league_id, matches.id, match_participants.fighter_id) for performance"
+      ],
+      "assignee": "coder",
+      "column": "backlog",
+      "description": "Implement GET /api/league/{id}/highscores (currently stub) to return ranked fighter scores within a league. Aggregate scores from match results and include fighterName and username by joining with fighters and users tables.",
+      "id": "TASK-042",
+      "labels": [
+        "backend",
+        "leagues",
+        "highscores",
+        "api"
+      ],
+      "priority": "high",
+      "title": "[Backend] Implement League Highscores Endpoint",
+      "updatedAt": "2026-02-07T19:00:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Response JSON's totalCount reflects total number of matches for the league (ignoring pagination)",
+        "Query includes separate COUNT(*) OVER() or separate count query",
+        "Tests updated to verify correct totalCount"
+      ],
+      "assignee": "coder",
+      "column": "backlog",
+      "description": "The LeagueMatches handler returns totalCount set to len(items) which is incorrect for pagination. Fix to return actual total count of matches for the league in the database.",
+      "id": "TASK-043",
+      "labels": [
+        "backend",
+        "leagues",
+        "bug",
+        "pagination"
+      ],
+      "priority": "medium",
+      "title": "[Backend] Fix League Matches Pagination TotalCount",
+      "updatedAt": "2026-02-07T19:00:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Endpoint returns 200 with object containing fighterId, fighterName, username, matchId",
+        "If no matches found, returns 204 No Content or 404 with appropriate message",
+        "Winner determined by highest score in the latest match",
+        "Query efficiently using league_matches and match results"
+      ],
+      "assignee": "coder",
+      "column": "backlog",
+      "description": "Currently GET /api/league/{id}/winner returns hardcoded leagueLastWinnerDto with only leagueId. Implement to return fighter info of the winner from the most recent completed match in that league.",
+      "id": "TASK-044",
+      "labels": [
+        "backend",
+        "leagues",
+        "feature"
+      ],
+      "priority": "low",
+      "title": "[Backend] Implement League LastWinner Endpoint",
+      "updatedAt": "2026-02-07T19:00:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Leagues page has data-testid='leagues-page' on root",
+        "Each league card has data-testid='league-card-{id}'",
+        "Subscribe button: data-testid='subscribe-btn-{id}'",
+        "Manage button: data-testid='manage-btn-{id}'",
+        "Modal containers: data-testid='subscribe-modal', 'manage-modal', 'detail-modal'",
+        "Tabs: data-testid='tab-participants', 'tab-matches', 'tab-leaderboard'",
+        "Participant rows: data-testid='participant-{fighterId}'",
+        "Match rows: data-testid='match-{matchId}'",
+        "Leaderboard entries: data-testid='highscore-{rank}'",
+        "All testids are unique and semantic"
+      ],
+      "assignee": "foundry",
+      "column": "backlog",
+      "description": "To enable reliable Playwright E2E tests, add unique data-testid attributes to key elements in Leagues.vue: page container, league cards, subscribe/unsubscribe buttons, modal sections, tabs, participant list items, matches list, leaderboard entries.",
+      "id": "TASK-045",
+      "labels": [
+        "frontend",
+        "leagues",
+        "testing",
+        "e2e"
+      ],
+      "priority": "high",
+      "title": "[Frontend] Add data-testid to Leagues Page Components",
+      "updatedAt": "2026-02-07T19:00:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Tests for successful leagues list load and display",
+        "Subscribe flow: open modal, select fighter, confirm, verify subscription appears",
+        "Unsubscribe flow from manage modal",
+        "View participants tab: shows subscribed fighters",
+        "View matches tab: displays match entries (or empty state)",
+        "View leaderboard tab: displays highscores (or empty state)",
+        "Error handling: network failure shows retry button",
+        "Empty state when no leagues exist"
+      ],
+      "assignee": "foundry",
+      "column": "backlog",
+      "description": "Write Playwright spec `leagues.spec.ts` covering the Leagues page user flows: loading, error states, subscription management, participants view, matches listing, and leaderboard tab. Use test IDs added in TASK-045.",
+      "id": "TASK-046",
+      "labels": [
+        "testing",
+        "e2e",
+        "leagues"
+      ],
+      "priority": "high",
+      "title": "[E2E] Leagues Page Tests",
+      "updatedAt": "2026-02-07T19:00:00Z"
     }
   ]
 }
