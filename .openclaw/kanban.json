@@ -393,7 +393,7 @@
         "E2E tests for main entry point"
       ],
       "assignee": "foundry",
-      "column": "in_progress",
+      "column": "done",
       "description": "Add comprehensive Playwright E2E tests for Home and Dashboard pages, covering navigation, overview cards, and user profile interactions.",
       "id": "TASK-040",
       "labels": [
@@ -415,7 +415,7 @@
         "Security and error handling in E2E"
       ],
       "assignee": "foundry",
-      "column": "backlog",
+      "column": "in_progress",
       "description": "Add comprehensive Playwright E2E tests for Authentication system, covering login, registration, session management, and security scenarios.",
       "id": "TASK-041",
       "labels": [
