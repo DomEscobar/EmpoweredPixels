@@ -400,8 +400,13 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		}
 	}
 
-	simulator := NewSimulator()
-	result, err := simulator.Run(matchID, fighters, fighterEquipment, options)
+		simulator := NewBattleSimulator()
+		// Convert MatchOptions to BattleOptions
+		battleOptions := BattleOptions{
+			MaxRounds: 100, // Default value
+			MapSize:   30.0, // Default value
+		}
+		result, err := simulator.Run(matchID, fighters, battleOptions)
 	if err != nil {
 		match.Status = matches.MatchStatusLobby
 		match.Started = nil

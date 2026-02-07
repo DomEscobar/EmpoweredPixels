@@ -20,6 +20,7 @@ type Service struct {
 	fighters       FighterRepository
 	experiences    ExperienceRepository
 	configurations ConfigurationRepository
+	SquadService   *SquadService
 	now            func() time.Time
 }
 
@@ -27,6 +28,7 @@ func NewService(
 	fighters FighterRepository,
 	experiences ExperienceRepository,
 	configurations ConfigurationRepository,
+	squads SquadRepository,
 	now func() time.Time,
 ) *Service {
 	if now == nil {
@@ -37,6 +39,7 @@ func NewService(
 		fighters:       fighters,
 		experiences:    experiences,
 		configurations: configurations,
+		SquadService:   NewSquadService(squads),
 		now:            now,
 	}
 }

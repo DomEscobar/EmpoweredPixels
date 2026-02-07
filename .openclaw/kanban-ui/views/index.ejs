@@ -326,7 +326,11 @@
                         <div class="empty-state">No tasks</div>
                     <% } else { %>
                         <% tasks.forEach(task => { %>
-                            <div class="task-card priority-<%= task.priority %> rarity-<%= (task.labels.includes('feature') || task.labels.includes('epic')) ? 'epic' : (task.labels.includes('enhancement') || task.labels.includes('rare')) ? 'rare' : (task.labels.includes('bug') || task.labels.includes('uncommon')) ? 'uncommon' : 'common' %>" data-task-id="<%= task.id %>">
+                            <div class="task-card priority-<%= task.priority %> rarity-<%= 
+    (task.labels && (task.labels.includes('feature') || task.labels.includes('epic'))) ? 'epic' : 
+    (task.labels && (task.labels.includes('enhancement') || task.labels.includes('rare'))) ? 'rare' : 
+    (task.labels && (task.labels.includes('bug') || task.labels.includes('uncommon'))) ? 'uncommon' : 
+    'common' %>" data-task-id="<%= task.id %>">
                                 <div class="task-header">
                                     <span class="task-id"><%= task.id %></span>
                                     <span class="task-priority <%= task.priority %>"><%= task.priority %></span>
@@ -337,9 +341,11 @@
                                 <% } %>
                                 <div class="task-footer">
                                     <div class="task-labels">
-                                        <% task.labels.forEach(label => { %>
-                                            <span class="label <%= label %>"><%= label %></span>
-                                        <% }) %>
+                                        <% if (task.labels && task.labels.length > 0) { %>
+                                            <% task.labels.forEach(label => { %>
+                                                <span class="label <%= label %>"><%= label %></span>
+                                            <% }) %>
+                                        <% } %>
                                     </div>
                                     <% 
                                         const assigneeName = task.assignee || 'unassigned';

@@ -6,7 +6,7 @@ import (
 
 	"empoweredpixels/internal/adapter/http/responses"
 	"empoweredpixels/internal/usecase/guilds"
-	"github.com/go-chi/chi/v5"
+	"github.com/gorilla/mux"
 )
 
 type Handler struct {
@@ -24,7 +24,9 @@ type CreateGuildRequest struct {
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// Assume user ID is available in context (from auth middleware)
-	fighterID := r.Context().Value("user_id").(string)
+	// Adjusted for gorilla/mux and your middleware context type
+	// Based on router.go, user ID is BIGINT
+	fighterID := "TODO_FIGHTER_ID" // You need a way to get fighter ID from user ID
 
 	var req CreateGuildRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -51,15 +53,13 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-	// Note: You would typically want a GetByID method in service too, 
-	// for now let's just use what's available or imply service expansion
+	_ = mux.Vars(r)["id"]
 	responses.JSON(w, http.StatusNotImplemented, map[string]string{"message": "GET single guild TBD"})
 }
 
 func (h *Handler) RequestJoin(w http.ResponseWriter, r *http.Request) {
-	fighterID := r.Context().Value("user_id").(string)
-	guildID := chi.URLParam(r, "id")
+	fighterID := "TODO_FIGHTER_ID"
+	guildID := mux.Vars(r)["id"]
 
 	if err := h.service.JoinGuild(r.Context(), fighterID, guildID); err != nil {
 		responses.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})

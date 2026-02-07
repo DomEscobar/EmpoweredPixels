@@ -1,8 +1,8 @@
 {
-  "project": "EmpoweredPixels",
   "meta": {
     "currentSprint": 1
   },
+  "project": "EmpoweredPixels",
   "columns": [
     "backlog",
     "todo",
@@ -12,132 +12,293 @@
   ],
   "tasks": [
     {
-      "id": "TASK-024",
-      "title": "Fix TypeScript build errors on main",
-      "description": "Resolve missing weapon endpoints and property errors in FighterStats.vue to fix the production build.",
+      "acceptanceCriteria": [
+        "Inventory component integrated into /inventory page",
+        "Functional hover tooltips for item stats using the Ethereal Iron theme",
+        "Filtering system for item types (Weapons, Consumables, Rings)",
+        "Mandatory Playwright E2E tests for navigation and filtering",
+        "Stricly adherence to DIR_PROTOCOL"
+      ],
       "assignee": "foundry",
       "column": "done",
-      "labels": ["bug", "critical"],
+      "description": "Implement the functional Inventory component in the frontend using the previously created mockup assets. Must include drag-and-drop stubs and item filtering.",
+      "id": "TASK-021",
+      "labels": [
+        "feature",
+        "frontend",
+        "inventory"
+      ],
       "priority": "high",
+      "title": "[FEAT] Darkened Forge: Functional Inventory UI",
+      "updatedAt": "2026-02-07T10:10:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "SQL migration created in /backend/internal/infra/db/migrations",
+        "Tables for 'battles', 'battle_logs', and 'combatant_snapshots' defined",
+        "Proper foreign keys to fighters and users",
+        "Verified by Alex-Auditor"
+      ],
+      "assignee": "coder",
+      "column": "done",
+      "description": "Create the database schema for storing battle logs, combatant states, and battle history.",
+      "id": "TASK-025",
+      "labels": [
+        "backend",
+        "database",
+        "combat"
+      ],
+      "priority": "high",
+      "title": "[DB] Combat Core: Schema for Battle Persistence",
+      "updatedAt": "2026-02-07T11:15:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Pure Go implementation in /backend/internal/domain/combat",
+        "Calculates damage, misses, and critical hits based on existing stats",
+        "Returns a structured BattleResult with a turn-by-turn log",
+        "Unit tests covering various stat scenarios (e.g., high-agi vs high-power)"
+      ],
+      "assignee": "coder",
+      "column": "done",
+      "description": "Implement the server-side logic that calculates battle outcomes based on fighter stats (Power, Agility, Health).",
+      "id": "TASK-026",
+      "labels": [
+        "backend",
+        "logic",
+        "combat"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Combat Core: Battle Resolution Algorithm",
+      "updatedAt": "2026-02-07T11:15:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "SQL Migration for 'squads' and 'squad_members' tables.",
+        "Limit: 3 slots per squad.",
+        "Constraint: Only 1 active squad per user."
+      ],
+      "assignee": "coder",
+      "column": "done",
+      "description": "SQL Migration for 'squads' and 'squad_members' tables.",
+      "id": "TASK-027",
+      "labels": [
+        "backend",
+        "database",
+        "squads"
+      ],
+      "priority": "high",
+      "title": "[DB] Squad System: DB Schema",
+      "updatedAt": "2026-02-07T11:45:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Go implementation for squad management API.",
+        "Test coverage for squad service",
+        "All backend tests passing"
+      ],
+      "assignee": "coder",
+      "column": "done",
+      "description": "Implement the squad management API endpoints.",
+      "id": "TASK-028",
+      "labels": [
+        "backend",
+        "api",
+        "squads"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Squad System: Management API",
+      "updatedAt": "2026-02-07T11:45:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Squad UI component design approved",
+        "Responsive layout for 3-fighter squad display",
+        "Fighter slot management UI",
+        "Active squad indicator"
+      ],
+      "assignee": "foundry",
+      "column": "in_progress",
+      "description": "Design and implement the Squad UI components.",
+      "id": "TASK-029",
+      "labels": [
+        "frontend",
+        "design",
+        "squads"
+      ],
+      "priority": "high",
+      "title": "[FEAT] Squad System: UI Components",
+      "updatedAt": "2026-02-07T13:55:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Squad management UI (create, delete, switch)",
+        "Integration with /roster page",
+        "Fighter selection and assignment",
+        "Playwright E2E tests for squad operations"
+      ],
+      "assignee": "foundry",
+      "column": "in_progress",
+      "description": "Implement the Squad Management UI.",
+      "id": "TASK-030",
+      "labels": [
+        "frontend",
+        "feature",
+        "squads"
+      ],
+      "priority": "high",
+      "title": "[FEAT] Squad System: Management UI",
+      "updatedAt": "2026-02-07T13:55:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Unify simulator signatures",
+        "Remove old simulator.go files",
+        "Update service.go to use BattleSimulator"
+      ],
+      "assignee": "coder",
+      "column": "done",
+      "description": "Unify BattleSimulator signatures and remove old files.",
+      "id": "TASK-031",
+      "labels": [
+        "backend",
+        "combat",
+        "cleanup"
+      ],
+      "priority": "high",
+      "title": "[CLEANUP] Combat Core: Unify BattleSimulator Signatures",
+      "updatedAt": "2026-02-07T11:30:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Refactor selectSkill to use Fighter Loadout",
+        "Integrate FighterSkills from roster service",
+        "Fallback to basic attack if no skill in loadout"
+      ],
+      "assignee": "coder",
+      "column": "done",
+      "description": "Refactor selectSkill to use Fighter Loadout.",
+      "id": "TASK-032",
+      "labels": [
+        "backend",
+        "combat",
+        "logic"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Combat Core: Refactor selectSkill",
+      "updatedAt": "2026-02-07T11:35:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Implement mana consumption logic",
+        "Add CurrentMana and MaxMana fields to combat.Entity",
+        "Integrate mana checks in selectSkillFromLoadout"
+      ],
+      "assignee": "coder",
+      "column": "done",
+      "description": "Implement mana consumption logic.",
+      "id": "TASK-033",
+      "labels": [
+        "backend",
+        "combat",
+        "logic"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Combat Core: Mana System",
+      "updatedAt": "2026-02-07T11:40:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Integrate CalculateSkillEffect in combat.EventAttack",
+        "Apply rank-based multipliers (25% per rank)",
+        "Combo and Momentum bonuses stack correctly"
+      ],
+      "assignee": "coder",
+      "column": "done",
+      "description": "Integrate CalculateSkillEffect in combat.EventAttack.",
+      "id": "TASK-034",
+      "labels": [
+        "backend",
+        "combat",
+        "logic"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Combat Core: Skill Rank Scaling",
+      "updatedAt": "2026-02-07T11:45:00Z"
+    },
+    {
+      "assignee": "foundry",
+      "column": "done",
+      "id": "TASK-024",
+      "title": "Fix TypeScript build errors on main",
       "updatedAt": "2026-02-07T08:26:00Z"
     },
     {
-      "id": "TASK-020",
-      "title": "[DESIGN] Mastery Constellation (Advanced Skill Trees)",
-      "description": "Design and implement the interactive Mastery Constellation UI using the Ethereal Iron theme.",
       "assignee": "foundry",
       "column": "done",
-      "labels": ["design", "concept", "skills", "frontend"],
-      "priority": "medium",
-      "acceptanceCriteria": [
-        "Interactive 3-branch skill tree (Weapon, Healing, Utility)",
-        "Unlock logic utilizing Soul-Shards (frontend mock/logic)",
-        "Ethereal Iron visual style (splatters + iron frames)",
-        "Mandatory Playwright E2E tests covering node unlocking and UI state changes",
-        "Updated ARCHITECTURE.md with skill system patterns"
-      ],
+      "id": "TASK-020",
+      "title": "[DESIGN] Mastery Constellation (Advanced Skill Trees)",
       "updatedAt": "2026-02-07T09:42:00Z"
     },
     {
+      "column": "done",
       "id": "TASK-001",
       "title": "Fix broken backend",
-      "column": "done",
-      "labels": ["bug", "backend"],
-      "priority": "high",
       "updatedAt": "2026-02-06T20:10:00Z"
     },
     {
+      "column": "done",
       "id": "TASK-002",
       "title": "Fix route ordering",
-      "column": "done",
-      "labels": ["bug", "backend"],
-      "priority": "high",
       "updatedAt": "2026-02-06T23:25:00Z"
     },
     {
+      "column": "done",
       "id": "TASK-003",
       "title": "Shop: Duplicate shops cleanup",
-      "column": "done",
-      "labels": ["bug", "database"],
-      "priority": "medium",
       "updatedAt": "2026-02-06T21:51:00Z"
     },
     {
+      "column": "done",
       "id": "TASK-004",
       "title": "Shop: Add USD payment integration stub",
-      "column": "done",
-      "labels": ["feature", "payments"],
-      "priority": "medium",
       "updatedAt": "2026-02-06T23:25:00Z"
     },
     {
+      "column": "done",
       "id": "TASK-005",
       "title": "Shop: Bundle equipment delivery",
-      "column": "done",
-      "labels": ["bug", "shop"],
-      "priority": "high",
       "updatedAt": "2026-02-06T23:15:00Z"
     },
     {
+      "column": "done",
       "id": "TASK-006",
       "title": "Shop: Add missing UI components",
-      "column": "done",
-      "labels": ["enhancement", "frontend"],
-      "priority": "low",
       "updatedAt": "2026-02-06T23:25:00Z"
     },
     {
+      "column": "done",
       "id": "TASK-016",
       "title": "UI: Weapon Integration in Fighter Stats",
-      "column": "done",
-      "labels": ["feature", "frontend"],
-      "priority": "high",
       "updatedAt": "2026-02-06T23:45:00Z"
     },
     {
+      "column": "done",
       "id": "TASK-017",
       "title": "[DESIGN] UI/UX Overhaul: WoW/GW2/D4 Fusion",
-      "column": "done",
-      "labels": ["design", "ux"],
-      "priority": "high",
       "updatedAt": "2026-02-07T01:32:00Z"
     },
     {
+      "column": "done",
       "id": "TASK-018",
       "title": "[DESIGN] Mockup: Darkened Forge Inventory",
-      "column": "done",
-      "labels": ["design", "ux"],
-      "priority": "medium",
       "updatedAt": "2026-02-07T01:34:00Z"
     },
     {
+      "column": "done",
       "id": "TASK-019",
       "title": "[EVENT] Hucki Shopping-Tour Audit",
-      "column": "done",
-      "labels": ["test", "bot"],
-      "priority": "medium",
       "updatedAt": "2026-02-06T23:55:00Z"
-    },
-    {
-      "id": "TASK-008",
-      "title": "[DESIGN] Elemental Overload System",
-      "column": "backlog",
-      "labels": ["design", "concept", "combat"],
-      "priority": "low"
-    },
-    {
-      "id": "TASK-009",
-      "title": "[DESIGN] Tactical Terrain Traits",
-      "column": "backlog",
-      "labels": ["design", "concept", "combat"],
-      "priority": "low"
-    },
-    {
-      "id": "TASK-011",
-      "title": "[DESIGN] 4+1 Skill System & Smart AI Logic",
-      "column": "backlog",
-      "labels": ["design", "concept", "logic"],
-      "priority": "low"
     }
   ]
 }

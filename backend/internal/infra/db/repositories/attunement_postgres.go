@@ -10,22 +10,14 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// AttunementRepository defines attunement database operations
-type AttunementRepository interface {
-	GetPlayerAttunements(ctx context.Context, userID int) ([]attunement.Attunement, error)
-	GetAttunement(ctx context.Context, userID int, element attunement.Element) (*attunement.Attunement, error)
-	AddXP(ctx context.Context, userID int, element attunement.Element, xpAmount int, source string) (levelUp bool, newLevel int, err error)
-	CreateInitialAttunements(ctx context.Context, userID int) error
-}
-
-// AttunementPostgres implements AttunementRepository
+// AttunementPostgres implements your AttunementRepository interface
 type AttunementPostgres struct {
-	db *pgxpool.Pool
+	pool *pgxpool.Pool
 }
 
 // NewAttunementRepository creates a new attunement repository
-func NewAttunementRepository(db *pgxpool.Pool) AttunementRepository {
-	return &AttunementPostgres{db: db}
+func NewAttunementRepository(pool *pgxpool.Pool) *AttunementPostgres {
+	return &AttunementPostgres{pool: pool}
 }
 
 // GetPlayerAttunements retrieves all 6 attunements for a player
@@ -37,7 +29,7 @@ func (r *AttunementPostgres) GetPlayerAttunements(ctx context.Context, userID in
 		ORDER BY element ASC
 	`
 
-	rows, err := r.db.Query(ctx, query, userID)
+	rows, err := r.pool.Query(ctx, query, userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query attunements: %w", err)
 	}
@@ -64,7 +56,7 @@ func (r *AttunementPostgres) GetAttunement(ctx context.Context, userID int, elem
 	`
 
 	var a attunement.Attunement
-	err := r.db.QueryRow(ctx, query, userID, string(element)).Scan(
+	err := r.pool.QueryRow(ctx, query, userID, string(element)).Scan(
 		&a.Element, &a.Level, &a.CurrentXP, &a.TotalXP,
 	)
 	if err != nil {
@@ -79,7 +71,7 @@ func (r *AttunementPostgres) GetAttunement(ctx context.Context, userID int, elem
 
 // AddXP adds XP to an element and handles level-ups
 func (r *AttunementPostgres) AddXP(ctx context.Context, userID int, element attunement.Element, xpAmount int, source string) (levelUp bool, newLevel int, err error) {
-	tx, err := r.db.Begin(ctx)
+	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return false, 0, fmt.Errorf("failed to begin transaction: %w", err)
 	}
@@ -170,7 +162,7 @@ func (r *AttunementPostgres) CreateInitialAttunements(ctx context.Context, userI
 	`
 
 	for _, element := range elements {
-		_, err := r.db.Exec(ctx, query, userID, string(element))
+		_, err := r.pool.Exec(ctx, query, userID, string(element))
 		if err != nil {
 			return fmt.Errorf("failed to create attunement for %s: %w", element, err)
 		}

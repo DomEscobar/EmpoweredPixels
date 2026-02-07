@@ -126,6 +126,11 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/fighter/{id}/configuration", func(w http.ResponseWriter, r *http.Request) {
 			h.UpdateConfiguration(w, r, mux.Vars(r)["id"])
 		}).Methods("POST")
+
+		// Squad routes
+		squadHandler := rosterhandlers.NewSquadHandler(deps.RosterService.SquadService) // Assume SquadService is injected
+		api.HandleFunc("/roster/squad/active", squadHandler.GetActive).Methods("GET")
+		api.HandleFunc("/roster/squad/active", squadHandler.SetActive).Methods("POST")
 	}
 
 	if deps.MatchService != nil {

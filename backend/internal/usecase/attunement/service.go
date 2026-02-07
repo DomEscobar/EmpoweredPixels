@@ -5,16 +5,15 @@ import (
 	"fmt"
 
 	"empoweredpixels/internal/domain/attunement"
-	"empoweredpixels/internal/infra/db/repositories"
 )
 
 // Service handles attunement business logic
 type Service struct {
-	repo repositories.AttunementRepository
+	repo AttunementRepository
 }
 
 // NewService creates a new attunement service
-func NewService(repo repositories.AttunementRepository) *Service {
+func NewService(repo AttunementRepository) *Service {
 	return &Service{repo: repo}
 }
 

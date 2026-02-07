@@ -62,10 +62,12 @@ func main() {
 	fighterRepo := repositories.NewFighterRepository(database.Pool)
 	experienceRepo := repositories.NewExperienceRepository(database.Pool)
 	configurationRepo := repositories.NewConfigurationRepository(database.Pool)
+	squadRepo := repositories.NewSquadRepository(database.Pool)
 	rosterService := rosterusecase.NewService(
 		fighterRepo,
 		experienceRepo,
 		configurationRepo,
+		squadRepo,
 		time.Now,
 	)
 

@@ -26,3 +26,9 @@ type ConfigurationRepository interface {
 	GetByFighterID(ctx context.Context, fighterID string) (*roster.FighterConfiguration, error)
 	Upsert(ctx context.Context, configuration *roster.FighterConfiguration) error
 }
+
+type SquadRepository interface {
+	Create(ctx context.Context, squad *roster.Squad) error
+	GetActiveByUserID(ctx context.Context, userID int64) (*roster.Squad, error)
+	DeactivateAll(ctx context.Context, userID int64) error
+}
