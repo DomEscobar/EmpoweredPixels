@@ -372,7 +372,7 @@
         "E2E tests for ranking and progression"
       ],
       "assignee": "foundry",
-      "column": "in_progress",
+      "column": "done",
       "description": "Add comprehensive Playwright E2E tests for Leaderboard and League systems including ranking display, filtering, and historical views.",
       "id": "TASK-039",
       "labels": [
@@ -393,7 +393,7 @@
         "E2E tests for main entry point"
       ],
       "assignee": "foundry",
-      "column": "backlog",
+      "column": "in_progress",
       "description": "Add comprehensive Playwright E2E tests for Home and Dashboard pages, covering navigation, overview cards, and user profile interactions.",
       "id": "TASK-040",
       "labels": [
