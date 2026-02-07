@@ -6,6 +6,7 @@
       backgroundSize: '128px 128px',
       imageRendering: 'pixelated'
     }"
+    data-testid="roster-page"
   >
     <!-- CRT Scanline Overlay -->
     <div class="pointer-events-none fixed inset-0 z-50 opacity-[0.03] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.3)_2px,rgba(0,0,0,0.3)_4px)]"></div>
@@ -16,7 +17,7 @@
     <div class="relative z-10 max-w-7xl mx-auto space-y-6">
 
       <!-- Header Banner -->
-      <header class="pixel-box bg-slate-900/95 p-6">
+      <header class="pixel-box bg-slate-900/95 p-6" data-testid="roster-header">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div class="flex items-center gap-4">
             <img 
@@ -42,7 +43,7 @@
             </div>
 
             <!-- Recruit Button -->
-            <button @click="openCreateWizard" class="rpg-btn flex items-center gap-2">
+            <button @click="openCreateWizard" class="rpg-btn flex items-center gap-2" data-testid="recruit-button">
               <img :src="PIXEL_ASSETS.ICON_PLUS" alt="" class="w-4 h-4 pixelated" />
               RECRUIT
             </button>
@@ -57,23 +58,24 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="!roster.fighters.length" class="pixel-box bg-slate-900/90 py-16 text-center">
+      <div v-else-if="!roster.fighters.length" class="pixel-box bg-slate-900/90 py-16 text-center" data-testid="roster-empty">
         <img :src="PIXEL_ASSETS.ICON_HELMET_EMPTY" alt="" class="w-20 h-20 pixelated mx-auto mb-4 opacity-50" />
         <h2 class="text-xl font-bold text-slate-400 mb-2">No Warriors Yet</h2>
         <p class="text-slate-500 text-sm mb-6">
           Thy arena awaits its first champion
         </p>
-        <button @click="openCreateWizard" class="rpg-btn">
+        <button @click="openCreateWizard" class="rpg-btn" data-testid="recruit-first-button">
           RECRUIT FIRST WARRIOR
         </button>
       </div>
 
       <!-- Fighter Grid -->
-      <div v-else class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div v-else class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="fighter-grid">
         <article
           v-for="fighter in roster.fighters"
           :key="fighter.id"
           class="pixel-box bg-slate-900/90 overflow-hidden group hover:border-indigo-500/50 transition-colors"
+          :data-testid="`fighter-card-${fighter.id}`"
         >
           <!-- Attunement Glow Header -->
           <div 
@@ -206,12 +208,14 @@
               <button
                 @click="openFighterPanel(fighter)"
                 class="rpg-btn flex-1 text-sm py-2"
+                :data-testid="`manage-fighter-${fighter.id}`"
               >
                 MANAGE
               </button>
               <button
                 @click="confirmDismiss(fighter)"
                 class="rpg-btn-small bg-red-900/50 hover:bg-red-800/50 border-red-700 text-red-300 px-3"
+                :data-testid="`dismiss-fighter-${fighter.id}`"
               >
                 <img :src="PIXEL_ASSETS.ICON_SKULL" alt="" class="w-4 h-4 pixelated" />
               </button>
@@ -283,6 +287,7 @@
                   <FighterStats
                     :fighter="selectedFighter"
                     :equipment="roster.equipment[selectedFighter.id] || []"
+                    :data-testid="`fighter-stats-${selectedFighter.id}`"
                   />
                 </div>
               </aside>
@@ -312,7 +317,7 @@
               leave-from-class="opacity-100 scale-100"
               leave-to-class="opacity-0 scale-95"
             >
-              <div v-if="showCreate" class="pixel-box bg-slate-900 w-full max-w-lg relative z-10">
+              <div v-if="showCreate" class="pixel-box bg-slate-900 w-full max-w-lg relative z-10" data-testid="create-wizard">
                 <!-- Wizard Header -->
                 <div class="p-4 border-b-4 border-slate-800 flex items-center gap-3">
                   <img :src="PIXEL_ASSETS.ICON_SCROLL" alt="" class="w-6 h-6 pixelated" />
@@ -352,6 +357,7 @@
                       minlength="2"
                       maxlength="24"
                       class="w-full pixel-box-sm bg-slate-800 px-4 py-3 text-lg text-white placeholder-slate-600 focus:border-amber-500 focus:outline-none"
+                      data-testid="new-fighter-name-input"
                     />
                     <p class="mt-1 text-[10px] text-slate-600">{{ newName.length }}/24 characters</p>
                   </div>
@@ -371,6 +377,7 @@
                             ? `${att.bgActive} ${att.borderActive}`
                             : 'bg-slate-800/60 hover:bg-slate-700'
                         ]"
+                        :data-testid="`attunement-select-${att.id.toLowerCase()}`"
                       >
                         <span class="text-xl">{{ att.icon }}</span>
                         <span class="text-[10px] font-bold" :class="createAttunement === att.id ? 'text-white' : 'text-slate-500'">
@@ -394,6 +401,7 @@
                       type="button"
                       @click="closeCreateWizard"
                       class="rpg-btn-small flex-1"
+                      data-testid="cancel-recruit"
                     >
                       CANCEL
                     </button>
@@ -401,6 +409,7 @@
                       type="submit"
                       :disabled="roster.isLoading || !newName.trim()"
                       :class="['rpg-btn flex-1', { 'opacity-50 cursor-not-allowed': roster.isLoading || !newName.trim() }]"
+                      data-testid="confirm-recruit"
                     >
                       <span v-if="roster.isLoading" class="flex items-center justify-center gap-2">
                         <span class="animate-spin">⚙️</span>
@@ -429,7 +438,7 @@
           <div v-if="dismissTarget" class="fixed inset-0 z-100 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/80" @click="dismissTarget = null"></div>
             
-            <div class="pixel-box bg-slate-900 w-full max-w-sm relative z-10 p-6">
+            <div class="pixel-box bg-slate-900 w-full max-w-sm relative z-10 p-6" data-testid="dismiss-confirmation">
               <div class="flex items-center gap-3 mb-4">
                 <img :src="PIXEL_ASSETS.ICON_SKULL" alt="" class="w-8 h-8 pixelated" />
                 <h3 class="text-lg font-bold text-red-400 text-shadow-retro">DISMISS WARRIOR</h3>
@@ -449,12 +458,14 @@
                 <button
                   @click="dismissTarget = null"
                   class="rpg-btn-small flex-1"
+                  data-testid="cancel-dismiss"
                 >
                   CANCEL
                 </button>
                 <button
                   @click="handleDismiss"
                   class="rpg-btn flex-1 bg-red-700 hover:bg-red-600 border-red-800"
+                  data-testid="confirm-dismiss"
                 >
                   DISMISS
                 </button>
