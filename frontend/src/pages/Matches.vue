@@ -1,11 +1,11 @@
 <template>
-  <div class="retro-rpg min-h-screen p-4 md:p-8 font-mono text-amber-100" :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_DUNGEON}')` }">
+  <div class="retro-rpg min-h-screen p-4 md:p-8 font-mono text-amber-100" :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_DUNGEON}')` }" data-testid="matches-page">
     <!-- Overlay for atmosphere -->
     <div class="fixed inset-0 bg-slate-950/80 pointer-events-none z-0"></div>
     
     <div class="relative z-10 max-w-7xl mx-auto space-y-8">
       <!-- Title Section -->
-      <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b-4 border-amber-900/50">
+      <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b-4 border-amber-900/50" data-testid="matches-header">
         <div class="flex items-center gap-4">
            <div class="w-16 h-16 bg-slate-900 border-4 border-amber-600 flex items-center justify-center shadow-lg">
               <img :src="PIXEL_ASSETS.ICON_CHEST" class="w-10 h-10 pixelated" />
@@ -33,6 +33,7 @@
               @click="handleQuickJoin"
               :disabled="isQuickJoining || roster.fighters.length === 0"
               class="rpg-btn bg-blue-600 border-blue-800 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed group relative px-4 py-3 font-bold uppercase tracking-wider flex items-center gap-2"
+              data-testid="quick-join-button"
             >
               <span v-if="isQuickJoining" class="animate-spin">⚡</span>
               <span v-else>⚡ Quick Join</span>
@@ -40,6 +41,7 @@
             <button 
               @click="showCreate = true"
               class="rpg-btn bg-emerald-700 border-emerald-900 text-white hover:bg-emerald-600 group relative px-6 py-3 font-bold uppercase tracking-wider flex items-center gap-2"
+              data-testid="create-match-button"
             >
               <span class="absolute inset-0 border-2 border-white/20 pointer-events-none"></span>
               <img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-5 h-5 pixelated" />
@@ -58,7 +60,7 @@
         leave-from-class="transform opacity-100 scale-100"
         leave-to-class="transform opacity-0 scale-95"
       >
-        <div v-if="currentMatchId" class="rpg-panel border-4 border-amber-600 bg-slate-900 shadow-xl p-1 relative overflow-hidden">
+        <div v-if="currentMatchId" class="rpg-panel border-4 border-amber-600 bg-slate-900 shadow-xl p-1 relative overflow-hidden" data-testid="active-match-banner">
           <!-- Decorative Corners -->
           <div class="absolute top-0 left-0 w-2 h-2 bg-amber-500"></div>
           <div class="absolute top-0 right-0 w-2 h-2 bg-amber-500"></div>
@@ -96,10 +98,10 @@
                     <span class="text-amber-400 font-bold">{{ currentMatch?.registrations?.length ?? 1 }}/{{ options.maxPlayers || 2 }}</span>
                   </div>
                   <div class="grid grid-cols-2 gap-2">
-                    <button @click="handleLeave" class="rpg-btn-small bg-red-900/50 border-red-800 text-red-300 hover:bg-red-900 hover:text-white">
+                    <button @click="handleLeave" class="rpg-btn-small bg-red-900/50 border-red-800 text-red-300 hover:bg-red-900 hover:text-white" data-testid="leave-match-button">
                       Flee
                     </button>
-                    <button @click="handleStart" :disabled="isStarting" class="rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black">
+                    <button @click="handleStart" :disabled="isStarting" class="rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black" data-testid="begin-match-button">
                       BEGIN
                     </button>
                   </div>
@@ -172,12 +174,13 @@
            <p class="text-slate-600 text-xs mt-2">{{ emptyMessage }}</p>
         </div>
 
-        <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="matches-grid">
            <div 
             v-for="match in filteredMatches" 
             :key="match.id"
             class="group rpg-card bg-slate-900 border-4 border-slate-800 hover:border-amber-600/50 transition-all duration-200 flex flex-col relative overflow-hidden"
             :class="{ 'border-amber-500 ring-4 ring-amber-500/20 z-10': currentMatchId === match.id }"
+            :data-testid="`match-card-${match.id}`"
            >
               <!-- Card Top Decoration -->
               <div class="h-1 bg-slate-800 group-hover:bg-amber-600/50 transition-colors"></div>
@@ -214,6 +217,7 @@
                         v-if="currentMatchId !== match.id"
                         @click="openJoinModal(match.id)"
                         class="w-full rpg-btn-small bg-indigo-900 border-indigo-700 text-indigo-200 hover:bg-indigo-800 hover:text-white font-bold uppercase"
+                        :data-testid="`join-match-${match.id}`"
                        >
                         Join Party
                        </button>
