@@ -6,6 +6,7 @@
       backgroundSize: '128px 128px',
       imageRendering: 'pixelated'
     }"
+    data-testid="dashboard-page"
   >
     <!-- CRT Scanline Overlay -->
     <div class="pointer-events-none fixed inset-0 z-50 opacity-[0.03] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.3)_2px,rgba(0,0,0,0.3)_4px)]"></div>
@@ -16,7 +17,7 @@
     <div class="relative z-10 max-w-7xl mx-auto space-y-6">
       
       <!-- Header Banner -->
-      <header class="pixel-box bg-slate-900/95 p-6">
+      <header class="pixel-box bg-slate-900/95 p-6" data-testid="dashboard-header">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div class="flex items-center gap-4">
             <img 
@@ -35,7 +36,7 @@
           </div>
           
           <!-- Status Indicator -->
-          <div class="pixel-box-sm bg-emerald-900/30 border-emerald-500/50 px-4 py-2 flex items-center gap-2">
+          <div class="pixel-box-sm bg-emerald-900/30 border-emerald-500/50 px-4 py-2 flex items-center gap-2" data-testid="user-status">
             <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
             <span class="text-emerald-400 text-xs font-bold uppercase tracking-wider">Online</span>
           </div>
@@ -43,13 +44,13 @@
       </header>
 
       <!-- Event Banner -->
-      <EventBanner />
+      <EventBanner data-testid="event-banner" />
 
       <!-- KPI Grid -->
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         
         <!-- Active Roster -->
-        <div class="pixel-box bg-slate-900/90 p-4 group hover:bg-slate-900/95 transition-colors">
+        <div class="pixel-box bg-slate-900/90 p-4 group hover:bg-slate-900/95 transition-colors" data-testid="kpi-roster">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-xs text-slate-500 uppercase tracking-wider">Active Roster</p>
@@ -65,7 +66,7 @@
         </div>
 
         <!-- Active Campaigns -->
-        <div class="pixel-box bg-slate-900/90 p-4 group hover:bg-slate-900/95 transition-colors">
+        <div class="pixel-box bg-slate-900/90 p-4 group hover:bg-slate-900/95 transition-colors" data-testid="kpi-campaigns">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-xs text-slate-500 uppercase tracking-wider">Active Campaigns</p>
@@ -85,7 +86,7 @@
         </div>
 
         <!-- Combat Record -->
-        <div class="pixel-box bg-slate-900/90 p-4 group hover:bg-slate-900/95 transition-colors">
+        <div class="pixel-box bg-slate-900/90 p-4 group hover:bg-slate-900/95 transition-colors" data-testid="kpi-combat">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-xs text-slate-500 uppercase tracking-wider">Combat Record</p>
@@ -104,6 +105,7 @@
         <div 
           class="pixel-box bg-slate-900/90 p-4 group transition-all"
           :class="rewardsStore.rewardCount > 0 ? 'border-amber-500/50 shadow-lg shadow-amber-500/10' : ''"
+          data-testid="kpi-rewards"
         >
           <div class="flex items-center justify-between">
             <div>
@@ -122,6 +124,7 @@
               v-if="rewardsStore.rewardCount > 0" 
               class="rpg-btn w-full text-sm py-2"
               @click="claimAllRewards"
+              data-testid="claim-rewards-btn"
             >
               CLAIM ALL
             </button>
@@ -142,7 +145,7 @@
                 <img :src="PIXEL_ASSETS.ICON_SCROLL" alt="" class="w-5 h-5 pixelated" />
                 <h3 class="text-lg font-bold text-amber-300">BATTLE LOG</h3>
               </div>
-              <router-link to="/matches" class="rpg-btn-small">
+              <router-link to="/matches" class="rpg-btn-small" data-testid="battle-log-view-all">
                 VIEW ALL
               </router-link>
             </div>
@@ -194,7 +197,7 @@
         <div class="space-y-6">
           
           <!-- Elite Operative -->
-          <div class="pixel-box bg-slate-900/90">
+          <div class="pixel-box bg-slate-900/90" data-testid="champion-card">
             <div class="p-4 border-b-4 border-slate-800 flex items-center gap-3">
               <img :src="PIXEL_ASSETS.ICON_CROWN" alt="" class="w-5 h-5 pixelated" />
               <h3 class="text-lg font-bold text-amber-300">CHAMPION</h3>
@@ -210,9 +213,9 @@
                     LVL {{ topFighter.level }}
                   </div>
                 </div>
-                <h4 class="text-lg font-bold text-white mt-2">{{ topFighter.name }}</h4>
+                <h4 class="text-lg font-bold text-white mt-2" data-testid="champion-name">{{ topFighter.name }}</h4>
                 <div class="mt-2">
-                  <span class="pixel-badge bg-slate-800 text-slate-300 px-2 py-1 text-xs border-slate-600">
+                  <span class="pixel-badge bg-slate-800 text-slate-300 px-2 py-1 text-xs border-slate-600" data-testid="champion-power">
                     Power: {{ topFighter.power }}
                   </span>
                 </div>
@@ -237,6 +240,7 @@
               <router-link 
                 to="/matches" 
                 class="pixel-box-sm bg-slate-800/60 p-4 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-indigo-500/50 transition-all group"
+                data-testid="quick-battle"
               >
                 <img :src="PIXEL_ASSETS.ICON_SWORDS" alt="" class="w-8 h-8 pixelated mb-2 group-hover:scale-110 transition-transform" />
                 <span class="text-xs font-bold text-slate-300">BATTLE</span>
@@ -245,6 +249,7 @@
               <router-link 
                 to="/roster" 
                 class="pixel-box-sm bg-slate-800/60 p-4 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-purple-500/50 transition-all group"
+                data-testid="quick-roster"
               >
                 <img :src="PIXEL_ASSETS.ICON_KNIGHT" alt="" class="w-8 h-8 pixelated mb-2 group-hover:scale-110 transition-transform" />
                 <span class="text-xs font-bold text-slate-300">ROSTER</span>
@@ -253,6 +258,7 @@
               <router-link 
                 to="/inventory" 
                 class="pixel-box-sm bg-slate-800/60 p-4 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-emerald-500/50 transition-all group"
+                data-testid="quick-vault"
               >
                 <img :src="PIXEL_ASSETS.ICON_CHEST" alt="" class="w-8 h-8 pixelated mb-2 group-hover:scale-110 transition-transform" />
                 <span class="text-xs font-bold text-slate-300">VAULT</span>
@@ -261,6 +267,7 @@
               <router-link 
                 to="/leagues" 
                 class="pixel-box-sm bg-slate-800/60 p-4 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-amber-500/50 transition-all group"
+                data-testid="quick-leagues"
               >
                 <img :src="PIXEL_ASSETS.ICON_TROPHY" alt="" class="w-8 h-8 pixelated mb-2 group-hover:scale-110 transition-transform" />
                 <span class="text-xs font-bold text-slate-300">LEAGUES</span>
