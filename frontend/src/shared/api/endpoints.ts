@@ -14,4 +14,4 @@ export const endpoints = {
   playerGold: "/api/player/gold",
   playerTransactions: "/api/player/transactions",
   weapons: "/api/weapons",
-};
+} as const;
