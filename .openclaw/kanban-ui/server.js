@@ -30,6 +30,10 @@ app.get('/roster', (req, res) => {
     res.render('roster');
 });
 
+app.get('/inventory', (req, res) => {
+    res.render('inventory');
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.listen(PORT, () => {

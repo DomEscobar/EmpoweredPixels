@@ -1,6 +1,10 @@
 :root {
     /* AAA RPG Color Palette */
-    --clr-ebony: #0a0b0d;
+    --d4-dark: #1a1a1a;
+    --iron: #4a4a4a;
+    --ethereal-blue: #00ccff;
+    
+    --clr-ebony: var(--d4-dark);
     --clr-slate-stone: #1a1c1e;
     --clr-deep-stone: #121417;
     --clr-dark-accent: #0f1012;
