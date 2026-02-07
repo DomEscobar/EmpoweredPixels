@@ -1,5 +1,5 @@
 <template>
-  <div class="gold-display" :class="{ 'is-loading': loading }">
+  <div class="gold-display" :class="{ 'is-loading': loading }" data-testid="gold-display">
     <div class="gold-icon">
       <span class="icon">🪙</span>
     </div>

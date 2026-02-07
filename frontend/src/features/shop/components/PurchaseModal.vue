@@ -1,19 +1,19 @@
 <template>
-  <div v-if="isOpen" class="modal-overlay" @click.self="close">
+  <div v-if="isOpen" class="modal-overlay" @click.self="close" data-testid="purchase-modal">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" data-testid="modal-header">
         <h2>Confirm Purchase</h2>
         <button class="close-button" @click="close">&times;</button>
       </div>
 
-      <div v-if="item" class="modal-body">
-        <div class="item-preview" :style="{ borderColor: rarityColor }">
+      <div v-if="item" class="modal-body" data-testid="modal-body">
+        <div class="item-preview" :style="{ borderColor: rarityColor }" data-testid="item-preview">
           <h3>{{ item.name }}</h3>
           <p>{{ item.description }}</p>
           <div class="price-tag">{{ formattedPrice }}</div>
         </div>
 
-        <div class="balance-info">
+        <div class="balance-info" data-testid="balance-info">
           <div class="balance-row">
             <span>Current Balance:</span>
             <span class="balance">{{ currentBalance.toLocaleString() }} Gold</span>
@@ -26,16 +26,17 @@
           </div>
         </div>
 
-        <div v-if="result" :class="['result-message', result.success ? 'success' : 'error']">
+        <div v-if="result" :class="['result-message', result.success ? 'success' : 'error']" data-testid="result-message">
           {{ result.message }}
         </div>
 
-        <div class="modal-actions">
-          <button class="cancel-button" @click="close">Cancel</button>
+        <div class="modal-actions" data-testid="modal-actions">
+          <button class="cancel-button" @click="close" data-testid="cancel-button">Cancel</button>
           <button 
             class="confirm-button"
             :disabled="!canPurchase || shopStore.purchaseInProgress"
             @click="confirmPurchase"
+            data-testid="confirm-button"
           >
             <span v-if="shopStore.purchaseInProgress">Processing...</span>
             <span v-else>Confirm Purchase</span>

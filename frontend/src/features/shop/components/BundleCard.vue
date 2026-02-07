@@ -1,5 +1,5 @@
 <template>
-  <div class="bundle-card" :style="{ borderColor: rarityColor }">
+  <div class="bundle-card" :style="{ borderColor: rarityColor }" :data-testid="`bundle-card-${item.id}`">
     <div class="bundle-header" :style="{ backgroundColor: rarityColor + '20' }">
       <span class="rarity-badge" :style="{ backgroundColor: rarityColor }">
         {{ rarityName }}
@@ -32,6 +32,7 @@
         class="buy-button"
         :disabled="isDisabled"
         @click="$emit('purchase', item.id)"
+        :data-testid="`buy-bundle-${item.id}`"
       >
         {{ buttonText }}
       </button>

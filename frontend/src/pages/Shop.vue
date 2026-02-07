@@ -1,16 +1,17 @@
 <template>
-  <div class="shop-page">
-    <header class="shop-header">
+  <div class="shop-page" data-testid="shop-page">
+    <header class="shop-header" data-testid="shop-header">
       <h1>🏪 Shop</h1>
       <GoldDisplay />
     </header>
 
-    <nav class="shop-tabs">
+    <nav class="shop-tabs" data-testid="shop-tabs">
       <button 
         v-for="tab in tabs" 
         :key="tab.id"
         :class="['tab', { active: activeTab === tab.id }]"
         @click="activeTab = tab.id"
+        :data-testid="`tab-${tab.id}`"
       >
         {{ tab.label }}
       </button>
@@ -18,7 +19,7 @@
 
     <main class="shop-content">
       <!-- Gold Packages Tab -->
-      <section v-if="activeTab === 'gold'" class="tab-content">
+      <section v-if="activeTab === 'gold'" class="tab-content" data-testid="tab-gold">
         <h2>Gold Emporium</h2>
         <p class="tab-description">Purchase gold for upgrades and items</p>
         
@@ -32,11 +33,11 @@
           </div>
         </div>
         
-        <div v-else-if="shopStore.error" class="error">
+        <div v-else-if="shopStore.error" class="error" data-testid="error-message">
           {{ shopStore.error }}
         </div>
 
-        <div v-else-if="shopStore.goldPackages.length === 0" class="empty-state-wrapper">
+        <div v-else-if="shopStore.goldPackages.length === 0" class="empty-state-wrapper" data-testid="empty-gold">
           <EmptyState 
             icon="🪙" 
             title="No Gold Packages" 
@@ -44,18 +45,19 @@
           />
         </div>
         
-        <div v-else class="gold-grid">
+        <div v-else class="gold-grid" data-testid="gold-grid">
           <GoldPackageCard 
             v-for="item in shopStore.goldPackages" 
             :key="item.id"
             :item="item"
             @purchase="openPurchaseModal"
+            :data-testid="`gold-package-${item.id}`"
           />
         </div>
       </section>
 
       <!-- Bundles Tab -->
-      <section v-if="activeTab === 'bundles'" class="tab-content">
+      <section v-if="activeTab === 'bundles'" class="tab-content" data-testid="tab-bundles">
         <h2>Equipment Bundles</h2>
         <p class="tab-description">Curated bundles with guaranteed rarity items</p>
         
@@ -69,11 +71,11 @@
           </div>
         </div>
         
-        <div v-else-if="shopStore.error" class="error">
+        <div v-else-if="shopStore.error" class="error" data-testid="error-message">
           {{ shopStore.error }}
         </div>
 
-        <div v-else-if="shopStore.bundles.length === 0" class="empty-state-wrapper">
+        <div v-else-if="shopStore.bundles.length === 0" class="empty-state-wrapper" data-testid="empty-bundles">
           <EmptyState 
             icon="📦" 
             title="No Bundles Available" 
@@ -81,18 +83,19 @@
           />
         </div>
         
-        <div v-else class="bundles-grid">
+        <div v-else class="bundles-grid" data-testid="bundles-grid">
           <BundleCard 
             v-for="item in shopStore.bundles" 
             :key="item.id"
             :item="item"
             @purchase="openPurchaseModal"
+            :data-testid="`bundle-${item.id}`"
           />
         </div>
       </section>
 
       <!-- History Tab -->
-      <section v-if="activeTab === 'history'" class="tab-content">
+      <section v-if="activeTab === 'history'" class="tab-content" data-testid="tab-history">
         <h2>Purchase History</h2>
         <p class="tab-description">Your recent transactions</p>
         
@@ -100,7 +103,7 @@
           <Skeleton v-for="i in 5" :key="i" height="64px" border-radius="8px" />
         </div>
 
-        <div v-else-if="shopStore.transactions.length === 0" class="empty-state-wrapper">
+        <div v-else-if="shopStore.transactions.length === 0" class="empty-state-wrapper" data-testid="empty-history">
           <EmptyState 
             icon="📜" 
             title="No History" 
@@ -108,11 +111,12 @@
           />
         </div>
         
-        <div v-else class="transactions-list">
+        <div v-else class="transactions-list" data-testid="transactions-list">
           <div 
             v-for="tx in shopStore.transactions" 
             :key="tx.id"
             :class="['transaction', tx.status]"
+            :data-testid="`tx-${tx.id}`"
           >
             <div class="tx-info">
               <span class="tx-name">{{ tx.item_name }}</span>

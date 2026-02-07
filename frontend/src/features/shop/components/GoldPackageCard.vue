@@ -1,5 +1,5 @@
 <template>
-  <div class="gold-package" :class="`tier-${tier}`">
+  <div class="gold-package" :class="`tier-${tier}`" :data-testid="`gold-package-card-${item.id}`">
     <div class="package-header">
       <span v-if="isPopular" class="popular-badge">Most Popular</span>
       <span v-if="isBestValue" class="value-badge">Best Value</span>
@@ -22,6 +22,7 @@
         class="buy-button"
         :disabled="shopStore.purchaseInProgress"
         @click="$emit('purchase', item.id)"
+        :data-testid="`buy-gold-${item.id}`"
       >
         {{ shopStore.purchaseInProgress ? 'Processing...' : 'Buy' }}
       </button>
