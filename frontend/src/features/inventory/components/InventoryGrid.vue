@@ -68,7 +68,7 @@ const activeFilter = ref('all');
 const filters = [
   { id: 'all', label: 'ALL' },
   { id: 'weapon', label: 'WEAPONS' },
-  { id: 'armor', label: 'ARMOR' }, // Placeholder for future armor types
+  { id: 'shards', label: 'SOUL-SHARDS' },
   { id: 'consumable', label: 'CONSUMABLES' },
   { id: 'ring', label: 'RINGS' }
 ];
@@ -76,11 +76,10 @@ const filters = [
 const filteredEquipment = computed(() => {
   if (activeFilter.value === 'all') return props.equipment;
   
-  // Note: Backend 'type' currently maps to ItemID. 
-  // We'll map some known prefixes or assume type strings for now.
   return props.equipment.filter(item => {
     const type = item.type.toLowerCase();
     if (activeFilter.value === 'weapon') return type.includes('wpn');
+    if (activeFilter.value === 'shards') return type.includes('shard');
     if (activeFilter.value === 'ring') return type.includes('ring');
     if (activeFilter.value === 'consumable') return type.includes('pot') || type.includes('scroll');
     return false;
