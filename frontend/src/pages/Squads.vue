@@ -31,7 +31,11 @@
         </div>
 
         <div class="squad-actions-view">
-          <button @click="openEdit" class="ep-button ep-button-secondary">
+          <button
+            @click="openEdit"
+            class="ep-button ep-button-secondary"
+            data-testid="edit-squad-btn"
+          >
             Edit Squad
           </button>
         </div>
@@ -49,7 +53,11 @@
       <p class="no-squad-text">
         Create a squad to build your combat team
       </p>
-      <button @click="openEdit" class="ep-button ep-button-primary">
+      <button
+        @click="openEdit"
+        class="ep-button ep-button-primary"
+        data-testid="create-squad-btn"
+      >
         Create Squad
       </button>
     </div>

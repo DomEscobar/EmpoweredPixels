@@ -1,5 +1,5 @@
 <template>
-  <div class="squad-slot">
+  <div class="squad-slot" :data-testid="fighter ? 'slot-content' : 'slot-empty'">
     <div class="slot-frame">
       <!-- Empty State -->
       <div v-if="!fighter" class="slot-empty">

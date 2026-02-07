@@ -20,6 +20,7 @@
           class="ep-input"
           placeholder="Enter squad name..."
           :disabled="isSubmitting"
+          data-testid="squad-name-input"
         />
       </div>
 
@@ -49,6 +50,7 @@
             @click="selectSlot(slot - 1)"
             class="slot-select-btn"
             :disabled="selectedSlot !== null"
+            data-testid="slot-select-btn"
           >
             Select Fighter
           </button>
@@ -59,6 +61,7 @@
       <div
         v-if="selectedSlot !== null && !fighters[selectedSlot]"
         class="selected-fighter-panel"
+        data-testid="fighter-select-list"
       >
         <h3 class="ep-header-gold">Select a Fighter</h3>
         <div class="fighter-list">
@@ -67,6 +70,7 @@
             :key="fighter.id"
             @click="addFighterToSlot(fighter)"
             class="fighter-select-btn"
+            data-testid="fighter-select-btn"
           >
             <span class="fighter-name">{{ fighter.name }}</span>
             <span class="fighter-level">Lv.{{ fighter.level }}</span>
