@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-[60vh] items-center justify-center">
+  <div class="flex min-h-[60vh] items-center justify-center" data-testid="register-page">
     <BaseCard class-name="w-full max-w-md">
       <template #header>
         <div class="text-center">
@@ -8,7 +8,7 @@
         </div>
       </template>
       
-      <form class="space-y-4" @submit.prevent="submit">
+      <form class="space-y-4" @submit.prevent="submit" data-testid="register-form">
         <div class="space-y-1.5">
           <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Username</span>
           <input 
@@ -16,6 +16,7 @@
             class="w-full rounded-md border border-slate-800 bg-slate-950 p-2.5 text-white transition-colors focus:border-indigo-500 focus:outline-none"
             placeholder="GhostCommander"
             required
+            data-testid="username-input"
           />
         </div>
 
@@ -27,6 +28,7 @@
             class="w-full rounded-md border border-slate-800 bg-slate-950 p-2.5 text-white transition-colors focus:border-indigo-500 focus:outline-none"
             placeholder="commander@arena.com"
             required
+            data-testid="email-input"
           />
         </div>
         
@@ -38,24 +40,25 @@
             class="w-full rounded-md border border-slate-800 bg-slate-950 p-2.5 text-white transition-colors focus:border-indigo-500 focus:outline-none"
             placeholder="••••••••"
             required
+            data-testid="password-input"
           />
         </div>
 
-        <div v-if="auth.error" class="rounded-md bg-red-500/10 p-3 text-sm text-red-400 border border-red-500/20">
+        <div v-if="auth.error" class="rounded-md bg-red-500/10 p-3 text-sm text-red-400 border border-red-500/20" data-testid="register-error">
           {{ auth.error }}
         </div>
 
-        <div v-if="success" class="rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-400 border border-emerald-500/20 text-center">
+        <div v-if="success" class="rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-400 border border-emerald-500/20 text-center" data-testid="success-message">
           Recruitment complete! You can now <router-link to="/login" class="underline font-bold">Sign In</router-link>.
         </div>
 
-        <BaseButton class-name="w-full mt-2" :disabled="auth.isLoading">
+        <BaseButton class-name="w-full mt-2" :disabled="auth.isLoading" data-testid="register-submit">
           {{ auth.isLoading ? "Recruiting..." : "Create Commander Account" }}
         </BaseButton>
 
         <p class="text-center text-sm text-slate-500">
           Already a Commander? 
-          <router-link to="/login" class="text-indigo-400 hover:text-indigo-300 font-medium">Access HQ</router-link>
+          <router-link to="/login" class="text-indigo-400 hover:text-indigo-300 font-medium" data-testid="login-link">Access HQ</router-link>
         </p>
       </form>
     </BaseCard>
