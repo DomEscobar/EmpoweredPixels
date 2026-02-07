@@ -30,13 +30,14 @@
       </header>
 
       <!-- Category Tabs -->
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2" data-testid="category-tabs">
         <button
           v-for="(label, key) in CATEGORY_LABELS"
           :key="key"
           @click="setCategory(key as LeaderboardCategory)"
           class="pixel-box-sm px-4 py-2 text-sm font-bold transition-all"
           :class="currentCategory === key ? 'bg-amber-600 text-white border-amber-400' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'"
+          :data-testid="`category-tab-${key}`"
         >
           <span class="mr-1">{{ label.icon }}</span>
           {{ label.name }}
@@ -55,18 +56,19 @@
             </h2>
 
             <!-- Loading State -->
-            <div v-if="leaderboardStore.isLoading" class="py-12 text-center">
+            <div v-if="leaderboardStore.isLoading" class="py-12 text-center" data-testid="leaderboard-loading">
               <div class="animate-spin text-3xl mb-2">⚔️</div>
               <p class="text-amber-400 animate-pulse">Loading rankings...</p>
             </div>
 
             <!-- Entries List -->
-            <div v-else class="space-y-2">
+            <div v-else class="space-y-2" data-testid="leaderboard-entries">
               <div
                 v-for="(entry, index) in leaderboardStore.topEntries"
                 :key="entry.id"
                 class="pixel-box-sm p-3 flex items-center gap-4 transition-all"
                 :class="getEntryClass(entry, index)"
+                :data-testid="`leaderboard-entry-${entry.rank}`"
               >
                 <!-- Rank -->
                 <div class="w-10 text-center">
@@ -97,7 +99,7 @@
               </div>
 
               <!-- Empty State -->
-              <div v-if="leaderboardStore.topEntries.length === 0" class="py-12 text-center text-slate-500">
+              <div v-if="leaderboardStore.topEntries.length === 0" class="py-12 text-center text-slate-500" data-testid="leaderboard-empty">
                 <p>No rankings available yet.</p>
                 <p class="text-sm">Be the first to climb the ranks!</p>
               </div>
@@ -105,7 +107,7 @@
           </div>
 
           <!-- Nearby Ranks -->
-          <div v-if="leaderboardStore.nearbyRanks?.entries?.length" class="pixel-box bg-slate-900/90 p-4">
+          <div v-if="leaderboardStore.nearbyRanks?.entries?.length" class="pixel-box bg-slate-900/90 p-4" data-testid="nearby-ranks">
             <h3 class="text-sm font-bold text-slate-400 mb-3 uppercase tracking-wider">Nearby Competition</h3>
             <div class="space-y-1">
               <div
@@ -113,6 +115,7 @@
                 :key="entry.id"
                 class="pixel-box-sm p-2 flex items-center gap-3 text-sm"
                 :class="entry.user_id === leaderboardStore.leaderboard?.user_entry?.user_id ? 'bg-amber-900/20 border-amber-500/30' : 'bg-slate-800/50'"
+                :data-testid="`nearby-entry-${entry.rank}`"
               >
                 <span class="w-8 text-center font-bold" :class="entry.rank === leaderboardStore.userRank ? 'text-amber-400' : 'text-slate-500'">
                   #{{ entry.rank }}
@@ -125,7 +128,7 @@
         </div>
 
         <!-- Achievements Sidebar -->
-        <div class="space-y-4">
+        <div class="space-y-4" data-testid="achievements-sidebar">
           <div class="pixel-box bg-slate-900/90 p-4">
             <h2 class="text-lg font-bold text-amber-400 mb-4 flex items-center gap-2">
               <span>⭐</span> Achievements
