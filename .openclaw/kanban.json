@@ -118,7 +118,7 @@
         "Active squad indicator"
       ],
       "assignee": "foundry",
-      "column": "in_progress",
+      "column": "done",
       "description": "Design and implement the Squad UI components.",
       "id": "TASK-029",
       "labels": [
@@ -138,7 +138,7 @@
         "Playwright E2E tests for squad operations"
       ],
       "assignee": "foundry",
-      "column": "in_progress",
+      "column": "done",
       "description": "Implement the Squad Management UI.",
       "id": "TASK-030",
       "labels": [
@@ -148,7 +148,7 @@
       ],
       "priority": "high",
       "title": "[FEAT] Squad System: Management UI",
-      "updatedAt": "2026-02-07T13:55:00Z"
+      "updatedAt": "2026-02-07T15:50:00Z"
     },
     {
       "acceptanceCriteria": [
