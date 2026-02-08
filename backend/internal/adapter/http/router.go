@@ -91,6 +91,9 @@ func NewRouter(deps Dependencies) http.Handler {
 
 	// API Routes
 	api := r.PathPrefix("/api").Subrouter()
+	api.Use(middleware.ValidateQueryParams)
+	api.Use(middleware.ValidateAuthHeader)
+	api.Use(middleware.ValidateJSON)
 	api.Use(func(next http.Handler) http.Handler {
 		return authMiddleware(next)
 	})

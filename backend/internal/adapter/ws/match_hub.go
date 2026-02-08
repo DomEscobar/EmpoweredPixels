@@ -60,6 +60,7 @@ type matchMessage struct {
 func (h *MatchHub) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	conn, err := h.upgrader.Upgrade(w, r, nil)
 	if err != nil {
+		log.Printf("WebSocket upgrade error: %v", err)
 		return
 	}
 
@@ -69,21 +70,37 @@ func (h *MatchHub) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	for {
 		_, data, err := conn.ReadMessage()
 		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("WebSocket read error: %v", err)
+			}
 			return
 		}
 
 		var msg matchMessage
 		if err := json.Unmarshal(data, &msg); err != nil {
+			log.Printf("WebSocket message unmarshal error: %v", err)
+			// Send error frame to client
+			if writeErr := conn.WriteJSON(map[string]string{"error": "invalid message format"}); writeErr != nil {
+				log.Printf("WebSocket write error (error response): %v", writeErr)
+			}
 			continue
 		}
 
 		if msg.Action == "subscribe" && msg.MatchID != "" {
 			h.register(conn, msg.MatchID)
-			_ = conn.WriteJSON(map[string]string{"status": "subscribed", "matchId": msg.MatchID})
-		}
-		if msg.Action == "unsubscribe" {
+			if err := conn.WriteJSON(map[string]string{"status": "subscribed", "matchId": msg.MatchID}); err != nil {
+				log.Printf("WebSocket write error (subscribe response): %v", err)
+			}
+		} else if msg.Action == "unsubscribe" {
 			h.register(conn, "")
-			_ = conn.WriteJSON(map[string]string{"status": "unsubscribed"})
+			if err := conn.WriteJSON(map[string]string{"status": "unsubscribed"}); err != nil {
+				log.Printf("WebSocket write error (unsubscribe response): %v", err)
+			}
+		} else {
+			log.Printf("WebSocket unknown action: %s", msg.Action)
+			if err := conn.WriteJSON(map[string]string{"error": "unknown action"}); err != nil {
+				log.Printf("WebSocket write error (unknown action response): %v", err)
+			}
 		}
 	}
 }
@@ -96,7 +113,9 @@ func (h *MatchHub) Broadcast(matchID string, payload any) {
 		if subscribed != matchID {
 			continue
 		}
-		_ = conn.WriteJSON(payload)
+		if err := conn.WriteJSON(payload); err != nil {
+			log.Printf("WebSocket broadcast error (matchID: %s): %v", matchID, err)
+		}
 	}
 }
 
