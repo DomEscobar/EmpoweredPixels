@@ -321,7 +321,7 @@
         "Playwright E2E tests covering browse, purchase, and validation"
       ],
       "assignee": "forge",
-      "column": "backlog",
+      "column": "review",
       "description": "Add comprehensive Playwright E2E tests for the Shop system, including item display, purchase flow, and gold management. Ensure full coverage of the shop MVP.",
       "id": "TASK-036",
       "labels": [
@@ -449,10 +449,10 @@
         "Adds appropriate indexes (league_matches.league_id, matches.id, match_participants.fighter_id) for performance"
       ],
       "assignee": "forge",
-      "column": "in_progress",
+      "column": "done",
       "description": "Implement GET /api/league/{id}/highscores (currently stub) to return ranked fighter scores within a league. Aggregate scores from match results and include fighterName and username by joining with fighters and users tables.",
       "id": "TASK-042",
-      "updatedAt": "2026-02-07T19:00:00Z",
+      "updatedAt": "2026-02-08T00:47:00Z",
       "labels": [
         "backend",
         "leagues",
@@ -469,7 +469,7 @@
         "Tests updated to verify correct totalCount"
       ],
       "assignee": "forge",
-      "column": "backlog",
+      "column": "review",
       "description": "The LeagueMatches handler returns totalCount set to len(items) which is incorrect for pagination. Fix to return actual total count of matches for the league in the database.",
       "id": "TASK-043",
       "labels": [
@@ -480,7 +480,7 @@
       ],
       "priority": "medium",
       "title": "[Backend] Fix League Matches Pagination TotalCount",
-      "updatedAt": "2026-02-07T19:00:00Z"
+      "updatedAt": "2026-02-08T02:45:00Z"
     },
     {
       "acceptanceCriteria": [
@@ -490,7 +490,7 @@
         "Query efficiently using league_matches and match results"
       ],
       "assignee": "forge",
-      "column": "backlog",
+      "column": "review",
       "description": "Currently GET /api/league/{id}/winner returns hardcoded leagueLastWinnerDto with only leagueId. Implement to return fighter info of the winner from the most recent completed match in that league.",
       "id": "TASK-044",
       "labels": [
@@ -500,7 +500,7 @@
       ],
       "priority": "low",
       "title": "[Backend] Implement League LastWinner Endpoint",
-      "updatedAt": "2026-02-07T19:00:00Z"
+      "updatedAt": "2026-02-08T02:45:00Z"
     },
     {
       "acceptanceCriteria": [
@@ -519,7 +519,7 @@
       "column": "done",
       "description": "To enable reliable Playwright E2E tests, add unique data-testid attributes to key elements in Leagues.vue: page container, league cards, subscribe/unsubscribe buttons, modal sections, tabs, participant list items, matches list, leaderboard entries.",
       "id": "TASK-045",
-      "updatedAt": "2026-02-07T23:26:00Z",
+      "updatedAt": "2026-02-08T02:20:00Z",
       "labels": [
         "frontend",
         "leagues",
@@ -541,7 +541,7 @@
         "Empty state when no leagues exist"
       ],
       "assignee": "forge",
-      "column": "backlog",
+      "column": "review",
       "description": "Write Playwright spec `leagues.spec.ts` covering the Leagues page user flows: loading, error states, subscription management, participants view, matches listing, and leaderboard tab. Use test IDs added in TASK-045.",
       "id": "TASK-046",
       "labels": [
@@ -551,7 +551,7 @@
       ],
       "priority": "high",
       "title": "[E2E] Leagues Page Tests",
-      "updatedAt": "2026-02-07T19:00:00Z"
+      "updatedAt": "2026-02-08T02:45:00Z"
     },
     {
       "acceptanceCriteria": [
