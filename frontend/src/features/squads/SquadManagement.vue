@@ -194,10 +194,10 @@ async function loadSquad() {
       await squadStore.loadSquad(token);
       if (squadStore.squad) {
         squadName.value = squadStore.squad.name;
-        squadStore.squad.members.forEach((member) => {
-          fighters.value[member.slotIndex] = fighterStore.fighters.find(
+        squadStore.squad.members.forEach((member: any) => {
+          fighters.value[member.slotIndex] = (fighterStore.fighters as Fighter[]).find(
             (f) => f.id === member.fighterId
-          );
+          ) || null;
         });
       }
     }
