@@ -91,6 +91,9 @@ func main() {
 	// Resonance service initialization
 	resonanceusecase := resonance.NewResonanceService(squadRepo, fighterRepo, attunementRepo)
 
+	// Achievement repository initialization
+	achievementRepo := repositories.NewResonanceAchievementRepository(database.Pool)
+
 	matchService := matchesusecase.NewServiceWithResonance(
 		matchRepo,
 		matchTeamRepo,
@@ -105,6 +108,7 @@ func main() {
 		engineClient,
 		matchHub,
 		time.Now,
+		achievementRepo,
 	)
 
 	leagueRepo := repositories.NewLeagueRepository(database.Pool)

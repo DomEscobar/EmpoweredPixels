@@ -48,6 +48,11 @@ type Service struct {
 	engine       *engine.Client
 	hub          Hub
 	now          func() time.Time
+	achievements AchievementRepository
+}
+
+type AchievementRepository interface {
+	UpdateMatchCount(ctx context.Context, userID int64, achievementType string, harmonyScore int) error
 }
 
 func NewService(
@@ -64,7 +69,7 @@ func NewService(
 	hub Hub,
 	now func() time.Time,
 ) *Service {
-	return NewServiceWithResonance(matches, teams, registrations, results, scores, fighters, inventory, nil, rewards, roster, engineClient, hub, now)
+	return NewServiceWithResonance(matches, teams, registrations, results, scores, fighters, inventory, nil, rewards, roster, engineClient, hub, now, nil)
 }
 
 func NewServiceWithResonance(
@@ -81,6 +86,7 @@ func NewServiceWithResonance(
 	engineClient *engine.Client,
 	hub Hub,
 	now func() time.Time,
+	achievements AchievementRepository,
 ) *Service {
 	if now == nil {
 		now = time.Now
@@ -100,6 +106,7 @@ func NewServiceWithResonance(
 		engine:        engineClient,
 		hub:           hub,
 		now:           now,
+		achievements:  achievements,
 	}
 }
 
@@ -564,6 +571,16 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 					_ = s.roster.UpdateExperience(ctx, currentExp)
 				}
 			}
+		}
+	}
+
+	// Update achievements for resonance masters
+	if s.achievements != nil {
+		for _, fighter := range fighters {
+			// Update RESONANCE_MASTER achievement counter
+			// The achievement system checks for unlock conditions internally
+			// For now, pass harmonyScore of 0 - this will be enhanced when squad tracking is available
+			_ = s.achievements.UpdateMatchCount(ctx, fighter.UserID, "RESONANCE_MASTER", 0)
 		}
 	}
 
