@@ -35,12 +35,12 @@
             <span class="slot-label">Slot {{ index + 1 }}</span>
             <span v-if="!fighters[slot - 1]" class="slot-status">Empty</span>
             <span v-else class="slot-status filled">
-              {{ fighters[slot - 1].name }}
+              {{ fighters[slot - 1]?.name }}
             </span>
           </div>
           <SquadSlot
             v-if="fighters[slot - 1]"
-            :fighter="fighters[slot - 1]"
+            :fighter="fighters[slot - 1]!"
             :slot-index="slot - 1"
             :is-active="selectedSlot === slot - 1"
             class="slot-content"
@@ -86,7 +86,7 @@
         <button
           @click="clearSlot"
           class="ep-button ep-button-secondary"
-          :disabled="selectedSlot === null || fighters[selectedSlot]"
+          :disabled="selectedSlot === null || !!fighters[selectedSlot]"
         >
           Clear Slot
         </button>

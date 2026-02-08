@@ -24,7 +24,7 @@
           >
             <SquadSlot
               :fighter="getFighterById(member.fighterId)"
-              :slot-index="index"
+              :slot-index="Number(index)"
               :is-active="true"
             />
           </div>
