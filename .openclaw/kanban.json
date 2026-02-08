@@ -615,6 +615,256 @@
       "priority": "high",
       "title": "[FEAT] Social Raids",
       "updatedAt": "2026-02-07T22:59:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Architecture design document for community monitoring pipeline",
+        "Discord bot/webhook integration (message parsing, sentiment tags)",
+        "Reddit API polling script (subreddit: r/EmpoweredPixels, keywords)",
+        "App store review fetchers (Apple App Store, Google Play)",
+        "Sentiment aggregation engine (thumbs up/down, keyword classification)",
+        "Weekly automated report generation (PDF/Telegram)",
+        "Delivery to feedback channel with trend analysis",
+        "Documentation: setup, credentials, maintenance runbook"
+      ],
+      "assignee": "analyst",
+      "column": "backlog",
+      "description": "Design and implement community monitoring system to collect sentiment, bug reports, and feature requests from Discord, Reddit, and app stores. Provide weekly aggregated reports. Analyst designs the pipeline; implementation will be assigned to coder/foundry after approval.",
+      "id": "TASK-903",
+      "labels": [
+        "infra",
+        "analytics",
+        "community"
+      ],
+      "priority": "high",
+      "title": "[INFRA] Community Monitoring & Sentiment Pipeline",
+      "updatedAt": "2026-02-08T07:20:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "SQL migration files created and placed in backend/internal/infra/db/migrations",
+        "Tables created with correct columns, types, and constraints",
+        "Indexes created for performance (source, collected_at, topics GIN, etc.)",
+        "Unique constraint on (source, external_id) prevents duplicates",
+        "Database connection and migrations verified on dev environment"
+      ],
+      "assignee": "forge",
+      "column": "backlog",
+      "description": "Create PostgreSQL schema for community monitoring: tables raw_posts, posts, weekly_reports with indexes, constraints, and isolated community schema. Provide SQL migration files in backend/internal/infra/db/migrations.",
+      "id": "TASK-910",
+      "labels": [
+        "backend",
+        "database",
+        "community"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Community DB Schema",
+      "updatedAt": "2026-02-08T07:20:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Discord bot token configured via .openclaw/secrets/discord.json",
+        "Fetches messages from monitored channels (guild + channel IDs)",
+        "Normalizes Discord message into common schema: source='discord', external_id, author, content, posted_at, metadata",
+        "Stores records in community.raw_posts with deduplication (unique constraint)",
+        "Checkpoint updates after successful fetch (last_message_id stored)",
+        "Handles rate limits: respects Discord API retry-after or uses exponential backoff",
+        "Retries on network failures up to 3 times with backoff",
+        "Logs summary: fetched X, stored Y"
+      ],
+      "assignee": "forge",
+      "column": "backlog",
+      "description": "Implement Discord data collector in backend/internal/community/discord.go. Authenticate using bot token from config. Fetch messages from configured guild/channel IDs. Normalize into CommunityPost struct and store in community.raw_posts. Implement checkpointing to avoid re-fetching.",
+      "id": "TASK-911",
+      "labels": [
+        "backend",
+        "collector",
+        "discord"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Community Collector \u2014 Discord",
+      "updatedAt": "2026-02-08T07:20:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Reddit app credentials configured in .openclaw/secrets/reddit.json",
+        "OAuth2 token acquisition and refresh working",
+        "Fetches posts from configured subreddits (hot/new) and search results for keywords",
+        "Fetches comments on relevant posts (nested if needed)",
+        "Normalizes into common schema: source='reddit', external_id (comment.id or post.id), author, content, posted_at, metadata",
+        "Stores in community.raw_posts with deduplication",
+        "Checkpointing per subreddit using last_post_ids",
+        "Handles rate limits and retries appropriately",
+        "Logs summary"
+      ],
+      "assignee": "forge",
+      "column": "backlog",
+      "description": "Implement Reddit data collector using Go HTTP or PRAW. OAuth2 authentication. Fetch new posts and comments from target subreddits (configurable). Search for brand mentions. Normalize and store in community.raw_posts.",
+      "id": "TASK-912",
+      "labels": [
+        "backend",
+        "collector",
+        "reddit"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Community Collector \u2014 Reddit",
+      "updatedAt": "2026-02-08T07:20:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Appbot API key configured in .openclaw/secrets/appstores.json",
+        "Fetches reviews for both iOS and Android apps",
+        "Normalizes review: source='app_store_ios' or 'app_store_android', external_id=review_id, author=author name, content=review text, metadata includes rating, version, app version code",
+        "Stores in community.raw_posts with deduplication",
+        "Checkpoint using last_review_id per platform",
+        "Handles Appbot rate limits and retries",
+        "Logs summary"
+      ],
+      "assignee": "forge",
+      "column": "backlog",
+      "description": "Implement app store review collection. Implement using Appbot API for unified iOS/Android access. Configure API key and target apps. Normalize reviews (rating, version, content) into common schema and store.",
+      "id": "TASK-913",
+      "labels": [
+        "backend",
+        "collector",
+        "appstore"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Community Collector \u2014 App Stores",
+      "updatedAt": "2026-02-08T07:20:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Sentiment lexicon files with positive/negative words and intensity weights",
+        "Game-specific terms added: 'balanced', 'OP', 'nerf', 'grindy', 'pay-to-win', etc.",
+        "Scoring algorithm handles negations ('not good'), intensifiers ('very bad'), and capitalization emphasis",
+        "Produces integer sentiment_score in [-100, 100] and sentiment_label ('negative','neutral','positive') based on thresholds",
+        "Unit tests cover: simple positive/negative, negated phrases, mixed sentiment, empty text",
+        "Integration: fills sentiment_score and sentiment_label for community.posts rows"
+      ],
+      "assignee": "forge",
+      "column": "backlog",
+      "description": "Build rule-based sentiment analyzer (VADER-like) with game-specific terms. Compute score from -100 to +100 and assign label (negative/neutral/positive).",
+      "id": "TASK-914",
+      "labels": [
+        "backend",
+        "analytics",
+        "sentiment"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Sentiment Lexicon & Scoring Engine",
+      "updatedAt": "2026-02-08T07:20:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Topic keyword lists defined for domains: combat, balance, pvp, pve, progression, economy, ui/ux, graphics, performance, matchmaking, guilds, events, shop, monetization, qol, bugs, crashes, server",
+        "Topic tagging function assigns one or more topics to a post based on keyword presence",
+        "Feature request patterns implemented: 'I wish...', 'It would be great if...', 'Should add...', 'Need more...', 'Hope they...', 'Please implement', 'Missing', 'Would like to see'",
+        "Extracted feature request phrases stored in feature_requests array (limit 3 per post)",
+        "Updates community.posts rows with topics[] and feature_requests[]",
+        "Unit tests verify topic assignment and feature extraction on sample texts"
+      ],
+      "assignee": "forge",
+      "column": "backlog",
+      "description": "Implement topic detection and feature request extraction. Scan content for predefined topic keywords; extract phrases using patterns.",
+      "id": "TASK-915",
+      "labels": [
+        "backend",
+        "analytics",
+        "topics"
+      ],
+      "priority": "medium",
+      "title": "[BACKEND] Topic Tagging & Feature Request Extraction",
+      "updatedAt": "2026-02-08T07:20:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Aggregation queries compute: total_posts, unique_authors, sentiment distribution (counts & percentages), top 5 topics by count, top 10 feature requests by frequency, most negative posts (lowest scores, length>20)",
+        "Trend detection compares current week vs previous 4-week average; flags significant changes (>50% increase in a topic or sentiment shift)",
+        "Writes aggregated data into community.weekly_reports table (week_start, totals, distributions, top lists, raw_summary)",
+        "Writes JSON file to .openclaw/community/reports/weekly-<year>-<week>.json with the same data",
+        "Generates human-readable markdown summary string suitable for Telegram",
+        "Can run on existing data for backfill; safe to re-run"
+      ],
+      "assignee": "forge",
+      "column": "backlog",
+      "description": "Write aggregation logic to compute weekly statistics and generate JSON report and database entry.",
+      "id": "TASK-916",
+      "labels": [
+        "backend",
+        "analytics",
+        "reporting"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Weekly Aggregation & Report Generation",
+      "updatedAt": "2026-02-08T07:20:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Telegram bot token and target chat ID configured in .openclaw/secrets/telegram.json",
+        "Formatter builds Telegram message with emoji, sections, and link to JSON report",
+        "Handles long messages: if summary > 4000 chars, truncates and appends 'See full report: <link>'",
+        "Sends message via Telegram Bot API sendMessage endpoint",
+        "Error handling: logs failure, retries once on 5xx, alerts on persistent failure (send to PM channel)",
+        "Message includes week date, totals, sentiment breakdown, top topics, top feature requests, negative highlights, and trend note"
+      ],
+      "assignee": "forge",
+      "column": "backlog",
+      "description": "Implement reporter to send weekly community summary to Telegram feedback channel with proper formatting.",
+      "id": "TASK-917",
+      "labels": [
+        "backend",
+        "integration",
+        "telegram"
+      ],
+      "priority": "high",
+      "title": "[BACKEND] Telegram Reporter Delivery",
+      "updatedAt": "2026-02-08T07:20:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "OpenClaw cron jobs added (via config or crontab) for: daily collector at 02:00, weekly analyzer/reporter Monday 08:00 Europe/Berlin",
+        "Secrets files documented and created: .openclaw/secrets/discord.json, reddit.json, appstores.json, telegram.json; placeholders for API keys",
+        "Environment variables or file paths for any external services (e.g., database connection) configured",
+        "Dry-run scripts available to test collector/analyzer/reporter individually",
+        "Can manually trigger jobs via `openclaw cron run <jobid>`; logs visible",
+        "Idempotency verified: running collector twice doesn't duplicate posts; analyzer re-runs safely"
+      ],
+      "assignee": "forge",
+      "column": "backlog",
+      "description": "Configure OpenClaw cron jobs to run daily collector and weekly analyzer/reporter. Document secrets setup.",
+      "id": "TASK-918",
+      "labels": [
+        "infrastructure",
+        "cron",
+        "deployment"
+      ],
+      "priority": "high",
+      "title": "[INFRA] Cron Jobs & Secrets Configuration",
+      "updatedAt": "2026-02-08T07:20:00Z"
+    },
+    {
+      "acceptanceCriteria": [
+        "Mock data generator creates sample posts for Discord, Reddit, App Store covering various sentiments (positive, negative, neutral), topics, and feature requests",
+        "Test runs collector with mocked API responses (or uses in-memory DB) to seed raw_posts",
+        "Runs analyzer to produce sentiment, topics, feature_requests",
+        "Runs reporter to generate weekly report JSON and Telegram message string",
+        "Assertions: total count matches input, sentiment distribution within expected ranges, top topics and feature requests match known frequencies, Telegram message length < 4096",
+        "Test is repeatable and deterministic; can be run by Guardian as part of pre-merge checks",
+        "Integration test added to backend test suite"
+      ],
+      "assignee": "forge",
+      "column": "backlog",
+      "description": "Create end-to-end integration test using mock data for all sources, validating the full pipeline: collector\u2192analyzer\u2192reporter.",
+      "id": "TASK-919",
+      "labels": [
+        "testing",
+        "e2e",
+        "community"
+      ],
+      "priority": "medium",
+      "title": "[TEST] Community Pipeline E2E Test",
+      "updatedAt": "2026-02-08T07:20:00Z"
     }
   ]
 }
