@@ -649,7 +649,7 @@
         "Database connection and migrations verified on dev environment"
       ],
       "assignee": "forge",
-      "column": "backlog",
+      "column": "done",
       "description": "Create PostgreSQL schema for community monitoring: tables raw_posts, posts, weekly_reports with indexes, constraints, and isolated community schema. Provide SQL migration files in backend/internal/infra/db/migrations.",
       "id": "TASK-910",
       "labels": [
@@ -659,7 +659,7 @@
       ],
       "priority": "high",
       "title": "[BACKEND] Community DB Schema",
-      "updatedAt": "2026-02-08T07:20:00Z"
+      "updatedAt": "2026-02-08T11:47:00Z"
     },
     {
       "acceptanceCriteria": [

@@ -120,6 +120,7 @@ import { useRouter } from 'vue-router';
 import SquadSlot from './SquadSlot.vue';
 import { useSquadStore } from './store';
 import { useFighterStore } from '../roster/store';
+import { Fighter } from '../roster/api';
 
 const router = useRouter();
 const squadStore = useSquadStore();
@@ -129,12 +130,12 @@ const squadName = ref('My Squad');
 const selectedSlot = ref<number | null>(null);
 const isSubmitting = ref(false);
 
-const fighters = ref<any[]>(Array(3).fill(null));
+const fighters = ref<(Fighter | null)[]>(Array(3).fill(null));
 
 const membersCount = computed(() => fighters.value.filter((f) => f !== null).length);
 
 const availableFighters = computed(() => {
-  return fighterStore.fighters.filter(
+  return (fighterStore.fighters as Fighter[]).filter(
     (fighter) => !fighters.value.some((existing) => existing?.id === fighter.id)
   );
 });
@@ -143,7 +144,7 @@ function selectSlot(index: number) {
   selectedSlot.value = index;
 }
 
-function addFighterToSlot(fighter: any) {
+function addFighterToSlot(fighter: Fighter) {
   if (selectedSlot.value !== null) {
     fighters.value[selectedSlot.value] = fighter;
     selectedSlot.value = null;
@@ -164,7 +165,7 @@ function resetAllSlots() {
 async function saveSquad() {
   isSubmitting.value = true;
   try {
-    const fighterIds = fighters.value
+    const fighterIds = (fighters.value as Fighter[])
       .filter((f) => f !== null)
       .map((f) => f.id);
 

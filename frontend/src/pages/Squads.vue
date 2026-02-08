@@ -69,6 +69,7 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useSquadStore } from '@/features/squads/store';
 import { useFighterStore } from '@/features/roster/store';
+import { Fighter } from '@/features/roster/api';
 import SquadSlot from '@/features/squads/SquadSlot.vue';
 import SquadManagement from '@/features/squads/SquadManagement.vue';
 
@@ -81,7 +82,7 @@ const error = ref<string | null>(null);
 const squad = ref<any>(null);
 
 function getFighterById(fighterId: string) {
-  return fighterStore.fighters.find((f) => f.id === fighterId);
+  return (fighterStore.fighters as Fighter[]).find((f) => f.id === fighterId);
 }
 
 function openEdit() {
