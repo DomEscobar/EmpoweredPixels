@@ -2,18 +2,24 @@
 
 This file stores persistent context for agents across sessions.
 
-## Team Structure (2025-02-07)
+## Team Structure (Updated 2026-02-08)
 
 **Core Agents:**
 - director (main) — Game Director, owns vision & KPIs
-- forge — Full-stack builder (backend + frontend)
+- forge — [DEACTIVATED] Full-stack builder
 - guardian — QA gatekeeper (Alex-Auditor)
 - player-casual — Casual player agent
 - player-hardcore — Hardcore/min-max player agent
-- analyst — Community monitoring
+- analyst — [DEACTIVATED] Community monitoring
 - balancer — Number tuning
 - creator — Content generation
 - releaser — Release management
+
+## Strategic Pivot (2026-02-08)
+- **Decision**: Game Director fired Forge and Analyst. Focus shifted to app completeness and bug-free stability.
+- **Action**: Community Monitoring infrastructure development paused (moved to Incubator).
+- **Quality Control**: Alex-Auditor (Guardian) now validates all view implementations for errors and UX polish.
+- **Recent Fixes**: Backend stabilized (migration conflicts, Guild table schema).
 
 **Communication Channels:**
 - telemetry — Player session logs
