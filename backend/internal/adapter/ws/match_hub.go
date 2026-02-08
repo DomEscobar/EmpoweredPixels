@@ -2,6 +2,7 @@ package ws
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"sync"
 
@@ -14,10 +15,38 @@ type MatchHub struct {
 	clients  map[*websocket.Conn]string
 }
 
+// AllowedWebSocketOrigins defines the list of trusted origins for WebSocket connections
+var AllowedWebSocketOrigins = []string{
+	"http://localhost:3000",
+	"http://localhost:5173",
+	"http://127.0.0.1:3000",
+	"http://127.0.0.1:5173",
+	// Add production domain(s) here
+}
+
+func isWSOriginAllowed(origin string) bool {
+	for _, allowed := range AllowedWebSocketOrigins {
+		if origin == allowed {
+			return true
+		}
+	}
+	return false
+}
+
 func NewMatchHub() *MatchHub {
 	return &MatchHub{
 		upgrader: websocket.Upgrader{
-			CheckOrigin: func(r *http.Request) bool { return true },
+			CheckOrigin: func(r *http.Request) bool {
+				origin := r.Header.Get("Origin")
+				if origin == "" {
+					return true // Allow requests without Origin header (same-origin)
+				}
+				allowed := isWSOriginAllowed(origin)
+				if !allowed {
+					log.Printf("WebSocket origin rejected: %s", origin)
+				}
+				return allowed
+			},
 		},
 		clients: make(map[*websocket.Conn]string),
 	}
