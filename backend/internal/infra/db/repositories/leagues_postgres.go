@@ -186,3 +186,79 @@ func (r *LeagueMatchRepository) ListByLeague(ctx context.Context, leagueID int, 
 	}
 	return result, rows.Err()
 }
+
+func (r *LeagueMatchRepository) GetLastWinner(ctx context.Context, leagueID int) (*leagues.LeagueWinner, error) {
+	const query = `
+		SELECT f.id AS fighter_id, f.name AS fighter_name, u.username, m.id AS match_id
+		FROM league_matches lm
+		JOIN matches m ON lm.match_id = m.id
+		JOIN match_score_fighters msf ON lm.match_id = msf.match_id
+		JOIN fighters f ON msf.fighter_id = f.id
+		JOIN users u ON f.user_id = u.id
+		WHERE lm.league_id = $1 AND m.status = 'completed'
+		ORDER BY m.completed_at DESC, (msf.total_kills * 10 + msf.total_assists * 5) DESC
+		LIMIT 1;
+	`
+	var fighterID, fighterName, username, matchID string
+	err := r.pool.QueryRow(ctx, query, leagueID).Scan(&fighterID, &fighterName, &username, &matchID)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &leagues.LeagueWinner{
+		FighterID:   fighterID,
+		FighterName: fighterName,
+		Username:    username,
+		MatchID:     matchID,
+	}, nil
+}
+
+func (r *LeagueMatchRepository) CountByLeague(ctx context.Context, leagueID int) (int, error) {
+	const query = `
+		SELECT COUNT(*) FROM league_matches WHERE league_id = $1;
+	`
+	var count int
+	err := r.pool.QueryRow(ctx, query, leagueID).Scan(&count)
+	return count, err
+}
+
+func (r *LeagueMatchRepository) GetHighScores(ctx context.Context, leagueID int, lastMatches int) ([]leagues.LeagueHighscore, error) {
+	const query = `
+		WITH recent_matches AS (
+			SELECT match_id
+			FROM league_matches
+			WHERE league_id = $1
+			  AND started IS NOT NULL
+			ORDER BY started DESC
+			LIMIT $2
+		)
+		SELECT 
+			f.id AS fighter_id,
+			f.name AS fighter_name,
+			u.username,
+			SUM((msf.total_kills * 10) + (msf.total_assists * 5)) AS score
+		FROM recent_matches rm
+		JOIN match_score_fighters msf ON rm.match_id = msf.match_id
+		JOIN fighters f ON msf.fighter_id = f.id
+		JOIN users u ON f.user_id = u.id
+		GROUP BY f.id, f.name, u.username
+		ORDER BY score DESC;
+	`
+	rows, err := r.pool.Query(ctx, query, leagueID, lastMatches)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []leagues.LeagueHighscore
+	for rows.Next() {
+		var hs leagues.LeagueHighscore
+		if err := rows.Scan(&hs.FighterID, &hs.FighterName, &hs.Username, &hs.Score); err != nil {
+			return nil, err
+		}
+		result = append(result, hs)
+	}
+	return result, rows.Err()
+}

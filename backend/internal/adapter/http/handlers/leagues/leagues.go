@@ -1,6 +1,7 @@
 package leagues
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -12,11 +13,24 @@ import (
 	leaguesusecase "empoweredpixels/internal/usecase/leagues"
 )
 
-type Handler struct {
-	service *leaguesusecase.Service
+// Service defines the contract for league business logic needed by the HTTP handler.
+type Service interface {
+	List(ctx context.Context) ([]leagues.League, error)
+	Get(ctx context.Context, id int) (*leagues.League, error)
+	Subscribe(ctx context.Context, userID int64, leagueID int, fighterID string) error
+	Unsubscribe(ctx context.Context, userID int64, leagueID int, fighterID string) error
+	Subscriptions(ctx context.Context, leagueID int) ([]leagues.LeagueSubscription, error)
+	SubscriptionsForUser(ctx context.Context, leagueID int, userID int64) ([]leagues.LeagueSubscription, error)
+	Matches(ctx context.Context, leagueID int, page int, pageSize int) ([]leagues.LeagueMatch, int, error)
+	GetLastWinner(ctx context.Context, leagueID int) (*leagues.LeagueWinner, error)
+	GetHighScores(ctx context.Context, leagueID int, lastMatches int) ([]leagues.LeagueHighscore, error)
 }
 
-func NewHandler(service *leaguesusecase.Service) *Handler {
+type Handler struct {
+	service Service
+}
+
+func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
 }
 
@@ -50,10 +64,6 @@ type leagueHighscoreDto struct {
 	FighterName string `json:"fighterName"`
 	Username    string `json:"username"`
 	Score       int    `json:"score"`
-}
-
-type leagueHighscoreOptionsDto struct {
-	LastMatches int `json:"lastMatches"`
 }
 
 type pagingOptions struct {
@@ -124,7 +134,19 @@ func (h *Handler) LastWinner(w http.ResponseWriter, r *http.Request, id string) 
 		return
 	}
 
-	responses.JSON(w, http.StatusOK, leagueLastWinnerDto{LeagueID: leagueID})
+	winner, err := h.service.GetLastWinner(r.Context(), leagueID)
+	if err != nil {
+		log.Printf("league last winner error: %v", err)
+		responses.Error(w, http.StatusInternalServerError, "server error")
+		return
+	}
+	if winner == nil {
+		// No completed matches found
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, winner)
 }
 
 func (h *Handler) Subscribe(w http.ResponseWriter, r *http.Request) {
@@ -235,7 +257,7 @@ func (h *Handler) Matches(w http.ResponseWriter, r *http.Request, id string) {
 		payload = pagingOptions{Page: 1, PageSize: 20}
 	}
 
-	matchesList, err := h.service.Matches(r.Context(), leagueID, payload.Page, payload.PageSize)
+	matchesList, totalCount, err := h.service.Matches(r.Context(), leagueID, payload.Page, payload.PageSize)
 	if err != nil {
 		log.Printf("league matches error: %v", err)
 		responses.Error(w, http.StatusInternalServerError, "server error")
@@ -253,13 +275,45 @@ func (h *Handler) Matches(w http.ResponseWriter, r *http.Request, id string) {
 	responses.JSON(w, http.StatusOK, pageDto[leagueMatchDto]{
 		Page:       payload.Page,
 		PageSize:   payload.PageSize,
-		TotalCount: len(items),
+		TotalCount: totalCount,
 		Items:      items,
 	})
 }
 
 func (h *Handler) Highscores(w http.ResponseWriter, r *http.Request, id string) {
-	responses.JSON(w, http.StatusOK, []leagueHighscoreDto{})
+	leagueID, err := strconv.Atoi(id)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, "invalid league")
+		return
+	}
+
+	// Parse lastMatches query parameter (default 50)
+	lastMatchesStr := r.URL.Query().Get("lastMatches")
+	lastMatches := 50
+	if lastMatchesStr != "" {
+		if lm, err := strconv.Atoi(lastMatchesStr); err == nil && lm > 0 {
+			lastMatches = lm
+		}
+	}
+
+	highscores, err := h.service.GetHighScores(r.Context(), leagueID, lastMatches)
+	if err != nil {
+		log.Printf("league highscores error: %v", err)
+		responses.Error(w, http.StatusInternalServerError, "server error")
+		return
+	}
+
+	result := make([]leagueHighscoreDto, 0, len(highscores))
+	for _, hs := range highscores {
+		result = append(result, leagueHighscoreDto{
+			FighterID:   hs.FighterID,
+			FighterName: hs.FighterName,
+			Username:    hs.Username,
+			Score:       hs.Score,
+		})
+	}
+
+	responses.JSON(w, http.StatusOK, result)
 }
 
 func mapLeague(league leagues.League) leagueDto {

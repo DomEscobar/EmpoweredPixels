@@ -208,7 +208,7 @@ func NewRouter(deps Dependencies) http.Handler {
 		}).Methods("POST")
 		api.HandleFunc("/league/{id}/highscores", func(w http.ResponseWriter, r *http.Request) {
 			h.Highscores(w, r, mux.Vars(r)["id"])
-		}).Methods("POST")
+		}).Methods("GET")
 		if deps.LeagueJob != nil {
 			api.HandleFunc("/league/{id}/run", func(w http.ResponseWriter, r *http.Request) {
 				runLeagueJob(w, r, mux.Vars(r)["id"], deps.LeagueJob)
