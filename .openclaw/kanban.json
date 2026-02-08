@@ -321,7 +321,7 @@
         "Playwright E2E tests covering browse, purchase, and validation"
       ],
       "assignee": "forge",
-      "column": "review",
+      "column": "done",
       "description": "Add comprehensive Playwright E2E tests for the Shop system, including item display, purchase flow, and gold management. Ensure full coverage of the shop MVP.",
       "id": "TASK-036",
       "labels": [
@@ -331,7 +331,7 @@
       ],
       "priority": "high",
       "title": "[E2E] Shop System Tests",
-      "updatedAt": "2026-02-07T15:14:00Z"
+      "updatedAt": "2026-02-08T06:44:15Z"
     },
     {
       "acceptanceCriteria": [
@@ -469,7 +469,7 @@
         "Tests updated to verify correct totalCount"
       ],
       "assignee": "forge",
-      "column": "review",
+      "column": "done",
       "description": "The LeagueMatches handler returns totalCount set to len(items) which is incorrect for pagination. Fix to return actual total count of matches for the league in the database.",
       "id": "TASK-043",
       "labels": [
@@ -480,7 +480,7 @@
       ],
       "priority": "medium",
       "title": "[Backend] Fix League Matches Pagination TotalCount",
-      "updatedAt": "2026-02-08T02:45:00Z"
+      "updatedAt": "2026-02-08T06:44:15Z"
     },
     {
       "acceptanceCriteria": [
@@ -490,7 +490,7 @@
         "Query efficiently using league_matches and match results"
       ],
       "assignee": "forge",
-      "column": "review",
+      "column": "done",
       "description": "Currently GET /api/league/{id}/winner returns hardcoded leagueLastWinnerDto with only leagueId. Implement to return fighter info of the winner from the most recent completed match in that league.",
       "id": "TASK-044",
       "labels": [
@@ -500,7 +500,7 @@
       ],
       "priority": "low",
       "title": "[Backend] Implement League LastWinner Endpoint",
-      "updatedAt": "2026-02-08T02:45:00Z"
+      "updatedAt": "2026-02-08T06:44:15Z"
     },
     {
       "acceptanceCriteria": [
@@ -541,7 +541,7 @@
         "Empty state when no leagues exist"
       ],
       "assignee": "forge",
-      "column": "review",
+      "column": "backlog",
       "description": "Write Playwright spec `leagues.spec.ts` covering the Leagues page user flows: loading, error states, subscription management, participants view, matches listing, and leaderboard tab. Use test IDs added in TASK-045.",
       "id": "TASK-046",
       "labels": [
@@ -551,7 +551,7 @@
       ],
       "priority": "high",
       "title": "[E2E] Leagues Page Tests",
-      "updatedAt": "2026-02-08T02:45:00Z"
+      "updatedAt": "2026-02-08T06:44:15Z"
     },
     {
       "acceptanceCriteria": [
@@ -682,7 +682,7 @@
         "discord"
       ],
       "priority": "high",
-      "title": "[BACKEND] Community Collector \u2014 Discord",
+      "title": "[BACKEND] Community Collector — Discord",
       "updatedAt": "2026-02-08T07:20:00Z"
     },
     {
@@ -707,7 +707,7 @@
         "reddit"
       ],
       "priority": "high",
-      "title": "[BACKEND] Community Collector \u2014 Reddit",
+      "title": "[BACKEND] Community Collector — Reddit",
       "updatedAt": "2026-02-08T07:20:00Z"
     },
     {
@@ -730,7 +730,7 @@
         "appstore"
       ],
       "priority": "high",
-      "title": "[BACKEND] Community Collector \u2014 App Stores",
+      "title": "[BACKEND] Community Collector — App Stores",
       "updatedAt": "2026-02-08T07:20:00Z"
     },
     {
@@ -855,7 +855,7 @@
       ],
       "assignee": "forge",
       "column": "backlog",
-      "description": "Create end-to-end integration test using mock data for all sources, validating the full pipeline: collector\u2192analyzer\u2192reporter.",
+      "description": "Create end-to-end integration test using mock data for all sources, validating the full pipeline: collector→analyzer→reporter.",
       "id": "TASK-919",
       "labels": [
         "testing",
