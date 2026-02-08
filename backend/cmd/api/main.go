@@ -28,6 +28,7 @@ import (
 	dailyusecase "empoweredpixels/internal/usecase/daily"
 	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
 	eventsusecase "empoweredpixels/internal/usecase/events"
+	resonance "empoweredpixels/internal/usecase/resonance"
 	"empoweredpixels/internal/mcp"
 )
 
@@ -140,6 +141,9 @@ func main() {
 	eventRepo := repositories.NewEventRepository(database.Pool)
 	eventService := eventsusecase.NewService(eventRepo)
 
+	// Resonance service initialization
+	resonanceusecase := resonance.NewResonanceService(squadRepo, fighterRepo, attunementRepo)
+
 	mcpFilter := mcp.NewFairnessFilter(100, 1*time.Minute)
 	mcpHandler := mcp.NewMCPHandler(mcpFilter, identityService, rosterService, inventoryService, leagueService, matchService, rewardService)
 	mcpAuditLogger, _ := mcp.NewAuditLogger("")
@@ -167,6 +171,7 @@ func main() {
 			MCPFilter:          mcpFilter,
 			LeaderboardService: leaderboardService,
 			EventService:       eventService,
+			ResonanceService:   resonanceusecase,
 		}),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
