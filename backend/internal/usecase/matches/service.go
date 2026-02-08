@@ -422,6 +422,9 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		}
 	}
 
+	// Track resonance states for WebSocket broadcasting
+	resonanceStates := make(map[string]*resonance.ResonanceState)
+
 	// Apply resonance bonuses if resonance service is available
 	if s.resonance != nil {
 		// Group fighters by UserID
@@ -436,12 +439,26 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 			// For now, we calculate resonance based on attunement composition directly
 			resonanceState, err := calculateUserResonance(ctx, userID, s.resonance)
 			if err == nil && resonanceState != nil {
+				// Store resonance state for broadcasting
+				for _, idx := range fighterIndices {
+					resonanceStates[fighters[idx].ID] = resonanceState
+				}
+
 				// Apply bonuses to all fighters of this user
 				for _, idx := range fighterIndices {
 					fighters[idx] = applyResonanceBonuses(fighters[idx], resonanceState)
 				}
 			}
 		}
+	}
+
+	// Broadcast resonance states to WebSocket clients if we have resonance data
+	if len(resonanceStates) > 0 && s.hub != nil {
+		resonancePayload := map[string]any{
+			"type":       "match.resonance_state",
+			"resonances": resonanceStates,
+		}
+		s.hub.Broadcast(matchID, resonancePayload)
 	}
 
 	simulator := NewBattleSimulator()
