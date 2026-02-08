@@ -44,9 +44,9 @@ func (s *SquadService) SetActiveSquad(ctx context.Context, userID int64, name st
 		return nil, err
 	}
 
-	return s.repo.GetActiveByUserID(ctx, userID)
+	return s.repo.GetDetailsByUserID(ctx, userID)
 }
 
 func (s *SquadService) GetActiveSquad(ctx context.Context, userID int64) (*roster.Squad, error) {
-	return s.repo.GetActiveByUserID(ctx, userID)
+	return s.repo.GetDetailsByUserID(ctx, userID)
 }

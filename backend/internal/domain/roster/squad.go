@@ -17,4 +17,5 @@ type Squad struct {
 type Member struct {
 	FighterID string `json:"fighterId"`
 	SlotIndex int    `json:"slotIndex"`
+	Fighter   *Fighter `json:"fighter,omitempty"`
 }

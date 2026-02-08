@@ -30,5 +30,6 @@ type ConfigurationRepository interface {
 type SquadRepository interface {
 	Create(ctx context.Context, squad *roster.Squad) error
 	GetActiveByUserID(ctx context.Context, userID int64) (*roster.Squad, error)
+	GetDetailsByUserID(ctx context.Context, userID int64) (*roster.Squad, error)
 	DeactivateAll(ctx context.Context, userID int64) error
 }

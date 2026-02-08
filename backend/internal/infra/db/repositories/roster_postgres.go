@@ -223,15 +223,19 @@ func (r *FighterRepository) SoftDelete(ctx context.Context, userID int64, id str
 func (r *FighterRepository) Update(ctx context.Context, fighter *roster.Fighter) error {
 	const query = `
 		update fighters
-		set level = $1, power = $2, condition_power = $3, precision = $4, ferocity = $5,
-		    accuracy = $6, agility = $7, armor = $8, vitality = $9, parry_chance = $10,
-		    healing_power = $11, speed = $12, vision = $13
-		where id = $14`
+		set level = $1, xp = $2, xp_to_next_level = $3, power = $4, condition_power = $5, precision = $6, ferocity = $7,
+		    accuracy = $8, agility = $9, armor = $10, vitality = $11, parry_chance = $12,
+		    healing_power = $13, speed = $14, vision = $15,
+		    matches_won = $16, matches_lost = $17, total_matches = $18,
+		    total_damage_dealt = $19, total_damage_taken = $20
+		where id = $21`
 
 	_, err := r.pool.Exec(ctx, query,
-		fighter.Level, fighter.Power, fighter.ConditionPower, fighter.Precision, fighter.Ferocity,
+		fighter.Level, fighter.XP, fighter.XPToNextLevel, fighter.Power, fighter.ConditionPower, fighter.Precision, fighter.Ferocity,
 		fighter.Accuracy, fighter.Agility, fighter.Armor, fighter.Vitality, fighter.ParryChance,
 		fighter.HealingPower, fighter.Speed, fighter.Vision,
+		fighter.MatchesWon, fighter.MatchesLost, fighter.TotalMatches,
+		fighter.TotalDamageDealt, fighter.TotalDamageTaken,
 		fighter.ID,
 	)
 	return err

@@ -92,3 +92,34 @@ func (r *SquadRepository) DeactivateAll(ctx context.Context, userID int64) error
 	_, err := r.pool.Exec(ctx, query, userID)
 	return err
 }
+
+func (r *SquadRepository) GetDetailsByUserID(ctx context.Context, userID int64) (*roster.Squad, error) {
+	squad, err := r.GetActiveByUserID(ctx, userID)
+	if err != nil || squad == nil {
+		return squad, err
+	}
+
+	for i, member := range squad.Members {
+		const query = `
+			select id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, attunement_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted
+			from fighters
+			where id = $1`
+		
+		var f roster.Fighter
+		err := r.pool.QueryRow(ctx, query, member.FighterID).Scan(
+			&f.ID, &f.UserID, &f.Name, &f.Level, &f.XP, &f.XPToNextLevel,
+			&f.Power, &f.ConditionPower, &f.Precision, &f.Ferocity,
+			&f.Accuracy, &f.Agility, &f.Armor, &f.Vitality,
+			&f.ParryChance, &f.HealingPower, &f.Speed, &f.Vision,
+			&f.WeaponID, &f.AttunementID,
+			&f.MatchesWon, &f.MatchesLost, &f.TotalMatches,
+			&f.TotalDamageDealt, &f.TotalDamageTaken,
+			&f.Created, &f.IsDeleted,
+		)
+		if err == nil {
+			squad.Members[i].Fighter = &f
+		}
+	}
+
+	return squad, nil
+}
