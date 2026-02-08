@@ -9,8 +9,10 @@ import (
 	"empoweredpixels/internal/domain/combat"
 	"empoweredpixels/internal/domain/inventory"
 	"empoweredpixels/internal/domain/matches"
+	"empoweredpixels/internal/domain/roster"
 	"empoweredpixels/internal/infra/engine"
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
+	"empoweredpixels/internal/usecase/resonance"
 	"empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 
@@ -33,18 +35,19 @@ type Hub interface {
 }
 
 type Service struct {
-	matches       MatchRepository
-	teams         TeamRepository
+	matches      MatchRepository
+	teams        TeamRepository
 	registrations RegistrationRepository
-	results       ResultRepository
-	scores        ScoreRepository
-	fighters      FighterRepository
-	inventory     inventoryusecase.Service
-	rewards       *rewards.Service
-	roster        *rosterusecase.Service
-	engine        *engine.Client
-	hub           Hub
-	now           func() time.Time
+	results      ResultRepository
+	scores       ScoreRepository
+	fighters     FighterRepository
+	inventory    inventoryusecase.Service
+	resonance    *resonance.ResonanceService
+	rewards      *rewards.Service
+	roster       *rosterusecase.Service
+	engine       *engine.Client
+	hub          Hub
+	now          func() time.Time
 }
 
 func NewService(
@@ -55,6 +58,24 @@ func NewService(
 	scores ScoreRepository,
 	fighters FighterRepository,
 	inventory inventoryusecase.Service,
+	rewards *rewards.Service,
+	roster *rosterusecase.Service,
+	engineClient *engine.Client,
+	hub Hub,
+	now func() time.Time,
+) *Service {
+	return NewServiceWithResonance(matches, teams, registrations, results, scores, fighters, inventory, nil, rewards, roster, engineClient, hub, now)
+}
+
+func NewServiceWithResonance(
+	matches MatchRepository,
+	teams TeamRepository,
+	registrations RegistrationRepository,
+	results ResultRepository,
+	scores ScoreRepository,
+	fighters FighterRepository,
+	inventory inventoryusecase.Service,
+	resonanceService *resonance.ResonanceService,
 	rewards *rewards.Service,
 	roster *rosterusecase.Service,
 	engineClient *engine.Client,
@@ -73,6 +94,7 @@ func NewService(
 		scores:        scores,
 		fighters:      fighters,
 		inventory:     inventory,
+		resonance:     resonanceService,
 		rewards:       rewards,
 		roster:        roster,
 		engine:        engineClient,
@@ -400,13 +422,35 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		}
 	}
 
-		simulator := NewBattleSimulator()
-		// Convert MatchOptions to BattleOptions
-		battleOptions := BattleOptions{
-			MaxRounds: 100, // Default value
-			MapSize:   30.0, // Default value
+	// Apply resonance bonuses if resonance service is available
+	if s.resonance != nil {
+		// Group fighters by UserID
+		fightersByUser := make(map[int64][]int)
+		for i, f := range fighters {
+			fightersByUser[f.UserID] = append(fightersByUser[f.UserID], i)
 		}
-		result, err := simulator.Run(matchID, fighters, battleOptions)
+
+		// Calculate resonance per user and apply bonuses
+		for userID, fighterIndices := range fightersByUser {
+			// Get the user's active squad (or create a temporary one for resonance calculation)
+			// For now, we calculate resonance based on attunement composition directly
+			resonanceState, err := calculateUserResonance(ctx, userID, s.resonance)
+			if err == nil && resonanceState != nil {
+				// Apply bonuses to all fighters of this user
+				for _, idx := range fighterIndices {
+					fighters[idx] = applyResonanceBonuses(fighters[idx], resonanceState)
+				}
+			}
+		}
+	}
+
+	simulator := NewBattleSimulator()
+	// Convert MatchOptions to BattleOptions
+	battleOptions := BattleOptions{
+		MaxRounds: 100, // Default value
+		MapSize:   30.0, // Default value
+	}
+	result, err := simulator.Run(matchID, fighters, battleOptions)
 	if err != nil {
 		match.Status = matches.MatchStatusLobby
 		match.Started = nil
@@ -642,4 +686,32 @@ func (s *Service) GetOnlinePlayersCount(ctx context.Context) (int, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+// calculateUserResonance calculates the resonance state for a user based on attunement composition
+// This is a temporary implementation that doesn't require explicit squad references
+func calculateUserResonance(ctx context.Context, userID int64, resonanceService *resonance.ResonanceService) (*resonance.ResonanceState, error) {
+	if resonanceService == nil {
+		return nil, nil
+	}
+
+	// For now, return nil - proper implementation requires the user to have an active squad
+	// Future enhancement: create a temporary squad concept for resonance calculation
+	return nil, nil
+}
+
+// applyResonanceBonuses applies resonance bonuses to a fighter's stats
+func applyResonanceBonuses(fighter roster.Fighter, state *resonance.ResonanceState) roster.Fighter {
+	if state == nil || state.HarmonyScore == 0 {
+		return fighter
+	}
+
+	// Apply damage bonus to Power and ConditionPower
+	fighter.Power = int(float64(fighter.Power) * state.BonusDamage)
+	fighter.ConditionPower = int(float64(fighter.ConditionPower) * state.BonusDamage)
+
+	// Apply defense bonus to Armor
+	fighter.Armor = int(float64(fighter.Armor) * state.BonusDefense)
+
+	return fighter
 }

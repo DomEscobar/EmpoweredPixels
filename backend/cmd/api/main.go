@@ -87,7 +87,11 @@ func main() {
 	matchScoreRepo := repositories.NewMatchScoreRepository(database.Pool)
 	engineClient := engine.NewClient(engine.Config{BaseURL: cfg.EngineURL})
 	matchHub := ws.NewMatchHub()
-	matchService := matchesusecase.NewService(
+
+	// Resonance service initialization
+	resonanceusecase := resonance.NewResonanceService(squadRepo, fighterRepo, attunementRepo)
+
+	matchService := matchesusecase.NewServiceWithResonance(
 		matchRepo,
 		matchTeamRepo,
 		matchRegistrationRepo,
@@ -95,6 +99,7 @@ func main() {
 		matchScoreRepo,
 		fighterRepo,
 		inventoryService,
+		resonanceusecase,
 		rewardService,
 		rosterService,
 		engineClient,
@@ -140,9 +145,6 @@ func main() {
 	// Event service initialization
 	eventRepo := repositories.NewEventRepository(database.Pool)
 	eventService := eventsusecase.NewService(eventRepo)
-
-	// Resonance service initialization
-	resonanceusecase := resonance.NewResonanceService(squadRepo, fighterRepo, attunementRepo)
 
 	mcpFilter := mcp.NewFairnessFilter(100, 1*time.Minute)
 	mcpHandler := mcp.NewMCPHandler(mcpFilter, identityService, rosterService, inventoryService, leagueService, matchService, rewardService)
