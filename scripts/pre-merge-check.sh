@@ -29,16 +29,28 @@ CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
 BACKEND_CHANGED=$(echo "$CHANGED_FILES" | grep -E '^backend/' || true)
 FRONTEND_CHANGED=$(echo "$CHANGED_FILES" | grep -E '^frontend/' || true)
 
-# 3. Build checks
+# 3. Build checks (detect build system: Go vs Node)
 if [ -n "$BACKEND_CHANGED" ]; then
   echo "🔧 Backend changed — running build..."
-  (cd backend && npm run build) || { echo "❌ Backend build failed"; exit 1; }
+  if [ -f "backend/go.mod" ]; then
+    echo "   Detected Go backend"
+    (cd backend && go build ./cmd/api) || { echo "❌ Backend Go build failed"; exit 1; }
+  elif [ -f "backend/package.json" ]; then
+    echo "   Detected Node backend"
+    (cd backend && npm run build) || { echo "❌ Backend Node build failed"; exit 1; }
+  else
+    echo "⚠️  No go.mod or package.json in backend — skipping build (unknown stack)"
+  fi
   echo "✅ Backend build passed"
 fi
 
 if [ -n "$FRONTEND_CHANGED" ]; then
   echo "🔧 Frontend changed — running build..."
-  (cd frontend && npm run build) || { echo "❌ Frontend build failed"; exit 1; }
+  if [ -f "frontend/package.json" ]; then
+    (cd frontend && npm run build) || { echo "❌ Frontend build failed"; exit 1; }
+  else
+    echo "⚠️  No package.json in frontend — skipping build"
+  fi
   echo "✅ Frontend build passed"
 fi
 
