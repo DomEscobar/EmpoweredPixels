@@ -23,6 +23,7 @@ import (
 	guildhandlers "empoweredpixels/internal/adapter/http/handlers/guilds"
 	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
+	resonancehandlers "empoweredpixels/internal/adapter/http/handlers/resonance"
 	"empoweredpixels/internal/adapter/http/middleware"
 	"empoweredpixels/internal/adapter/http/responses"
 	"empoweredpixels/internal/adapter/ws"
@@ -44,6 +45,7 @@ import (
 	guildsusecase "empoweredpixels/internal/usecase/guilds"
 	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
 	eventsusecase "empoweredpixels/internal/usecase/events"
+	resonanceusecase "empoweredpixels/internal/usecase/resonance"
 )
 
 type Dependencies struct {
@@ -64,6 +66,7 @@ type Dependencies struct {
 	LeaderboardService  *leaderboardusecase.Service
 	EventService        *eventsusecase.Service
 	GuildService        *guildsusecase.Service
+	ResonanceService    *resonanceusecase.ResonanceService
 	MatchHub            *ws.MatchHub
 	MCPHandler       *mcp.MCPHandler
 	MCPAuditLogger   *mcp.AuditLogger
@@ -91,6 +94,9 @@ func NewRouter(deps Dependencies) http.Handler {
 
 	// API Routes
 	api := r.PathPrefix("/api").Subrouter()
+	api.Use(middleware.ValidateQueryParams)
+	api.Use(middleware.ValidateAuthHeader)
+	api.Use(middleware.ValidateJSON)
 	api.Use(func(next http.Handler) http.Handler {
 		return authMiddleware(next)
 	})
@@ -131,6 +137,17 @@ func NewRouter(deps Dependencies) http.Handler {
 		squadHandler := rosterhandlers.NewSquadHandler(deps.RosterService.SquadService) // Assume SquadService is injected
 		api.HandleFunc("/roster/squad/active", squadHandler.GetActive).Methods("GET")
 		api.HandleFunc("/roster/squad/active", squadHandler.SetActive).Methods("POST")
+	}
+
+	// Resonance routes
+	if deps.ResonanceService != nil {
+		resonanceHandler := resonancehandlers.NewResonanceHandler(deps.ResonanceService)
+		api.HandleFunc("/squads/{squadID}/resonance", func(w http.ResponseWriter, r *http.Request) {
+			resonanceHandler.GetSquadResonance(w, r)
+		}).Methods("GET")
+		api.HandleFunc("/squads/{squadID}/resonance/prefetch", func(w http.ResponseWriter, r *http.Request) {
+			resonanceHandler.PrefetchResonance(w, r)
+		}).Methods("POST")
 	}
 
 	if deps.MatchService != nil {

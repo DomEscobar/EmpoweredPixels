@@ -28,6 +28,7 @@ import (
 	dailyusecase "empoweredpixels/internal/usecase/daily"
 	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
 	eventsusecase "empoweredpixels/internal/usecase/events"
+	resonance "empoweredpixels/internal/usecase/resonance"
 	"empoweredpixels/internal/mcp"
 )
 
@@ -86,7 +87,14 @@ func main() {
 	matchScoreRepo := repositories.NewMatchScoreRepository(database.Pool)
 	engineClient := engine.NewClient(engine.Config{BaseURL: cfg.EngineURL})
 	matchHub := ws.NewMatchHub()
-	matchService := matchesusecase.NewService(
+
+	// Resonance service initialization
+	resonanceusecase := resonance.NewResonanceService(squadRepo, fighterRepo, attunementRepo)
+
+	// Achievement repository initialization
+	achievementRepo := repositories.NewResonanceAchievementRepository(database.Pool)
+
+	matchService := matchesusecase.NewServiceWithResonance(
 		matchRepo,
 		matchTeamRepo,
 		matchRegistrationRepo,
@@ -94,11 +102,13 @@ func main() {
 		matchScoreRepo,
 		fighterRepo,
 		inventoryService,
+		resonanceusecase,
 		rewardService,
 		rosterService,
 		engineClient,
 		matchHub,
 		time.Now,
+		achievementRepo,
 	)
 
 	leagueRepo := repositories.NewLeagueRepository(database.Pool)
@@ -167,6 +177,7 @@ func main() {
 			MCPFilter:          mcpFilter,
 			LeaderboardService: leaderboardService,
 			EventService:       eventService,
+			ResonanceService:   resonanceusecase,
 		}),
 		ReadHeaderTimeout: 5 * time.Second,
 	}

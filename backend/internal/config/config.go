@@ -1,6 +1,10 @@
 package config
 
-import "os"
+import (
+	"fmt"
+	"log"
+	"os"
+)
 
 type Config struct {
 	HTTPAddress string
@@ -23,7 +27,10 @@ func FromEnv() Config {
 
 	jwtSecret := os.Getenv("EP_JWT_SECRET")
 	if jwtSecret == "" {
-		jwtSecret = "dev-secret"
+		log.Fatal("FATAL: EP_JWT_SECRET environment variable is required and must be at least 32 characters. Set a strong secret before starting.")
+	}
+	if len(jwtSecret) < 32 {
+		log.Fatalf("FATAL: EP_JWT_SECRET must be at least 32 characters long (got %d). Use a cryptographically strong value.", len(jwtSecret))
 	}
 
 	tokenDays := 7
