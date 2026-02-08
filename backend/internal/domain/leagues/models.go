@@ -20,3 +20,17 @@ type LeagueMatch struct {
 	MatchID  string
 	Started  *time.Time
 }
+
+type LeagueHighscore struct {
+	FighterID   string
+	FighterName string
+	Username    string
+	Score       int
+}
+
+type LeagueWinner struct {
+	FighterID   string
+	FighterName string
+	Username    string
+	MatchID     string
+}

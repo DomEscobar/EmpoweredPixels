@@ -113,7 +113,7 @@ func (s *Service) SubscriptionsForUser(ctx context.Context, leagueID int, userID
 	return s.subscriptions.ListByLeagueAndUser(ctx, leagueID, userID)
 }
 
-func (s *Service) Matches(ctx context.Context, leagueID int, page int, pageSize int) ([]leagues.LeagueMatch, error) {
+func (s *Service) Matches(ctx context.Context, leagueID int, page int, pageSize int) ([]leagues.LeagueMatch, int, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -121,5 +121,22 @@ func (s *Service) Matches(ctx context.Context, leagueID int, page int, pageSize 
 		pageSize = 20
 	}
 	offset := (page - 1) * pageSize
-	return s.matches.ListByLeague(ctx, leagueID, pageSize, offset)
+	items, err := s.matches.ListByLeague(ctx, leagueID, pageSize, offset)
+	if err != nil {
+		return nil, 0, err
+	}
+	totalCount, err := s.matches.CountByLeague(ctx, leagueID)
+	if err != nil {
+		// If count fails, return items with totalCount = len(items) as fallback (like leaderboard service)
+		totalCount = len(items)
+	}
+	return items, totalCount, nil
+}
+
+func (s *Service) GetLastWinner(ctx context.Context, leagueID int) (*leagues.LeagueWinner, error) {
+	return s.matches.GetLastWinner(ctx, leagueID)
+}
+
+func (s *Service) GetHighScores(ctx context.Context, leagueID int, lastMatches int) ([]leagues.LeagueHighscore, error) {
+	return s.matches.GetHighScores(ctx, leagueID, lastMatches)
 }

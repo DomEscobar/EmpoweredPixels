@@ -21,6 +21,9 @@ type SubscriptionRepository interface {
 
 type LeagueMatchRepository interface {
 	ListByLeague(ctx context.Context, leagueID int, limit int, offset int) ([]leagues.LeagueMatch, error)
+	CountByLeague(ctx context.Context, leagueID int) (int, error)
+	GetLastWinner(ctx context.Context, leagueID int) (*leagues.LeagueWinner, error)
+	GetHighScores(ctx context.Context, leagueID int, lastMatches int) ([]leagues.LeagueHighscore, error)
 }
 
 type FighterRepository interface {
