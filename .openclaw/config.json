@@ -1,70 +1,28 @@
 {
   "agents": {
     "main": {
-      "model": "openrouter/arcee-ai/trinity-large-preview:free",
+      "model": "openrouter/stepfun/step-3.5-flash:free",
       "fallbacks": [
         "openrouter/google/gemini-3-flash-preview",
         "openrouter/moonshotai/kimi-k2.5"
       ]
     },
-    "forge": {
-      "model": "openrouter/arcee-ai/trinity-large-preview:free",
+    "doer": {
+      "model": "openrouter/stepfun/step-3.5-flash:free",
       "fallbacks": [
         "openrouter/google/gemini-3-flash-preview",
         "openrouter/moonshotai/kimi-k2.5"
       ]
     },
     "guardian": {
-      "model": "openrouter/arcee-ai/trinity-large-preview:free",
+      "model": "openrouter/stepfun/step-3.5-flash:free",
       "fallbacks": [
         "openrouter/google/gemini-3-flash-preview",
         "openrouter/moonshotai/kimi-k2.5"
       ]
     },
-    "player-casual": {
-      "model": "openrouter/arcee-ai/trinity-large-preview:free",
-      "fallbacks": [
-        "openrouter/google/gemini-3-flash-preview",
-        "openrouter/moonshotai/kimi-k2.5"
-      ]
-    },
-    "player-hardcore": {
-      "model": "openrouter/arcee-ai/trinity-large-preview:free",
-      "fallbacks": [
-        "openrouter/google/gemini-3-flash-preview",
-        "openrouter/moonshotai/kimi-k2.5"
-      ]
-    },
-    "analyst": {
-      "model": "openrouter/arcee-ai/trinity-large-preview:free",
-      "fallbacks": [
-        "openrouter/google/gemini-3-flash-preview",
-        "openrouter/moonshotai/kimi-k2.5"
-      ]
-    },
-    "balancer": {
-      "model": "openrouter/arcee-ai/trinity-large-preview:free",
-      "fallbacks": [
-        "openrouter/google/gemini-3-flash-preview",
-        "openrouter/moonshotai/kimi-k2.5"
-      ]
-    },
-    "creator": {
-      "model": "openrouter/arcee-ai/trinity-large-preview:free",
-      "fallbacks": [
-        "openrouter/google/gemini-3-flash-preview",
-        "openrouter/moonshotai/kimi-k2.5"
-      ]
-    },
-    "releaser": {
-      "model": "openrouter/arcee-ai/trinity-large-preview:free",
-      "fallbacks": [
-        "openrouter/google/gemini-3-flash-preview",
-        "openrouter/moonshotai/kimi-k2.5"
-      ]
-    },
-    "critic": {
-      "model": "openrouter/arcee-ai/trinity-large-preview:free",
+    "player": {
+      "model": "openrouter/stepfun/step-3.5-flash:free",
       "fallbacks": [
         "openrouter/google/gemini-3-flash-preview",
         "openrouter/moonshotai/kimi-k2.5"
