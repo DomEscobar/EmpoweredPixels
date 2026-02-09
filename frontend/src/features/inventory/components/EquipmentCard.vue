@@ -2,6 +2,7 @@
   <div 
     class="relative group pixel-box-iron transition-all hover:-translate-y-1"
     :class="[rarityBorderColor, { 'is-favorite': item.isFavorite }]"
+    :data-testid="'equipment-card-' + item.id"
   >
     <!-- CRT Overlay for Item Slot -->
     <div class="pointer-events-none absolute inset-0 z-0 opacity-[0.05] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.1)_2px,rgba(255,255,255,0.1)_4px)]"></div>
@@ -55,9 +56,9 @@
       </div>
 
       <div class="tooltip-actions">
-        <button @click.stop="$emit('enhance', item)" class="tip-btn enhance">ENHANCE</button>
-        <button @click.stop="$emit('salvage', item)" class="tip-btn salvage">SALVAGE</button>
-        <button @click.stop="$emit('toggle-favorite', item)" class="tip-btn favorite">
+        <button @click.stop="$emit('enhance', item)" class="tip-btn enhance" data-testid="enhance-button">ENHANCE</button>
+        <button @click.stop="$emit('salvage', item)" class="tip-btn salvage" data-testid="salvage-button">SALVAGE</button>
+        <button @click.stop="$emit('toggle-favorite', item)" class="tip-btn favorite" data-testid="favorite-button">
           {{ item.isFavorite ? 'UNFAVORITE' : 'FAVORITE' }}
         </button>
       </div>

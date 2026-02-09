@@ -88,11 +88,15 @@ func main() {
 	engineClient := engine.NewClient(engine.Config{BaseURL: cfg.EngineURL})
 	matchHub := ws.NewMatchHub()
 
+	// Attunement service initialization
+	attunementRepo := repositories.NewAttunementRepository(database.Pool)
+	attunementService := attunementusecase.NewService(attunementRepo)
+
 	// Resonance service initialization
 	resonanceusecase := resonance.NewResonanceService(squadRepo, fighterRepo, attunementRepo)
 
-	// Achievement repository initialization
-	achievementRepo := repositories.NewResonanceAchievementRepository(database.Pool)
+	// Resonance achievement repository initialization
+	resonanceAchievementRepo := repositories.NewResonanceAchievementRepository(database.Pool)
 
 	matchService := matchesusecase.NewServiceWithResonance(
 		matchRepo,
@@ -108,7 +112,7 @@ func main() {
 		engineClient,
 		matchHub,
 		time.Now,
-		achievementRepo,
+		resonanceAchievementRepo,
 	)
 
 	leagueRepo := repositories.NewLeagueRepository(database.Pool)
@@ -132,10 +136,6 @@ func main() {
 	goldRepo := repositories.NewPlayerGoldRepository(database.Pool)
 	txRepo := repositories.NewTransactionRepository(database.Pool)
 	shopService := shopusecase.NewService(shopRepo, goldRepo, txRepo, weaponService, shopusecase.NewSimulatedPaymentProvider())
-
-	// Attunement service initialization
-	attunementRepo := repositories.NewAttunementRepository(database.Pool)
-	attunementService := attunementusecase.NewService(attunementRepo)
 
 	// Daily reward service initialization
 	dailyRepo := repositories.NewDailyRewardRepository(database.Pool)

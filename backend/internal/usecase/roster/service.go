@@ -39,7 +39,7 @@ func NewService(
 		fighters:       fighters,
 		experiences:    experiences,
 		configurations: configurations,
-		SquadService:   NewSquadService(squads),
+		SquadService:   NewSquadService(squads, fighters),
 		now:            now,
 	}
 }

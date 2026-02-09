@@ -153,6 +153,41 @@ func (r *FighterRepository) GetByID(ctx context.Context, id string) (*roster.Fig
 	return &fighter, nil
 }
 
+func (r *FighterRepository) GetMultiple(ctx context.Context, fighterIDs []string) ([]roster.Fighter, error) {
+	if len(fighterIDs) == 0 {
+		return []roster.Fighter{}, nil
+	}
+	const query = `
+		select id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, attunement_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted
+		from fighters
+		where id = ANY($1) and is_deleted = false`
+
+	rows, err := r.pool.Query(ctx, query, fighterIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var fighters []roster.Fighter
+	for rows.Next() {
+		var fighter roster.Fighter
+		if err := rows.Scan(
+			&fighter.ID, &fighter.UserID, &fighter.Name, &fighter.Level, &fighter.XP, &fighter.XPToNextLevel,
+			&fighter.Power, &fighter.ConditionPower, &fighter.Precision, &fighter.Ferocity,
+			&fighter.Accuracy, &fighter.Agility, &fighter.Armor, &fighter.Vitality,
+			&fighter.ParryChance, &fighter.HealingPower, &fighter.Speed, &fighter.Vision,
+			&fighter.WeaponID, &fighter.AttunementID,
+			&fighter.MatchesWon, &fighter.MatchesLost, &fighter.TotalMatches,
+			&fighter.TotalDamageDealt, &fighter.TotalDamageTaken,
+			&fighter.Created, &fighter.IsDeleted,
+		); err != nil {
+			return nil, err
+		}
+		fighters = append(fighters, fighter)
+	}
+	return fighters, rows.Err()
+}
+
 func (r *FighterRepository) NameExists(ctx context.Context, name string) (bool, error) {
 	const query = `select 1 from fighters where name = $1`
 	var exists int
@@ -223,15 +258,23 @@ func (r *FighterRepository) SoftDelete(ctx context.Context, userID int64, id str
 func (r *FighterRepository) Update(ctx context.Context, fighter *roster.Fighter) error {
 	const query = `
 		update fighters
-		set level = $1, power = $2, condition_power = $3, precision = $4, ferocity = $5,
-		    accuracy = $6, agility = $7, armor = $8, vitality = $9, parry_chance = $10,
-		    healing_power = $11, speed = $12, vision = $13
-		where id = $14`
+		set level = $1, xp = $2, xp_to_next_level = $3,
+		    power = $4, condition_power = $5, precision = $6, ferocity = $7,
+		    accuracy = $8, agility = $9, armor = $10, vitality = $11, 
+		    parry_chance = $12, healing_power = $13, speed = $14, vision = $15,
+		    matches_won = $16, matches_lost = $17, total_matches = $18,
+		    total_damage_dealt = $19, total_damage_taken = $20,
+		    weapon_id = $21, attunement_id = $22
+		where id = $23`
 
 	_, err := r.pool.Exec(ctx, query,
-		fighter.Level, fighter.Power, fighter.ConditionPower, fighter.Precision, fighter.Ferocity,
-		fighter.Accuracy, fighter.Agility, fighter.Armor, fighter.Vitality, fighter.ParryChance,
-		fighter.HealingPower, fighter.Speed, fighter.Vision,
+		fighter.Level, fighter.XP, fighter.XPToNextLevel,
+		fighter.Power, fighter.ConditionPower, fighter.Precision, fighter.Ferocity,
+		fighter.Accuracy, fighter.Agility, fighter.Armor, fighter.Vitality,
+		fighter.ParryChance, fighter.HealingPower, fighter.Speed, fighter.Vision,
+		fighter.MatchesWon, fighter.MatchesLost, fighter.TotalMatches,
+		fighter.TotalDamageDealt, fighter.TotalDamageTaken,
+		fighter.WeaponID, fighter.AttunementID,
 		fighter.ID,
 	)
 	return err

@@ -5,10 +5,10 @@ export interface Fighter {
   id: string;
   name: string;
   level: number;
-  xp: number;
-  xpToNextLevel: number;
-  currentExp?: number;
-  levelExp?: number;
+  currentExp: number;
+  levelExp: number;
+  xp?: number; // Kept for compatibility if used elsewhere
+  xpToNextLevel?: number; // Kept for compatibility
   power: number;
   conditionPower: number;
   precision: number;
@@ -76,4 +76,18 @@ export interface Equipment {
 
 export async function getFighterEquipment(token: string, fighterId: string) {
   return request<Equipment[]>(`${endpoints.equipment}/fighter/${fighterId}`, { token });
+}
+
+export async function equipItem(token: string, fighterId: string, equipmentId: string) {
+  return request<void>(`${endpoints.equipment}/${equipmentId}/equip/${fighterId}`, {
+    method: "POST",
+    token
+  });
+}
+
+export async function unequipItem(token: string, equipmentId: string) {
+  return request<void>(`${endpoints.equipment}/${equipmentId}/unequip`, {
+    method: "POST",
+    token
+  });
 }

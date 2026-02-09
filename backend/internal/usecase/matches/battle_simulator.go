@@ -26,9 +26,13 @@ type BattleOptions struct {
 	MapSize   float64
 }
 
+const (
+	MaxActionGauge = 100.0
+)
+
 func (s *BattleSimulator) Run(matchID string, fighters []roster.Fighter, options BattleOptions) (*combat.MatchResult, error) {
 	if options.MaxRounds == 0 {
-		options.MaxRounds = 100
+		options.MaxRounds = 500 // Increased for tick-based
 	}
 	if options.MapSize == 0 {
 		options.MapSize = 30.0
@@ -46,26 +50,42 @@ func (s *BattleSimulator) Run(matchID string, fighters []roster.Fighter, options
 	spawnTicks := s.generateSpawnTicks(entities)
 	roundTicks = append(roundTicks, combat.RoundTick{Round: 0, Ticks: spawnTicks})
 
-	// Battle Loop
-	for round := 1; round <= options.MaxRounds; round++ {
-		var ticks []combat.Tick
+	// Battle Loop (Tick-based)
+	for tickCounter := 1; tickCounter <= options.MaxRounds; tickCounter++ {
+		var currentTickEvents []combat.Tick
 		alive := s.getAlive(entities)
 
 		if len(alive) <= 1 {
-			// Battle ends if 1 or 0 fighters left
 			break
 		}
 
-		// Turn order based on Speed + Agility with some variance
-		s.sortByInitiative(alive)
+		// Increase Action Gauge based on Agility
+		for _, e := range alive {
+			// Base growth + Agility scaling
+			growth := 5.0 + (float64(e.Stats.Agility) / 2.0)
+			e.ActionGauge += growth
+		}
+
+		// Process actors who reached the threshold
+		// Sort by overflow to handle simultaneous turns fairly
+		sort.Slice(alive, func(i, j int) bool {
+			return alive[i].ActionGauge > alive[j].ActionGauge
+		})
 
 		for _, attacker := range alive {
+			if attacker.ActionGauge < MaxActionGauge {
+				continue
+			}
+
+			// Attacker takes turn
 			if attacker.CurrentHP <= 0 {
+				attacker.ActionGauge = 0 // Reset even if dead to prevent loops
 				continue
 			}
 
 			target := s.findNearestTarget(attacker, alive)
 			if target == nil {
+				attacker.ActionGauge = 0
 				continue
 			}
 
@@ -73,28 +93,29 @@ func (s *BattleSimulator) Run(matchID string, fighters []roster.Fighter, options
 			skill := s.selectSkill(attacker)
 
 			if dist <= skill.Range() {
-				// Execute combat
 				eventTicks, err := skill.Execute(attacker, target)
-				if err != nil {
-					continue
-				}
-				ticks = append(ticks, eventTicks...)
-
-				// Handle scoring and death
-				for _, t := range eventTicks {
-					if t.Type == "died" {
-						scores[attacker.ID].Kills++
-						scores[target.ID].Deaths++
+				if err == nil {
+					currentTickEvents = append(currentTickEvents, eventTicks...)
+					for _, t := range eventTicks {
+						if t.Type == "died" {
+							scores[attacker.ID].Kills++
+							scores[target.ID].Deaths++
+						}
 					}
 				}
 			} else {
-				// Movement phase
-				ticks = append(ticks, s.moveTowards(attacker, target)...)
+				currentTickEvents = append(currentTickEvents, s.moveTowards(attacker, target)...)
+			}
+
+			// Turn cost
+			attacker.ActionGauge -= MaxActionGauge
+			if attacker.ActionGauge < 0 {
+				attacker.ActionGauge = 0
 			}
 		}
 
-		if len(ticks) > 0 {
-			roundTicks = append(roundTicks, combat.RoundTick{Round: round, Ticks: ticks})
+		if len(currentTickEvents) > 0 {
+			roundTicks = append(roundTicks, combat.RoundTick{Round: tickCounter, Ticks: currentTickEvents})
 		}
 	}
 
@@ -132,7 +153,8 @@ func (s *BattleSimulator) initializeEntities(fighters []roster.Fighter, mapSize 
 				Speed:          f.Speed,
 				Vision:         f.Vision,
 			},
-			Momentum: 1.0, // Start with neutral momentum
+			Momentum:    1.0, // Start with neutral momentum
+			ActionGauge: s.rng.Float64() * 20.0,
 		}
 	}
 	return entities

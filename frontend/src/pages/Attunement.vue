@@ -1,5 +1,5 @@
 <template>
-  <div class="attunement-page">
+  <div class="attunement-page" data-testid="attunement-page">
     <header class="page-header">
       <h1>✨ Attunements</h1>
       <p class="subtitle">Master the 6 elements to gain powerful bonuses</p>
@@ -19,6 +19,7 @@
         :key="att.element"
         class="attunement-card"
         :style="{ borderColor: getConfig(att.element).color }"
+        :data-testid="'attunement-card-' + att.element"
       >
         <div class="card-header" :style="{ backgroundColor: getConfig(att.element).color + '20' }">
           <span class="element-icon">{{ getConfig(att.element).icon }}</span>

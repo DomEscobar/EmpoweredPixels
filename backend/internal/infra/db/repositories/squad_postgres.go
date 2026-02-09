@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"errors"
+	"time"
 
 	"empoweredpixels/internal/domain/roster"
 	"github.com/jackc/pgx/v5"
@@ -90,5 +91,56 @@ func (r *SquadRepository) GetActiveByUserID(ctx context.Context, userID int64) (
 func (r *SquadRepository) DeactivateAll(ctx context.Context, userID int64) error {
 	const query = `update squads set is_active = false where user_id = $1`
 	_, err := r.pool.Exec(ctx, query, userID)
+	return err
+}
+
+func (r *SquadRepository) GetByID(ctx context.Context, squadID string) (*roster.Squad, error) {
+	const query = `
+		select id, user_id, name, is_active, created_at, updated_at
+		from squads
+		where id = $1`
+
+	var squad roster.Squad
+	err := r.pool.QueryRow(ctx, query, squadID).Scan(
+		&squad.ID, &squad.UserID, &squad.Name, &squad.IsActive, &squad.CreatedAt, &squad.UpdatedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	// Load members
+	const memberQuery = `
+		select fighter_id, slot_index
+		from squad_members
+		where squad_id = $1
+		order by slot_index asc`
+
+	rows, err := r.pool.Query(ctx, memberQuery, squad.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var members []roster.Member
+	for rows.Next() {
+		var m roster.Member
+		if err := rows.Scan(&m.FighterID, &m.SlotIndex); err != nil {
+			return nil, err
+		}
+		members = append(members, m)
+	}
+	squad.Members = members
+	return &squad, rows.Err()
+}
+
+func (r *SquadRepository) UpdateResonanceScore(ctx context.Context, squadID string, score int, pattern string, timestamp time.Time) error {
+	const query = `
+		update squads
+		set resonance_score = $1, resonance_pattern = $2, updated_at = $3
+		where id = $4`
+	_, err := r.pool.Exec(ctx, query, score, pattern, timestamp, squadID)
 	return err
 }

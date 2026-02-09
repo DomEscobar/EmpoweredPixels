@@ -119,7 +119,7 @@
                 <div class="mt-2">
                   <div class="mb-0.5 flex justify-between text-[10px]">
                     <span class="text-slate-500 uppercase">EXP</span>
-                    <span class="text-slate-400">{{ fighter.xp }}/{{ fighter.xpToNextLevel }}</span>
+                    <span class="text-slate-400">{{ fighter.currentExp !== undefined ? fighter.currentExp : (fighter.xp || 0) }}/{{ fighter.levelExp || fighter.xpToNextLevel }}</span>
                   </div>
                   <div class="h-1.5 pixel-box-sm bg-slate-800/80 overflow-hidden">
                     <div
@@ -287,12 +287,31 @@
                   <FighterStats
                     :fighter="selectedFighter"
                     :equipment="roster.equipment[selectedFighter.id] || []"
+                    @open-armory="showArmory = true"
                     :data-testid="`fighter-stats-${selectedFighter.id}`"
                   />
                 </div>
               </aside>
             </Transition>
           </div>
+        </Transition>
+      </Teleport>
+
+      <!-- Armory Modal -->
+      <Teleport to="body">
+        <Transition
+          enter-active-class="transition duration-200"
+          enter-from-class="opacity-0"
+          enter-to-class="opacity-100"
+          leave-active-class="transition duration-150"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
+        >
+          <ArmoryModal
+            v-if="showArmory && selectedFighter"
+            :fighter="selectedFighter"
+            @close="showArmory = false"
+          />
         </Transition>
       </Teleport>
 
@@ -484,6 +503,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRosterStore } from '@/features/roster/store';
 import type { Fighter } from '@/features/roster/api';
 import FighterStats from '@/features/roster/FighterStats.vue';
+import ArmoryModal from '@/features/roster/ArmoryModal.vue';
 import VoxelFighter from '@/shared/ui/VoxelFighter.vue';
 
 const PIXEL_ASSETS = {
@@ -497,6 +517,7 @@ const PIXEL_ASSETS = {
 
 const roster = useRosterStore();
 const showCreate = ref(false);
+const showArmory = ref(false);
 const newName = ref('');
 const createAttunement = ref<string | null>(null);
 const selectedFighter = ref<Fighter | null>(null);
@@ -530,8 +551,10 @@ const getAttunementBarColor = (id: string) => {
 };
 
 const getExpPercent = (fighter: Fighter) => {
-  if (!fighter.xpToNextLevel || fighter.xpToNextLevel === 0) return 0;
-  return Math.min(100, (fighter.xp / fighter.xpToNextLevel) * 100);
+  const next = fighter.levelExp || fighter.xpToNextLevel;
+  if (!next || next === 0) return 0;
+  const current = fighter.currentExp !== undefined ? fighter.currentExp : (fighter.xp || 0);
+  return Math.min(100, (current / next) * 100);
 };
 
 const getCoreStats = (fighter: Fighter) => [

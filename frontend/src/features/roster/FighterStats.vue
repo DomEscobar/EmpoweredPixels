@@ -16,7 +16,7 @@
         <div class="flex-1 w-full">
           <div class="flex justify-between items-end mb-2">
             <h3 class="ep-header-gold text-2xl">Commander Level</h3>
-            <span class="text-xs text-slate-500">{{ fighter.xp }} / {{ fighter.xpToNextLevel }} XP</span>
+            <span class="text-xs text-slate-500">{{ getExpDisplay }} XP</span>
           </div>
           <div class="h-4 overflow-hidden rounded-sm bg-black border border-slate-800">
             <div
@@ -38,7 +38,7 @@
           <div v-for="stat in group" :key="stat.key" class="flex items-center justify-between group">
             <span class="text-sm text-slate-400 group-hover:text-amber-200 transition-colors">{{ stat.label }}</span>
             <div class="flex items-center gap-2">
-                <span class="text-base font-mono font-bold text-white">{{ stat.value }}{{ stat.suffix || '' }}</span>
+                <span class="text-base font-mono font-bold text-white">{{ stat.value ?? 0 }}{{ stat.suffix || '' }}</span>
             </div>
           </div>
         </div>
@@ -54,18 +54,18 @@
                 <!-- D4 Style Item Frame -->
                 <div class="w-32 h-32 bg-slate-950 border-2 border-slate-800 rounded flex items-center justify-center relative overflow-hidden">
                     <div v-if="equippedWeapon" class="absolute inset-0 bg-gradient-to-t from-purple-900/20 to-transparent"></div>
-                    <img v-if="equippedWeapon" :src="equippedWeapon.iconUrl" class="w-24 h-24 relative z-10 pixelated" />
+                    <div v-if="equippedWeapon" class="text-5xl z-10">{{ getWeaponIcon(equippedWeapon.type) }}</div>
                     <span v-else class="text-slate-800 text-5xl">⚔️</span>
                     
                     <!-- Rarity Accent Corner -->
-                    <div v-if="equippedWeapon" class="absolute top-0 left-0 w-8 h-8 -translate-x-4 -translate-y-4 rotate-45" :class="rarityColors[equippedWeapon.rarity]"></div>
+                    <div v-if="equippedWeapon" class="absolute top-0 left-0 w-8 h-8 -translate-x-4 -translate-y-4 rotate-45" :class="rarityColors[getRarityName(equippedWeapon.rarity)]"></div>
                 </div>
             </div>
 
             <div v-if="equippedWeapon" class="flex-1 space-y-4">
                 <div>
-                    <h2 class="text-2xl font-bold text-white tracking-tight">{{ equippedWeapon.name }}</h2>
-                    <p class="text-xs font-bold uppercase text-purple-400 opacity-80">{{ equippedWeapon.rarity }} {{ equippedWeapon.type }}</p>
+                    <h2 class="text-2xl font-bold text-white tracking-tight">{{ equippedWeapon.type }}</h2>
+                    <p class="text-xs font-bold uppercase text-purple-400 opacity-80">{{ getRarityName(equippedWeapon.rarity) }} Item</p>
                 </div>
                 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -76,14 +76,32 @@
                 </div>
 
                 <div class="pt-4 border-t border-slate-800 flex gap-3">
-                    <button class="px-6 py-2 bg-slate-800 hover:bg-red-900/40 text-xs font-bold uppercase tracking-widest text-slate-300 transition-all border border-slate-700">Unequip</button>
-                    <button class="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-xs font-bold uppercase tracking-widest text-black transition-all border border-amber-400">Upgrade</button>
+                    <button 
+                        @click="handleUnequip(equippedWeapon.id)"
+                        class="px-6 py-2 bg-slate-800 hover:bg-red-900/40 text-xs font-bold uppercase tracking-widest text-slate-300 transition-all border border-slate-700"
+                        data-testid="unequip-weapon-button"
+                    >
+                        Unequip
+                    </button>
+                    <button 
+                        @click="handleUpgrade"
+                        class="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-xs font-bold uppercase tracking-widest text-black transition-all border border-amber-400"
+                        data-testid="upgrade-weapon-button"
+                    >
+                        Upgrade
+                    </button>
                 </div>
             </div>
             
             <div v-else class="flex-1 text-center md:text-left py-8">
                 <p class="text-slate-500 italic mb-4">No primary weapon currently bound to this fighter.</p>
-                <button class="px-8 py-3 bg-slate-900 border border-slate-700 text-xs font-bold uppercase tracking-widest hover:border-amber-500 transition-all">Open Armory</button>
+                <button 
+                    @click="$emit('openArmory')"
+                    class="px-8 py-3 bg-slate-900 border border-slate-700 text-xs font-bold uppercase tracking-widest hover:border-amber-500 transition-all"
+                    data-testid="open-armory-button"
+                >
+                    Open Armory
+                </button>
             </div>
         </div>
     </section>
@@ -93,26 +111,63 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { Fighter, Equipment } from '@/features/roster/api';
+import { useRosterStore } from '@/features/roster/store';
+import { useRouter } from 'vue-router';
 
 const props = defineProps<{
   fighter: Fighter;
   equipment: Equipment[];
 }>();
 
+const rosterStore = useRosterStore();
+const router = useRouter();
+
+const emit = defineEmits(['openArmory']);
+
+const handleUnequip = async (itemId: string) => {
+    try {
+        await rosterStore.unequipItemFromFighter(props.fighter.id, itemId);
+    } catch (e) {
+        console.error("Unequip failed", e);
+    }
+};
+
+const handleUpgrade = () => {
+    // Navigate to Inventory/Enhancement page or open modal
+    router.push('/inventory');
+};
+
 const getExpPercent = computed(() => {
-  if (!props.fighter.xpToNextLevel) return 0;
-  return Math.round((props.fighter.xp / props.fighter.xpToNextLevel) * 100);
+  const next = props.fighter.levelExp || props.fighter.xpToNextLevel;
+  if (!next) return 0;
+  const current = props.fighter.currentExp !== undefined ? props.fighter.currentExp : (props.fighter.xp || 0);
+  return Math.round((current / next) * 100);
 });
 
-// Mock equipped weapon for visual testing until we wire store back
-const equippedWeapon = {
-    name: "Obsidian Dread-Axe",
-    type: "Great-Axe",
-    rarity: "Legendary",
-    iconUrl: "https://vibemedia.space/wpn_axe_fixed_9a8f7b2c.png?prompt=legendary%20obsidian%20battle%20axe%20glow%20purple%20pixel%20art&style=pixel_game_asset&key=NOGON",
-    damage: 184,
-    speed: 0.8,
-    crit: 12
+const getExpDisplay = computed(() => {
+  const current = props.fighter.currentExp !== undefined ? props.fighter.currentExp : (props.fighter.xp || 0);
+  const next = props.fighter.levelExp || props.fighter.xpToNextLevel;
+  return `${current} / ${next}`;
+});
+
+// Primary weapon detection
+const equippedWeapon = computed(() => {
+  return props.equipment.find(item => 
+    item.type.toLowerCase().includes('weapon') || 
+    item.type.toLowerCase().includes('axe') || 
+    item.type.toLowerCase().includes('sword') ||
+    item.type.toLowerCase().includes('staff') ||
+    item.type.toLowerCase().includes('bow')
+  );
+});
+
+const getWeaponIcon = (type: string) => {
+  const t = type.toLowerCase();
+  if (t.includes('axe')) return '🪓';
+  if (t.includes('sword')) return '⚔️';
+  if (t.includes('staff')) return '🪄';
+  if (t.includes('bow')) return '🏹';
+  return '⚔️';
 };
 
 const rarityColors: Record<string, string> = {
@@ -122,12 +177,22 @@ const rarityColors: Record<string, string> = {
     'Epic': 'bg-purple-600'
 };
 
-const weaponStats = computed(() => [
-    { label: 'Base Damage', value: equippedWeapon.damage },
-    { label: 'Attack Speed', value: equippedWeapon.speed },
-    { label: 'Critical Chance', value: equippedWeapon.crit + '%' },
-    { label: 'Durability', value: '100/100' }
-]);
+const getRarityName = (rarity: number) => {
+  if (rarity >= 4) return 'Legendary';
+  if (rarity === 3) return 'Epic';
+  if (rarity === 2) return 'Rare';
+  return 'Common';
+};
+
+const weaponStats = computed(() => {
+    if (!equippedWeapon.value) return [];
+    return [
+        { label: 'Level', value: equippedWeapon.value.level },
+        { label: 'Enhancement', value: `+${equippedWeapon.value.enhancement}` },
+        { label: 'Type', value: equippedWeapon.value.type },
+        { label: 'Rarity', value: getRarityName(equippedWeapon.value.rarity) }
+    ];
+});
 
 const statGroups = computed(() => ({
   'Offense': [
