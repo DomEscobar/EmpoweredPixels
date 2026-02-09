@@ -1,5 +1,5 @@
 <template>
-  <div class="inventory-container">
+  <div class="inventory-container" data-testid="inventory-grid">
     <!-- Filtering Bar -->
     <div class="pixel-box-iron bg-slate-900/90 p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-4">
@@ -76,13 +76,13 @@ const filters = [
 const filteredEquipment = computed(() => {
   if (activeFilter.value === 'all') return props.equipment;
   
-  // Note: Backend 'type' currently maps to ItemID. 
-  // We'll map some known prefixes or assume type strings for now.
   return props.equipment.filter(item => {
     const type = item.type.toLowerCase();
-    if (activeFilter.value === 'weapon') return type.includes('wpn');
-    if (activeFilter.value === 'ring') return type.includes('ring');
-    if (activeFilter.value === 'consumable') return type.includes('pot') || type.includes('scroll');
+    // Backend item types follow patterns: "Wpn..", "Arm..", "Ring..", "Pot..", "Scroll.."
+    if (activeFilter.value === 'weapon') return type.startsWith('wpn');
+    if (activeFilter.value === 'armor') return type.startsWith('arm');
+    if (activeFilter.value === 'ring') return type.startsWith('ring');
+    if (activeFilter.value === 'consumable') return type.startsWith('pot') || type.startsWith('scroll');
     return false;
   });
 });

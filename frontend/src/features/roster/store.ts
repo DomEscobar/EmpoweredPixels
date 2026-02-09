@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
-import { Fighter, getFighters, createFighter, deleteFighter, getFighterEquipment, Equipment, updateFighterConfiguration } from "./api";
+import { Fighter, getFighters, createFighter, deleteFighter, getFighterEquipment, Equipment, updateFighterConfiguration, equipItem, unequipItem } from "./api";
 import { useAuthStore } from "@/features/auth/store";
+import { useInventoryStore } from "@/features/inventory/store";
 
 interface RosterState {
   fighters: Fighter[];
@@ -82,6 +83,36 @@ export const useFighterStore = defineStore("roster", {
       } catch (e) {
         this.error = "Failed to update attunement";
         console.error("Failed to update attunement", e);
+      }
+    },
+    async equipItemToFighter(fighterId: string, equipmentId: string) {
+      const auth = useAuthStore();
+      const inventory = useInventoryStore();
+      if (!auth.token) return;
+
+      try {
+        await equipItem(auth.token, fighterId, equipmentId);
+        await this.fetchFighterEquipment(fighterId);
+        await this.fetchFighters(); // Power might change
+        await inventory.fetchInventory(); // Item is now bound
+      } catch (e: any) {
+        this.error = e.message || "Failed to equip item";
+        throw e;
+      }
+    },
+    async unequipItemFromFighter(fighterId: string, equipmentId: string) {
+      const auth = useAuthStore();
+      const inventory = useInventoryStore();
+      if (!auth.token) return;
+
+      try {
+        await unequipItem(auth.token, equipmentId);
+        await this.fetchFighterEquipment(fighterId);
+        await this.fetchFighters(); // Power might change
+        await inventory.fetchInventory(); // Item is now free
+      } catch (e: any) {
+        this.error = e.message || "Failed to unequip item";
+        throw e;
       }
     }
   }

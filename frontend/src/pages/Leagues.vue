@@ -263,6 +263,7 @@
             <select 
               v-model="selectedFighterId" 
               class="flex-1 bg-slate-950 border-2 border-slate-700 p-2 text-amber-100 uppercase text-xs font-bold focus:outline-none focus:border-amber-500"
+              data-testid="fighter-select"
             >
               <option value="">Select Fighter</option>
               <option v-for="f in availableFighters" :key="f.id" :value="f.id">{{ f.name }}</option>
@@ -271,6 +272,7 @@
               @click="confirmSubscribe"
               :disabled="!selectedFighterId || leaguesStore.isSubscribing"
               class="rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black disabled:opacity-50"
+              data-testid="enlist-button"
             >
               Enlist
             </button>

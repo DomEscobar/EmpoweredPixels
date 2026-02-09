@@ -111,7 +111,7 @@
           <div class="absolute inset-0 bg-black/80" @click="closeEnhanceModal"></div>
           
           <!-- Modal -->
-          <div class="pixel-box bg-slate-900 w-full max-w-md relative z-10 p-6 space-y-4">
+          <div class="pixel-box bg-slate-900 w-full max-w-md relative z-10 p-6 space-y-4" data-testid="enhance-modal">
             <div class="flex items-center justify-between mb-4">
               <h3 class="text-xl font-bold text-amber-400 text-shadow-retro flex items-center gap-2">
                 <img :src="PIXEL_ASSETS.ICON_ANVIL" alt="" class="w-6 h-6 pixelated" />
@@ -187,7 +187,7 @@
           <div class="absolute inset-0 bg-black/80" @click="closeSalvageModal"></div>
           
           <!-- Modal -->
-          <div class="pixel-box bg-slate-900 w-full max-w-md relative z-10 p-6 space-y-4">
+          <div class="pixel-box bg-slate-900 w-full max-w-md relative z-10 p-6 space-y-4" data-testid="salvage-modal">
             <div class="flex items-center justify-between mb-4">
               <h3 class="text-xl font-bold text-red-400 text-shadow-retro flex items-center gap-2">
                 <img :src="PIXEL_ASSETS.ICON_SKULL" alt="" class="w-6 h-6 pixelated" />

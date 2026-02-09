@@ -8,11 +8,15 @@ import (
 )
 
 type SquadService struct {
-	repo SquadRepository
+	repo        SquadRepository
+	fighterRepo FighterRepository
 }
 
-func NewSquadService(repo SquadRepository) *SquadService {
-	return &SquadService{repo: repo}
+func NewSquadService(repo SquadRepository, fighterRepo FighterRepository) *SquadService {
+	return &SquadService{
+		repo:        repo,
+		fighterRepo: fighterRepo,
+	}
 }
 
 func (s *SquadService) SetActiveSquad(ctx context.Context, userID int64, name string, fighterIDs []string) (*roster.Squad, error) {
@@ -44,9 +48,22 @@ func (s *SquadService) SetActiveSquad(ctx context.Context, userID int64, name st
 		return nil, err
 	}
 
-	return s.repo.GetActiveByUserID(ctx, userID)
+	return s.GetActiveSquad(ctx, userID)
 }
 
 func (s *SquadService) GetActiveSquad(ctx context.Context, userID int64) (*roster.Squad, error) {
-	return s.repo.GetActiveByUserID(ctx, userID)
+	squad, err := s.repo.GetActiveByUserID(ctx, userID)
+	if err != nil || squad == nil {
+		return squad, err
+	}
+
+	// Hydrate fighter data for each member
+	for i := range squad.Members {
+		fighter, err := s.fighterRepo.GetByID(ctx, squad.Members[i].FighterID)
+		if err == nil && fighter != nil {
+			squad.Members[i].Fighter = fighter
+		}
+	}
+
+	return squad, nil
 }

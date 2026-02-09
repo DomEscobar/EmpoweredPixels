@@ -52,8 +52,44 @@ func (m *MockSquadRepository) DeactivateAll(ctx context.Context, userID int64) e
 	return nil
 }
 
+type MockFighterRepository struct {
+	fighters map[string]*roster.Fighter
+}
+
+func NewMockFighterRepository() *MockFighterRepository {
+	return &MockFighterRepository{
+		fighters: make(map[string]*roster.Fighter),
+	}
+}
+
+func (m *MockFighterRepository) ListByUser(ctx context.Context, userID int64) ([]roster.Fighter, error) {
+	return nil, nil
+}
+func (m *MockFighterRepository) GetByUserAndID(ctx context.Context, userID int64, id string) (*roster.Fighter, error) {
+	return nil, nil
+}
+func (m *MockFighterRepository) GetByID(ctx context.Context, id string) (*roster.Fighter, error) {
+	return m.fighters[id], nil
+}
+func (m *MockFighterRepository) NameExists(ctx context.Context, name string) (bool, error) {
+	return false, nil
+}
+func (m *MockFighterRepository) UserHasFighter(ctx context.Context, userID int64) (bool, error) {
+	return false, nil
+}
+func (m *MockFighterRepository) Create(ctx context.Context, fighter *roster.Fighter) error {
+	return nil
+}
+func (m *MockFighterRepository) Update(ctx context.Context, fighter *roster.Fighter) error {
+	return nil
+}
+func (m *MockFighterRepository) SoftDelete(ctx context.Context, userID int64, id string) error {
+	return nil
+}
+
 func TestSetActiveSquad(t *testing.T) {
 	ctx := context.Background()
+	fighterRepo := NewMockFighterRepository()
 
 	tests := []struct {
 		name        string
@@ -166,7 +202,7 @@ func TestSetActiveSquad(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			service := NewSquadService(tt.repo)
+			service := NewSquadService(tt.repo, fighterRepo)
 
 			squad, err := service.SetActiveSquad(ctx, tt.userID, tt.squadName, tt.fighterIDs)
 
@@ -198,6 +234,7 @@ func TestSetActiveSquad(t *testing.T) {
 
 func TestGetActiveSquad(t *testing.T) {
 	ctx := context.Background()
+	fighterRepo := NewMockFighterRepository()
 
 	tests := []struct {
 		name      string
@@ -242,7 +279,7 @@ func TestGetActiveSquad(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			service := NewSquadService(tt.repo)
+			service := NewSquadService(tt.repo, fighterRepo)
 
 			squad, err := service.GetActiveSquad(ctx, tt.userID)
 
@@ -271,7 +308,8 @@ func TestGetActiveSquad(t *testing.T) {
 
 func TestNewSquadService(t *testing.T) {
 	repo := NewMockSquadRepository()
-	service := NewSquadService(repo)
+	fighterRepo := NewMockFighterRepository()
+	service := NewSquadService(repo, fighterRepo)
 
 	if service == nil {
 		t.Fatal("Expected service to not be nil")

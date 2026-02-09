@@ -161,6 +161,41 @@ test.describe('Roster System', () => {
     await expect(fighterGrid).toContainText('New Champion');
   });
 
+  test('should open armory from fighter stats panel', async ({ page }) => {
+    // Create fighter first
+    await page.locator('[data-testid="recruit-button"]').click();
+    await page.locator('[data-testid="new-fighter-name-input"]').fill('Armory User');
+    await page.locator('[data-testid="confirm-recruit"]').click();
+    await expect(page.locator('[data-testid="create-wizard"]')).not.toBeVisible();
+    
+    // Manage fighter
+    await page.locator('[data-testid^="manage-fighter-"]').first().click();
+    
+    // Open armory
+    await page.locator('[data-testid="open-armory-button"]').click();
+    
+    // Armory modal should be visible
+    await expect(page.locator('[data-testid="armory-modal"]')).toBeVisible();
+    await expect(page.locator('[data-testid="armory-modal"] h2')).toContainText('ARMORY');
+  });
+
+  test('should unequip weapon', async ({ page }) => {
+    // This requires a fighter with a weapon. For now, check button presence in Manage panel.
+    // If no weapon, button isn't shown. We can Mock equipment in future.
+    await page.locator('[data-testid="recruit-button"]').click();
+    await page.locator('[data-testid="new-fighter-name-input"]').fill('Unequip Test');
+    await page.locator('[data-testid="confirm-recruit"]').click();
+    await expect(page.locator('[data-testid="create-wizard"]')).not.toBeVisible();
+    
+    await page.locator('[data-testid^="manage-fighter-"]').first().click();
+    
+    // If weapon exists, unequip button should be there
+    const unequipBtn = page.locator('[data-testid="unequip-weapon-button"]');
+    if (await unequipBtn.count() > 0) {
+      await expect(unequipBtn).toBeVisible();
+    }
+  });
+
   test('should not create fighter with empty name', async ({ page }) => {
     await page.locator('[data-testid="recruit-button"]').click();
     

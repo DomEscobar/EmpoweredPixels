@@ -17,6 +17,7 @@ type Entity struct {
 	Stats        Stats
 	Combo        int
 	Momentum     float64
+	ActionGauge  float64
 }
 
 type Stats struct {
