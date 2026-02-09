@@ -61,7 +61,7 @@
 
     <!-- Tier Name and Description -->
     <div v-if="resonanceState" class="tier-info">
-      <div class="tier-name" :style="{ color: getTierColor(resonanceState.tierName) }}">
+      <div class="tier-name" :style="{ color: getTierColor(resonanceState.tierName) }">
         {{ resonanceState.tierName }}
       </div>
       <div class="tier-description">
@@ -73,13 +73,13 @@
     <div v-if="resonanceState" class="bonus-table">
       <div class="bonus-row">
         <span class="bonus-label">Damage Bonus</span>
-        <span class="bonus-value" :style="{ color: getBonusColor(resonanceState.bonusDamage) }}">
+        <span class="bonus-value" :style="{ color: getBonusColor(resonanceState.bonusDamage) }">
           {{ formatBonus(resonanceState.bonusDamage) }}
         </span>
       </div>
       <div class="bonus-row">
         <span class="bonus-label">Defense Bonus</span>
-        <span class="bonus-value" :style="{ color: getBonusColor(resonanceState.bonusDefense) }}">
+        <span class="bonus-value" :style="{ color: getBonusColor(resonanceState.bonusDefense) }">
           {{ formatBonus(resonanceState.bonusDefense) }}
         </span>
       </div>

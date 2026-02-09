@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"net/http"
-	"strings"
 )
 
 // AllowedOrigins defines the list of trusted origins for CORS

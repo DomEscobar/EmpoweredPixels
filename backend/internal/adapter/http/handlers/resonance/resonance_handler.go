@@ -76,7 +76,7 @@ func (h *ResonanceHandler) GetSquadResonance(w http.ResponseWriter, r *http.Requ
 // GetUserActiveSquadResonance returns the resonance state for the user's active squad
 // GET /api/v1/user/resonance
 func (h *ResonanceHandler) GetUserActiveSquadResonance(w http.ResponseWriter, r *http.Request) {
-	userID, ok := middleware.UserID(r.Context())
+	_, ok := middleware.UserID(r.Context())
 	if !ok {
 		responses.Error(w, http.StatusForbidden, "Unauthorized")
 		return

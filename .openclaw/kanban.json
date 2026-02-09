@@ -2,8 +2,9 @@
   "project": "EmpoweredPixels",
   "meta": {
     "currentSprint": 2,
+    "sprintStatus": "complete",
     "focus": "APP COMPLETENESS: Every view must be 100% functional, error-free, and polished.",
-    "updatedAt": "2026-02-09T11:40:00Z"
+    "updatedAt": "2026-02-09T14:06:00Z"
   },
   "columns": [
     "incubator",
@@ -117,18 +118,18 @@
       "id": "TASK-900",
       "title": "[FEAT] Guild System",
       "description": "Add guild system: players can form/join guilds, chat, compete.",
-      "assignee": "",
+      "assignee": "forge",
       "priority": "high",
-      "column": "incubator",
+      "column": "backlog",
       "labels": ["feature", "social", "multiplayer"]
     },
     {
       "id": "TASK-903",
       "title": "[INFRA] Community Monitoring Pipeline",
       "description": "Design and implement community monitoring for Discord, Reddit, and Store reviews.",
-      "assignee": "",
+      "assignee": "analyst",
       "priority": "high",
-      "column": "incubator",
+      "column": "backlog",
       "labels": ["infra", "analytics", "community"]
     }
   ]
