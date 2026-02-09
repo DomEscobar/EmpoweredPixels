@@ -127,9 +127,9 @@
       "id": "TASK-903",
       "title": "[INFRA] Community Monitoring Pipeline",
       "description": "Design and implement community monitoring for Discord, Reddit, and Store reviews.",
-      "assignee": "analyst",
+      "assignee": "player",
       "priority": "high",
-      "column": "backlog",
+      "column": "done",
       "labels": ["infra", "analytics", "community"]
     }
   ]

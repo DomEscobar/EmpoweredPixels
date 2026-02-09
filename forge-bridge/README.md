@@ -6,7 +6,7 @@ Enables safe, stateless coordination between `@Mama_moma_bot` (Director) and `@f
 
 ```bash
 cd /root/EmpoweredPixels/forge-bridge
-node server.js          # listens on 127.0.0.1:3001
+node server.js          # listens on 0.0.0.0:4915 (externally accessible)
 # or custom port:
 node server.js 4000
 ```
@@ -48,7 +48,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDir=/root/EmpoweredPixels/forge-bridge
-ExecStart=/usr/bin/node server.js 3001
+ExecStart=/usr/bin/node server.js 4915
 Restart=on-failure
 RestartSec=5
 
