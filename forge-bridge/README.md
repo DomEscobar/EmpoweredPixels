@@ -69,3 +69,30 @@ sudo systemctl status forge-bridge
 - Director (`main` agent) POSTs tasks to `/webhook/task`.
 - `@forge_labs_bot` polls `/queue` or receives webhook call from your infrastructure; it POSTs completions to `/webhook/response`.
 - Bridge is in-memory; restart clears pending queue. For persistence, extend to write `queue.json` and `results.json`.
+
+## WebSocket Chat (real-time push)
+
+Connect to `ws://your-bridge:4915/chat` (or `wss://` for TLS). Include `Authorization: Bearer <secret>` header if `FORGE_BRIDGE_SECRET` is set.
+
+### Subscribe to tasks
+
+After connecting, send a JSON message to subscribe to tasks for a specific recipient:
+
+```json
+{ "type": "subscribe", "recipient": "forge_labs_bot" }
+```
+
+### Incoming messages
+
+The server will push messages of two types:
+
+- Task assignment:
+  ```json
+  { "type": "task", "payload": { "id": "...", "recipient": "...", "payload": {...} } }
+  ```
+- Result delivered:
+  ```json
+  { "type": "response", "payload": { "taskId": "...", "result": {...} } }
+  ```
+
+Clients should acknowledge tasks by POSTing results to `/webhook/response` as usual. Tasks are also retained in `/queue` for polling fallback.
