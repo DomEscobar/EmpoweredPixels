@@ -115,16 +115,6 @@ func main() {
 		resonanceAchievementRepo,
 	)
 
-	leagueRepo := repositories.NewLeagueRepository(database.Pool)
-	leagueSubRepo := repositories.NewLeagueSubscriptionRepository(database.Pool)
-	leagueMatchRepo := repositories.NewLeagueMatchRepository(database.Pool)
-	leagueService := leaguesusecase.NewService(leagueRepo, leagueSubRepo, leagueMatchRepo, fighterRepo, time.Now)
-	leagueJob := jobs.NewLeagueJob(matchService, leagueRepo, leagueSubRepo, leagueMatchRepo, fighterRepo, 4*time.Hour)
-	leagueJob.Start()
-
-	lobbyCleanupJob := jobs.NewLobbyCleanupJob(matchService, 60, 5*time.Minute)
-	lobbyCleanupJob.Start()
-
 	seasonSummaryRepo := repositories.NewSeasonSummaryRepository(database.Pool)
 	seasonService := seasonsusecase.NewService(seasonSummaryRepo)
 
@@ -145,6 +135,16 @@ func main() {
 	leaderboardRepo := repositories.NewLeaderboardRepository(database.Pool)
 	achievementRepo := repositories.NewAchievementRepository(database.Pool)
 	leaderboardService := leaderboardusecase.NewService(leaderboardRepo, achievementRepo, userRepo, fighterRepo, goldRepo)
+
+	leagueRepo := repositories.NewLeagueRepository(database.Pool)
+	leagueSubRepo := repositories.NewLeagueSubscriptionRepository(database.Pool)
+	leagueMatchRepo := repositories.NewLeagueMatchRepository(database.Pool)
+	leagueService := leaguesusecase.NewService(leagueRepo, leagueSubRepo, leagueMatchRepo, fighterRepo, achievementRepo, time.Now)
+	leagueJob := jobs.NewLeagueJob(matchService, leagueRepo, leagueSubRepo, leagueMatchRepo, fighterRepo, 4*time.Hour)
+	leagueJob.Start()
+
+	lobbyCleanupJob := jobs.NewLobbyCleanupJob(matchService, 60, 5*time.Minute)
+	lobbyCleanupJob.Start()
 
 	// Event service initialization
 	eventRepo := repositories.NewEventRepository(database.Pool)

@@ -306,6 +306,52 @@ func TestGetActiveSquad(t *testing.T) {
 	}
 }
 
+func TestGetActiveSquadParallelHydration(t *testing.T) {
+	ctx := context.Background()
+	fighterRepo := NewMockFighterRepository()
+
+	// Setup fighters in mock repo
+	fighterRepo.fighters["f1"] = &roster.Fighter{ID: "f1", Name: "Fighter 1"}
+	fighterRepo.fighters["f2"] = &roster.Fighter{ID: "f2", Name: "Fighter 2"}
+	fighterRepo.fighters["f3"] = &roster.Fighter{ID: "f3", Name: "Fighter 3"}
+
+	repo := NewMockSquadRepository()
+	repo.activeSquad[1] = &roster.Squad{
+		ID:       uuid.NewString(),
+		UserID:   1,
+		Name:     "Test Squad",
+		IsActive: true,
+		Members: []roster.Member{
+			{FighterID: "f1", SlotIndex: 0},
+			{FighterID: "f2", SlotIndex: 1},
+			{FighterID: "f3", SlotIndex: 2},
+		},
+	}
+
+	service := NewSquadService(repo, fighterRepo)
+	squad, err := service.GetActiveSquad(ctx, 1)
+
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if squad == nil {
+		t.Fatal("Expected squad to not be nil")
+	}
+
+	if len(squad.Members) != 3 {
+		t.Fatalf("Expected 3 members, got %d", len(squad.Members))
+	}
+
+	for i, member := range squad.Members {
+		if member.Fighter == nil {
+			t.Errorf("Member at index %d has nil Fighter data", i)
+		} else if member.Fighter.ID != member.FighterID {
+			t.Errorf("Member at index %d has mismatching Fighter ID: got %s, want %s", i, member.Fighter.ID, member.FighterID)
+		}
+	}
+}
+
 func TestNewSquadService(t *testing.T) {
 	repo := NewMockSquadRepository()
 	fighterRepo := NewMockFighterRepository()
