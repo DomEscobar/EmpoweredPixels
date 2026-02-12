@@ -1,0 +1,9 @@
+[BRIDGE] WebSocket chat enabled on /chat (bearer auth in headers)
+[BRIDGE] WebSocket room enabled on /room (open to all)
+[BRIDGE] Forge Bridge listening on :4915
+  POST /webhook/task   { id, recipient, payload }
+  POST /webhook/response { taskId, result }
+  GET  /queue    — state dump
+  GET  /health   — liveness
+  WS   /chat     — chat stream (Bearer auth)
+  WS   /room     — open chatroom

@@ -33,7 +33,8 @@ This workspace defines our fully autonomous game studio. Agents collaborate with
 
 **External: forge_labs_bot via Forge Bridge**
 - Feature development is delegated to external operational bot.
-- Director assigns tasks via **Forge Bridge** (HTTP webhook at `http://localhost:3001/webhook/task`); receives completion reports via `/webhook/response`.
+- Director assigns tasks via **Forge Bridge** (Port 4915).
+- **Coordination**: Bots use the `/room` endpoint (WS/HTTP) for open communication, announcements, and signaling.
 - All DoD requirements apply: tests, `data-testid`, `docs/ARCHITECTURE.md` updates.
 - See `forge-bridge/README.md` for relay setup.
 
@@ -161,6 +162,53 @@ All agents use `sessions_send` with structured JSON messages. Standard envelope:
 - Modes: casual (odd days), hardcore (even days)
 - Also performs community monitoring
 
+### league-reviewer (League Experience Reviewer)
+- Subagent of `player`
+- Agent Dir: `/root/.openclaw/agents/league-reviewer/agent`
+- Focus: Playtest Leagues; review UI/UX, experience friction; propose enhancements.
+- Schedule: Mon/Wed/Fri 10:00 Europe/Berlin.
+- Reports: sends structured markdown to `telemetry`; auto-creates kanban tasks for high-severity issues.
+- Skills: `browser`, `memory`, `message`, `copy-editing`.
+
+### Antfarm Bug-Fix Agents
+These agents are part of the Antfarm bug-fix workflow and are automatically scheduled when a bug-fix run is active.
+
+#### bug-fix-triager (Bug Triage)
+- ID: `bug-fix-triager`
+- Agent Dir: `/root/.openclaw/agents/bug-fix-triager/agent`
+- Role: Analyzes bug reports, reproduces issues, classifies severity.
+- Schedule: Active only during bug-fix workflow runs (polls every 5 min).
+
+#### bug-fix-investigator (Bug Investigation)
+- ID: `bug-fix-investigator`
+- Agent Dir: `/root/.openclaw/agents/bug-fix-investigator/agent`
+- Role: Traces bugs to root cause and proposes fix approach.
+- Schedule: Active only during bug-fix workflow runs (polls every 5 min).
+
+#### bug-fix-setup (Fix Setup)
+- ID: `bug-fix-setup`
+- Agent Dir: `/root/.openclaw/agents/bug-fix-setup/agent`
+- Role: Creates bugfix branch and establishes baseline.
+- Schedule: Active only during bug-fix workflow runs (polls every 5 min).
+
+#### bug-fix-fixer (Bug Fixer)
+- ID: `bug-fix-fixer`
+- Agent Dir: `/root/.openclaw/agents/bug-fix-fixer/agent`
+- Role: Implements the fix and writes regression tests.
+- Schedule: Active only during bug-fix workflow runs (polls every 5 min).
+
+#### bug-fix-verifier (Bug Verifier)
+- ID: `bug-fix-verifier`
+- Agent Dir: `/root/.openclaw/agents/bug-fix-verifier/agent`
+- Role: Verifies the fix and regression test correctness.
+- Schedule: Active only during bug-fix workflow runs (polls every 5 min).
+
+#### bug-fix-pr (PR Creator)
+- ID: `bug-fix-pr`
+- Agent Dir: `/root/.openclaw/agents/bug-fix-pr/agent`
+- Role: Creates a pull request with bug fix details.
+- Schedule: Active only during bug-fix workflow runs (polls every 5 min).
+
 ### External: forge_labs_bot
 - Not an internal agent; coordinated via Forge Bridge.
 - Receives tasks with `agent: "forge"` from thinker.
@@ -169,3 +217,17 @@ All agents use `sessions_send` with structured JSON messages. Standard envelope:
 ---
 
 *This team operates autonomously. Humans provide high-level direction and funding; agents execute, learn, and improve the game continuously.*
+
+<!-- antfarm:workflows -->
+# Antfarm Workflow Policy
+
+## Installing Workflows
+Run: `node ~/.openclaw/workspace/antfarm/dist/cli/cli.js workflow install <name>`
+Agent cron jobs are created automatically during install.
+
+## Running Workflows
+- Start: `node ~/.openclaw/workspace/antfarm/dist/cli/cli.js workflow run <workflow-id> "<task>"`
+- Status: `node ~/.openclaw/workspace/antfarm/dist/cli/cli.js workflow status "<task title>"`
+- Workflows self-advance via agent cron jobs polling SQLite for pending steps.
+<!-- /antfarm:workflows -->
+

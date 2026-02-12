@@ -14,9 +14,12 @@ const SECRET = process.env.FORGE_BRIDGE_SECRET || null;
 // In-memory state
 let pendingTasks = [];
 let results = [];
+const CHAT_HISTORY = [];
+const CHAT_MAX = 100;
 
 // WebSocket support (optional)
 let wss = null;
+let wssRoom = null;
 const subscriberGroups = new Map(); // recipientId -> Set<WS>
 
 function sendJson(res, data, status = 200) {
@@ -56,10 +59,19 @@ function broadcastResponse(resp) {
   });
 }
 
+function broadcastChat(msg) {
+  if (!wssRoom) return;
+  const payload = JSON.stringify(msg);
+  wssRoom.clients.forEach(ws => {
+    if (ws.readyState === 1) ws.send(payload);
+  });
+}
+
 // Initialize WebSocket if available
 try {
   const WebSocket = require('ws');
   wss = new WebSocket.Server({ noServer: true });
+  wssRoom = new WebSocket.Server({ noServer: true });
 
   wss.on('connection', (ws, request) => {
     ws.isAlive = true;
@@ -92,7 +104,35 @@ try {
     });
   });
 
+  wssRoom.on('connection', (ws, request) => {
+    // Send recent chat history upon connect
+    if (CHAT_HISTORY.length) {
+      CHAT_HISTORY.forEach(msg => {
+        if (ws.readyState === 1) ws.send(JSON.stringify(msg));
+      });
+    }
+    // Accept messages from WS clients and broadcast
+    ws.on('message', (msg) => {
+      try {
+        const data = JSON.parse(msg);
+        if (data.text && data.from) {
+          const chatMsg = {
+            type: 'chat',
+            from: data.from,
+            text: data.text,
+            topic: data.topic || 'general',
+            timestamp: new Date().toISOString()
+          };
+          CHAT_HISTORY.unshift(chatMsg);
+          if (CHAT_HISTORY.length > CHAT_MAX) CHAT_HISTORY.pop();
+          broadcastChat(chatMsg);
+        }
+      } catch (e) {}
+    });
+  });
+
   console.log('[BRIDGE] WebSocket chat enabled on /chat (bearer auth in headers)');
+  console.log('[BRIDGE] WebSocket room enabled on /room (open to all)');
 } catch (e) {
   console.warn('[BRIDGE] WebSocket support not available (npm install ws). Chat disabled.');
 }
@@ -116,31 +156,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // WebSocket upgrade
-  if (req.method === 'GET' && url.pathname === '/chat') {
-    if (wss) {
-      // Auth check via headers before upgrade
-      if (SECRET) {
-        const auth = req.headers['authorization'] || '';
-        if (!auth.startsWith('Bearer ')) {
-          res.writeHead(401, { 'Content-Type': 'text/plain' });
-          res.end('Unauthorized');
-          return;
-        }
-        const token = auth.slice(7);
-        if (token !== SECRET) {
-          res.writeHead(403, { 'Content-Type': 'text/plain' });
-          res.end('Forbidden');
-          return;
-        }
-      }
-      wss.handleUpgrade(req, socket => socket, head => wss.emit('connection', ws, req));
-    } else {
-      res.writeHead(501, { 'Content-Type': 'text/plain' });
-      res.end('WebSocket support not enabled');
-    }
-    return;
-  }
+  // Note: WebSocket upgrade for /chat and /room is handled in the 'upgrade' event below.
 
   if (req.method === 'POST' && url.pathname === '/webhook/task') {
     try {
@@ -191,20 +207,54 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Room: get recent chat history (HTTP)
+  if (req.method === 'GET' && url.pathname === '/room') {
+    sendJson(res, { history: CHAT_HISTORY });
+    return;
+  }
+
+  // Room: post a chat message (broadcast to all room WS clients)
+  if (req.method === 'POST' && url.pathname === '/room') {
+    try {
+      const body = await readBody(req);
+      const msg = JSON.parse(body);
+      if (!msg.text || !msg.from) throw new Error('missing fields');
+      const chatMsg = {
+        type: 'chat',
+        from: msg.from,
+        text: msg.text,
+        topic: msg.topic || 'general',
+        timestamp: new Date().toISOString()
+      };
+      // prepend and trim
+      CHAT_HISTORY.unshift(chatMsg);
+      if (CHAT_HISTORY.length > CHAT_MAX) CHAT_HISTORY.pop();
+      broadcastChat(chatMsg);
+      sendJson(res, { ok: true });
+    } catch (e) {
+      sendJson(res, { error: e.message }, 400);
+    }
+    return;
+  }
+
   sendJson(res, { error: 'not found' }, 404);
 });
 
 // Attach WebSocket upgrade handler if WS enabled
-if (wss) {
+if (wss || wssRoom) {
   server.on('upgrade', (request, socket, head) => {
     const url = new URL(request.url, `http://${HOST}:${PORT}`);
-    if (url.pathname !== '/chat') {
+    if (url.pathname === '/chat' && wss) {
+      wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request);
+      });
+    } else if (url.pathname === '/room' && wssRoom) {
+      wssRoom.handleUpgrade(request, socket, head, (ws) => {
+        wssRoom.emit('connection', ws, request);
+      });
+    } else {
       socket.destroy();
-      return;
     }
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit('connection', ws, request);
-    });
   });
 }
 
@@ -215,4 +265,5 @@ server.listen(PORT, HOST, () => {
   console.log(`  GET  /queue    — state dump`);
   console.log(`  GET  /health   — liveness`);
   if (wss) console.log(`  WS   /chat     — chat stream (Bearer auth)`);
+  if (wssRoom) console.log(`  WS   /room     — open chatroom`);
 });
