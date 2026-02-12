@@ -4,7 +4,7 @@
     "currentSprint": 2,
     "sprintStatus": "complete",
     "focus": "APP COMPLETENESS: Every view must be 100% functional, error-free, and polished.",
-    "updatedAt": "2026-02-09T14:06:00Z"
+    "updatedAt": "2026-02-09T20:33:54+01:00"
   },
   "columns": [
     "incubator",
@@ -120,7 +120,7 @@
       "description": "Add guild system: players can form/join guilds, chat, compete.",
       "assignee": "forge",
       "priority": "high",
-      "column": "backlog",
+      "column": "in_progress",
       "labels": ["feature", "social", "multiplayer"]
     },
     {

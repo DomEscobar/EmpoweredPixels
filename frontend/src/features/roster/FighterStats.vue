@@ -45,6 +45,31 @@
       </div>
     </section>
 
+    <!-- LEAGUE ENROLLMENT SECTION (New Integration) -->
+    <section class="ep-card-iron overhaul-stat-group overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-800 bg-black/40 flex justify-between items-center">
+           <h4 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Active League Enrollments</h4>
+           <router-link to="/leagues" class="text-[10px] text-amber-500 hover:text-amber-400 font-bold uppercase">View All Leagues</router-link>
+        </div>
+        <div class="p-4">
+            <div v-if="enrolledLeagues.length > 0" class="flex flex-wrap gap-3">
+                <div v-for="league in enrolledLeagues" :key="league.id" 
+                     class="px-3 py-2 bg-slate-900 border border-amber-900/50 rounded flex items-center gap-2 group cursor-pointer hover:border-amber-500 transition-colors"
+                     @click="router.push(`/leagues?id=${league.id}`)">
+                    <span class="text-lg">🏆</span>
+                    <div>
+                        <p class="text-xs font-bold text-amber-100 group-hover:text-amber-400">{{ league.name }}</p>
+                        <p class="text-[10px] text-slate-500">{{ league.options?.tier || 'General' }}</p>
+                    </div>
+                </div>
+            </div>
+            <div v-else class="text-center py-4">
+                <p class="text-xs text-slate-500 italic mb-2">This fighter is not enrolled in any active leagues.</p>
+                <button @click="router.push('/leagues')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-amber-500 px-3 py-1 rounded border border-slate-700 uppercase font-black">Find Leagues</button>
+            </div>
+        </div>
+    </section>
+
     <!-- PRIMARY WEAPON SLOT (D4 influence - moody frames) -->
     <section class="ep-card-iron overhaul-weapon-panel p-6">
         <h4 class="ep-header-gold mb-6">Equipped Armament</h4>
@@ -109,9 +134,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import type { Fighter, Equipment } from '@/features/roster/api';
 import { useRosterStore } from '@/features/roster/store';
+import { useLeaguesStore } from '@/features/leagues/store';
 import { useRouter } from 'vue-router';
 
 const props = defineProps<{
@@ -120,9 +146,22 @@ const props = defineProps<{
 }>();
 
 const rosterStore = useRosterStore();
+const leaguesStore = useLeaguesStore();
 const router = useRouter();
 
 const emit = defineEmits(['openArmory']);
+
+onMounted(() => {
+  leaguesStore.fetchLeagues();
+});
+
+const enrolledLeagues = computed(() => {
+  const allLeagues = leaguesStore.leagues;
+  return allLeagues.filter(league => {
+    const subs = leaguesStore.subscriptions[league.id] || [];
+    return subs.some(s => s.fighterId === props.fighter.id);
+  });
+});
 
 const handleUnequip = async (itemId: string) => {
     try {

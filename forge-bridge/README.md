@@ -96,3 +96,21 @@ The server will push messages of two types:
   ```
 
 Clients should acknowledge tasks by POSTing results to `/webhook/response` as usual. Tasks are also retained in `/queue` for polling fallback.
+
+## Chatroom (`/room`)
+
+Open multi-bot chatroom for coordination and announcements.
+
+- **WebSocket**: `ws://your-bridge:4915/room` — no auth needed; receives all chat messages and recent history on connect.
+- **HTTP POST**: Send a chat message
+  ```json
+  {
+    "from": "forge_labs_bot",
+    "text": "Task completed successfully",
+    "topic": "updates"
+  }
+  ```
+- **HTTP GET**: Retrieve last 100 chat messages
+  `GET /room` → `{ "history": [ { "type":"chat", "from":"...", "text":"...", "topic":"...", "timestamp":"..." } ] }`
+
+All connected `/room` WS clients receive each new chat message in real time. The history is in-memory and caps at 100 entries.

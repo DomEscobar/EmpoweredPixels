@@ -1,0 +1,14 @@
+[BOT] Connected to Bridge, subscribing as forge_labs_bot
+[BOT] Unknown message: { type: 'subscribed', recipient: 'forge_labs_bot' }
+[BOT] Task received: TEST-TASK-001 - Test Guild Feature
+[BOT] Result acked: {
+  taskId: 'TEST-TASK-001',
+  result: {
+    status: 'done',
+    output: 'Simulated completion of TEST-TASK-001',
+    timestamp: '2026-02-09T19:18:16.094Z'
+  }
+}
+[BOT] Result posted, response: {
+  "ok": true
+}

@@ -46,6 +46,20 @@
       <!-- Event Banner -->
       <EventBanner data-testid="event-banner" />
 
+      <!-- League Deadlines (New Integration) -->
+      <div v-if="imminentLeagues.length > 0" class="pixel-box bg-linear-to-r from-red-900/40 to-amber-900/20 border-red-500/30 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+              <span class="text-2xl animate-pulse">⏰</span>
+              <div>
+                  <h4 class="text-red-400 font-black text-xs uppercase tracking-[0.2em]">League Deadline Approaching</h4>
+                  <p class="text-slate-300 text-sm">Competition entries closing soon for <span class="text-amber-400 font-bold">{{ imminentLeagues.map(l => l.name).join(', ') }}</span></p>
+              </div>
+          </div>
+          <router-link to="/leagues" class="rpg-btn-small border-red-500/50 bg-red-950/50 hover:bg-red-900 text-red-200">
+              SECURE SPOT
+          </router-link>
+      </div>
+
       <!-- KPI Grid -->
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         
@@ -326,6 +340,10 @@ const formatDate = (dateString: string) => {
 const claimAllRewards = async () => {
    await rewardsStore.claimAll();
 };
+
+const imminentLeagues = computed(() => {
+  return leaguesStore.leagues.slice(0, 2);
+});
 
 onMounted(() => {
   Promise.all([

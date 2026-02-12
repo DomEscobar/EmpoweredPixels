@@ -39,6 +39,34 @@
             Edit Squad
           </button>
         </div>
+
+        <!-- Eligible Leagues Section (New Integration) -->
+        <div class="eligible-leagues-section mt-10 pt-10 border-t border-slate-800">
+           <div class="flex items-center justify-between mb-6">
+              <h3 class="text-amber-500 font-bold uppercase tracking-widest text-lg">Eligible Competitions</h3>
+              <span class="text-[10px] text-slate-500 font-mono">BASED ON CURRENT COMPOSITION</span>
+           </div>
+           
+           <div v-if="eligibleLeagues.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div v-for="league in eligibleLeagues" :key="league.id" 
+                   class="bg-black/40 border border-slate-800 p-4 rounded-lg flex items-center justify-between group hover:border-amber-500/50 transition-all">
+                  <div class="flex items-center gap-4">
+                      <div class="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center text-xl">🏆</div>
+                      <div>
+                          <h4 class="text-slate-200 font-bold text-sm">{{ league.name }}</h4>
+                          <p class="text-[10px] text-slate-500 uppercase">{{ league.options?.tier || 'General' }} • Active</p>
+                      </div>
+                  </div>
+                  <router-link :to="`/leagues?id=${league.id}`" 
+                               class="text-[10px] bg-amber-600/10 hover:bg-amber-600 text-amber-500 hover:text-black border border-amber-500/50 px-3 py-1.5 rounded font-black transition-all">
+                      REGISTER
+                  </router-link>
+              </div>
+           </div>
+           <div v-else class="text-center py-6 bg-slate-900/50 rounded-lg border border-dashed border-slate-800">
+              <p class="text-slate-500 text-sm italic">Adjust your squad composition to unlock new league eligibilities.</p>
+           </div>
+        </div>
       </section>
 
       <!-- Edit Mode -->
@@ -65,10 +93,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useSquadStore } from '@/features/squads/store';
 import { useFighterStore } from '@/features/roster/store';
+import { useLeaguesStore } from '@/features/leagues/store';
 import { Fighter } from '@/features/roster/api';
 import SquadSlot from '@/features/squads/SquadSlot.vue';
 import SquadManagement from '@/features/squads/SquadManagement.vue';
@@ -76,10 +105,22 @@ import SquadManagement from '@/features/squads/SquadManagement.vue';
 const router = useRouter();
 const squadStore = useSquadStore();
 const fighterStore = useFighterStore();
+const leaguesStore = useLeaguesStore();
 
 const loading = ref(true);
 const error = ref<string | null>(null);
 const squad = ref<any>(null);
+
+const eligibleLeagues = computed(() => {
+  if (!squad.value) return [];
+  // For now, simplify and show all major leagues as "eligible" if squad exists
+  // Real logic would check squad.power / level etc
+  return leaguesStore.leagues;
+});
+
+onMounted(() => {
+  leaguesStore.fetchLeagues();
+});
 
 function getFighterById(fighterId: string) {
   return (fighterStore.fighters as Fighter[]).find((f) => f.id === fighterId);

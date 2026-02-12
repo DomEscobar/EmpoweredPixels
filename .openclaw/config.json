@@ -28,5 +28,28 @@
         "openrouter/moonshotai/kimi-k2.5"
       ]
     }
-  }
+  },
+  "cron": [
+    {
+      "name": "league-reviewer-monday",
+      "schedule": { "kind": "cron", "expr": "0 10 * * 1", "tz": "Europe/Berlin" },
+      "payload": { "kind": "agentTurn", "message": "Run full league review session" },
+      "sessionTarget": "isolated",
+      "enabled": true
+    },
+    {
+      "name": "league-reviewer-wednesday",
+      "schedule": { "kind": "cron", "expr": "0 10 * * 3", "tz": "Europe/Berlin" },
+      "payload": { "kind": "agentTurn", "message": "Run full league review session" },
+      "sessionTarget": "isolated",
+      "enabled": true
+    },
+    {
+      "name": "league-reviewer-friday",
+      "schedule": { "kind": "cron", "expr": "0 10 * * 5", "tz": "Europe/Berlin" },
+      "payload": { "kind": "agentTurn", "message": "Run full league review session" },
+      "sessionTarget": "isolated",
+      "enabled": true
+    }
+  ]
 }

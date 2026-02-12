@@ -1,0 +1,7 @@
+[BRIDGE] Forge Bridge listening on :49152
+  POST /webhook/task   { id, recipient, payload }
+  POST /webhook/response { taskId, result }
+  GET  /queue    — state dump
+  GET  /health   — liveness
+[BRIDGE] Task queued: TASK-900 → forge_labs_bot
+[BRIDGE] Result received: TASK-900
