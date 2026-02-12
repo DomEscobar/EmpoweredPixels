@@ -19,6 +19,7 @@ type Service struct {
 	subscriptions SubscriptionRepository
 	matches       LeagueMatchRepository
 	fighters      FighterRepository
+	achievements  AchievementRepository
 	now           func() time.Time
 }
 
@@ -27,6 +28,7 @@ func NewService(
 	subscriptions SubscriptionRepository,
 	matches LeagueMatchRepository,
 	fighters FighterRepository,
+	achievements AchievementRepository,
 	now func() time.Time,
 ) *Service {
 	if now == nil {
@@ -38,6 +40,7 @@ func NewService(
 		subscriptions: subscriptions,
 		matches:       matches,
 		fighters:      fighters,
+		achievements:  achievements,
 		now:           now,
 	}
 }
@@ -73,7 +76,19 @@ func (s *Service) Subscribe(ctx context.Context, userID int64, leagueID int, fig
 		Created:   s.now(),
 	}
 
-	return s.subscriptions.Create(ctx, subscription)
+	if err := s.subscriptions.Create(ctx, subscription); err != nil {
+		return err
+	}
+
+	// Trigger achievement progress in the background to avoid blocking enrollment
+	if s.achievements != nil {
+		go func() {
+			// Using Background context as the request context might be cancelled
+			_ = s.achievements.UpdateAchievementProgress(context.Background(), int(userID), "league_enrolled", 1)
+		}()
+	}
+
+	return nil
 }
 
 func (s *Service) Unsubscribe(ctx context.Context, userID int64, leagueID int, fighterID string) error {

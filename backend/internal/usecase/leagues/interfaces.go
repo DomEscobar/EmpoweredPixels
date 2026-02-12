@@ -29,3 +29,7 @@ type LeagueMatchRepository interface {
 type FighterRepository interface {
 	GetByUserAndID(ctx context.Context, userID int64, id string) (*roster.Fighter, error)
 }
+
+type AchievementRepository interface {
+	UpdateAchievementProgress(ctx context.Context, userID int, achievementKey string, progress int) error
+}

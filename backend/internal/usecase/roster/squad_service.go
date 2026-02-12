@@ -57,11 +57,26 @@ func (s *SquadService) GetActiveSquad(ctx context.Context, userID int64) (*roste
 		return squad, err
 	}
 
-	// Hydrate fighter data for each member
+	// Hydrate fighter data for each member in parallel to reduce latency
+	type result struct {
+		index   int
+		fighter *roster.Fighter
+		err     error
+	}
+
+	resChan := make(chan result, len(squad.Members))
+
 	for i := range squad.Members {
-		fighter, err := s.fighterRepo.GetByID(ctx, squad.Members[i].FighterID)
-		if err == nil && fighter != nil {
-			squad.Members[i].Fighter = fighter
+		go func(idx int, fighterID string) {
+			fighter, err := s.fighterRepo.GetByID(ctx, fighterID)
+			resChan <- result{index: idx, fighter: fighter, err: err}
+		}(i, squad.Members[i].FighterID)
+	}
+
+	for i := 0; i < len(squad.Members); i++ {
+		res := <-resChan
+		if res.err == nil && res.fighter != nil {
+			squad.Members[res.index].Fighter = res.fighter
 		}
 	}
 
