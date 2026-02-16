@@ -4,7 +4,7 @@
  * Executes coding tasks using OpenCode CLI with queue-based task consumption
  */
 
-const { AgentBase } = require('./agent-base');
+const { AgentBase } = require('../agent-base');
 const { spawn } = require('child_process');
 
 class CoderAgent extends AgentBase {
@@ -89,3 +89,25 @@ class CoderAgent extends AgentBase {
 }
 
 module.exports = { CoderAgent };
+
+if (require.main === module) {
+  (async () => {
+    const configPath = process.env.AGENCY_CONFIG || '../agency-config.json';
+    const config = require(configPath).agents.coder;
+    const { TaskQueue } = require('../task-queue');
+    const queueConfig = require(configPath).agency.queue;
+    const queue = new TaskQueue(queueConfig);
+    await queue.initialize();
+    const agent = new CoderAgent(config, queue);
+    await agent.start();
+    // Keep process alive
+    process.on('SIGINT', async () => {
+      await agent.stop();
+      queue.close();
+      process.exit(0);
+    });
+    console.log(`Coder agent ${config.name} started`);
+    // Keep process alive indefinitely
+    await new Promise(() => {});
+  })();
+}

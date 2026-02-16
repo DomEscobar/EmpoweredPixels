@@ -1,0 +1,42 @@
+{
+  "$schema": "https://charm.land/crush.json",
+  "providers": {
+    "openrouter": {
+      "type": "openai-compat",
+      "name": "OpenRouter",
+      "base_url": "https://openrouter.ai/api/v1",
+      "api_key": "$OPENROUTER_API_KEY",
+      "models": [
+        {
+          "id": "openrouter/auto",
+          "name": "OpenRouter Auto",
+          "context_window": 131072,
+          "default_max_tokens": 4096,
+          "cost_per_1m_in": 0.0,
+          "cost_per_1m_out": 0.0
+        },
+        {
+          "id": "openai/gpt-4o",
+          "name": "GPT-4o",
+          "context_window": 128000,
+          "default_max_tokens": 4096,
+          "cost_per_1m_in": 2.50,
+          "cost_per_1m_out": 10.00
+        },
+        {
+          "id": "anthropic/claude-sonnet-4",
+          "name": "Claude Sonnet 4",
+          "context_window": 200000,
+          "default_max_tokens": 4096,
+          "cost_per_1m_in": 3.00,
+          "cost_per_1m_out": 15.00,
+          "can_reason": true,
+          "supports_attachments": true
+        }
+      ]
+    }
+  },
+  "options": {
+    "initialize_as": "AGENTS.md"
+  }
+}

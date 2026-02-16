@@ -4,7 +4,7 @@
  * Generates and runs tests, performs validation
  */
 
-const { AgentBase } = require('./agent-base');
+const { AgentBase } = require('../agent-base');
 const { spawn } = require('child_process');
 
 class TesterAgent extends AgentBase {
@@ -100,3 +100,23 @@ class TesterAgent extends AgentBase {
 }
 
 module.exports = { TesterAgent };
+
+if (require.main === module) {
+  (async () => {
+    const configPath = process.env.AGENCY_CONFIG || '../agency-config.json';
+    const config = require(configPath).agents.tester;
+    const { TaskQueue } = require('../task-queue');
+    const queueConfig = require(configPath).agency.queue;
+    const queue = new TaskQueue(queueConfig);
+    await queue.initialize();
+    const agent = new TesterAgent(config, queue);
+    await agent.start();
+    process.on('SIGINT', async () => {
+      await agent.stop();
+      queue.close();
+      process.exit(0);
+    });
+    console.log(`Tester agent ${config.name} started`);
+    await new Promise(() => {});
+  })();
+}

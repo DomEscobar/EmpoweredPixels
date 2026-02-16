@@ -179,3 +179,24 @@ class DirectorAgent extends AgentBase {
 }
 
 module.exports = { DirectorAgent };
+
+if (require.main === module) {
+  (async () => {
+    const configPath = process.env.AGENCY_CONFIG || './agency-config.json';
+    const config = require(configPath).agents.director;
+    const { TaskQueue } = require('./task-queue');
+    const queueConfig = require(configPath).agency.queue;
+    const queue = new TaskQueue(queueConfig);
+    await queue.initialize();
+    const agent = new DirectorAgent(config, queue);
+    await agent.start();
+    agent.startHealthServer(9092); // default director health port
+    process.on('SIGINT', async () => {
+      await agent.stop();
+      queue.close();
+      process.exit(0);
+    });
+    console.log(`Director agent ${config.name} started`);
+    await new Promise(() => {});
+  })();
+}

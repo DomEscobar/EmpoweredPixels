@@ -47,6 +47,7 @@
   },
   "agents": {
     "director": {
+      "name": "director",
       "role": "Orchestrator",
       "description": "Plans tasks, assigns to workers, monitors health, escalates blockers",
       "capabilities": ["orchestration", "planning", "delegation", "monitoring"],
@@ -59,6 +60,7 @@
       }
     },
     "coder": {
+      "name": "coder",
       "role": "Implementation",
       "description": "Executes coding tasks using OpenCode CLI",
       "capabilities": ["coding", "debugging", "refactoring"],
@@ -76,6 +78,7 @@
       "health_path": "/health"
     },
     "reviewer": {
+      "name": "reviewer",
       "role": "Quality Gate",
       "description": "Reviews changes, runs static analysis, security checks",
       "capabilities": ["review", "security", "static-analysis", " linting"],
@@ -88,6 +91,7 @@
       }
     },
     "tester": {
+      "name": "tester",
       "role": "QA",
       "description": "Generates and runs tests, performs exploratory testing",
       "capabilities": ["test-generation", "qa", "validation", "exploratory"],
@@ -100,6 +104,7 @@
       }
     },
     "deployer": {
+      "name": "deployer",
       "role": "Release",
       "description": "Manages CI/CD pipelines, deployments, rollbacks",
       "capabilities": ["deployment", "ci-cd", "monitoring", "rollback"],

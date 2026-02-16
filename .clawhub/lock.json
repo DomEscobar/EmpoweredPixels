@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "sonoscli": {
+      "version": "1.0.0",
+      "installedAt": 1771020555262
+    },
+    "cellcog": {
+      "version": "1.0.15",
+      "installedAt": 1771020850195
+    },
+    "research-cog": {
+      "version": "1.0.3",
+      "installedAt": 1771020856349
+    }
+  }
+}

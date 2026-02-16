@@ -1,0 +1,108 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - link "EP EMPOWEREDPIXELS" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]:
+          - img "EP"
+        - generic [ref=e9]: EMPOWEREDPIXELS
+      - generic [ref=e10]:
+        - link "Command" [ref=e11] [cursor=pointer]:
+          - /url: /dashboard
+          - generic [ref=e12]: Command
+        - link "Roster" [ref=e13] [cursor=pointer]:
+          - /url: /roster
+          - generic [ref=e14]: Roster
+        - link "Battle" [ref=e15] [cursor=pointer]:
+          - /url: /matches
+          - generic [ref=e16]: Battle
+        - link "Vault" [ref=e17] [cursor=pointer]:
+          - /url: /inventory
+          - generic [ref=e18]: Vault
+        - link "Leagues" [ref=e19] [cursor=pointer]:
+          - /url: /leagues
+          - generic [ref=e20]: Leagues
+        - link "Attune" [ref=e21] [cursor=pointer]:
+          - /url: /attunement
+          - generic [ref=e22]: Attune
+        - link "Rankings" [ref=e23] [cursor=pointer]:
+          - /url: /leaderboard
+          - generic [ref=e24]: Rankings
+        - link "Guilds" [ref=e25] [cursor=pointer]:
+          - /url: /guilds
+          - generic [ref=e26]: Guilds
+        - link "Shop" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+          - generic [ref=e28]: Shop
+      - generic [ref=e29]:
+        - button "🎁 0d" [ref=e30]:
+          - generic [ref=e31]: 🎁
+          - generic [ref=e32]: 0d
+        - link "Gold 0" [ref=e33] [cursor=pointer]:
+          - /url: /shop
+          - img "Gold" [ref=e34]
+          - generic [ref=e35]: "0"
+        - button "Logout" [ref=e36]:
+          - img [ref=e38]
+        - generic [ref=e43]: Commander
+        - button "☰" [ref=e44] [cursor=pointer]:
+          - generic [ref=e45]: ☰
+  - main [ref=e46]:
+    - generic [ref=e47]:
+      - generic [ref=e49]:
+        - button "← BACK" [ref=e50]
+        - 'heading "BATTLE LOG #win-test" [level=1] [ref=e52]'
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - generic [ref=e61]:
+            - generic [ref=e62]:
+              - button ">" [ref=e63]:
+                - generic [ref=e64]: ">"
+              - generic [ref=e65]:
+                - button "<<" [ref=e66]
+                - generic [ref=e67]: RND 0
+                - button ">>" [ref=e68]
+            - generic [ref=e69]:
+              - generic [ref=e70]:
+                - generic [ref=e71]: SPD
+                - slider [ref=e72] [cursor=pointer]: "1"
+                - generic [ref=e73]: 1x
+              - generic [ref=e74]:
+                - generic [ref=e75]: ZM
+                - button "-" [ref=e76]
+                - generic [ref=e77]: 100%
+                - button "+" [ref=e78]
+          - generic [ref=e79]:
+            - generic [ref=e80]:
+              - img [ref=e81]
+              - generic [ref=e82]: Heroes
+            - generic [ref=e83]:
+              - img [ref=e84]
+              - generic [ref=e85]: Enemies
+            - generic [ref=e86]:
+              - generic [ref=e87]:
+                - generic [ref=e88]: TOTAL
+                - generic [ref=e89]: "0"
+              - generic [ref=e91]:
+                - generic [ref=e92]: ALIVE
+                - generic [ref=e93]: "0"
+              - generic [ref=e95]:
+                - generic [ref=e96]: FALLEN
+                - generic [ref=e97]: "0"
+        - generic [ref=e98]:
+          - generic [ref=e99]:
+            - heading "Combat Log" [level=3] [ref=e100]: Combat Log
+            - generic [ref=e102]: 1 TICKS
+          - generic [ref=e104] [cursor=pointer]:
+            - generic [ref=e106]:
+              - generic [ref=e107]: ROUND 00
+              - generic [ref=e108]: 1 EVENTS
+            - generic [ref=e112]:
+              - generic [ref=e113]: Nova
+              - generic [ref=e114]: HIT
+              - generic [ref=e115]: Shadow
+              - generic [ref=e116]: "-10"
+```

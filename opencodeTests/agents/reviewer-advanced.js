@@ -4,7 +4,7 @@
  * Quality gate with static analysis, security checks, and test validation
  */
 
-const { AgentBase } = require('./agent-base');
+const { AgentBase } = require('../agent-base');
 const { spawn } = require('child_process');
 
 class ReviewerAgent extends AgentBase {
@@ -140,3 +140,23 @@ class ReviewerAgent extends AgentBase {
 }
 
 module.exports = { ReviewerAgent };
+
+if (require.main === module) {
+  (async () => {
+    const configPath = process.env.AGENCY_CONFIG || '../agency-config.json';
+    const config = require(configPath).agents.reviewer;
+    const { TaskQueue } = require('../task-queue');
+    const queueConfig = require(configPath).agency.queue;
+    const queue = new TaskQueue(queueConfig);
+    await queue.initialize();
+    const agent = new ReviewerAgent(config, queue);
+    await agent.start();
+    process.on('SIGINT', async () => {
+      await agent.stop();
+      queue.close();
+      process.exit(0);
+    });
+    console.log(`Reviewer agent ${config.name} started`);
+    await new Promise(() => {});
+  })();
+}

@@ -4,7 +4,7 @@
  * Manages CI/CD pipelines, deployments, rollbacks
  */
 
-const { AgentBase } = require('./agent-base');
+const { AgentBase } = require('../agent-base');
 const { spawn } = require('child_process');
 
 class DeployerAgent extends AgentBase {
@@ -159,3 +159,23 @@ dirExists(dir) {
 }
 
 module.exports = { DeployerAgent };
+
+if (require.main === module) {
+  (async () => {
+    const configPath = process.env.AGENCY_CONFIG || '../agency-config.json';
+    const config = require(configPath).agents.deployer;
+    const { TaskQueue } = require('../task-queue');
+    const queueConfig = require(configPath).agency.queue;
+    const queue = new TaskQueue(queueConfig);
+    await queue.initialize();
+    const agent = new DeployerAgent(config, queue);
+    await agent.start();
+    process.on('SIGINT', async () => {
+      await agent.stop();
+      queue.close();
+      process.exit(0);
+    });
+    console.log(`Deployer agent ${config.name} started`);
+    await new Promise(() => {});
+  })();
+}
