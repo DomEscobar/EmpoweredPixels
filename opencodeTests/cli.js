@@ -90,6 +90,25 @@ async function main() {
     return;
   }
 
+  if (cmd === 'coder') {
+    const description = process.argv[3];
+    if (!description) {
+      console.error('Usage: node cli.js coder "<description>"');
+      process.exit(1);
+    }
+    const queue = new TaskQueue({ path: './data/agency.db', table: 'tasks' });
+    await queue.initialize();
+    const taskId = queue.enqueue({
+      type: 'coder_task',
+      payload: { description, priority: 0 },
+      priority: 10,
+      assigned_to: 'coder'
+    });
+    console.log(`Enqueued coder task ${taskId}`);
+    queue.close();
+    return;
+  }
+
   if (cmd === 'workflow') {
     const [workflow, ...descParts] = process.argv.slice(3);
     const description = descParts.join(' ');
@@ -120,6 +139,7 @@ Commands:
   init              Create logs/ and data/ directories, verify config
   start             Start supervisor (all agents)
   task "<desc>"     Submit a coding task via director.plan
+  coder "<desc>"    Submit a task directly to coder agent (bypass director)
   workflow <name> "<desc>"  Start a workflow (feature, bugfix)
   status            Show queue metrics
   dlq               List dead-letter queue

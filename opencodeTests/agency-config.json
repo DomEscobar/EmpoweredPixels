@@ -53,21 +53,25 @@
       "priority": 1,
       "max_concurrent": 1,
       "restart_on_failure": true,
-      "health_path": "/health"
+      "health_path": "/health",
+      "env": {
+        "AGENT_WORKDIR": "/root/EmpoweredPixels"
+      }
     },
     "coder": {
       "role": "Implementation",
       "description": "Executes coding tasks using OpenCode CLI",
       "capabilities": ["coding", "debugging", "refactoring"],
       "sub_capabilities": {
-        "coding": ["javascript", "typescript", "python", "go", "rust", "java"]
+        "coding": ["javascript", "typescript", "vue", "go", "sql", "docker", "nginx"]
       },
       "priority": 2,
-      "max_concurrent": 2,
+      "max_concurrent": 1,
       "restart_on_failure": true,
       "executor": "opencode",
       "env": {
-        "OPENCODE_MODEL": "openrouter/auto"
+        "OPENCODE_MODEL": "openrouter/auto",
+        "AGENT_WORKDIR": "/root/EmpoweredPixels"
       },
       "health_path": "/health"
     },
@@ -76,18 +80,24 @@
       "description": "Reviews changes, runs static analysis, security checks",
       "capabilities": ["review", "security", "static-analysis", " linting"],
       "priority": 3,
-      "max_concurrent": 2,
+      "max_concurrent": 1,
       "restart_on_failure": true,
-      "health_path": "/health"
+      "health_path": "/health",
+      "env": {
+        "AGENT_WORKDIR": "/root/EmpoweredPixels"
+      }
     },
     "tester": {
       "role": "QA",
       "description": "Generates and runs tests, performs exploratory testing",
       "capabilities": ["test-generation", "qa", "validation", "exploratory"],
       "priority": 4,
-      "max_concurrent": 3,
+      "max_concurrent": 1,
       "restart_on_failure": true,
-      "health_path": "/health"
+      "health_path": "/health",
+      "env": {
+        "AGENT_WORKDIR": "/root/EmpoweredPixels"
+      }
     },
     "deployer": {
       "role": "Release",
@@ -96,7 +106,11 @@
       "priority": 5,
       "max_concurrent": 1,
       "restart_on_failure": true,
-      "health_path": "/health"
+      "health_path": "/health",
+      "env": {
+        "AGENT_WORKDIR": "/root/EmpoweredPixels",
+        "DEPLOY_PIPELINE": "docker-compose"
+      }
     }
   },
   "workflows": {

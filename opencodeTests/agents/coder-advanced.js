@@ -18,12 +18,32 @@ class CoderAgent extends AgentBase {
   async execute(task) {
     this.logger.info({ taskId: task.id, description: task.payload.description }, 'Coder executing task');
 
-    // Build OpenCode command
+    // MOCK MODE: For testing without OpenRouter API key
+    if (process.env.OPENCODE_MOCK === 'true') {
+      this.logger.info('Running in OPENCODE_MOCK mode – simulating work');
+      const fs = require('fs');
+      const path = require('path');
+      const workdir = this.workdir;
+      // Simulate some work
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Write a simple artifact to demonstrate execution
+      const outFile = path.join(workdir, `AGENCY_TASK_${task.id}.txt`);
+      const content = `OpenCode Agency Mock Execution\nTask ID: ${task.id}\nDescription: ${task.payload.description}\nTimestamp: ${new Date().toISOString()}\n`;
+      fs.writeFileSync(outFile, content, 'utf8');
+      this.logger.info({ file: outFile }, 'Mock artifact created');
+      return {
+        success: true,
+        output: `Mock execution completed – wrote ${outFile}`,
+        files_changed: [outFile]
+      };
+    }
+
+    // Real OpenCode execution
     const args = [
       '--prompt', task.payload.description,
       '--model', this.model,
       '--workdir', this.workdir,
-      '--auto-approve' // assume OpenCode supports this flag to avoid prompts
+      '--auto-approve' // assume OpenCode supports this
     ];
 
     return new Promise((resolve, reject) => {
