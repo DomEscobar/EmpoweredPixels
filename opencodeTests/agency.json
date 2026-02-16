@@ -1,0 +1,56 @@
+{
+  "$schema": "https://charm.land/crush.json",
+  "name": "OpenCode Agency",
+  "description": "Multi-agent autonomous coding swarm using OpenCode",
+  "options": {
+    "initialize_as": "AGENTS.md",
+    "debug": true
+  },
+  "agents": {
+    "director": {
+      "role": "Orchestrator",
+      "description": "Plans tasks, assigns work, monitors progress, escalates blockers",
+      "capabilities": ["planning", "delegation", "monitoring"],
+      "priority": 1
+    },
+    "coder": {
+      "role": "Implementation",
+      "description": "Executes coding tasks using OpenCode CLI",
+      "capabilities": ["coding", "testing", "debugging"],
+      "priority": 2,
+      "executor": "opencode"
+    },
+    "reviewer": {
+      "role": "Quality Gate",
+      "description": "Reviews changes, runs static analysis, security checks",
+      "capabilities": ["review", "security", "static-analysis"],
+      "priority": 3
+    },
+    "tester": {
+      "role": "QA",
+      "description": "Generates and runs tests, performs exploratory testing",
+      "capabilities": ["test-generation", "qa", "validation"],
+      "priority": 4
+    },
+    "deployer": {
+      "role": "Release",
+      "description": "Manages CI/CD pipelines, deployments, rollbacks",
+      "capabilities": ["deployment", "ci-cd", "monitoring"],
+      "priority": 5
+    }
+  },
+  "workflows": {
+    "feature": {
+      "steps": ["director.plan", "coder.implement", "reviewer.approve", "tester.validate", "deployer.release"],
+      "auto_advance": true
+    },
+    "bugfix": {
+      "steps": ["director.triage", "coder.fix", "reviewer.approve", "tester.verify"],
+      "auto_advance": true
+    },
+    "explore": {
+      "steps": ["director.define_goal", "tester.explore", "coder.implement_findings"],
+      "auto_advance": false
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "task-001",
+  "title": "Refactor utils.js into modular exports",
+  "description": "Take the monolithic utils.js file and split it into separate modules: stringUtils, arrayUtils, dateUtils. Update all imports accordingly. Add tests for each module.",
+  "priority": "medium",
+  "created": "2026-02-16T17:30:00Z",
+  "assigned_to": "coder",
+  "status": "pending"
+}

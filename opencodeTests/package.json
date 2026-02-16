@@ -1,0 +1,24 @@
+{
+  "name": "opencode-agency",
+  "version": "0.1.0",
+  "description": "Autonomous AI coding agency using OpenCode",
+  "main": "director.js",
+  "bin": {
+    "opencode-agency": "./cli.js"
+  },
+  "scripts": {
+    "start": "node cli.js start coder",
+    "director": "node director.js",
+    "coder": "node agents/coder.js",
+    "reviewer": "node agents/reviewer.js",
+    "tester": "node agents/tester.js",
+    "deployer": "node agents/deployer.js",
+    "demo": "node cli.js start coder"
+  },
+  "keywords": ["open-code", "autonomous", "agent", "swarm", "ai"],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
