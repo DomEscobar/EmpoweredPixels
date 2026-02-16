@@ -36,7 +36,7 @@ class MemoryQueue {
       retry_count: 0,
       max_retries: task.max_retries || 3,
       last_error: null,
-      scheduled_at: task.scheduled_at || new Date().toISOString(),
+      scheduled_at: task.scheduled_at || null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     });
@@ -146,6 +146,7 @@ class TaskQueue {
     this.config = config;
     this.useMemory = false;
     this.db = null;
+    this.pollIntervalMs = config.poll_interval_ms || 1000;
   }
 
   async initialize() {
@@ -221,16 +222,17 @@ class TaskQueue {
       return this.queue.enqueue(task);
     }
     const id = task.id || uuidv4();
+    const scheduledAt = task.scheduled_at || null;
     const stmt = this.db.prepare(`
-      INSERT INTO ${this.config.table} (id, type, payload, priority, scheduled_at, created_at)
-      VALUES (@id, @type, @payload, @priority, @scheduled_at, datetime('now'))
+      INSERT INTO ${this.config.table} (id, type, payload, priority, scheduled_at)
+      VALUES (@id, @type, @payload, @priority, @scheduled_at)
     `);
     stmt.run({
       id,
       type: task.type,
       payload: JSON.stringify(task.payload),
       priority: task.priority || 0,
-      scheduled_at: task.scheduled_at || new Date().toISOString()
+      scheduled_at: scheduledAt
     });
     this.logEvent('task_enqueued', id, null, { type: task.type, priority: task.priority });
     return id;
