@@ -1,0 +1,130 @@
+{
+  "$schema": "https://charm.land/crush.json",
+  "name": "OpenCode Agency",
+  "version": "0.2.0",
+  "description": "Robust multi-agent autonomous coding swarm using OpenCode with SQLite queue, supervision, and observability",
+  "options": {
+    "initialize_as": "AGENTS.md",
+    "debug": false,
+    "log_format": "json",
+    "log_file": "./logs/agency.log",
+    "log_rotate": true,
+    "max_log_size_mb": 10,
+    "max_log_files": 7
+  },
+  "agency": {
+    "queue": {
+      "type": "sqlite",
+      "path": "./data/agency.db",
+      "table": "tasks",
+      "poll_interval_ms": 1000,
+      "max_retries": 3,
+      "retry_backoff_ms": 2000,
+      "dead_letter_table": "dlq"
+    },
+    "supervisor": {
+      "enabled": true,
+      "health_check_interval_ms": 10000,
+      "restart_delay_ms": 5000,
+      "max_restart_attempts": 5,
+      "backoff_multiplier": 1.5
+    },
+    "metrics": {
+      "enabled": true,
+      "port": 9090,
+      "path": "/metrics",
+      "export_interval_seconds": 15
+    },
+    "webhooks": {
+      "enabled": true,
+      "port": 9091,
+      "secret": "",
+      "routes": {
+        "/webhook/github": "github_issue",
+        "/webhook/task": "manual_task"
+      }
+    }
+  },
+  "agents": {
+    "director": {
+      "role": "Orchestrator",
+      "description": "Plans tasks, assigns to workers, monitors health, escalates blockers",
+      "capabilities": ["orchestration", "planning", "delegation", "monitoring"],
+      "priority": 1,
+      "max_concurrent": 1,
+      "restart_on_failure": true,
+      "health_path": "/health"
+    },
+    "coder": {
+      "role": "Implementation",
+      "description": "Executes coding tasks using OpenCode CLI",
+      "capabilities": ["coding", "debugging", "refactoring"],
+      "sub_capabilities": {
+        "coding": ["javascript", "typescript", "python", "go", "rust", "java"]
+      },
+      "priority": 2,
+      "max_concurrent": 2,
+      "restart_on_failure": true,
+      "executor": "opencode",
+      "env": {
+        "OPENCODE_MODEL": "openrouter/auto"
+      },
+      "health_path": "/health"
+    },
+    "reviewer": {
+      "role": "Quality Gate",
+      "description": "Reviews changes, runs static analysis, security checks",
+      "capabilities": ["review", "security", "static-analysis", " linting"],
+      "priority": 3,
+      "max_concurrent": 2,
+      "restart_on_failure": true,
+      "health_path": "/health"
+    },
+    "tester": {
+      "role": "QA",
+      "description": "Generates and runs tests, performs exploratory testing",
+      "capabilities": ["test-generation", "qa", "validation", "exploratory"],
+      "priority": 4,
+      "max_concurrent": 3,
+      "restart_on_failure": true,
+      "health_path": "/health"
+    },
+    "deployer": {
+      "role": "Release",
+      "description": "Manages CI/CD pipelines, deployments, rollbacks",
+      "capabilities": ["deployment", "ci-cd", "monitoring", "rollback"],
+      "priority": 5,
+      "max_concurrent": 1,
+      "restart_on_failure": true,
+      "health_path": "/health"
+    }
+  },
+  "workflows": {
+    "feature": {
+      "description": "End-to-end feature development",
+      "steps": [
+        {"agent": "director", "action": "plan", "output_to": "plan"},
+        {"agent": "coder", "action": "implement", "input_from": "plan", "output_to": "changes"},
+        {"agent": "reviewer", "action": "review", "input_from": "changes", "output_to": "review"},
+        {"agent": "tester", "action": "validate", "input_from": "changes", "output_to": "test_results"},
+        {"agent": "deployer", "action": "release", "input_from": "review", "condition": "review.approved == true"}
+      ],
+      "on_failure": "notify_director",
+      "auto_advance": true
+    },
+    "bugfix": {
+      "description": "Quick bug fix cycle",
+      "steps": [
+        {"agent": "director", "action": "triage", "output_to": "triage"},
+        {"agent": "coder", "action": "fix", "input_from": "triage", "output_to": "fix"},
+        {"agent": "reviewer", "action": "approve", "input_from": "fix", "output_to": "approval"},
+        {"agent": "tester", "action": "verify", "input_from": "approval", "output_to": "verification"}
+      ],
+      "auto_advance": true
+    }
+  },
+  "capability_registry": {
+    "enabled": true,
+    "refresh_interval_ms": 30000
+  }
+}

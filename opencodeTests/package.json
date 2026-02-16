@@ -1,24 +1,33 @@
 {
   "name": "opencode-agency",
-  "version": "0.1.0",
-  "description": "Autonomous AI coding agency using OpenCode",
-  "main": "director.js",
+  "version": "0.2.0",
+  "description": "Robust multi-agent autonomous coding swarm using OpenCode with SQLite queue, supervision, and observability",
+  "main": "supervisor.js",
   "bin": {
     "opencode-agency": "./cli.js"
   },
   "scripts": {
-    "start": "node cli.js start coder",
-    "director": "node director.js",
-    "coder": "node agents/coder.js",
-    "reviewer": "node agents/reviewer.js",
-    "tester": "node agents/tester.js",
-    "deployer": "node agents/deployer.js",
-    "demo": "node cli.js start coder"
+    "start": "node cli.js start",
+    "director": "node director-advanced.js",
+    "coder": "node agents/coder-advanced.js",
+    "reviewer": "node agents/reviewer-advanced.js",
+    "tester": "node agents/tester-advanced.js",
+    "deployer": "node agents/deployer-advanced.js",
+    "supervisor": "node supervisor.js",
+    "demo": "node cli.js start",
+    "logs": "tail -f logs/agency.log",
+    "init": "mkdir -p logs data"
   },
-  "keywords": ["open-code", "autonomous", "agent", "swarm", "ai"],
+  "keywords": ["open-code", "autonomous", "agent", "swarm", "ai", "orchestration"],
   "author": "",
   "license": "MIT",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.4.0",
+    "pino": "^9.0.0",
+    "pino-pretty": "^13.0.0",
+    "uuid": "^9.0.0"
   }
 }
