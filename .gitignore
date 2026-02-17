@@ -13,3 +13,8 @@
 !.openclaw/USER.md
 !.openclaw/IDENTITY.md
 !.openclaw/MEMORY.md
+
+# Sensitive local env files (never commit)
+.env
+.env.local
+.env.*.local

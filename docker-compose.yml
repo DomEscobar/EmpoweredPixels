@@ -1,6 +1,10 @@
+version: '3.8'
+
 services:
-  postgres:
+  # Production Postgres
+  postgres-prod:
     image: postgres:16-alpine
+    profiles: ["prod"]
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -13,29 +17,91 @@ services:
       timeout: 5s
       retries: 5
 
-  backend:
+  # Development Postgres (with migrations auto-run)
+  postgres-dev:
+    image: postgres:16-alpine
+    profiles: ["dev"]
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ep_postgres_data_dev:/var/lib/postgresql/data
+      - ./backend/internal/infra/db/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Production backend
+  backend-prod:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    profiles: ["prod"]
     environment:
       EP_HTTP_ADDRESS: ${EP_HTTP_ADDRESS}
       EP_DATABASE_URL: ${EP_DATABASE_URL}
       EP_JWT_SECRET: ${EP_JWT_SECRET}
       EP_ENGINE_URL: ${EP_ENGINE_URL}
     depends_on:
-      postgres:
+      postgres-prod:
         condition: service_healthy
     ports:
       - "49101:54321"
 
-  frontend:
+  # Development backend (with air live reload)
+  backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    profiles: ["dev"]
+    environment:
+      - EP_HTTP_ADDRESS=0.0.0.0:54321
+      - EP_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-dev:5432/${POSTGRES_DB}?sslmode=disable
+      - EP_JWT_SECRET=${EP_JWT_SECRET}
+      - EP_ENGINE_URL=${EP_ENGINE_URL}
+      - LOG_LEVEL=debug
+      - LOG_FORMAT=json
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+    ports:
+      - "49101:54321"
+    volumes:
+      - ./backend:/app
+      - go_mod:/go/pkg/mod
+    command: air
+
+  # Production frontend
+  frontend-prod:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    profiles: ["prod"]
     ports:
       - "49100:80"
 
+  # Development frontend (Vite dev server)
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    profiles: ["dev"]
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:49101
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/dist
+
 volumes:
   ep_postgres_data:
+  ep_postgres_data_dev:
+  go_mod:
