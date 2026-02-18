@@ -1,38 +1,35 @@
 <template>
   <div class="retro-rpg min-h-screen p-4 md:p-8 font-mono text-amber-100" :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_DUNGEON}')` }" data-testid="matches-page">
-    <!-- Overlay for atmosphere -->
     <div class="fixed inset-0 bg-slate-950/80 pointer-events-none z-0"></div>
     
-    <div class="relative z-10 max-w-7xl mx-auto space-y-8">
-      <!-- Title Section -->
-      <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b-4 border-amber-900/50" data-testid="matches-header">
+    <div class="relative z-10 max-w-7xl mx-auto space-y-6">
+      <!-- Header Section -->
+      <header class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-6 border-b-4 border-amber-900/50" data-testid="matches-header">
         <div class="flex items-center gap-4">
-           <div class="w-16 h-16 bg-slate-900 border-4 border-amber-600 flex items-center justify-center shadow-lg">
-              <img :src="PIXEL_ASSETS.ICON_CHEST" class="w-10 h-10 pixelated" />
-           </div>
-           <div>
-            <h1 class="text-4xl md:text-6xl font-black tracking-tight text-amber-500 uppercase text-shadow-retro leading-none">
+          <div class="w-14 h-14 md:w-16 md:h-16 bg-slate-900 border-4 border-amber-600 flex items-center justify-center shadow-lg">
+            <img :src="PIXEL_ASSETS.ICON_CHEST" class="w-8 h-8 md:w-10 md:h-10 pixelated" />
+          </div>
+          <div>
+            <h1 class="text-3xl md:text-5xl font-black tracking-tight text-amber-500 uppercase text-shadow-retro leading-none">
               QUEST BOARD
             </h1>
-            <p class="text-amber-200/60 mt-2 font-bold text-xs uppercase tracking-widest">
+            <p class="text-amber-200/60 mt-1 md:mt-2 font-bold text-xs uppercase tracking-widest hidden md:block">
               <span class="text-red-500">>></span> Find your glory in the arena
             </p>
-           </div>
+          </div>
         </div>
         
-        <div v-if="!currentMatchId" class="flex flex-col gap-3">
-          <!-- Online Players Counter -->
+        <div class="flex flex-col gap-3">
           <div class="pixel-box-sm bg-slate-800/80 px-3 py-1.5 flex items-center gap-2 self-end">
             <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
             <span class="text-xs text-slate-400">Online:</span>
             <span class="text-sm font-bold text-green-400">{{ onlinePlayers }}</span>
           </div>
-          <div class="flex gap-3">
-            <!-- Quick Join Button -->
+          <div class="flex gap-2 md:gap-3">
             <button 
               @click="handleQuickJoin"
               :disabled="isQuickJoining || roster.fighters.length === 0"
-              class="rpg-btn bg-blue-600 border-blue-800 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed group relative px-4 py-3 font-bold uppercase tracking-wider flex items-center gap-2"
+              class="flex-1 md:flex-none rpg-btn bg-blue-600 border-blue-800 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed group relative px-4 md:px-6 py-3 font-bold uppercase tracking-wider flex items-center justify-center gap-2"
               data-testid="quick-join-button"
             >
               <span v-if="isQuickJoining" class="animate-spin">⚡</span>
@@ -40,12 +37,12 @@
             </button>
             <button 
               @click="showCreate = true"
-              class="rpg-btn bg-emerald-700 border-emerald-900 text-white hover:bg-emerald-600 group relative px-6 py-3 font-bold uppercase tracking-wider flex items-center gap-2"
+              class="rpg-btn bg-emerald-700 border-emerald-900 text-white hover:bg-emerald-600 group relative px-4 md:px-6 py-3 font-bold uppercase tracking-wider flex items-center gap-2"
               data-testid="create-match-button"
             >
               <span class="absolute inset-0 border-2 border-white/20 pointer-events-none"></span>
-              <img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-5 h-5 pixelated" />
-              <span>New Contract</span>
+              <span class="hidden md:inline"><img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-5 h-5 pixelated" /></span>
+              <span>New</span>
             </button>
           </div>
         </div>
@@ -61,25 +58,24 @@
         leave-to-class="transform opacity-0 scale-95"
       >
         <div v-if="currentMatchId" class="rpg-panel border-4 border-amber-600 bg-slate-900 shadow-xl p-1 relative overflow-hidden" data-testid="active-match-banner">
-          <!-- Decorative Corners -->
           <div class="absolute top-0 left-0 w-2 h-2 bg-amber-500"></div>
           <div class="absolute top-0 right-0 w-2 h-2 bg-amber-500"></div>
           <div class="absolute bottom-0 left-0 w-2 h-2 bg-amber-500"></div>
           <div class="absolute bottom-0 right-0 w-2 h-2 bg-amber-500"></div>
 
-          <div class="bg-slate-900/90 p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-6 border border-amber-900/30">
-            <div class="flex items-center gap-6">
+          <div class="bg-slate-900/90 p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 border border-amber-900/30">
+            <div class="flex items-center gap-4 md:gap-6">
               <div class="relative">
-                <div class="w-20 h-20 bg-slate-950 border-4 border-slate-700 flex items-center justify-center overflow-hidden">
-                   <img :src="statusIconImg" class="w-16 h-16 pixelated object-contain animate-bounce-slow" />
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-slate-950 border-4 border-slate-700 flex items-center justify-center overflow-hidden">
+                  <img :src="statusIconImg" class="w-12 h-12 md:w-16 md:h-16 pixelated object-contain animate-bounce-slow" />
                 </div>
-                <div class="absolute -bottom-3 -right-3 bg-slate-900 border-2 border-amber-600 text-amber-500 text-xs font-bold px-2 py-0.5">
+                <div class="absolute -bottom-2 -right-2 bg-slate-900 border-2 border-amber-600 text-amber-500 text-xs font-bold px-2 py-0.5">
                   #{{ currentMatchId.substring(0, 4) }}
                 </div>
               </div>
               
               <div>
-                <h3 class="font-black text-2xl text-amber-100 uppercase tracking-wide flex flex-col">
+                <h3 class="font-black text-xl md:text-2xl text-amber-100 uppercase tracking-wide flex flex-col">
                   <span class="text-xs text-amber-500 font-bold mb-1">Current Objective</span>
                   {{ currentMatchStatusLabel }}
                 </h3>
@@ -90,219 +86,289 @@
               </div>
             </div>
 
-            <div class="flex flex-col gap-2 w-full md:w-auto min-w-[200px]">
-               <!-- Lobby Actions -->
-               <template v-if="currentMatchStatus === 'lobby'">
-                  <div class="flex justify-between items-center bg-black/40 px-3 py-1 border border-slate-700 mb-2">
-                    <span class="text-[10px] text-slate-400 uppercase">Party Size</span>
-                    <span class="text-amber-400 font-bold">{{ currentMatch?.registrations?.length ?? 1 }}/{{ options.maxPlayers || 2 }}</span>
-                  </div>
-                  <div class="grid grid-cols-2 gap-2">
-                    <button @click="handleLeave" class="rpg-btn-small bg-red-900/50 border-red-800 text-red-300 hover:bg-red-900 hover:text-white" data-testid="leave-match-button">
-                      Flee
-                    </button>
-                    <button @click="handleStart" :disabled="isStarting" class="rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black" data-testid="begin-match-button">
-                      BEGIN
-                    </button>
-                  </div>
-               </template>
+            <div class="flex flex-col gap-2 w-full md:w-auto min-w-[180px] md:min-w-[200px]">
+              <template v-if="currentMatchStatus === 'lobby'">
+                <div class="flex justify-between items-center bg-black/40 px-3 py-1 border border-slate-700 mb-1">
+                  <span class="text-[10px] text-slate-400 uppercase">Party Size</span>
+                  <span class="text-amber-400 font-bold">{{ currentMatch?.registrations?.length ?? 1 }}/{{ options.maxPlayers || 2 }}</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button @click="handleLeave" class="rpg-btn-small bg-red-900/50 border-red-800 text-red-300 hover:bg-red-900 hover:text-white" data-testid="leave-match-button">
+                    Flee
+                  </button>
+                  <button @click="handleStart" :disabled="isStarting" class="rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black" data-testid="begin-match-button">
+                    BEGIN
+                  </button>
+                </div>
+              </template>
 
-               <!-- Running Actions -->
-               <template v-else-if="currentMatchStatus === 'running'">
-                  <div class="text-center mb-2">
-                    <span class="text-red-500 font-bold animate-pulse text-xs uppercase tracking-widest">>> COMBAT ENGAGED <<</span>
-                  </div>
+              <template v-else-if="currentMatchStatus === 'running'">
+                <div class="text-center mb-2">
+                  <span class="text-red-500 font-bold animate-pulse text-xs uppercase tracking-widest">>> COMBAT ENGAGED <<</span>
+                </div>
+                <router-link :to="'/matches/' + currentMatchId" class="block">
+                  <button class="w-full rpg-btn bg-red-700 border-red-900 text-white hover:bg-red-600 font-bold uppercase tracking-wider py-3">
+                    Spectate
+                  </button>
+                </router-link>
+              </template>
+
+              <template v-else-if="currentMatchStatus === 'completed'">
+                <div class="grid grid-cols-2 gap-2">
+                  <button @click="clearCurrentMatch" class="rpg-btn-small bg-slate-800 border-slate-600 text-slate-400 hover:bg-slate-700">Dismiss</button>
                   <router-link :to="'/matches/' + currentMatchId" class="block">
-                    <button class="w-full rpg-btn bg-red-700 border-red-900 text-white hover:bg-red-600 font-bold uppercase tracking-wider py-3">
-                      Spectate
-                    </button>
+                    <button class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600">Rewards</button>
                   </router-link>
-               </template>
-
-               <!-- Completed Actions -->
-               <template v-else-if="currentMatchStatus === 'completed'">
-                  <div class="grid grid-cols-2 gap-2">
-                    <button @click="clearCurrentMatch" class="rpg-btn-small bg-slate-800 border-slate-600 text-slate-400 hover:bg-slate-700">Dismiss</button>
-                    <router-link :to="'/matches/' + currentMatchId" class="block">
-                      <button class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600">Rewards</button>
-                    </router-link>
-                  </div>
-               </template>
+                </div>
+              </template>
             </div>
           </div>
         </div>
       </transition>
 
       <!-- Main Quest Board -->
-      <div class="space-y-6">
-        <!-- Filters (Scroll Style) -->
-        <div class="bg-amber-100/5 p-4 border-y-4 border-amber-900/50 flex flex-wrap items-center justify-between gap-4 backdrop-blur-sm">
-          <div class="flex items-center gap-2">
-            <template v-for="stat in ['lobby', 'running', 'completed']" :key="stat">
-              <button
-                @click="browseStatus = stat"
-                class="px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all border-2 relative overflow-hidden"
-                :class="browseStatus === stat ? 'bg-amber-600 border-amber-400 text-slate-900 shadow-lg scale-105 z-10' : 'bg-slate-900 border-slate-700 text-slate-500 hover:text-amber-200 hover:border-amber-700'"
-              >
-                {{ stat }}
-              </button>
-            </template>
+      <div class="space-y-4 md:space-y-6">
+        <!-- Compact Filter Pills -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 custom-scrollbar">
+            <button
+              v-for="stat in filterOptions"
+              :key="stat.value"
+              @click="browseStatus = stat.value"
+              class="px-3 md:px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-all whitespace-nowrap flex items-center gap-2"
+              :class="browseStatus === stat.value 
+                ? 'bg-amber-600 text-slate-900 shadow-lg scale-105 z-10' 
+                : 'bg-slate-900 border-2 border-slate-700 text-slate-500 hover:text-amber-200 hover:border-amber-700'"
+            >
+              {{ stat.label }}
+              <span class="text-[10px] opacity-70">({{ getCountForStatus(stat.value) }})</span>
+            </button>
           </div>
           
-          <div class="relative w-full md:w-64">
+          <div class="relative w-full md:w-56 shrink-0">
             <input
               v-model="search"
-              placeholder="Search Archives..."
-              class="w-full bg-slate-900 border-2 border-slate-700 p-2 pl-3 text-amber-100 placeholder-slate-600 focus:outline-none focus:border-amber-500 uppercase text-xs font-bold"
+              placeholder="Search..."
+              class="w-full bg-slate-900 border-2 border-slate-700 p-2 pl-3 pr-8 text-amber-100 placeholder-slate-600 focus:outline-none focus:border-amber-500 uppercase text-xs font-bold rounded"
             />
-            <div class="absolute right-2 top-2 pointer-events-none opacity-50">
+            <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
                🔍
             </div>
           </div>
         </div>
 
-        <!-- Grid -->
-        <div v-if="isLoading" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-           <div v-for="i in 4" :key="i" class="h-64 bg-slate-900/50 border-4 border-slate-800 animate-pulse flex items-center justify-center">
-              <span class="text-slate-700 uppercase font-bold text-xs">Loading...</span>
-           </div>
+        <!-- Loading Skeletons -->
+        <div v-if="isLoading" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div v-for="i in 8" :key="i" class="match-card-skeleton bg-slate-900/80 border-2 border-slate-800 rounded-lg overflow-hidden">
+            <Skeleton height="80px" />
+            <div class="p-4 space-y-3">
+              <Skeleton width="60%" height="20px" />
+              <Skeleton width="80%" height="14px" />
+              <Skeleton width="40%" height="14px" />
+              <div class="pt-2">
+                <Skeleton height="36px" />
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div v-else-if="!filteredMatches.length" class="py-20 text-center border-4 border-dashed border-slate-800 bg-slate-900/20">
-           <img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-16 h-16 mx-auto opacity-20 pixelated grayscale mb-4" />
-           <h3 class="text-slate-500 uppercase font-bold tracking-widest">No Quests Found</h3>
-           <p class="text-slate-600 text-xs mt-2">{{ emptyMessage }}</p>
-        </div>
+        <!-- Empty State -->
+        <EmptyState
+          v-else-if="!filteredMatches.length"
+          icon="📜"
+          :title="emptyStateTitle"
+          :message="emptyStateMessage"
+        >
+          <button 
+            v-if="browseStatus === 'lobby' && roster.fighters.length === 0"
+            @click="$router.push('/roster')" 
+            class="rpg-btn-small mt-4 bg-indigo-600 border-indigo-800 text-white hover:bg-indigo-500"
+          >
+            RECRUIT HERO
+          </button>
+          <button 
+            v-else-if="browseStatus === 'lobby'"
+            @click="showCreate = true" 
+            class="rpg-btn-small mt-4 bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600"
+          >
+            CREATE MATCH
+          </button>
+        </EmptyState>
 
-        <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="matches-grid">
-           <div 
+        <!-- Match Cards Grid -->
+        <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="matches-grid">
+          <div 
             v-for="match in filteredMatches" 
             :key="match.id"
-            class="group rpg-card bg-slate-900 border-4 border-slate-800 hover:border-amber-600/50 transition-all duration-200 flex flex-col relative overflow-hidden"
+            class="match-card group bg-slate-900 border-2 border-slate-800 hover:border-amber-600/50 transition-all duration-200 flex flex-col relative overflow-hidden"
             :class="{ 'border-amber-500 ring-4 ring-amber-500/20 z-10': currentMatchId === match.id }"
             :data-testid="`match-card-${match.id}`"
-           >
-              <!-- Card Top Decoration -->
-              <div class="h-1 bg-slate-800 group-hover:bg-amber-600/50 transition-colors"></div>
-              
-              <div class="p-4 flex flex-col h-full relative z-10">
-                 <div class="flex justify-between items-start mb-4">
-                    <div>
-                       <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block mb-1">Quest ID: {{ match.id.substring(0, 4) }}</span>
-                       <h3 class="text-amber-100 font-bold uppercase leading-tight text-lg group-hover:text-amber-400 transition-colors">
-                          {{ match.status === 'lobby' ? 'Open Arena' : match.status }}
-                       </h3>
-                    </div>
-                    <div class="w-10 h-10 bg-slate-950 border-2 border-slate-700 flex items-center justify-center group-hover:border-amber-600 transition-colors">
-                       <img :src="getMatchIconImg(match.status)" class="w-6 h-6 pixelated" />
-                    </div>
-                 </div>
+            @mouseenter="hoveredMatchId = match.id"
+            @mouseleave="hoveredMatchId = null"
+          >
+            <!-- Card Hero Header -->
+            <div class="h-20 relative overflow-hidden" :class="getMatchCardGradient(match.status)">
+              <div class="absolute inset-0 flex items-center justify-center">
+                <img :src="getMatchHeroImage(match.status)" class="w-12 h-12 pixelated opacity-60" />
+              </div>
+              <div class="absolute top-2 left-2">
+                <span class="status-badge" :class="getStatusBadgeClass(match.status)">
+                  {{ match.status }}
+                </span>
+              </div>
+              <div class="absolute top-2 right-2">
+                <span class="text-[10px] text-slate-400 uppercase font-bold">#{{ match.id.substring(0, 4) }}</span>
+              </div>
+              <div v-if="match.status === 'lobby' && isMatchHot(match)" class="absolute bottom-2 right-2">
+                <span class="text-[10px] text-red-400 animate-pulse font-bold">🔥 HOT</span>
+              </div>
+            </div>
 
-                 <!-- Stats -->
-                 <div class="space-y-2 mb-6 flex-1">
-                    <div class="flex items-center justify-between text-xs bg-slate-950/50 p-2 border border-slate-800">
-                       <span class="text-slate-500 uppercase">Fighters</span>
-                       <span class="text-amber-200 font-bold">{{ match.registrations?.length || 0 }}</span>
-                    </div>
-                    <div class="flex items-center justify-between text-xs bg-slate-950/50 p-2 border border-slate-800">
-                       <span class="text-slate-500 uppercase">Bots</span>
-                       <span class="text-amber-200 font-bold">{{ match.options?.botCount || 0 }}</span>
-                    </div>
-                 </div>
+            <!-- Card Body -->
+            <div class="p-4 flex flex-col flex-1">
+              <h3 class="text-lg font-bold uppercase leading-tight group-hover:text-amber-400 transition-colors mb-3">
+                {{ getMatchTitle(match) }}
+              </h3>
 
-                 <!-- Action -->
-                 <div class="mt-auto space-y-2">
-                    <template v-if="(match.status ?? 'lobby') === 'lobby'">
-                       <button 
-                        v-if="currentMatchId !== match.id"
-                        @click="openJoinModal(match.id)"
-                        class="w-full rpg-btn-small bg-indigo-900 border-indigo-700 text-indigo-200 hover:bg-indigo-800 hover:text-white font-bold uppercase"
-                        :data-testid="`join-match-${match.id}`"
-                       >
-                        Join Party
-                       </button>
-                       <template v-else>
-                         <button 
-                          @click="handleStart"
-                          :disabled="isStarting"
-                          class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600 font-bold uppercase"
-                         >
-                          {{ isStarting ? 'Starting...' : 'Start Battle' }}
-                         </button>
-                         <button 
-                          @click="handleLeave"
-                          class="w-full rpg-btn-small bg-slate-800 border-slate-700 text-red-400 hover:bg-slate-700 hover:text-red-300 font-bold uppercase text-xs"
-                         >
-                          Leave
-                         </button>
-                       </template>
-                    </template>
-                    <template v-else>
-                       <router-link :to="'/matches/' + match.id" class="block">
-                          <button class="w-full rpg-btn-small bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 font-bold uppercase">
-                             {{ match.status === 'running' ? 'Watch' : 'Results' }}
-                          </button>
-                       </router-link>
-                    </template>
-                 </div>
+              <!-- Key Metrics -->
+              <div class="space-y-2 mb-4 flex-1">
+                <div class="flex items-center justify-between text-xs bg-slate-950/50 p-2 rounded border border-slate-800">
+                  <span class="text-slate-500 uppercase flex items-center gap-1">👥 Fighters</span>
+                  <span class="text-amber-200 font-bold">{{ match.registrations?.length || 0 }}/{{ match.options?.maxFightersPerUser || 2 }}</span>
+                </div>
+                <div class="flex items-center justify-between text-xs bg-slate-950/50 p-2 rounded border border-slate-800">
+                  <span class="text-slate-500 uppercase flex items-center gap-1">🤖 Bots</span>
+                  <span class="text-amber-200 font-bold">{{ match.options?.botCount || 0 }}</span>
+                </div>
+                <div v-if="match.status === 'completed'" class="flex items-center justify-between text-xs bg-slate-950/50 p-2 rounded border border-slate-800">
+                  <span class="text-slate-500 uppercase flex items-center gap-1">💎 Rewards</span>
+                  <span class="text-emerald-400 font-bold">{{ match.totalRewards || 0 }}</span>
+                </div>
               </div>
 
-              <!-- BG Texture Overlay -->
-              <div class="absolute inset-0 opacity-5 pointer-events-none" :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_DUNGEON}')`, backgroundSize: '64px' }"></div>
-           </div>
+              <!-- CTA -->
+              <div class="mt-auto space-y-2">
+                <template v-if="(match.status ?? 'lobby') === 'lobby'">
+                  <button 
+                    v-if="currentMatchId !== match.id"
+                    @click="openJoinModal(match.id)"
+                    class="w-full rpg-btn-small bg-indigo-900 border-indigo-700 text-indigo-200 hover:bg-indigo-800 hover:text-white font-bold uppercase"
+                    :data-testid="`join-match-${match.id}`"
+                  >
+                   Join Party
+                  </button>
+                  <template v-else>
+                    <button 
+                      @click="handleStart"
+                      :disabled="isStarting"
+                      class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600 font-bold uppercase"
+                    >
+                      {{ isStarting ? 'Starting...' : 'Start Battle' }}
+                    </button>
+                    <button 
+                      @click="handleLeave"
+                      class="w-full rpg-btn-small bg-slate-800 border-slate-700 text-red-400 hover:bg-slate-700 hover:text-red-300 font-bold uppercase text-xs"
+                    >
+                      Leave
+                    </button>
+                  </template>
+                </template>
+                <template v-else>
+                  <router-link :to="'/matches/' + match.id" class="block">
+                    <button class="w-full rpg-btn-small bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 font-bold uppercase">
+                      {{ match.status === 'running' ? 'Watch' : 'Results' }}
+                    </button>
+                  </router-link>
+                </template>
+              </div>
+            </div>
+
+            <!-- Match Preview Tooltip -->
+            <transition name="fade">
+              <div v-if="hoveredMatchId === match.id && match.status === 'lobby'" class="absolute inset-0 bg-slate-900/95 z-20 p-4 flex flex-col">
+                <h4 class="text-amber-400 font-bold uppercase text-sm mb-3">Match Preview</h4>
+                <div class="flex-1 space-y-2 overflow-y-auto custom-scrollbar">
+                  <div v-for="reg in match.registrations" :key="reg.fighterId" class="bg-slate-800 p-2 rounded text-xs">
+                    <div class="flex items-center gap-2">
+                      <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-6 h-6 pixelated" />
+                      <div>
+                        <div class="text-slate-200 font-bold">{{ reg.fighterName || 'Unknown' }}</div>
+                        <div class="text-slate-500">Lvl {{ reg.fighterLevel || 1 }} • PWR {{ reg.fighterPower || 0 }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-if="!match.registrations?.length" class="text-slate-500 text-xs text-center py-4">
+                    No fighters yet
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Mobile FAB -->
+    <button
+      v-if="!currentMatchId"
+      @click="handleQuickJoin"
+      :disabled="isQuickJoining || roster.fighters.length === 0"
+      class="fixed bottom-6 right-6 z-50 md:hidden w-14 h-14 rounded-full bg-blue-600 border-4 border-blue-800 shadow-xl flex items-center justify-center text-white animate-bounce-slow"
+      data-testid="mobile-fab"
+    >
+      <span v-if="isQuickJoining" class="animate-spin text-xl">⚡</span>
+      <span v-else class="text-2xl">⚔️</span>
+    </button>
 
     <!-- Create Modal -->
     <BaseModal :show="showCreate" @close="showCreate = false">
       <template #title>
         <div class="flex items-center gap-3 text-amber-500">
-           <img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-6 h-6 pixelated" />
-           <span class="uppercase font-black text-xl tracking-wide">Draft Contract</span>
+          <img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-6 h-6 pixelated" />
+          <span class="uppercase font-black text-xl tracking-wide">Draft Contract</span>
         </div>
       </template>
       <form @submit.prevent="handleCreate" class="space-y-6 font-mono text-slate-200">
         <div class="space-y-4">
           <div class="p-4 bg-slate-900 border-2 border-slate-700">
-             <label class="flex items-center justify-between cursor-pointer group">
-                <div>
-                   <span class="font-bold text-amber-100 uppercase tracking-wide group-hover:text-amber-400">Private Event</span>
-                   <p class="text-[10px] text-slate-500 uppercase mt-1">Requires invitation code</p>
-                </div>
-                <input type="checkbox" v-model="options.isPrivate" class="accent-amber-600 w-5 h-5 rounded-none cursor-pointer" />
-             </label>
+            <label class="flex items-center justify-between cursor-pointer group">
+              <div>
+                <span class="font-bold text-amber-100 uppercase tracking-wide group-hover:text-amber-400">Private Event</span>
+                <p class="text-[10px] text-slate-500 uppercase mt-1">Requires invitation code</p>
+              </div>
+              <input type="checkbox" v-model="options.isPrivate" class="accent-amber-600 w-5 h-5 cursor-pointer" />
+            </label>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-             <div class="bg-slate-900 p-3 border-2 border-slate-700">
-                <label class="text-[10px] font-bold uppercase text-slate-500 block mb-2">Enemy Bots</label>
-                <input type="number" v-model.number="options.botCount" min="0" max="10" 
-                  class="w-full bg-black border border-slate-700 p-2 text-center text-amber-400 font-bold focus:outline-none focus:border-amber-500" />
-             </div>
-             <div class="bg-slate-900 p-3 border-2 border-slate-700">
-                <label class="text-[10px] font-bold uppercase text-slate-500 block mb-2">Difficulty Lvl</label>
-                <input type="number" v-model.number="options.botPowerlevel" min="1" max="100" 
-                  class="w-full bg-black border border-slate-700 p-2 text-center text-amber-400 font-bold focus:outline-none focus:border-amber-500" />
-             </div>
+            <div class="bg-slate-900 p-3 border-2 border-slate-700">
+              <label class="text-[10px] font-bold uppercase text-slate-500 block mb-2">Enemy Bots</label>
+              <input type="number" v-model.number="options.botCount" min="0" max="10" 
+                class="w-full bg-black border border-slate-700 p-2 text-center text-amber-400 font-bold focus:outline-none focus:border-amber-500 rounded" />
+            </div>
+            <div class="bg-slate-900 p-3 border-2 border-slate-700">
+              <label class="text-[10px] font-bold uppercase text-slate-500 block mb-2">Difficulty Lvl</label>
+              <input type="number" v-model.number="options.botPowerlevel" min="1" max="100" 
+                class="w-full bg-black border border-slate-700 p-2 text-center text-amber-400 font-bold focus:outline-none focus:border-amber-500 rounded" />
+            </div>
           </div>
 
           <div class="p-4 bg-slate-900 border-2 border-emerald-900/50">
-             <label class="flex items-center justify-between cursor-pointer group">
-                <div>
-                   <span class="font-bold text-emerald-100 uppercase tracking-wide group-hover:text-emerald-400">Auto-Start</span>
-                   <p class="text-[10px] text-slate-500 uppercase mt-1">Begin battle immediately when ready</p>
-                </div>
-                <input type="checkbox" v-model="options.autoStart" class="accent-emerald-600 w-5 h-5 rounded-none cursor-pointer" />
-             </label>
+            <label class="flex items-center justify-between cursor-pointer group">
+              <div>
+                <span class="font-bold text-emerald-100 uppercase tracking-wide group-hover:text-emerald-400">Auto-Start</span>
+                <p class="text-[10px] text-slate-500 uppercase mt-1">Begin battle immediately when ready</p>
+              </div>
+              <input type="checkbox" v-model="options.autoStart" class="accent-emerald-600 w-5 h-5 cursor-pointer" />
+            </label>
           </div>
         </div>
 
         <div class="flex justify-between gap-3 pt-4 border-t-2 border-slate-800 border-dashed">
-           <button type="button" @click="showCreate = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300">Cancel</button>
-           <button type="submit" :disabled="isCreating" class="rpg-btn bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase tracking-wider px-8 py-2">
-              Create
-           </button>
+          <button type="button" @click="showCreate = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300">Cancel</button>
+          <button type="submit" :disabled="isCreating" class="rpg-btn bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase tracking-wider px-8 py-2">
+            Create
+          </button>
         </div>
       </form>
     </BaseModal>
@@ -313,33 +379,33 @@
         <span class="uppercase font-black text-xl text-indigo-400">Select Hero</span>
       </template>
       <div class="space-y-4 font-mono text-slate-200">
-         <div class="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-            <div
-              v-for="f in roster.fighters"
-              :key="f.id"
-              class="relative flex items-center gap-4 p-3 border-2 cursor-pointer transition-all duration-200 group bg-slate-900"
-              :class="selectedFighterId === f.id ? 'border-indigo-500 bg-indigo-900/20' : 'border-slate-800 hover:border-slate-600 hover:bg-slate-800'"
-              @click="selectedFighterId = f.id"
-            >
-              <div class="w-12 h-12 bg-black border-2 border-slate-700 flex items-center justify-center">
-                 <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-10 h-10 pixelated object-cover" />
-              </div>
-              <div class="flex-1">
-                 <h4 class="font-bold text-white uppercase tracking-wider" :class="selectedFighterId === f.id ? 'text-indigo-300' : ''">{{ f.name }}</h4>
-                 <div class="text-[10px] text-slate-500 uppercase mt-1">Lvl {{ f.level ?? 1 }} • {{ f.class ?? 'Warrior' }}</div>
-              </div>
-              <div v-if="selectedFighterId === f.id" class="text-indigo-400 font-bold text-lg">
-                 <<
-              </div>
+        <div class="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+          <div
+            v-for="f in roster.fighters"
+            :key="f.id"
+            class="relative flex items-center gap-4 p-3 border-2 cursor-pointer transition-all duration-200 group bg-slate-900"
+            :class="selectedFighterId === f.id ? 'border-indigo-500 bg-indigo-900/20' : 'border-slate-800 hover:border-slate-600 hover:bg-slate-800'"
+            @click="selectedFighterId = f.id"
+          >
+            <div class="w-12 h-12 bg-black border-2 border-slate-700 flex items-center justify-center">
+              <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-10 h-10 pixelated object-cover" />
             </div>
-         </div>
+            <div class="flex-1">
+              <h4 class="font-bold text-white uppercase tracking-wider" :class="selectedFighterId === f.id ? 'text-indigo-300' : ''">{{ f.name }}</h4>
+              <div class="text-[10px] text-slate-500 uppercase mt-1">Lvl {{ f.level ?? 1 }} • {{ f.class ?? 'Warrior' }}</div>
+            </div>
+            <div v-if="selectedFighterId === f.id" class="text-indigo-400 font-bold text-lg">
+              <<
+            </div>
+          </div>
+        </div>
 
-         <div class="flex justify-between gap-3 pt-6 border-t-2 border-slate-800 border-dashed">
-            <button type="button" @click="showJoinModal = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300">Retreat</button>
-            <button :disabled="!selectedFighterId || isJoining" @click="confirmJoin" class="rpg-btn bg-indigo-600 border-indigo-900 text-white hover:bg-indigo-500 font-black uppercase tracking-wider px-6 py-2">
-               Ready
-            </button>
-         </div>
+        <div class="flex justify-between gap-3 pt-6 border-t-2 border-slate-800 border-dashed">
+          <button type="button" @click="showJoinModal = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300">Retreat</button>
+          <button :disabled="!selectedFighterId || isJoining" @click="confirmJoin" class="rpg-btn bg-indigo-600 border-indigo-900 text-white hover:bg-indigo-500 font-black uppercase tracking-wider px-6 py-2">
+            Ready
+          </button>
+        </div>
       </div>
     </BaseModal>
   </div>
@@ -347,35 +413,56 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
-import BaseCard from '@/shared/ui/BaseCard.vue';
-import BaseButton from '@/shared/ui/BaseButton.vue';
+import { useRouter } from 'vue-router';
 import BaseModal from '@/shared/ui/BaseModal.vue';
-import { request } from '@/shared/api/http';
-import { endpoints } from '@/shared/api/endpoints';
+import Skeleton from '@/shared/ui/Skeleton.vue';
+import EmptyState from '@/shared/ui/EmptyState.vue';
 import { useAuthStore } from '@/features/auth/store';
 import { useRosterStore } from '@/features/roster/store';
+import { PIXEL_ASSETS, getMatchStatusIcon, getMatchHeroImage } from '@/shared/utils/pixelAssets';
+import type { Match, MatchStatus } from '@/features/matches/api';
+import { 
+  getMatches, 
+  getCurrentMatch, 
+  getOnlinePlayers, 
+  quickJoinMatch, 
+  joinMatch, 
+  createMatch, 
+  leaveMatch, 
+  startMatch 
+} from '@/features/matches/api';
 
-const PIXEL_ASSETS = {
-  BG_DUNGEON: 'https://vibemedia.space/bg_dungeon_v2_99283.png?prompt=dark%20dungeon%20floor%20tile%20texture%20seamless&style=pixel_game_asset&key=NOGON',
-  ICON_SWORDS: 'https://vibemedia.space/icon_swords_v2_11234.png?prompt=crossed%20steel%20swords%20pixel%20art&style=pixel_game_asset&key=NOGON',
-  ICON_TROPHY: 'https://vibemedia.space/trophy_icon_4d5e6f_v1.png?prompt=golden%20trophy%20pixel%20art&style=pixel_game_asset&key=NOGON',
-  ICON_SCROLL: 'https://vibemedia.space/icon_scroll_v2_66789.png?prompt=ancient%20magic%20scroll%20pixel%20art&style=pixel_game_asset&key=NOGON',
-  ICON_CHEST: 'https://vibemedia.space/icon_chest_v2_55667.png?prompt=ancient%20wooden%20treasure%20chest%20with%20golden%20brass%20corners%20and%20mystical%20glow&style=pixel_game_asset&key=NOGON',
-  ICON_POTION: 'https://vibemedia.space/icon_potion_v2_77890.png?prompt=red%20health%20potion%20pixel%20art&style=pixel_game_asset&key=NOGON',
-  ICON_BOT: 'https://vibemedia.space/icon_skull_v2_55432.png?prompt=skull%20icon%20pixel%20art&style=pixel_game_asset&key=NOGON',
-  ICON_FIGHTER: 'https://vibemedia.space/fighter_hooded_8p9q0r_v1.png?prompt=mystery%20hooded%20figure%20pixel%20art&style=pixel_game_asset&key=NOGON'
-};
-
+const router = useRouter();
 const auth = useAuthStore();
 const roster = useRosterStore();
 
-// State
-const matches = ref<any[]>([]);
+interface MatchOption {
+  isPrivate: boolean;
+  botCount: number;
+  botPowerlevel: number;
+  maxPlayers: number;
+  autoStart: boolean;
+}
+
+interface FilterOption {
+  value: MatchStatus | 'all';
+  label: string;
+}
+
+const filterOptions: FilterOption[] = [
+  { value: 'all', label: 'All' },
+  { value: 'lobby', label: 'Open' },
+  { value: 'running', label: 'Live' },
+  { value: 'completed', label: 'Done' },
+];
+
+const matchCounts = ref({ lobby: 0, running: 0, completed: 0 });
+
+const matches = ref<Match[]>([]);
 const isLoading = ref(false);
 const search = ref('');
-const browseStatus = ref('lobby');
+const browseStatus = ref<MatchStatus | 'all'>('lobby');
 
-// Modals
 const showCreate = ref(false);
 const showJoinModal = ref(false);
 const joinTargetMatchId = ref<string | null>(null);
@@ -383,24 +470,22 @@ const selectedFighterId = ref<string | null>(null);
 const isJoining = ref(false);
 const isCreating = ref(false);
 
-// Active Match
 const currentMatchId = ref<string | null>(null);
-const currentMatch = ref<any>(null);
+const currentMatch = ref<Match | null>(null);
 const myFighterIdInMatch = ref<string | null>(null);
 const isStarting = ref(false);
 
-// Quick Join & Online Players
 const isQuickJoining = ref(false);
 const onlinePlayers = ref(0);
 const onlinePlayersPoll = ref<number | null>(null);
 
-// Feedback
 const statusMessage = ref('');
 const statusTone = ref<'info' | 'success' | 'warning' | 'error'>('info');
 const pollHandle = ref<number | null>(null);
 const wsRef = ref<WebSocket | null>(null);
+const hoveredMatchId = ref<string | null>(null);
 
-const options = ref({
+const options = ref<MatchOption>({
   isPrivate: false,
   botCount: 1,
   botPowerlevel: 10,
@@ -408,7 +493,6 @@ const options = ref({
   autoStart: true
 });
 
-// Computeds
 const currentMatchStatus = computed(() => currentMatch.value?.status ?? (currentMatchId.value ? 'lobby' : null));
 
 const currentMatchStatusLabel = computed(() => {
@@ -419,12 +503,7 @@ const currentMatchStatusLabel = computed(() => {
   return 'ACTIVE';
 });
 
-const statusIconImg = computed(() => {
-  const s = currentMatchStatus.value;
-  if (s === 'running') return PIXEL_ASSETS.ICON_SWORDS;
-  if (s === 'completed') return PIXEL_ASSETS.ICON_TROPHY;
-  return PIXEL_ASSETS.ICON_SCROLL;
-});
+const statusIconImg = computed(() => getMatchStatusIcon(currentMatchStatus.value || 'lobby'));
 
 const statusTextClass = computed(() => {
   const tone = statusTone.value;
@@ -436,23 +515,57 @@ const statusTextClass = computed(() => {
 
 const filteredMatches = computed(() => {
   let list = matches.value;
+  if (browseStatus.value !== 'all') {
+    list = list.filter(m => m.status === browseStatus.value);
+  }
   if (search.value.trim()) {
     const q = search.value.trim().toLowerCase();
-    list = list.filter((m: any) => (m.id || '').toLowerCase().includes(q));
+    list = list.filter((m: Match) => (m.id || '').toLowerCase().includes(q));
   }
   return list;
 });
 
-const emptyMessage = computed(() => {
-  if (browseStatus.value === 'lobby') return 'NO OPEN CONTRACTS';
+const emptyStateTitle = computed(() => {
+  if (browseStatus.value === 'lobby' || browseStatus.value === 'all') return 'NO OPEN CONTRACTS';
   if (browseStatus.value === 'running') return 'NO ACTIVE BATTLES';
   return 'ARCHIVES EMPTY';
 });
 
-function getMatchIconImg(status: string) {
-  if (status === 'running') return PIXEL_ASSETS.ICON_SWORDS;
-  if (status === 'completed') return PIXEL_ASSETS.ICON_TROPHY;
-  return PIXEL_ASSETS.ICON_SCROLL;
+const emptyStateMessage = computed(() => {
+  if (browseStatus.value === 'lobby' || browseStatus.value === 'all') {
+    return roster.fighters.length === 0 ? 'Recruit a hero first to join battles' : 'Create a new contract to start';
+  }
+  if (browseStatus.value === 'running') return 'No battles in progress';
+  return 'Complete some matches to see history';
+});
+
+function getCountForStatus(status: string): number {
+  if (status === 'all') return matches.value.length;
+  return matchCounts.value[status as keyof typeof matchCounts.value] || 0;
+}
+
+function getMatchTitle(match: Match): string {
+  if (match.status === 'lobby') return 'Open Arena';
+  if (match.status === 'running') return 'Battle in Progress';
+  return 'Match Complete';
+}
+
+function getMatchCardGradient(status: string): string {
+  if (status === 'lobby') return 'bg-gradient-to-br from-slate-800 to-slate-900';
+  if (status === 'running') return 'bg-gradient-to-br from-red-900/50 to-slate-900';
+  return 'bg-gradient-to-br from-emerald-900/30 to-slate-900';
+}
+
+function getStatusBadgeClass(status: string): string {
+  if (status === 'lobby') return 'bg-green-900/80 text-green-300 border-green-600';
+  if (status === 'running') return 'bg-red-900/80 text-red-300 border-red-600 animate-pulse';
+  return 'bg-slate-700 text-slate-300 border-slate-500';
+}
+
+function isMatchHot(match: Match): boolean {
+  const regCount = match.registrations?.length || 0;
+  const maxPlayers = match.options?.maxFightersPerUser || 2;
+  return regCount >= maxPlayers - 1;
 }
 
 function setStatus(message: string, tone: 'info' | 'success' | 'warning' | 'error' = 'info') {
@@ -460,34 +573,38 @@ function setStatus(message: string, tone: 'info' | 'success' | 'warning' | 'erro
   statusTone.value = tone;
 }
 
-// Actions
 async function fetchMatches() {
   if (!auth.token) return;
   isLoading.value = true;
   try {
-    const data = await request<any>(endpoints.match + '/browse', {
-      method: 'POST',
-      token: auth.token,
-      body: { page: 1, pageSize: 50, status: browseStatus.value || undefined }
-    });
+    const data = await getMatches(auth.token, 1, 50);
     matches.value = data?.items ?? [];
+    
+    matchCounts.value = {
+      lobby: matches.value.filter(m => m.status === 'lobby').length,
+      running: matches.value.filter(m => m.status === 'running').length,
+      completed: matches.value.filter(m => m.status === 'completed').length,
+    };
   } catch (e) {
     console.error(e);
+    setStatus('Failed to load matches', 'error');
   } finally {
     isLoading.value = false;
   }
 }
 
 async function fetchCurrentMatch() {
-  if (!auth.token) return;
-  if (currentMatchId.value) {
-    try {
-        const m = await request<any>(`${endpoints.match}/${currentMatchId.value}`, { token: auth.token });
-        currentMatch.value = m;
-    } catch (e) {
-        console.error(e);
-        if ((e as any)?.status === 404) clearCurrentMatch();
+  if (!auth.token || !currentMatchId.value) return;
+  try {
+    const m = await getCurrentMatch(auth.token);
+    if (m) {
+      currentMatch.value = m;
+    } else if (currentMatchId.value) {
+      clearCurrentMatch();
     }
+  } catch (e) {
+    console.error(e);
+    if ((e as any)?.status === 404) clearCurrentMatch();
   }
 }
 
@@ -534,7 +651,7 @@ function startPolling() {
   if (pollHandle.value) return;
   pollHandle.value = window.setInterval(() => {
     fetchCurrentMatch();
-  }, 4000);
+  }, 5000);
 }
 
 function stopPolling() {
@@ -567,11 +684,7 @@ async function confirmJoin() {
   if (!auth.token || !joinTargetMatchId.value || !selectedFighterId.value) return;
   isJoining.value = true;
   try {
-    await request<void>(endpoints.match + '/join', {
-      method: 'POST',
-      token: auth.token,
-      body: { matchId: joinTargetMatchId.value, fighterId: selectedFighterId.value }
-    });
+    await joinMatch(auth.token, joinTargetMatchId.value, selectedFighterId.value);
     currentMatchId.value = joinTargetMatchId.value;
     myFighterIdInMatch.value = selectedFighterId.value;
     currentMatch.value = null;
@@ -593,10 +706,11 @@ async function handleCreate() {
   if (!auth.token) return;
   isCreating.value = true;
   try {
-    const match = await request<any>(endpoints.match + '/create', {
-      method: 'PUT',
-      token: auth.token,
-      body: options.value
+    const match = await createMatch(auth.token, {
+      isPrivate: options.value.isPrivate,
+      botCount: options.value.botCount,
+      botPowerlevel: options.value.botPowerlevel,
+      autoStart: options.value.autoStart,
     });
     showCreate.value = false;
     currentMatchId.value = match.id;
@@ -626,11 +740,7 @@ async function handleLeave() {
   if (!fighterId) return;
 
   try {
-    await request<void>(endpoints.match + '/leave', {
-      method: 'POST',
-      token: auth.token,
-      body: { matchId: currentMatchId.value, fighterId }
-    });
+    await leaveMatch(auth.token, currentMatchId.value, fighterId);
     clearCurrentMatch();
     setStatus('ABANDONED QUEST.', 'warning');
     await fetchMatches();
@@ -644,10 +754,7 @@ async function handleStart() {
   isStarting.value = true;
   setStatus('ENTERING ARENA...', 'info');
   try {
-    await request<void>(`${endpoints.match}/${currentMatchId.value}/start`, {
-      method: 'POST',
-      token: auth.token
-    });
+    await startMatch(auth.token, currentMatchId.value);
     setStatus('BATTLE STARTED!', 'success');
     await fetchCurrentMatch();
   } catch (e: any) {
@@ -657,45 +764,10 @@ async function handleStart() {
   }
 }
 
-// Watchers
-watch(currentMatchId, (id) => {
-  if (id) {
-    fetchCurrentMatch();
-    connectWebSocket();
-    startPolling();
-  } else {
-    stopPolling();
-    disconnectWebSocket();
-    currentMatch.value = null;
-  }
-});
-
-watch(browseStatus, () => fetchMatches());
-
-// Lifecycle
-onMounted(async () => {
-  await roster.fetchFighters();
-  
-  try {
-    const active = await request<any>(endpoints.match + '/current', { token: auth.token ?? undefined }).catch(() => null);
-    if (active && active.id) {
-        currentMatchId.value = active.id;
-        currentMatch.value = active;
-        setStatus('SESSION RESTORED.', 'info');
-    }
-  } catch (e) {
-    console.error("Failed to restore session", e);
-  }
-
-  await fetchMatches();
-  startOnlinePlayersPolling();
-});
-
-// Online Players
 async function fetchOnlinePlayers() {
   if (!auth.token) return;
   try {
-    const data = await request<any>(endpoints.match + '/online-players', { token: auth.token });
+    const data = await getOnlinePlayers(auth.token);
     onlinePlayers.value = data?.onlinePlayers ?? 0;
   } catch (e) {
     console.error('Failed to fetch online players', e);
@@ -704,7 +776,7 @@ async function fetchOnlinePlayers() {
 
 function startOnlinePlayersPolling() {
   fetchOnlinePlayers();
-  onlinePlayersPoll.value = window.setInterval(fetchOnlinePlayers, 30000); // Every 30s
+  onlinePlayersPoll.value = window.setInterval(fetchOnlinePlayers, 30000);
 }
 
 function stopOnlinePlayersPolling() {
@@ -714,7 +786,6 @@ function stopOnlinePlayersPolling() {
   }
 }
 
-// Quick Join
 async function handleQuickJoin() {
   if (!auth.token || roster.fighters.length === 0) return;
   isQuickJoining.value = true;
@@ -722,11 +793,7 @@ async function handleQuickJoin() {
 
   try {
     const fighter = roster.fighters[0];
-    const match = await request<any>(endpoints.match + '/quick-join', {
-      method: 'POST',
-      token: auth.token,
-      body: { fighterId: fighter.id }
-    });
+    const match = await quickJoinMatch(auth.token, fighter.id);
 
     currentMatchId.value = match.id;
     myFighterIdInMatch.value = fighter.id;
@@ -742,9 +809,42 @@ async function handleQuickJoin() {
   }
 }
 
+watch(currentMatchId, (id) => {
+  if (id) {
+    fetchCurrentMatch();
+    connectWebSocket();
+    startPolling();
+  } else {
+    stopPolling();
+    disconnectWebSocket();
+    currentMatch.value = null;
+  }
+});
+
+watch(browseStatus, () => fetchMatches());
+
+onMounted(async () => {
+  await roster.fetchFighters();
+  
+  try {
+    const active = await getCurrentMatch(auth.token ?? '').catch(() => null);
+    if (active && active.id) {
+        currentMatchId.value = active.id;
+        currentMatch.value = active;
+        setStatus('SESSION RESTORED.', 'info');
+    }
+  } catch (e) {
+    console.error("Failed to restore session", e);
+  }
+
+  await fetchMatches();
+  startOnlinePlayersPolling();
+});
+
 onUnmounted(() => {
   stopPolling();
   disconnectWebSocket();
+  stopOnlinePlayersPolling();
 });
 </script>
 
@@ -790,12 +890,17 @@ onUnmounted(() => {
   transform: translateY(1px);
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+.pixel-box-sm {
+  border: 2px solid #334155;
+  box-shadow: 2px 2px 0 #0f172a;
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
+.status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
 }
 
 .animate-bounce-slow {
@@ -805,5 +910,37 @@ onUnmounted(() => {
 @keyframes bounce {
   0%, 100% { transform: translateY(-5%); }
   50% { transform: translateY(5%); }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.match-card-skeleton {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 </style>
