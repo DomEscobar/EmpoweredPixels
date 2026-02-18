@@ -1,20 +1,20 @@
 <template>
-  <div class="pixel-theme h-dvh max-h-dvh overflow-hidden flex flex-col font-mono text-slate-200" :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_DUNGEON}')` }">
+  <div class="pixel-theme h-svh max-h-svh overflow-hidden flex flex-col font-mono text-slate-200" :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_DUNGEON}')` }">
     <div class="fixed inset-0 bg-slate-950/80 pointer-events-none z-0"></div>
 
     <!-- Header -->
-    <header class="relative z-20 flex items-center justify-between shrink-0 px-3 py-2 bg-slate-900/90 border-b-2 border-amber-900/50">
+    <header class="relative z-20 flex items-center justify-between shrink-0 px-2 py-1.5 bg-slate-900/90 border-b-2 border-amber-900/50">
       <div class="flex items-center gap-2">
-        <button @click="$router.push('/matches')" class="text-amber-500 hover:text-amber-400 font-bold text-sm">
+        <button @click="$router.push('/matches')" class="text-amber-500 hover:text-amber-400 font-bold text-xs">
           ← BACK
         </button>
       </div>
       <div class="flex items-center gap-2">
         <span v-if="matchStatus === 'running'" class="flex items-center gap-1">
-          <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-          <span class="text-[10px] text-red-400 font-bold uppercase">LIVE</span>
+          <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+          <span class="text-[8px] text-red-400 font-bold uppercase">LIVE</span>
         </span>
-        <span class="text-[10px] text-slate-500 font-mono">#{{ matchId?.substring(0, 4) }}</span>
+        <span class="text-[8px] text-slate-500 font-mono">#{{ matchId?.substring(0, 4) }}</span>
       </div>
     </header>
 
@@ -51,43 +51,43 @@
       </div>
     </div>
 
-    <!-- Bottom Controls - Mobile Optimized -->
-    <div class="relative z-20 bg-slate-900/95 border-t-2 border-slate-700 px-2 py-2">
+    <!-- Bottom Controls - Mobile Optimized TINY -->
+    <div class="relative z-20 bg-slate-900/95 border-t-2 border-slate-700 px-1 py-1">
       <!-- Progress Bar -->
-      <div class="relative h-3 bg-slate-950 border border-slate-700 cursor-pointer mb-2" @click="seekToPercent">
+      <div class="relative h-2 bg-slate-950 border border-slate-700 cursor-pointer mb-1" @click="seekToPercent">
         <div class="absolute inset-y-0 left-0 bg-amber-600" :style="{ width: progressPercent + '%' }"></div>
-        <div class="absolute inset-y-0 w-1.5 bg-white" :style="{ left: progressPercent + '%' }"></div>
+        <div class="absolute inset-y-0 w-1 bg-white" :style="{ left: progressPercent + '%' }"></div>
       </div>
 
       <!-- Controls Row -->
-      <div class="flex items-center justify-between gap-2">
-        <!-- Left: Playback -->
-        <div class="flex items-center gap-1">
-          <button @click="stepRound(-1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white text-xs font-bold">
-            |◀
+      <div class="flex items-center justify-between gap-1">
+        <!-- Left: TINY Playback -->
+        <div class="flex items-center gap-0.5">
+          <button @click="stepRound(-1)" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white text-[8px] font-bold">
+            ◀
           </button>
-          <button @click="togglePlayback" class="w-10 h-10 flex items-center justify-center bg-amber-600 border-2 border-amber-800 text-slate-900 font-black hover:bg-amber-500">
+          <button @click="togglePlayback" class="w-7 h-7 flex items-center justify-center bg-amber-600 border border-amber-800 text-slate-900 font-black hover:bg-amber-500 text-[8px]">
             <span v-if="isPlaying">||</span>
             <span v-else>▶</span>
           </button>
-          <button @click="stepRound(1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white text-xs font-bold">
-            ▶|
+          <button @click="stepRound(1)" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white text-[8px] font-bold">
+            ▶
           </button>
         </div>
 
         <!-- Center: Round Info -->
-        <div class="text-[10px] text-amber-400 font-mono font-bold bg-slate-950 px-2 py-1 border border-slate-700">
+        <div class="text-[8px] text-amber-400 font-mono font-bold bg-slate-950 px-1.5 py-0.5 border border-slate-700">
           R{{ selectedRound }}/{{ orderedRounds.length || 0 }}
         </div>
 
-        <!-- Right: Actions -->
-        <div class="flex items-center gap-1">
+        <!-- Right: TINY Actions -->
+        <div class="flex items-center gap-0.5">
           <!-- Log Toggle -->
-          <button @click="showLog = !showLog" class="w-8 h-8 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-amber-400">
+          <button @click="showLog = !showLog" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-amber-400 text-[8px]">
             📜
           </button>
           <!-- Config Toggle -->
-          <button @click="showConfig = !showConfig" class="w-8 h-8 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-amber-400">
+          <button @click="showConfig = !showConfig" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-amber-400 text-[8px]">
             ⚙️
           </button>
         </div>
@@ -95,46 +95,46 @@
 
       <!-- Hidden Config Panel -->
       <transition name="slide">
-        <div v-if="showConfig" class="mt-2 pt-2 border-t border-slate-700 flex items-center justify-between gap-4">
-          <div class="flex items-center gap-2">
-            <span class="text-[9px] text-slate-500 uppercase font-bold">Speed</span>
-            <input type="range" min="0.5" max="4" step="0.5" v-model.number="playbackSpeed" class="w-16 accent-amber-500 h-1.5 bg-slate-800" />
-            <span class="text-[10px] text-amber-400 font-mono font-bold w-8">{{ playbackSpeed }}x</span>
+        <div v-if="showConfig" class="mt-1 pt-1 border-t border-slate-700 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1">
+            <span class="text-[7px] text-slate-500 uppercase font-bold">Speed</span>
+            <input type="range" min="0.5" max="4" step="0.5" v-model.number="playbackSpeed" class="w-12 accent-amber-500 h-1 bg-slate-800" />
+            <span class="text-[8px] text-amber-400 font-mono font-bold w-6">{{ playbackSpeed }}x</span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-[9px] text-slate-500 uppercase font-bold">Zoom</span>
-            <button @click="zoom(-0.2)" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white font-bold text-xs">-</button>
-            <span class="text-[10px] text-amber-400 font-mono font-bold w-10 text-center">{{ Math.round(camera.zoom * 100) }}%</span>
-            <button @click="zoom(0.2)" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white font-bold text-xs">+</button>
+          <div class="flex items-center gap-1">
+            <span class="text-[7px] text-slate-500 uppercase font-bold">Zoom</span>
+            <button @click="zoom(-0.2)" class="w-5 h-5 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white font-bold text-[8px]">-</button>
+            <span class="text-[8px] text-amber-400 font-mono font-bold w-8 text-center">{{ Math.round(camera.zoom * 100) }}%</span>
+            <button @click="zoom(0.2)" class="w-5 h-5 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white font-bold text-[8px]">+</button>
           </div>
         </div>
       </transition>
     </div>
 
-    <!-- Log Modal Overlay -->
+    <!-- Log Modal Overlay - 30svh -->
     <transition name="slide-up">
-      <div v-if="showLog" class="fixed inset-x-0 bottom-0 z-30 h-[30vh] bg-slate-900 border-t-4 border-amber-600 flex flex-col shadow-2xl">
+      <div v-if="showLog" class="fixed inset-x-0 bottom-0 z-30 h-[30svh] bg-slate-900 border-t-4 border-amber-600 flex flex-col shadow-2xl">
         <!-- Drag Handle -->
         <div class="flex justify-center py-1 cursor-pointer" @click="showLog = false">
           <div class="w-12 h-1 bg-slate-600 rounded-full"></div>
         </div>
         
         <!-- Header -->
-        <div class="flex items-center justify-between px-3 py-2 border-b border-slate-700 shrink-0">
+        <div class="flex items-center justify-between px-2 py-1 border-b border-slate-700 shrink-0">
           <span class="text-amber-500 font-bold text-xs uppercase">Combat Log</span>
-          <span class="text-[10px] text-slate-500 font-mono">{{ ticks.length }} Rounds</span>
+          <span class="text-[8px] text-slate-500 font-mono">{{ ticks.length }} Rounds</span>
         </div>
         
         <!-- Log Content -->
-        <div class="flex-1 overflow-y-auto px-2 pb-2 space-y-1 custom-scrollbar">
+        <div class="flex-1 overflow-y-auto px-1 pb-1 space-y-1 custom-scrollbar">
           <div 
             v-for="round in ticks" 
             :key="round.round"
             @click="selectRound(round.round); showLog = false;"
-            class="p-2 text-[10px] cursor-pointer border transition-all"
+            class="p-1.5 text-[9px] cursor-pointer border transition-all"
             :class="round.round === selectedRound ? 'border-amber-600 bg-amber-900/20' : 'border-slate-700 hover:border-slate-500'"
           >
-            <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center justify-between mb-0.5">
               <span class="font-bold text-amber-100 uppercase">R{{ round.round.toString().padStart(2, '0') }}</span>
               <span class="text-slate-500">{{ round.ticks?.length || 0 }} events</span>
             </div>

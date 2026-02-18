@@ -148,7 +148,14 @@ func (h *MCPHandler) handleJoinLeague(ctx context.Context, userID int64, args ma
 }
 
 func (h *MCPHandler) handleBrowseMatches(ctx context.Context) (interface{}, error) {
-	return h.matchService.BrowseMatches(ctx, 1, 20)
+	matches, totalCount, err := h.matchService.BrowseMatches(ctx, 1, 20)
+	if err != nil {
+		return nil, err
+	}
+	return map[string]interface{}{
+		"matches":    matches,
+		"totalCount": totalCount,
+	}, nil
 }
 
 func (h *MCPHandler) handleCreateMatch(ctx context.Context, userID int64, args map[string]interface{}) (interface{}, error) {
@@ -191,31 +198,31 @@ type GameState struct {
 }
 
 type MatchSummary struct {
-	ID            string    `json:"id"`
-	Status        string    `json:"status"`
-	Created       time.Time `json:"created"`
-	FighterCount  int       `json:"fighter_count"`
-	IsJoinable    bool      `json:"is_joinable"`
+	ID           string    `json:"id"`
+	Status       string    `json:"status"`
+	Created      time.Time `json:"created"`
+	FighterCount int       `json:"fighter_count"`
+	IsJoinable   bool      `json:"is_joinable"`
 }
 
 type MatchDetail struct {
-	ID            string                `json:"id"`
-	Status        string                `json:"status"`
-	Created       time.Time             `json:"created"`
-	Teams         []matches.MatchTeam   `json:"teams,omitempty"`
+	ID            string                      `json:"id"`
+	Status        string                      `json:"status"`
+	Created       time.Time                   `json:"created"`
+	Teams         []matches.MatchTeam         `json:"teams,omitempty"`
 	Registrations []matches.MatchRegistration `json:"registrations,omitempty"`
 }
 
 // GetGameState returns the current game state (lobbies and active matches)
 func (h *MCPHandler) GetGameState(ctx context.Context, userID int64) (*GameState, error) {
 	// Get lobby matches
-	lobbies, err := h.matchService.BrowseByStatus(ctx, matches.MatchStatusLobby, 1, 20)
+	lobbies, _, err := h.matchService.BrowseByStatus(ctx, matches.MatchStatusLobby, 1, 20)
 	if err != nil {
 		return nil, err
 	}
 
 	// Get active matches
-	active, err := h.matchService.BrowseByStatus(ctx, matches.MatchStatusRunning, 1, 20)
+	active, _, err := h.matchService.BrowseByStatus(ctx, matches.MatchStatusRunning, 1, 20)
 	if err != nil {
 		return nil, err
 	}
@@ -263,20 +270,20 @@ func (h *MCPHandler) GetGameState(ctx context.Context, userID int64) (*GameState
 
 // PlayerStats represents comprehensive player/fighter statistics
 type PlayerStats struct {
-	FighterID      string                 `json:"fighter_id"`
-	Name           string                 `json:"name"`
-	Level          int                    `json:"level"`
-	Power          int                    `json:"power"`
-	Attributes     map[string]int         `json:"attributes"`
-	Experience     *roster.FighterExperience `json:"experience,omitempty"`
-	Equipment      []inventory.Equipment  `json:"equipment,omitempty"`
-	MatchStats     *MatchStatistics       `json:"match_stats,omitempty"`
+	FighterID  string                    `json:"fighter_id"`
+	Name       string                    `json:"name"`
+	Level      int                       `json:"level"`
+	Power      int                       `json:"power"`
+	Attributes map[string]int            `json:"attributes"`
+	Experience *roster.FighterExperience `json:"experience,omitempty"`
+	Equipment  []inventory.Equipment     `json:"equipment,omitempty"`
+	MatchStats *MatchStatistics          `json:"match_stats,omitempty"`
 }
 
 type MatchStatistics struct {
-	TotalKills   int `json:"total_kills"`
-	TotalDeaths  int `json:"total_deaths"`
-	TotalAssists int `json:"total_assists"`
+	TotalKills    int `json:"total_kills"`
+	TotalDeaths   int `json:"total_deaths"`
+	TotalAssists  int `json:"total_assists"`
 	MatchesPlayed int `json:"matches_played"`
 }
 
@@ -298,10 +305,10 @@ func (h *MCPHandler) GetPlayerStats(ctx context.Context, userID int64, fighterID
 	equipment, _ := h.inventoryService.ListByFighter(ctx, userID, fighterID)
 
 	stats := &PlayerStats{
-		FighterID:  fighter.ID,
-		Name:       fighter.Name,
-		Level:      fighter.Level,
-		Power:      fighter.Power,
+		FighterID: fighter.ID,
+		Name:      fighter.Name,
+		Level:     fighter.Level,
+		Power:     fighter.Power,
 		Attributes: map[string]int{
 			"condition_power": fighter.ConditionPower,
 			"precision":       fighter.Precision,
@@ -332,8 +339,8 @@ type SubmitActionRequest struct {
 
 // SubmitActionResult represents the result of an action submission
 type SubmitActionResult struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
+	Success bool        `json:"success"`
+	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
 }
 

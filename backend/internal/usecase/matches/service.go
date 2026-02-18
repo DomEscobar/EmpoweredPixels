@@ -195,7 +195,7 @@ func (s *Service) GetRegistrations(ctx context.Context, matchID string) ([]match
 	return s.registrations.ListByMatch(ctx, matchID)
 }
 
-func (s *Service) BrowseMatches(ctx context.Context, page int, pageSize int) ([]matches.Match, error) {
+func (s *Service) BrowseMatches(ctx context.Context, page int, pageSize int) ([]matches.Match, int, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -203,7 +203,14 @@ func (s *Service) BrowseMatches(ctx context.Context, page int, pageSize int) ([]
 		pageSize = 20
 	}
 	offset := (page - 1) * pageSize
-	return s.matches.ListAll(ctx, pageSize, offset)
+
+	totalCount, err := s.matches.CountAll(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	matches, err := s.matches.ListAll(ctx, pageSize, offset)
+	return matches, totalCount, err
 }
 
 func (s *Service) BrowseByStatus(ctx context.Context, status string, page int, pageSize int) ([]matches.Match, int, error) {
