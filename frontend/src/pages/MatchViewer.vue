@@ -1,181 +1,133 @@
 <template>
-  <div class="pixel-theme h-svh max-h-svh overflow-hidden flex flex-col font-mono text-slate-200" :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_DUNGEON}')` }">
-    <div class="fixed inset-0 bg-slate-950/80 pointer-events-none z-0"></div>
-
+  <div class="h-svh max-h-svh overflow-hidden flex flex-col bg-slate-950">
     <!-- Header -->
-    <header class="relative z-20 flex items-center justify-between shrink-0 px-2 py-1.5 bg-slate-900/90 border-b-2 border-amber-900/50">
-      <div class="flex items-center gap-2">
-        <button @click="$router.push('/matches')" class="text-amber-500 hover:text-amber-400 font-bold text-xs">
-          ← BACK
-        </button>
-      </div>
+    <header class="shrink-0 flex items-center justify-between px-3 py-2 bg-slate-900 border-b border-slate-700">
+      <button @click="$router.push('/matches')" class="text-amber-400 hover:text-amber-300 font-bold text-sm">
+        ← Back
+      </button>
       <div class="flex items-center gap-2">
         <span v-if="matchStatus === 'running'" class="flex items-center gap-1">
-          <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
-          <span class="text-[8px] text-red-400 font-bold uppercase">LIVE</span>
+          <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+          <span class="text-xs text-red-400 font-bold uppercase">LIVE</span>
         </span>
-        <span class="text-[8px] text-slate-500 font-mono">#{{ matchId?.substring(0, 4) }}</span>
+        <span class="text-xs text-slate-500 font-mono">#{{ matchId?.substring(0, 4) }}</span>
       </div>
     </header>
 
-    <!-- Canvas Area - Full Height -->
-    <div class="relative z-10 flex-1 min-h-0">
-      <canvas
-        ref="canvasRef"
-        class="w-full h-full object-cover cursor-move pixelated"
-        @mousedown="startDrag"
-        @mousemove="onDrag"
-        @mouseup="endDrag"
-        @mouseleave="endDrag"
-        @wheel.prevent="onWheel"
-      ></canvas>
+    <!-- Canvas Area -->
+    <div class="flex-1 relative bg-slate-900">
+      <canvas ref="canvasRef" class="w-full h-full"></canvas>
       
-      <!-- Vignette -->
-      <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.6)_100%)]"></div>
-
-      <!-- Loading Overlay -->
-      <div v-if="isLoading" class="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/80">
+      <!-- Loading -->
+      <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-slate-950/80">
         <div class="flex flex-col items-center gap-2">
-          <div class="h-6 w-6 animate-spin border-2 border-amber-500 border-t-transparent rounded-full"></div>
-          <p class="text-amber-200 text-xs font-bold uppercase">Loading...</p>
+          <div class="h-8 w-8 animate-spin border-2 border-amber-500 border-t-transparent rounded-full"></div>
+          <p class="text-amber-200 text-sm font-bold uppercase">Loading...</p>
         </div>
       </div>
 
-      <!-- Victory Overlay -->
-      <div v-if="matchStatus === 'completed' && orderedRounds.length && selectedRound === orderedRounds[orderedRounds.length-1]" 
-           class="absolute inset-0 z-10 flex items-center justify-center bg-black/60">
-        <div class="border-2 border-amber-500 bg-slate-900 p-4 text-center">
-          <img :src="PIXEL_ASSETS.ICON_TROPHY" class="w-8 h-8 mx-auto mb-2 pixelated" />
-          <p class="text-xl font-black text-amber-500 uppercase">VICTORY</p>
+      <!-- Victory -->
+      <div v-if="isVictory" class="absolute inset-0 flex items-center justify-center bg-black/60">
+        <div class="border-2 border-amber-500 bg-slate-900 p-6 text-center">
+          <p class="text-3xl font-black text-amber-500 uppercase mb-1">Victory</p>
+          <p class="text-xs text-slate-400">Match Complete</p>
         </div>
       </div>
     </div>
 
-    <!-- Bottom Controls - Mobile Optimized TINY -->
-    <div class="relative z-20 bg-slate-900/95 border-t-2 border-slate-700 px-1 py-1">
-      <!-- Progress Bar -->
-      <div class="relative h-2 bg-slate-950 border border-slate-700 cursor-pointer mb-1" @click="seekToPercent">
-        <div class="absolute inset-y-0 left-0 bg-amber-600" :style="{ width: progressPercent + '%' }"></div>
-        <div class="absolute inset-y-0 w-1 bg-white" :style="{ left: progressPercent + '%' }"></div>
+    <!-- Controls -->
+    <div class="shrink-0 bg-slate-900 border-t border-slate-700 p-2">
+      <!-- Progress -->
+      <div class="relative h-3 bg-slate-800 rounded cursor-pointer mb-2" @click="seekToPercent">
+        <div class="absolute inset-y-0 left-0 bg-amber-600 rounded-l" :style="{ width: progressPercent + '%' }"></div>
       </div>
 
-      <!-- Controls Row -->
-      <div class="flex items-center justify-between gap-1">
-        <!-- Left: TINY Playback -->
-        <div class="flex items-center gap-0.5">
-          <button @click="stepRound(-1)" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white text-[8px] font-bold">
-            ◀
-          </button>
-          <button @click="togglePlayback" class="w-7 h-7 flex items-center justify-center bg-amber-600 border border-amber-800 text-slate-900 font-black hover:bg-amber-500 text-[8px]">
-            <span v-if="isPlaying">||</span>
-            <span v-else>▶</span>
-          </button>
-          <button @click="stepRound(1)" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white text-[8px] font-bold">
-            ▶
+      <!-- Main Controls -->
+      <div class="flex items-center justify-between">
+        <!-- Left: Steps -->
+        <div class="flex items-center gap-1">
+          <button @click="stepRound(-1)" class="w-10 h-10 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-300 hover:text-white hover:border-amber-500 text-lg font-bold">
+            ‹
           </button>
         </div>
 
-        <!-- Center: Round Info -->
-        <div class="text-[8px] text-amber-400 font-mono font-bold bg-slate-950 px-1.5 py-0.5 border border-slate-700">
-          R{{ selectedRound }}/{{ orderedRounds.length || 0 }}
-        </div>
+        <!-- Center: Play -->
+        <button @click="togglePlayback" class="w-14 h-14 flex items-center justify-center bg-amber-600 border-2 border-amber-400 text-slate-900 font-black hover:bg-amber-500 text-xl rounded">
+          <span v-if="isPlaying">||</span>
+          <span v-else>▶</span>
+        </button>
 
-        <!-- Right: TINY Actions -->
-        <div class="flex items-center gap-0.5">
-          <!-- Log Toggle -->
-          <button @click="showLog = !showLog" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-amber-400 text-[8px]">
-            📜
-          </button>
-          <!-- Config Toggle -->
-          <button @click="showConfig = !showConfig" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-amber-400 text-[8px]">
-            ⚙️
+        <!-- Right: Steps -->
+        <div class="flex items-center gap-1">
+          <button @click="stepRound(1)" class="w-10 h-10 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-300 hover:text-white hover:border-amber-500 text-lg font-bold">
+            ›
           </button>
         </div>
       </div>
 
-      <!-- Hidden Config Panel -->
-      <transition name="slide">
-        <div v-if="showConfig" class="mt-1 pt-1 border-t border-slate-700 flex items-center justify-between gap-2">
-          <div class="flex items-center gap-1">
-            <span class="text-[7px] text-slate-500 uppercase font-bold">Speed</span>
-            <input type="range" min="0.5" max="4" step="0.5" v-model.number="playbackSpeed" class="w-12 accent-amber-500 h-1 bg-slate-800" />
-            <span class="text-[8px] text-amber-400 font-mono font-bold w-6">{{ playbackSpeed }}x</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <span class="text-[7px] text-slate-500 uppercase font-bold">Zoom</span>
-            <button @click="zoom(-0.2)" class="w-5 h-5 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white font-bold text-[8px]">-</button>
-            <span class="text-[8px] text-amber-400 font-mono font-bold w-8 text-center">{{ Math.round(camera.zoom * 100) }}%</span>
-            <button @click="zoom(0.2)" class="w-5 h-5 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white font-bold text-[8px]">+</button>
-          </div>
+      <!-- Round Info -->
+      <div class="flex items-center justify-center mt-2 gap-4">
+        <span class="text-amber-400 font-mono font-bold text-sm">
+          Round {{ currentRoundIndex + 1 }} / {{ rounds.length }}
+        </span>
+        <button @click="showLog = !showLog" class="text-xs text-slate-400 hover:text-amber-400">
+          {{ showLog ? 'Hide Log' : 'Show Log' }}
+        </button>
+      </div>
+
+      <!-- Config (expandable) -->
+      <div v-if="showConfig" class="mt-2 pt-2 border-t border-slate-700 flex items-center justify-center gap-6">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-500 uppercase font-bold">Speed</span>
+          <input type="range" min="0.5" max="4" step="0.5" v-model.number="playbackSpeed" class="w-20 accent-amber-500" />
+          <span class="text-xs text-amber-400 font-mono font-bold w-8">{{ playbackSpeed }}x</span>
         </div>
-      </transition>
+        <button @click="showConfig = false" class="text-xs text-slate-500">✕</button>
+      </div>
+      <div v-else class="flex justify-center mt-1">
+        <button @click="showConfig = true" class="text-xs text-slate-600 hover:text-slate-400">⚙ Settings</button>
+      </div>
     </div>
 
-    <!-- Log Modal Overlay - 30svh -->
+    <!-- Log Modal -->
     <transition name="slide-up">
-      <div v-if="showLog" class="fixed inset-x-0 bottom-0 z-30 h-[30svh] bg-slate-900 border-t-4 border-amber-600 flex flex-col shadow-2xl">
-        <!-- Drag Handle -->
-        <div class="flex justify-center py-1 cursor-pointer" @click="showLog = false">
-          <div class="w-12 h-1 bg-slate-600 rounded-full"></div>
+      <div v-if="showLog" class="fixed inset-x-0 bottom-0 z-50 h-[40vh] bg-slate-900 border-t-4 border-amber-600 flex flex-col">
+        <div class="flex justify-center py-2 cursor-pointer" @click="showLog = false">
+          <div class="w-16 h-1.5 bg-slate-600 rounded-full"></div>
         </div>
-        
-        <!-- Header -->
-        <div class="flex items-center justify-between px-2 py-1 border-b border-slate-700 shrink-0">
-          <span class="text-amber-500 font-bold text-xs uppercase">Combat Log</span>
-          <span class="text-[8px] text-slate-500 font-mono">{{ ticks.length }} Rounds</span>
+        <div class="flex items-center justify-between px-3 py-1 border-b border-slate-700">
+          <span class="text-amber-500 font-bold uppercase">Combat Log</span>
+          <span class="text-xs text-slate-500 font-mono">{{ rounds.length }} Rounds</span>
         </div>
-        
-        <!-- Log Content -->
-        <div class="flex-1 overflow-y-auto px-1 pb-1 space-y-1 custom-scrollbar">
+        <div class="flex-1 overflow-y-auto p-2 space-y-1">
           <div 
-            v-for="round in ticks" 
+            v-for="(round, idx) in rounds" 
             :key="round.round"
-            @click="selectRound(round.round); showLog = false;"
-            class="p-1.5 text-[9px] cursor-pointer border transition-all"
-            :class="round.round === selectedRound ? 'border-amber-600 bg-amber-900/20' : 'border-slate-700 hover:border-slate-500'"
+            @click="selectRound(idx)"
+            class="p-2 cursor-pointer border rounded"
+            :class="idx === currentRoundIndex ? 'border-amber-500 bg-amber-900/20' : 'border-slate-700 hover:border-slate-500'"
           >
-            <div class="flex items-center justify-between mb-0.5">
-              <span class="font-bold text-amber-100 uppercase">R{{ round.round.toString().padStart(2, '0') }}</span>
-              <span class="text-slate-500">{{ round.ticks?.length || 0 }} events</span>
-            </div>
-            <div class="text-slate-400 space-y-0.5">
-              <div v-for="(tick, idx) in (round.ticks || []).slice(0, 3)" :key="idx" class="truncate">
-                <template v-if="tick.type === 'attack'">
-                  <span class="text-emerald-400">{{ payloadValue(tick.payload, 'attackerId')?.substring(0,4) }}</span>
-                  →
-                  <span class="text-rose-400">{{ payloadValue(tick.payload, 'targetId')?.substring(0,4) }}</span>
-                  <span class="text-slate-300"> -{{ payloadValue(tick.payload, 'damage') }}</span>
-                </template>
-                <template v-else-if="tick.type === 'died'">
-                  <span class="text-rose-500">☠ {{ payloadValue(tick.payload, 'fighterId')?.substring(0,4) }}</span>
-                </template>
-              </div>
-              <div v-if="(round.ticks?.length || 0) > 3" class="text-slate-600">+{{ (round.ticks?.length || 0) - 3 }} more</div>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-amber-100">Round {{ round.round }}</span>
+              <span class="text-xs text-slate-500">{{ round.ticks?.length || 0 }} events</span>
             </div>
           </div>
         </div>
       </div>
     </transition>
 
-    <!-- Log Backdrop -->
-    <transition name="fade">
-      <div v-if="showLog" @click="showLog = false" class="fixed inset-0 z-25 bg-black/50"></div>
-    </transition>
+    <!-- Backdrop -->
+    <div v-if="showLog" @click="showLog = false" class="fixed inset-0 z-40 bg-black/50"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, reactive, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { request } from '@/shared/api/http';
 import { endpoints } from '@/shared/api/endpoints';
 import { useAuthStore } from '@/features/auth/store';
 import { useRosterStore } from '@/features/roster/store';
-
-const PIXEL_ASSETS = {
-  BG_DUNGEON: 'https://vibemedia.space/bg_dungeon_v2_99283.png?prompt=dark%20dungeon%20floor%20tile%20texture%20seamless&style=pixel_game_asset&key=NOGON',
-  ICON_TROPHY: 'https://vibemedia.space/trophy_icon_4d5e6f_v1.png?prompt=golden%20trophy%20pixel%20art&style=pixel_game_asset&key=NOGON',
-};
 
 const auth = useAuthStore();
 const roster = useRosterStore();
@@ -183,184 +135,124 @@ const route = useRoute();
 
 const matchId = ref(route.params.id as string);
 const matchStatus = ref<string | null>(null);
-const ticks = ref<any[]>([]);
+const rounds = ref<any[]>([]);
 const isLoading = ref(false);
-
 const showLog = ref(false);
 const showConfig = ref(false);
-
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-const roundStateMap = ref<Record<number, any>>({});
 
-const TILE_WIDTH = 64;
-const TILE_HEIGHT = 32;
-const worldSize = 24;
-
-const camera = reactive({
-  x: 0,
-  y: 0,
-  zoom: 1.0,
-  shakeX: 0,
-  shakeY: 0,
-  isDragging: false,
-  lastX: 0,
-  lastY: 0
-});
-
-const selectedRound = ref(0);
+const selectedRoundIdx = ref(0);
 const isPlaying = ref(false);
 const playbackSpeed = ref(1.0);
-let segmentStart = 0;
-let visualLoopHandle: number | null = null;
-let livePollHandle: number | null = null;
 
-const orderedRounds = computed(() => ticks.value.map((r) => r.round));
+let animationId: number | null = null;
+let lastStepTime = 0;
+
+const TILE_W = 48;
+const TILE_H = 24;
+const WORLD_SIZE = 20;
+
+const camera = ref({ x: 0, y: 0, zoom: 1 });
+
+const currentRoundIndex = computed(() => selectedRoundIdx.value);
 
 const progressPercent = computed(() => {
-  if (!orderedRounds.value.length) return 0;
-  const idx = orderedRounds.value.indexOf(selectedRound.value);
-  return ((idx + 1) / orderedRounds.value.length) * 100;
+  if (!rounds.value.length) return 0;
+  return ((selectedRoundIdx.value + 1) / rounds.value.length) * 100;
+});
+
+const isVictory = computed(() => {
+  return matchStatus.value === 'completed' && selectedRoundIdx.value === rounds.value.length - 1;
 });
 
 const toIso = (x: number, y: number) => ({
-  x: (x - y) * TILE_WIDTH * 0.5,
-  y: (x + y) * TILE_HEIGHT * 0.5
+  x: (x - y) * TILE_W * 0.5,
+  y: (x + y) * TILE_H * 0.5
 });
 
-const toScreen = (x: number, y: number, canvasW: number, canvasH: number) => {
+const toScreen = (x: number, y: number, w: number, h: number) => {
   const iso = toIso(x, y);
-  const centerX = canvasW / 2;
-  const centerY = canvasH / 4;
+  const cx = w / 2;
+  const cy = h / 3;
   return {
-    x: centerX + (iso.x * camera.zoom) + camera.x + camera.shakeX,
-    y: centerY + (iso.y * camera.zoom) + camera.y + camera.shakeY
+    x: cx + iso.x * camera.value.zoom + camera.value.x,
+    y: cy + iso.y * camera.value.zoom + camera.value.y
   };
 };
 
-const payloadValue = (payload: unknown, key: string) => {
-  if (!payload || typeof payload !== 'object') return undefined;
-  return (payload as Record<string, any>)[key];
-};
-
-const startDrag = (e: MouseEvent) => {
-  camera.isDragging = true;
-  camera.lastX = e.clientX;
-  camera.lastY = e.clientY;
-};
-
-const onDrag = (e: MouseEvent) => {
-  if (!camera.isDragging) return;
-  camera.x += e.clientX - camera.lastX;
-  camera.y += e.clientY - camera.lastY;
-  camera.lastX = e.clientX;
-  camera.lastY = e.clientY;
-};
-
-const endDrag = () => { camera.isDragging = false; };
-
-const onWheel = (e: WheelEvent) => {
-  const delta = -Math.sign(e.deltaY) * 0.2;
-  camera.zoom = Math.max(0.3, Math.min(2.5, camera.zoom + delta));
-};
-
-const zoom = (delta: number) => {
-  camera.zoom = Math.max(0.3, Math.min(2.5, camera.zoom + delta));
-};
-
-const stepRound = (dir: 1 | -1) => {
-  const idx = orderedRounds.value.indexOf(selectedRound.value);
-  if (idx === -1) return;
-  const next = idx + dir;
-  if (next >= 0 && next < orderedRounds.value.length) {
-    selectedRound.value = orderedRounds.value[next];
+const stepRound = (dir: number) => {
+  const newIdx = selectedRoundIdx.value + dir;
+  if (newIdx >= 0 && newIdx < rounds.value.length) {
+    selectedRoundIdx.value = newIdx;
   }
-};
-
-const selectRound = (round: number) => {
-  selectedRound.value = round;
   isPlaying.value = false;
 };
 
+const selectRound = (idx: number) => {
+  selectedRoundIdx.value = idx;
+  showLog.value = false;
+};
+
 const togglePlayback = () => {
-  if (orderedRounds.value.length <= 1) return;
+  if (rounds.value.length <= 1) return;
   if (isPlaying.value) {
     isPlaying.value = false;
   } else {
-    if (selectedRound.value === orderedRounds.value[orderedRounds.value.length - 1]) {
-      selectedRound.value = orderedRounds.value[0];
+    if (selectedRoundIdx.value >= rounds.value.length - 1) {
+      selectedRoundIdx.value = 0;
     }
     isPlaying.value = true;
-    segmentStart = 0;
+    lastStepTime = Date.now();
   }
 };
 
 const seekToPercent = (e: MouseEvent) => {
-  if (!orderedRounds.value.length) return;
+  if (!rounds.value.length) return;
   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
   const p = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-  const idx = Math.floor(p * (orderedRounds.value.length - 1));
-  selectedRound.value = orderedRounds.value[idx];
+  selectedRoundIdx.value = Math.floor(p * (rounds.value.length - 1));
 };
 
-// Drawing
-const drawTile = (ctx: CanvasRenderingContext2D, x: number, y: number, canvasW: number, canvasH: number) => {
-  const pos = toScreen(x, y, canvasW, canvasH);
-  const w = TILE_WIDTH * camera.zoom;
-  const h = TILE_HEIGHT * camera.zoom;
-  
-  ctx.beginPath();
-  ctx.moveTo(pos.x, pos.y);
-  ctx.lineTo(pos.x + w/2, pos.y + h/2);
-  ctx.lineTo(pos.x, pos.y + h);
-  ctx.lineTo(pos.x - w/2, pos.y + h/2);
-  ctx.closePath();
-  ctx.fillStyle = '#1e293b';
-  ctx.fill();
-  ctx.strokeStyle = '#334155';
-  ctx.lineWidth = 1;
-  ctx.stroke();
-};
+const buildRoundStates = () => {
+  const playerIds = new Set(roster.fighters.map(f => f.id));
+  const states: any[] = [];
+  let currentEntities: Record<string, any> = {};
 
-const drawEntity = (ctx: CanvasRenderingContext2D, entity: any, x: number, y: number, canvasW: number, canvasH: number) => {
-  const pos = toScreen(x, y, canvasW, canvasH);
-  const zoom = camera.zoom;
-  
-  if (!entity.alive) {
-    ctx.fillStyle = '#334155';
-    ctx.fillRect(pos.x - 5 * zoom, pos.y, 10 * zoom, 10 * zoom);
-    return;
+  for (const round of rounds.value) {
+    const entities = { ...currentEntities };
+    
+    for (const tick of round.ticks || []) {
+      const p = tick.payload || {};
+      
+      if (tick.type === 'spawn') {
+        entities[p.fighterId] = {
+          id: p.fighterId,
+          x: p.x ?? 0,
+          y: p.y ?? 0,
+          hp: p.hp ?? 100,
+          maxHp: p.hp ?? 100,
+          alive: true,
+          isPlayer: playerIds.has(p.fighterId),
+        };
+      } else if (tick.type === 'move' && entities[p.fighterId]) {
+        entities[p.fighterId].x = p.toX ?? entities[p.fighterId].x;
+        entities[p.fighterId].y = p.toY ?? entities[p.fighterId].y;
+      } else if (tick.type === 'attack' && entities[p.targetId]) {
+        entities[p.targetId].hp = Math.max(0, entities[p.targetId].hp - (p.damage || 0));
+      } else if (tick.type === 'died' && entities[p.fighterId]) {
+        entities[p.fighterId].alive = false;
+        entities[p.fighterId].hp = 0;
+      }
+    }
+    
+    states.push({ entities: { ...entities } });
+    currentEntities = entities;
   }
-
-  // Shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.5)';
-  ctx.beginPath();
-  ctx.ellipse(pos.x, pos.y + 14 * zoom, 10 * zoom, 5 * zoom, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Simple voxel character
-  const colors = entity.isPlayer 
-    ? { head: '#fbbf24', body: '#3b82f6' }
-    : { head: '#4ade80', body: '#166534' };
-
-  const bob = Math.sin(Date.now() / 300 + (entity.floatOffset || 0)) * 2 * zoom;
   
-  // Body
-  ctx.fillStyle = colors.body;
-  ctx.fillRect(pos.x - 8 * zoom, pos.y - 20 * zoom + bob, 16 * zoom, 20 * zoom);
-  
-  // Head
-  ctx.fillStyle = colors.head;
-  ctx.fillRect(pos.x - 6 * zoom, pos.y - 32 * zoom + bob, 12 * zoom, 12 * zoom);
-
-  // HP Bar
-  const hpPercent = Math.max(0, entity.hp / entity.maxHp);
-  ctx.fillStyle = '#000';
-  ctx.fillRect(pos.x - 10 * zoom, pos.y - 40 * zoom + bob, 20 * zoom, 3 * zoom);
-  ctx.fillStyle = hpPercent > 0.5 ? '#10b981' : hpPercent > 0.25 ? '#f59e0b' : '#ef4444';
-  ctx.fillRect(pos.x - 10 * zoom, pos.y - 40 * zoom + bob, 20 * zoom * hpPercent, 3 * zoom);
+  return states;
 };
 
-const drawScene = () => {
+const draw = () => {
   if (!canvasRef.value) return;
   const canvas = canvasRef.value;
   const ctx = canvas.getContext('2d');
@@ -372,190 +264,137 @@ const drawScene = () => {
     canvas.height = rect.height;
   }
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Grid
-  for (let x = 0; x <= worldSize; x++) {
-    for (let y = 0; y <= worldSize; y++) {
-      drawTile(ctx, x, y, canvas.width, canvas.height);
+  const z = camera.value.zoom;
+  for (let x = 0; x <= WORLD_SIZE; x++) {
+    for (let y = 0; y <= WORLD_SIZE; y++) {
+      const pos = toScreen(x, y, canvas.width, canvas.height);
+      const tw = TILE_W * z;
+      const th = TILE_H * z;
+      
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      ctx.lineTo(pos.x + tw/2, pos.y + th/2);
+      ctx.lineTo(pos.x, pos.y + th);
+      ctx.lineTo(pos.x - tw/2, pos.y + th/2);
+      ctx.closePath();
+      ctx.fillStyle = '#1e293b';
+      ctx.fill();
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 1;
+      ctx.stroke();
     }
   }
 
   // Entities
-  const state = roundStateMap.value[selectedRound.value];
+  const states = buildRoundStates();
+  const state = states[selectedRoundIdx.value];
   if (state) {
-    Object.values(state.entities || {}).forEach((entity: any) => {
-      drawEntity(ctx, entity, entity.x, entity.y, canvas.width, canvas.height);
-    });
+    for (const ent of Object.values(state.entities) as any[]) {
+      const pos = toScreen(ent.x, ent.y, canvas.width, canvas.height);
+      
+      if (!ent.alive) {
+        ctx.fillStyle = '#374151';
+        ctx.fillRect(pos.x - 6*z, pos.y, 12*z, 8*z);
+        continue;
+      }
+
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y + 12*z, 10*z, 4*z, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const bob = Math.sin(Date.now() / 200) * 2 * z;
+      const colors = ent.isPlayer 
+        ? { head: '#fbbf24', body: '#3b82f6' }
+        : { head: '#4ade80', body: '#166534' };
+
+      // Body
+      ctx.fillStyle = colors.body;
+      ctx.fillRect(pos.x - 8*z, pos.y - 18*z + bob, 16*z, 18*z);
+      
+      // Head
+      ctx.fillStyle = colors.head;
+      ctx.fillRect(pos.x - 6*z, pos.y - 28*z + bob, 12*z, 12*z);
+
+      // HP Bar
+      const hpPct = Math.max(0, ent.hp / ent.maxHp);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(pos.x - 10*z, pos.y - 36*z + bob, 20*z, 4*z);
+      ctx.fillStyle = hpPct > 0.5 ? '#10b981' : hpPct > 0.25 ? '#f59e0b' : '#ef4444';
+      ctx.fillRect(pos.x - 10*z, pos.y - 36*z + bob, 20*z * hpPct, 4*z);
+    }
   }
+
+  // Round number overlay
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(10, 10, 80, 28);
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = `bold ${16*z}px monospace`;
+  ctx.fillText(`R${rounds.value[selectedRoundIdx.value]?.round || 0}`, 20, 30);
 };
 
-const visualLoop = () => {
-  drawScene();
+const loop = () => {
+  draw();
   
-  if (isPlaying.value && orderedRounds.value.length > 1) {
-    if (!segmentStart) segmentStart = Date.now();
-    const duration = 1500 / playbackSpeed.value;
-    const elapsed = Date.now() - segmentStart;
-    
-    if (elapsed >= duration) {
-      const idx = orderedRounds.value.indexOf(selectedRound.value);
-      const nextIdx = idx + 1;
-      if (nextIdx >= orderedRounds.value.length) {
-        isPlaying.value = false;
-        segmentStart = 0;
+  if (isPlaying.value && rounds.value.length > 1) {
+    const now = Date.now();
+    const delay = 1200 / playbackSpeed.value;
+    if (now - lastStepTime >= delay) {
+      if (selectedRoundIdx.value < rounds.value.length - 1) {
+        selectedRoundIdx.value++;
       } else {
-        selectedRound.value = orderedRounds.value[nextIdx];
-        segmentStart = Date.now();
+        isPlaying.value = false;
       }
+      lastStepTime = now;
     }
   }
   
-  visualLoopHandle = requestAnimationFrame(visualLoop);
+  animationId = requestAnimationFrame(loop);
 };
 
-const fetchLogs = async () => {
+const fetchData = async () => {
   if (!auth.token || !matchId.value) return;
   isLoading.value = true;
   try {
-    const data = await request<any[]>(`${endpoints.match}/${matchId.value}/roundticks`, { token: auth.token });
-    ticks.value = data || [];
-    refreshRoundStates();
-  } catch (e) { console.error(e); }
-  finally { isLoading.value = false; }
-};
-
-const fetchMatchStatus = async () => {
-  if (!auth.token || !matchId.value) return;
-  try {
-    const m = await request<{ status?: string }>(`${endpoints.match}/${matchId.value}`, { token: auth.token });
-    matchStatus.value = m?.status ?? null;
-  } catch (e) { matchStatus.value = null; }
-};
-
-const refreshRoundStates = () => {
-  const playerIds = new Set(roster.fighters.map(f => f.id));
-  const states: Record<number, any> = {};
-
-  for (const round of ticks.value) {
-    const entities: Record<string, any> = {};
-    
-    for (const tick of round.ticks || []) {
-      const payload = tick.payload || {};
-      
-      if (tick.type === 'spawn') {
-        entities[payload.fighterId] = {
-          id: payload.fighterId,
-          x: payload.x ?? 0,
-          y: payload.y ?? 0,
-          hp: payload.hp ?? 100,
-          maxHp: payload.hp ?? 100,
-          alive: true,
-          isPlayer: playerIds.has(payload.fighterId),
-          floatOffset: Math.random() * Math.PI * 2
-        };
-      } else if (tick.type === 'move') {
-        if (entities[payload.fighterId]) {
-          entities[payload.fighterId].x = payload.toX ?? entities[payload.fighterId].x;
-          entities[payload.fighterId].y = payload.toY ?? entities[payload.fighterId].y;
-        }
-      } else if (tick.type === 'attack') {
-        if (entities[payload.targetId]) {
-          entities[payload.targetId].hp = Math.max(0, entities[payload.targetId].hp - (payload.damage || 0));
-        }
-      } else if (tick.type === 'died') {
-        if (entities[payload.fighterId]) {
-          entities[payload.fighterId].alive = false;
-          entities[payload.fighterId].hp = 0;
-        }
-      }
-    }
-    
-    states[round.round] = { entities };
-  }
-  
-  roundStateMap.value = states;
-};
-
-const startLivePoll = () => {
-  if (livePollHandle) return;
-  livePollHandle = window.setInterval(async () => {
-    await fetchMatchStatus();
-    await fetchLogs();
-    if (matchStatus.value === 'completed') stopLivePoll();
-  }, 3000);
-};
-
-const stopLivePoll = () => {
-  if (livePollHandle) {
-    clearInterval(livePollHandle);
-    livePollHandle = null;
+    const [match, ticksData] = await Promise.all([
+      request<{ status?: string }>(`${endpoints.match}/${matchId.value}`, { token: auth.token }),
+      request<any[]>(`${endpoints.match}/${matchId.value}/roundticks`, { token: auth.token })
+    ]);
+    matchStatus.value = match?.status ?? null;
+    rounds.value = ticksData || [];
+  } catch (e) {
+    console.error('Failed to load match:', e);
+  } finally {
+    isLoading.value = false;
   }
 };
 
 onMounted(async () => {
   await roster.fetchFighters();
-  await fetchMatchStatus();
-  await fetchLogs();
+  await fetchData();
   
-  if (orderedRounds.value.length) {
-    selectedRound.value = matchStatus.value === 'completed' 
-      ? orderedRounds.value[0]
-      : orderedRounds.value[orderedRounds.value.length - 1];
+  if (rounds.value.length) {
+    selectedRoundIdx.value = matchStatus.value === 'completed' ? 0 : rounds.value.length - 1;
   }
   
-  visualLoopHandle = requestAnimationFrame(visualLoop);
-  
-  if (matchStatus.value === 'running') startLivePoll();
+  animationId = requestAnimationFrame(loop);
 });
 
 onUnmounted(() => {
-  if (visualLoopHandle) cancelAnimationFrame(visualLoopHandle);
-  stopLivePoll();
+  if (animationId) cancelAnimationFrame(animationId);
 });
 </script>
 
 <style scoped>
-.pixel-theme {
-  image-rendering: pixelated;
-  background-repeat: repeat;
-  background-size: 128px;
-}
-
-.pixelated {
-  image-rendering: pixelated;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #0f172a;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-radius: 2px;
-}
-
-.slide-enter-active, .slide-leave-active {
-  transition: all 0.2s ease;
-}
-.slide-enter-from, .slide-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
 .slide-up-enter-active, .slide-up-leave-active {
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
 }
 .slide-up-enter-from, .slide-up-leave-to {
   transform: translateY(100%);
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
 }
 </style>
