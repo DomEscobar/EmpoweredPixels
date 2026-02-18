@@ -16,6 +16,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - ep-network
 
   # Development Postgres (with migrations auto-run)
   postgres-dev:
@@ -33,6 +35,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - ep-network
 
   # Production backend
   backend-prod:
@@ -40,6 +44,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     profiles: ["prod"]
+    env_file:
+      - .env
     environment:
       EP_HTTP_ADDRESS: ${EP_HTTP_ADDRESS}
       EP_DATABASE_URL: ${EP_DATABASE_URL}
@@ -48,6 +54,8 @@ services:
     depends_on:
       postgres-prod:
         condition: service_healthy
+    networks:
+      - ep-network
     ports:
       - "49101:54321"
 
@@ -67,6 +75,8 @@ services:
     depends_on:
       postgres-dev:
         condition: service_healthy
+    networks:
+      - ep-network
     ports:
       - "49101:54321"
     volumes:
@@ -82,6 +92,8 @@ services:
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     profiles: ["prod"]
+    networks:
+      - ep-network
     ports:
       - "49100:80"
 
@@ -100,6 +112,12 @@ services:
       - ./frontend:/app
       - /app/node_modules
       - /app/dist
+    networks:
+      - ep-network
+
+networks:
+  ep-network:
+    driver: bridge
 
 volumes:
   ep_postgres_data:

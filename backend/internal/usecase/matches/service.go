@@ -443,7 +443,7 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 	if options.BotPowerlevel != nil {
 		powerlevel = *options.BotPowerlevel
 	}
-	botCount := 0
+	botCount := 7 // Default: 7 bots if not specified
 	if options.BotCount != nil {
 		botCount = *options.BotCount
 	}
@@ -801,6 +801,7 @@ func generateBotFighters(botCount int, powerlevel int, baseName string) []roster
 
 	bots := make([]roster.Fighter, botCount)
 	botNames := []string{"Alpha", "Beta", "Gamma", "Delta", "Echo", "Foxtrot", "Omega", "Sigma"}
+	defaultAttunement := "fire" // Default attunement for bots
 
 	for i := 0; i < botCount; i++ {
 		// Scale stats based on powerlevel
@@ -824,6 +825,7 @@ func generateBotFighters(botCount int, powerlevel int, baseName string) []roster
 			UserID:         0, // Bot user ID
 			Name:           name,
 			Level:          1 + (powerlevel / 20),
+			AttunementID:   &defaultAttunement, // Default attunement
 			Power:          int(10*scale) + rand.Intn(10),
 			ConditionPower: int(8*scale) + rand.Intn(8),
 			Precision:      int(10*scale) + rand.Intn(10),
@@ -834,6 +836,8 @@ func generateBotFighters(botCount int, powerlevel int, baseName string) []roster
 			Armor:          int(5*scale) + rand.Intn(5),
 			Speed:          int(10*scale) + rand.Intn(10),
 			Vision:         int(10*scale) + rand.Intn(10),
+			ParryChance:    int(5 * scale),
+			HealingPower:   int(8 * scale),
 		}
 	}
 

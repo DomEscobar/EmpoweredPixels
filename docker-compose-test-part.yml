@@ -1,0 +1,8 @@
+networks:
+  ep-network:
+    driver: bridge
+
+volumes:
+  ep_postgres_data:
+  ep_postgres_data_dev:
+  go_mod:
