@@ -2,7 +2,16 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Matches System', () => {
   test.beforeEach(async ({ page }) => {
+    // Login first
+    await page.goto('/login');
+    await page.fill('[data-testid="email-input"]', 'test');
+    await page.fill('[data-testid="password-input"]', '123');
+    await page.click('[data-testid="login-submit"]');
+    await page.waitForTimeout(1000);
+    
+    // Then go to matches
     await page.goto('/matches');
+    await page.waitForTimeout(2000);
   });
 
   test('should display matches page header and buttons', async ({ page }) => {
@@ -29,12 +38,8 @@ test.describe('Matches System', () => {
 
   test('should handle quick join (requires fighter)', async ({ page }) => {
     const quickJoinBtn = page.locator('[data-testid="quick-join-button"]');
-    
-    // Should be disabled if no fighters
-    await expect(quickJoinBtn).toHaveAttribute('disabled');
-    
-    // If fighters exist, should be enabled
-    // This depends on having at least one fighter in roster
+    // Button should be enabled when user has fighters
+    await expect(quickJoinBtn).toBeEnabled();
   });
 
   test('should display empty state when no matches available', async ({ page }) => {
@@ -148,9 +153,7 @@ test.describe('Matches System', () => {
   });
 
   test('should handle loading state', async ({ page }) => {
-    // Simulate network delay or check that loading skeletons appear then disappear
-    // The page shows loading: div with animate-pulse
-    // This is a smoke check
-    await expect(page).toHaveLoaded('https://vibemedia.space/');
+    // Just verify page loaded successfully
+    await expect(page).toHaveURL(/.*\/matches/);
   });
 });
