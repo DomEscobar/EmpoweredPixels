@@ -13,6 +13,6 @@ CREATE TABLE IF NOT EXISTS resonance_achievements (
 );
 
 -- Indexes for efficient queries
-CREATE INDEX idx_resonance_achievements_user_id ON resonance_achievements(user_id);
-CREATE INDEX idx_resonance_achievements_unlocked ON resonance_achievements(unlocked_at) WHERE unlocked_at IS NOT NULL;
-CREATE INDEX idx_resonance_achievements_type ON resonance_achievements(achievement_type);
+CREATE INDEX IF NOT EXISTS idx_resonance_achievements_user_id ON resonance_achievements(user_id);
+CREATE INDEX IF NOT EXISTS idx_resonance_achievements_unlocked ON resonance_achievements(unlocked_at) WHERE unlocked_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_resonance_achievements_type ON resonance_achievements(achievement_type);

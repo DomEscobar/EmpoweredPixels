@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS squads (
 );
 
 -- Ensure only one active squad per user
-CREATE UNIQUE INDEX idx_unique_active_squad_per_user ON squads(user_id) WHERE (is_active = true);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_active_squad_per_user ON squads(user_id) WHERE (is_active = true);
 
 CREATE TABLE IF NOT EXISTS squad_members (
     squad_id UUID NOT NULL REFERENCES squads(id) ON DELETE CASCADE,
@@ -21,4 +21,4 @@ CREATE TABLE IF NOT EXISTS squad_members (
     UNIQUE (squad_id, fighter_id)
 );
 
-CREATE INDEX idx_squads_user_id ON squads(user_id);
+CREATE INDEX IF NOT EXISTS idx_squads_user_id ON squads(user_id);

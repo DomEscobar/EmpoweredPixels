@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS combat_logs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_combat_logs_match_id ON combat_logs(match_id);
+CREATE INDEX IF NOT EXISTS idx_combat_logs_match_id ON combat_logs(match_id);
 
 CREATE TABLE IF NOT EXISTS battle_details (
     match_id UUID PRIMARY KEY,
