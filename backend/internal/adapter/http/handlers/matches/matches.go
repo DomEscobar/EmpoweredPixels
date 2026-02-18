@@ -223,11 +223,12 @@ func (h *Handler) Browse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var matchesList []matches.Match
+	var totalCount int
 	var err error
 	if payload.Status != "" {
-		matchesList, err = h.service.BrowseByStatus(r.Context(), payload.Status, payload.Page, payload.PageSize)
+		matchesList, totalCount, err = h.service.BrowseByStatus(r.Context(), payload.Status, payload.Page, payload.PageSize)
 	} else {
-		matchesList, err = h.service.BrowseMatches(r.Context(), payload.Page, payload.PageSize)
+		matchesList, totalCount, err = h.service.BrowseMatches(r.Context(), payload.Page, payload.PageSize)
 	}
 	if err != nil {
 		log.Printf("match browse error: %v", err)
@@ -245,7 +246,7 @@ func (h *Handler) Browse(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, pageDto[matchDto]{
 		Page:       payload.Page,
 		PageSize:   payload.PageSize,
-		TotalCount: len(items),
+		TotalCount: totalCount,
 		Items:      items,
 	})
 }

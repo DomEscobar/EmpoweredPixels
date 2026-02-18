@@ -196,10 +196,6 @@ func (s *Service) GetRegistrations(ctx context.Context, matchID string) ([]match
 }
 
 func (s *Service) BrowseMatches(ctx context.Context, page int, pageSize int) ([]matches.Match, error) {
-	return s.matches.ListAll(ctx, page, pageSize)
-}
-
-func (s *Service) BrowseByStatus(ctx context.Context, status string, page int, pageSize int) ([]matches.Match, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -207,10 +203,36 @@ func (s *Service) BrowseByStatus(ctx context.Context, status string, page int, p
 		pageSize = 20
 	}
 	offset := (page - 1) * pageSize
-	if status == "" {
-		return s.matches.ListAll(ctx, pageSize, offset)
+	return s.matches.ListAll(ctx, pageSize, offset)
+}
+
+func (s *Service) BrowseByStatus(ctx context.Context, status string, page int, pageSize int) ([]matches.Match, int, error) {
+	if page < 1 {
+		page = 1
 	}
-	return s.matches.ListByStatus(ctx, status, pageSize, offset)
+	if pageSize <= 0 {
+		pageSize = 20
+	}
+	offset := (page - 1) * pageSize
+
+	var totalCount int
+	var err error
+
+	if status == "" {
+		totalCount, err = s.matches.CountAll(ctx)
+		if err != nil {
+			return nil, 0, err
+		}
+		matches, err := s.matches.ListAll(ctx, pageSize, offset)
+		return matches, totalCount, err
+	}
+
+	totalCount, err = s.matches.CountByStatus(ctx, status)
+	if err != nil {
+		return nil, 0, err
+	}
+	matches, err := s.matches.ListByStatus(ctx, status, pageSize, offset)
+	return matches, totalCount, err
 }
 
 func (s *Service) Join(ctx context.Context, userID int64, matchID string, fighterID string) error {

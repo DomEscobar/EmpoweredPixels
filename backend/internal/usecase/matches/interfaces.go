@@ -14,6 +14,8 @@ type MatchRepository interface {
 	ListAll(ctx context.Context, limit int, offset int) ([]matches.Match, error)
 	ListOpen(ctx context.Context, limit int, offset int) ([]matches.Match, error)
 	ListByStatus(ctx context.Context, status string, limit int, offset int) ([]matches.Match, error)
+	CountAll(ctx context.Context) (int, error)
+	CountByStatus(ctx context.Context, status string) (int, error)
 	GetCurrentMatch(ctx context.Context, userID int64) (*matches.Match, error)
 	ListStaleLobbies(ctx context.Context, olderThanMinutes int) ([]matches.Match, error)
 	CountRecentActiveUsers(ctx context.Context, minutes int) (int, error)

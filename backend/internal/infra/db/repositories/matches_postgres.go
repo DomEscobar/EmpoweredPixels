@@ -141,6 +141,22 @@ func (r *MatchRepository) ListByStatus(ctx context.Context, status string, limit
 	return result, rows.Err()
 }
 
+func (r *MatchRepository) CountAll(ctx context.Context) (int, error) {
+	const query = `select count(*) from matches`
+
+	var count int
+	err := r.pool.QueryRow(ctx, query).Scan(&count)
+	return count, err
+}
+
+func (r *MatchRepository) CountByStatus(ctx context.Context, status string) (int, error) {
+	const query = `select count(*) from matches where status = $1`
+
+	var count int
+	err := r.pool.QueryRow(ctx, query, status).Scan(&count)
+	return count, err
+}
+
 func (r *MatchRepository) GetCurrentMatch(ctx context.Context, userID int64) (*matches.Match, error) {
 	const query = `
 		select m.id, m.creator_user_id, m.created, m.started, m.completed_at, m.cancelled_at, m.status, m.options

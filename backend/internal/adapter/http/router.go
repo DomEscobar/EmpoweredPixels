@@ -153,7 +153,7 @@ func NewRouter(deps Dependencies) http.Handler {
 	if deps.MatchService != nil {
 		h := matchhandlers.NewHandler(deps.MatchService)
 		api.HandleFunc("/match/current", h.GetCurrentMatch).Methods("GET")
-		api.HandleFunc("/match/create", h.CreateMatch).Methods("PUT")
+		api.HandleFunc("/match/create", h.CreateMatch).Methods("PUT", "POST")
 		api.HandleFunc("/match/quick-join", h.QuickJoin).Methods("POST")
 		api.HandleFunc("/match/online-players", h.GetOnlinePlayers).Methods("GET")
 		api.HandleFunc("/match/{id}", func(w http.ResponseWriter, r *http.Request) {
