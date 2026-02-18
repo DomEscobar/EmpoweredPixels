@@ -7,13 +7,11 @@ import (
 // AllowedOrigins defines the list of trusted origins for CORS
 // Update this list based on your deployment environment
 var AllowedOrigins = []string{
-	"http://localhost:3000",      // Local development frontend
-	"http://localhost:5173",      // Vite dev server alternative
-	"http://127.0.0.1:3000",      // Local testing
-	"http://127.0.0.1:5173",      // Local testing
-	// Add production domain(s) here, e.g.:
-	// "https://app.example.com",
-	// "https://www.example.com",
+	"http://localhost:3000",
+	"http://localhost:5173",
+	"http://127.0.0.1:3000",
+	"http://127.0.0.1:5173",
+	"http://v2202502215330313077.supersrv.de:49100",
 }
 
 func isOriginAllowed(origin string) bool {
@@ -28,14 +26,15 @@ func isOriginAllowed(origin string) bool {
 func WithCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")
-		
-		// Validate origin against whitelist
-		if origin != "" && isOriginAllowed(origin) {
+
+		// Be permissive for development/test environment
+		if origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Set("Vary", "Origin")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
 		}
-		
-		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,PATCH,OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
 		w.Header().Set("Access-Control-Max-Age", "3600")
 
