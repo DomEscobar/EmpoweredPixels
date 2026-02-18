@@ -345,7 +345,7 @@ onMounted(async () => {
     match.value = matchData
     rounds.value = roundTicksData || []
     matchStatus.value = matchData.status
-    if (orderedRounds.value.length) selectedRound.value = 1
+    if (orderedRounds.value.length) selectedRound.value = orderedRounds.value[0]
     render()
     requestAnimationFrame(tick)
   } catch (err) {
