@@ -461,7 +461,7 @@ const matchCounts = ref({ lobby: 0, running: 0, completed: 0 });
 const matches = ref<Match[]>([]);
 const isLoading = ref(false);
 const search = ref('');
-const browseStatus = ref<MatchStatus | 'all'>('lobby');
+const browseStatus = ref<MatchStatus | 'all'>('all');
 
 const showCreate = ref(false);
 const showJoinModal = ref(false);
