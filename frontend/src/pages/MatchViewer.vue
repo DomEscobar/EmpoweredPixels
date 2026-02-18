@@ -37,7 +37,7 @@
       <div class="lg:col-span-2 flex flex-col gap-3 sm:gap-4 min-h-0 min-w-0">
         
         <!-- Viewer Container -->
-        <div class="relative flex-1 min-h-[45vh] sm:min-h-[55vh] border-4 border-slate-700 bg-[#020617] overflow-hidden shadow-2xl flex flex-col group pixel-box">
+        <div class="relative flex-1 min-h-0 border-4 border-slate-700 bg-[#020617] overflow-hidden shadow-2xl flex flex-col group pixel-box">
           
           <!-- Loading Overlay -->
           <div v-if="isLoading" class="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
@@ -64,31 +64,31 @@
           ></canvas>
 
           <!-- Mobile: Always-visible tiny controls -->
-          <div class="lg:hidden absolute bottom-0 inset-x-0 bg-slate-900/95 border-t-2 border-slate-700 p-2 flex flex-col gap-1">
-            <div class="flex items-center justify-between">
-              <button @click="stepRound(-1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white text-xs font-bold">‹</button>
-              <button @click="togglePlayback" class="w-10 h-10 flex items-center justify-center bg-amber-600 border border-amber-800 text-slate-900 font-black hover:bg-amber-500 text-sm">
+          <div class="lg:hidden absolute bottom-0 inset-x-0 bg-slate-900/90 border-t border-slate-700 px-2 pb-1 flex flex-col gap-0.5">
+            <div class="flex items-center justify-between h-6">
+              <button @click="stepRound(-1)" class="w-5 h-5 flex items-center justify-center bg-slate-800/80 border border-slate-600/50 text-slate-500 hover:text-white text-xs font-bold">‹</button>
+              <button @click="togglePlayback" class="w-6 h-6 flex items-center justify-center bg-amber-600 border border-amber-800 text-slate-900 font-black hover:bg-amber-500 text-xs">
                 <span v-if="isPlaying">||</span><span v-else>▶</span>
               </button>
-              <div class="flex items-center gap-1">
-                <button @click="stepRound(1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white text-xs font-bold">›</button>
-                <button @click="showLog = !showLog" class="w-8 h-8 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-amber-400 text-xs">📜</button>
-                <button @click="showConfig = !showConfig" class="w-8 h-8 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-amber-400 text-xs">⚙</button>
+              <div class="flex items-center gap-0.5">
+                <button @click="stepRound(1)" class="w-5 h-5 flex items-center justify-center bg-slate-800/80 border border-slate-600/50 text-slate-500 hover:text-white text-xs font-bold">›</button>
+                <button @click="showLog = !showLog" class="w-5 h-5 flex items-center justify-center bg-slate-800/80 border border-slate-600/50 text-slate-500 hover:text-amber-400 text-xs">📜</button>
+                <button @click="showConfig = !showConfig" class="w-5 h-5 flex items-center justify-center bg-slate-800/80 border border-slate-600/50 text-slate-500 hover:text-amber-400 text-xs">⚙</button>
               </div>
             </div>
-            <div class="relative h-1.5 bg-slate-950 border border-slate-700 cursor-pointer" @click="seekToPercent">
+            <div class="relative h-1 bg-slate-950 border border-slate-700/50 cursor-pointer" @click="seekToPercent">
               <div class="absolute inset-y-0 left-0 bg-amber-600" :style="{ width: progressPercent + '%' }"></div>
             </div>
-            <div v-if="showConfig" class="flex items-center justify-center gap-4 pt-1 border-t border-slate-700">
+            <div v-if="showConfig" class="flex items-center justify-center gap-3 pt-1 border-t border-slate-700/50 text-[9px]">
               <div class="flex items-center gap-1">
-                <span class="text-[9px] text-slate-500 uppercase font-bold">SPD</span>
-                <input type="range" min="0.5" max="4" step="0.5" v-model.number="playbackSpeed" class="w-12 accent-amber-500 h-1 bg-slate-800" />
-                <span class="text-[10px] text-amber-400 font-mono font-bold">{{ playbackSpeed }}x</span>
+                <span class="text-slate-500 uppercase font-bold">SPD</span>
+                <input type="range" min="0.5" max="4" step="0.5" v-model.number="playbackSpeed" class="w-10 accent-amber-500 h-1 bg-slate-800" />
+                <span class="text-amber-400 font-mono font-bold">{{ playbackSpeed }}x</span>
               </div>
               <div class="flex items-center gap-1">
-                <button @click="zoom(-0.1)" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white font-bold text-xs">-</button>
-                <span class="text-[10px] text-amber-400 font-mono font-bold w-8 text-center">{{ Math.round(camera.zoom * 100) }}%</span>
-                <button @click="zoom(0.1)" class="w-6 h-6 flex items-center justify-center bg-slate-800 border border-slate-600 text-slate-400 hover:text-white font-bold text-xs">+</button>
+                <button @click="zoom(-0.1)" class="w-4 h-4 flex items-center justify-center bg-slate-800/80 border border-slate-600/50 text-slate-500 hover:text-white font-bold text-xs">-</button>
+                <span class="text-amber-400 font-mono font-bold w-6 text-center">{{ Math.round(camera.zoom * 100) }}%</span>
+                <button @click="zoom(0.1)" class="w-4 h-4 flex items-center justify-center bg-slate-800/80 border border-slate-600/50 text-slate-500 hover:text-white font-bold text-xs">+</button>
               </div>
             </div>
           </div>
