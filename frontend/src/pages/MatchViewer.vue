@@ -132,7 +132,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { matchesApi } from '@/features/matches/api'
+import { getMatch } from '@/features/matches/api'
 import { useAuthStore } from '@/features/auth/store'
 
 const route = useRoute()
@@ -292,7 +292,8 @@ const onWheel = (e: WheelEvent) => zoom(e.deltaY * -0.001)
 
 onMounted(async () => {
   try {
-    const data = await matchesApi.getMatch(matchId)
+    if (!auth.token) return;
+    const data = await getMatch(auth.token, matchId)
     match.value = data
     rounds.value = data.roundTicks || []
     matchStatus.value = data.status
