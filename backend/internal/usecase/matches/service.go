@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"math/rand"
 	"time"
 
 	"empoweredpixels/internal/domain/combat"
@@ -436,6 +438,19 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		return ErrNotEnoughFighters
 	}
 
+	// Generate bot fighters
+	powerlevel := 50
+	if options.BotPowerlevel != nil {
+		powerlevel = *options.BotPowerlevel
+	}
+	botCount := 0
+	if options.BotCount != nil {
+		botCount = *options.BotCount
+	}
+	botFighters := generateBotFighters(botCount, powerlevel, "Bot")
+	// Add bots to the fighters list for the battle
+	fighters = append(fighters, botFighters...)
+
 	now := s.now()
 	match.Status = matches.MatchStatusRunning
 	match.Started = &now
@@ -776,4 +791,51 @@ func applyResonanceBonuses(fighter roster.Fighter, state *resonance.ResonanceSta
 	fighter.Armor = int(float64(fighter.Armor) * state.BonusDefense)
 
 	return fighter
+}
+
+// generateBotFighters creates bot fighters for a match
+func generateBotFighters(botCount int, powerlevel int, baseName string) []roster.Fighter {
+	if botCount <= 0 {
+		return nil
+	}
+
+	bots := make([]roster.Fighter, botCount)
+	botNames := []string{"Alpha", "Beta", "Gamma", "Delta", "Echo", "Foxtrot", "Omega", "Sigma"}
+
+	for i := 0; i < botCount; i++ {
+		// Scale stats based on powerlevel
+		scale := float64(powerlevel) / 100.0
+		if scale < 0.1 {
+			scale = 0.1
+		}
+		if scale > 3.0 {
+			scale = 3.0
+		}
+
+		name := baseName
+		if i < len(botNames) {
+			name = botNames[i]
+		} else {
+			name = fmt.Sprintf("Bot_%d", i+1)
+		}
+
+		bots[i] = roster.Fighter{
+			ID:             uuid.NewString(),
+			UserID:         0, // Bot user ID
+			Name:           name,
+			Level:          1 + (powerlevel / 20),
+			Power:          int(10*scale) + rand.Intn(10),
+			ConditionPower: int(8*scale) + rand.Intn(8),
+			Precision:      int(10*scale) + rand.Intn(10),
+			Ferocity:       int(10*scale) + rand.Intn(10),
+			Accuracy:       int(10*scale) + rand.Intn(10),
+			Agility:        int(10*scale) + rand.Intn(10),
+			Vitality:       int(10*scale) + rand.Intn(10),
+			Armor:          int(5*scale) + rand.Intn(5),
+			Speed:          int(10*scale) + rand.Intn(10),
+			Vision:         int(10*scale) + rand.Intn(10),
+		}
+	}
+
+	return bots
 }
