@@ -159,11 +159,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { matchesApi } from '../features/matches/api'
+import { getMatch } from '../features/matches/api'
+import { useAuthStore } from '@/features/auth/store'
 
 const route = useRoute()
 const router = useRouter()
 const matchId = route.params.id as string
+const auth = useAuthStore()
 
 // Refs
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -322,9 +324,10 @@ const toggleDock = (panel: 'log' | 'settings') => {
 // Init
 onMounted(async () => {
   try {
-    const data = await matchesApi.getMatch(matchId)
+    const token = auth.token || ''
+    const data = await getMatch(token, matchId)
     match.value = data
-    rounds.value = data.roundTicks || []
+    rounds.value = (data as any).roundTicks || []
     matchStatus.value = data.status
     if (orderedRounds.value.length) selectedRound.value = 1
     render()
@@ -341,10 +344,33 @@ onUnmounted(() => {
 
 <style scoped>
 .dock-btn {
-  @apply w-8 h-8 flex items-center justify-center bg-black/60 border border-amber-900/50 rounded hover:bg-amber-900/60 transition-all text-xs;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(146, 64, 14, 0.5);
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+  font-size: 0.75rem;
+}
+.dock-btn:hover {
+  background-color: rgba(146, 64, 14, 0.6);
 }
 .dock-btn-secondary {
-  @apply w-7 h-7 flex items-center justify-center hover:bg-amber-900/30 rounded transition-all text-lg font-bold;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+  font-size: 1.125rem;
+  font-weight: bold;
+}
+.dock-btn-secondary:hover {
+  background-color: rgba(146, 64, 14, 0.3);
 }
 .custom-scrollbar::-webkit-scrollbar { width: 3px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }

@@ -51,6 +51,7 @@ export interface Match {
   rewards?: MatchRewards;
   totalRewards?: number;
   estimatedDuration?: number;
+  roundTicks?: any[];
 }
 
 export interface MatchWithDetails extends Match {
@@ -133,4 +134,8 @@ export async function startMatch(token: string, matchId: string): Promise<void> 
     method: 'POST',
     token
   });
+}
+
+export async function getMatch(token: string, matchId: string): Promise<Match> {
+  return request<Match>(`${endpoints.match}/${matchId}`, { token });
 }
