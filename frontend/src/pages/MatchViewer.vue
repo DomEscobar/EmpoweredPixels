@@ -44,15 +44,28 @@
       </div>
     </div>
 
-    <!-- Layer 3: Center Round Display (fades when playing) -->
-    <div class="fixed inset-0 z-10 flex items-center justify-center pointer-events-none">
+    <!-- Center Round Display (fades when playing) -->
+    <div v-if="rounds.length" class="fixed inset-0 z-10 flex items-center justify-center pointer-events-none">
       <div class="text-center transition-all duration-500" :class="isPlaying ? 'opacity-5 scale-90' : 'opacity-20 scale-100'">
         <span class="text-amber-500/30 font-black text-[12vw] leading-none tracking-[0.1em]">{{ selectedRound }}</span>
       </div>
     </div>
 
+    <!-- No Data / Loading Overlay -->
+    <div v-if="!rounds.length && matchStatus !== 'loading'" 
+         class="fixed inset-0 z-20 flex items-center justify-center bg-black/80">
+      <div class="text-center p-8">
+        <div class="text-amber-500 text-4xl mb-4">⚔</div>
+        <h2 class="text-amber-400 font-black text-xl uppercase tracking-wider mb-2">No Replay Data</h2>
+        <p class="text-amber-600/70 text-sm mb-4">{{ matchStatus === 'lobby' ? 'Match has not started yet' : 'Battle replay unavailable' }}</p>
+        <button @click="$router.push('/matches')" class="px-4 py-2 bg-amber-700 hover:bg-amber-600 text-black font-bold text-sm rounded">
+          Back to Matches
+        </button>
+      </div>
+    </div>
+
     <!-- Layer 4: Bottom Dock (Compacts to icons, expands on interaction) -->
-    <div class="fixed bottom-0 left-0 right-0 z-30">
+    <div v-if="rounds.length" class="fixed bottom-0 left-0 right-0 z-30">
       
       <!-- Progress Bar (Always visible thin line) -->
       <div class="h-1 bg-black/80 cursor-pointer" @click="seekToPercent">
