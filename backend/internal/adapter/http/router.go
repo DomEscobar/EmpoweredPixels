@@ -9,73 +9,73 @@ import (
 
 	"empoweredpixels/internal/adapter/http/handlers"
 	mcphandlers "empoweredpixels/internal/adapter/http/handlers"
+	attunementhandlers "empoweredpixels/internal/adapter/http/handlers/attunement"
+	dailyhandlers "empoweredpixels/internal/adapter/http/handlers/daily"
+	eventhandlers "empoweredpixels/internal/adapter/http/handlers/events"
+	guildhandlers "empoweredpixels/internal/adapter/http/handlers/guilds"
 	inventoryhandlers "empoweredpixels/internal/adapter/http/handlers/inventory"
+	leaderboardhandlers "empoweredpixels/internal/adapter/http/handlers/leaderboard"
 	leaguehandlers "empoweredpixels/internal/adapter/http/handlers/leagues"
 	matchhandlers "empoweredpixels/internal/adapter/http/handlers/matches"
+	resonancehandlers "empoweredpixels/internal/adapter/http/handlers/resonance"
 	rewardhandlers "empoweredpixels/internal/adapter/http/handlers/rewards"
 	rosterhandlers "empoweredpixels/internal/adapter/http/handlers/roster"
 	seasonhandlers "empoweredpixels/internal/adapter/http/handlers/seasons"
 	shophandlers "empoweredpixels/internal/adapter/http/handlers/shop"
-	attunementhandlers "empoweredpixels/internal/adapter/http/handlers/attunement"
-	dailyhandlers "empoweredpixels/internal/adapter/http/handlers/daily"
-	leaderboardhandlers "empoweredpixels/internal/adapter/http/handlers/leaderboard"
-	eventhandlers "empoweredpixels/internal/adapter/http/handlers/events"
-	guildhandlers "empoweredpixels/internal/adapter/http/handlers/guilds"
-	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
-	resonancehandlers "empoweredpixels/internal/adapter/http/handlers/resonance"
+	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	"empoweredpixels/internal/adapter/http/middleware"
 	"empoweredpixels/internal/adapter/http/responses"
 	"empoweredpixels/internal/adapter/ws"
 	"empoweredpixels/internal/config"
 	"empoweredpixels/internal/infra/jobs"
 	"empoweredpixels/internal/mcp"
+	attunementusecase "empoweredpixels/internal/usecase/attunement"
+	dailyusecase "empoweredpixels/internal/usecase/daily"
+	eventsusecase "empoweredpixels/internal/usecase/events"
+	guildsusecase "empoweredpixels/internal/usecase/guilds"
 	"empoweredpixels/internal/usecase/identity"
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
+	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
 	leaguesusecase "empoweredpixels/internal/usecase/leagues"
 	matchesusecase "empoweredpixels/internal/usecase/matches"
+	resonanceusecase "empoweredpixels/internal/usecase/resonance"
 	rewardsusecase "empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
 	shopusecase "empoweredpixels/internal/usecase/shop"
-	attunementusecase "empoweredpixels/internal/usecase/attunement"
-	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 	skillsusecase "empoweredpixels/internal/usecase/skills"
-	dailyusecase "empoweredpixels/internal/usecase/daily"
-	guildsusecase "empoweredpixels/internal/usecase/guilds"
-	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
-	eventsusecase "empoweredpixels/internal/usecase/events"
-	resonanceusecase "empoweredpixels/internal/usecase/resonance"
+	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 )
 
 type Dependencies struct {
-	Config           config.Config
-	IdentityService  *identity.Service
-	RosterService    *rosterusecase.Service
-	MatchService     *matchesusecase.Service
-	InventoryService inventoryusecase.Service
-	WeaponService    *weaponsusecase.Service
-	SkillService     *skillsusecase.Service
-	LeagueService    *leaguesusecase.Service
-	LeagueJob        *jobs.LeagueJob
-	RewardService    *rewardsusecase.Service
-	SeasonService       *seasonsusecase.Service
-	ShopService         *shopusecase.Service
-	AttunementService   *attunementusecase.Service
-	DailyService        *dailyusecase.Service
-	LeaderboardService  *leaderboardusecase.Service
-	EventService        *eventsusecase.Service
-	GuildService        *guildsusecase.Service
-	ResonanceService    *resonanceusecase.ResonanceService
-	MatchHub            *ws.MatchHub
-	MCPHandler       *mcp.MCPHandler
-	MCPAuditLogger   *mcp.AuditLogger
-	MCPFilter        *mcp.FairnessFilter
+	Config             config.Config
+	IdentityService    *identity.Service
+	RosterService      *rosterusecase.Service
+	MatchService       *matchesusecase.Service
+	InventoryService   inventoryusecase.Service
+	WeaponService      *weaponsusecase.Service
+	SkillService       *skillsusecase.Service
+	LeagueService      *leaguesusecase.Service
+	LeagueJob          *jobs.LeagueJob
+	RewardService      *rewardsusecase.Service
+	SeasonService      *seasonsusecase.Service
+	ShopService        *shopusecase.Service
+	AttunementService  *attunementusecase.Service
+	DailyService       *dailyusecase.Service
+	LeaderboardService *leaderboardusecase.Service
+	EventService       *eventsusecase.Service
+	GuildService       *guildsusecase.Service
+	ResonanceService   *resonanceusecase.ResonanceService
+	MatchHub           *ws.MatchHub
+	MCPHandler         *mcp.MCPHandler
+	MCPAuditLogger     *mcp.AuditLogger
+	MCPFilter          *mcp.FairnessFilter
 }
 
 func NewRouter(deps Dependencies) http.Handler {
 	r := mux.NewRouter().StrictSlash(true)
-	
+
 	// Create common middleware
 	authMiddleware := func(next http.Handler) http.Handler { return next }
 	if deps.Config.JWTSecret != "" {
@@ -152,6 +152,7 @@ func NewRouter(deps Dependencies) http.Handler {
 
 	if deps.MatchService != nil {
 		h := matchhandlers.NewHandler(deps.MatchService)
+		api.HandleFunc("/match/current", h.GetCurrentMatch).Methods("GET")
 		api.HandleFunc("/match/quick-join", h.QuickJoin).Methods("POST")
 		api.HandleFunc("/match/online-players", h.GetOnlinePlayers).Methods("GET")
 		api.HandleFunc("/match/{id}", func(w http.ResponseWriter, r *http.Request) {
