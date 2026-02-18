@@ -172,7 +172,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getMatch } from '../features/matches/api'
+import { getMatch, getMatchRoundTicks } from '../features/matches/api'
 import { useAuthStore } from '@/features/auth/store'
 
 const route = useRoute()
@@ -338,10 +338,13 @@ const toggleDock = (panel: 'log' | 'settings') => {
 onMounted(async () => {
   try {
     const token = auth.token || ''
-    const data = await getMatch(token, matchId)
-    match.value = data
-    rounds.value = (data as any).roundTicks || []
-    matchStatus.value = data.status
+    const [matchData, roundTicksData] = await Promise.all([
+      getMatch(token, matchId),
+      getMatchRoundTicks(token, matchId).catch(() => [])
+    ])
+    match.value = matchData
+    rounds.value = roundTicksData || []
+    matchStatus.value = matchData.status
     if (orderedRounds.value.length) selectedRound.value = 1
     render()
     requestAnimationFrame(tick)

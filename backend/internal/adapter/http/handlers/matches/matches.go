@@ -174,6 +174,21 @@ func (h *Handler) GetMatch(w http.ResponseWriter, r *http.Request, id string) {
 	responses.JSON(w, http.StatusOK, mapMatch(match, registrations))
 }
 
+func (h *Handler) GetMatchWithResults(w http.ResponseWriter, r *http.Request, id string) {
+	match, err := h.service.GetMatchWithResults(r.Context(), id)
+	if err != nil {
+		log.Printf("match get with results error: %v", err)
+		responses.Error(w, http.StatusInternalServerError, "server error")
+		return
+	}
+	if match == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, match)
+}
+
 func (h *Handler) GetCurrentMatch(w http.ResponseWriter, r *http.Request) {
 	userID, ok := middleware.UserID(r.Context())
 	if !ok {

@@ -189,6 +189,35 @@ func (s *Service) GetMatch(ctx context.Context, id string) (*matches.Match, erro
 	return s.matches.GetByID(ctx, id)
 }
 
+type MatchWithResults struct {
+	*matches.Match
+	RoundTicks json.RawMessage `json:"roundTicks,omitempty"`
+}
+
+func (s *Service) GetMatchWithResults(ctx context.Context, id string) (*MatchWithResults, error) {
+	match, err := s.matches.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if match == nil {
+		return nil, nil
+	}
+
+	result, err := s.results.GetByMatch(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &MatchWithResults{
+		Match: match,
+	}
+	if result != nil {
+		response.RoundTicks = result.RoundTicks
+	}
+
+	return response, nil
+}
+
 func (s *Service) GetTeams(ctx context.Context, matchID string) ([]matches.MatchTeam, error) {
 	return s.teams.ListByMatch(ctx, matchID)
 }

@@ -139,3 +139,8 @@ export async function startMatch(token: string, matchId: string): Promise<void> 
 export async function getMatch(token: string, matchId: string): Promise<Match> {
   return request<Match>(`${endpoints.match}/${matchId}`, { token });
 }
+
+export async function getMatchRoundTicks(token: string, matchId: string): Promise<any[]> {
+  const data = await request<any[]>(`${endpoints.match}/${matchId}/roundticks`, { token });
+  return data;
+}
