@@ -577,7 +577,8 @@ async function fetchMatches() {
   if (!auth.token) return;
   isLoading.value = true;
   try {
-    const data = await getMatches(auth.token, 1, 50);
+    const statusFilter = browseStatus.value === 'all' ? undefined : browseStatus.value;
+    const data = await getMatches(auth.token, 1, 50, statusFilter);
     matches.value = data?.items ?? [];
     
     matchCounts.value = {
