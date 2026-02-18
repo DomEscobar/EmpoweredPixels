@@ -11,6 +11,7 @@ type MatchRepository interface {
 	Create(ctx context.Context, match *matches.Match) error
 	GetByID(ctx context.Context, id string) (*matches.Match, error)
 	Update(ctx context.Context, match *matches.Match) error
+	ListAll(ctx context.Context, limit int, offset int) ([]matches.Match, error)
 	ListOpen(ctx context.Context, limit int, offset int) ([]matches.Match, error)
 	ListByStatus(ctx context.Context, status string, limit int, offset int) ([]matches.Match, error)
 	GetCurrentMatch(ctx context.Context, userID int64) (*matches.Match, error)

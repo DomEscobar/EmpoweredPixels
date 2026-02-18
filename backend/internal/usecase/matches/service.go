@@ -35,20 +35,20 @@ type Hub interface {
 }
 
 type Service struct {
-	matches      MatchRepository
-	teams        TeamRepository
+	matches       MatchRepository
+	teams         TeamRepository
 	registrations RegistrationRepository
-	results      ResultRepository
-	scores       ScoreRepository
-	fighters     FighterRepository
-	inventory    inventoryusecase.Service
-	resonance    *resonance.ResonanceService
-	rewards      *rewards.Service
-	roster       *rosterusecase.Service
-	engine       *engine.Client
-	hub          Hub
-	now          func() time.Time
-	achievements AchievementRepository
+	results       ResultRepository
+	scores        ScoreRepository
+	fighters      FighterRepository
+	inventory     inventoryusecase.Service
+	resonance     *resonance.ResonanceService
+	rewards       *rewards.Service
+	roster        *rosterusecase.Service
+	engine        *engine.Client
+	hub           Hub
+	now           func() time.Time
+	achievements  AchievementRepository
 }
 
 type AchievementRepository interface {
@@ -196,7 +196,7 @@ func (s *Service) GetRegistrations(ctx context.Context, matchID string) ([]match
 }
 
 func (s *Service) BrowseMatches(ctx context.Context, page int, pageSize int) ([]matches.Match, error) {
-	return s.BrowseByStatus(ctx, matches.MatchStatusLobby, page, pageSize)
+	return s.matches.ListAll(ctx, page, pageSize)
 }
 
 func (s *Service) BrowseByStatus(ctx context.Context, status string, page int, pageSize int) ([]matches.Match, error) {
@@ -208,7 +208,7 @@ func (s *Service) BrowseByStatus(ctx context.Context, status string, page int, p
 	}
 	offset := (page - 1) * pageSize
 	if status == "" {
-		status = matches.MatchStatusLobby
+		return s.matches.ListAll(ctx, pageSize, offset)
 	}
 	return s.matches.ListByStatus(ctx, status, pageSize, offset)
 }
@@ -471,7 +471,7 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 	simulator := NewBattleSimulator()
 	// Convert MatchOptions to BattleOptions
 	battleOptions := BattleOptions{
-		MaxRounds: 100, // Default value
+		MaxRounds: 100,  // Default value
 		MapSize:   30.0, // Default value
 	}
 	result, err := simulator.Run(matchID, fighters, battleOptions)
@@ -590,7 +590,6 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 
 	return nil
 }
-
 
 func (s *Service) tryAutoStart(matchID string, options MatchOptions) {
 	go func() {

@@ -84,6 +84,32 @@ func (r *MatchRepository) GetByID(ctx context.Context, id string) (*matches.Matc
 	return &match, nil
 }
 
+func (r *MatchRepository) ListAll(ctx context.Context, limit int, offset int) ([]matches.Match, error) {
+	const query = `
+		select id, creator_user_id, created, started, completed_at, cancelled_at, status, options
+		from matches
+		order by created desc
+		limit $1 offset $2`
+
+	rows, err := r.pool.Query(ctx, query, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []matches.Match
+	for rows.Next() {
+		var match matches.Match
+		if err := rows.Scan(&match.ID, &match.CreatorUserID, &match.Created, &match.Started,
+			&match.CompletedAt, &match.CancelledAt, &match.Status, &match.Options); err != nil {
+			return nil, err
+		}
+		result = append(result, match)
+	}
+
+	return result, rows.Err()
+}
+
 func (r *MatchRepository) ListOpen(ctx context.Context, limit int, offset int) ([]matches.Match, error) {
 	return r.ListByStatus(ctx, matches.MatchStatusLobby, limit, offset)
 }

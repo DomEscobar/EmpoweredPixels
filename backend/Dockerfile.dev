@@ -1,0 +1,16 @@
+FROM golang:1.23-alpine
+WORKDIR /app
+
+# Install air (live reload) - use correct repo path
+ENV GOTOOLCHAIN=auto
+RUN go install github.com/air-verse/air@latest
+ENV PATH=$PATH:/go/bin
+
+# Copy source (air will rebuild on changes)
+COPY . .
+
+# Expose backend port
+EXPOSE 54321
+
+# Air watches for changes and rebuilds/restarts automatically
+CMD ["air"]
