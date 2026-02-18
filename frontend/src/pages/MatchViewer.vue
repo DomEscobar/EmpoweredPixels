@@ -122,7 +122,8 @@
              <!-- Controls Row -->
              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-1 gap-3">
                 <div class="flex items-center gap-3 sm:gap-4">
-                   <button @click="togglePlayback" class="rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black h-10 w-10 flex items-center justify-center">
+                    <button @click="togglePlayback" class="rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black h-10 w-10 flex items-center justify-center">
+                      <!-- Mobile: full canvas, tiny controls, log modal 30svh, config cog -->
                       <span v-if="isPlaying">||</span>
                       <span v-else class="ml-1">></span>
                    </button>
