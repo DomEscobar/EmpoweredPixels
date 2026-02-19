@@ -50,6 +50,22 @@ func (s *Service) IssueReward(ctx context.Context, userID int64, poolID string) 
 		UserID:       userID,
 		RewardPoolID: poolID,
 		Created:      s.now(),
+		Claimed:      nil,
+	}
+
+	if err := s.rewards.Create(ctx, reward); err != nil {
+		return nil, err
+	}
+
+	return reward, nil
+}
+
+func (s *Service) IssueAndClaimReward(ctx context.Context, userID int64, poolID string) (*rewards.Reward, error) {
+	reward := &rewards.Reward{
+		ID:           uuid.NewString(),
+		UserID:       userID,
+		RewardPoolID: poolID,
+		Created:      s.now(),
 		Claimed:      func() *time.Time { t := s.now(); return &t }(),
 	}
 

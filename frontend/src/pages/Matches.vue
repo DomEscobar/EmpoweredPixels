@@ -610,7 +610,14 @@ async function fetchCurrentMatch() {
 
 function connectWebSocket() {
   if (!auth.token || !currentMatchId.value) return;
-  const base = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:54321').replace(/^http/, 'ws');
+  
+  // Robustly construct WebSocket URL by stripping trailing slashes and /api suffix
+  let base = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:54321').replace(/\/$/, '');
+  if (base.endsWith('/api')) {
+    base = base.substring(0, base.length - 4);
+  }
+  base = base.replace(/^http/, 'ws');
+  
   const url = `${base}/ws/match`;
   
   if (wsRef.value) disconnectWebSocket();

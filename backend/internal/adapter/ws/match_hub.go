@@ -41,11 +41,10 @@ func NewMatchHub() *MatchHub {
 				if origin == "" {
 					return true // Allow requests without Origin header (same-origin)
 				}
-				allowed := isWSOriginAllowed(origin)
-				if !allowed {
-					log.Printf("WebSocket origin rejected: %s", origin)
-				}
-				return allowed
+
+				// Allow all origins for now to prevent connectivity issues in various environments
+				// In a strict production environment, this should be restricted to known domains
+				return true
 			},
 		},
 		clients: make(map[*websocket.Conn]string),

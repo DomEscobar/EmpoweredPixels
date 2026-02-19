@@ -146,13 +146,64 @@
                      <div class="text-2xl font-black text-amber-400">+ {{ rewardsStore.rewardCount * 20 }} <span class="text-sm text-amber-600">Particles</span></div>
                  </div>
 
-                 <button @click="claimAndExit" class="w-full py-4 mt-2 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg hover:shadow-amber-500/20 active:scale-95 transition-all text-sm border-t border-amber-300">
-                    {{ rewardsStore.isLoading ? 'Claiming...' : 'Claim Rewards & Exit' }}
+                 <button @click="claimAndExit" :disabled="rewardsStore.isLoading" class="w-full py-4 mt-2 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg hover:shadow-amber-500/20 active:scale-95 transition-all text-sm border-t border-amber-300 disabled:opacity-70 disabled:cursor-not-allowed">
+                    <span v-if="rewardsStore.isLoading" class="flex items-center justify-center gap-2">
+                      <span class="animate-spin">↻</span> Claiming...
+                    </span>
+                    <span v-else>Claim Rewards & Exit</span>
                  </button>
              </div>
          </div>
     </div>
 
+    <!-- Claim Summary Modal -->
+    <div v-if="showClaimSummary" class="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-300 pointer-events-auto">
+      <div class="bg-slate-900 border-4 border-amber-600 p-8 rounded-2xl shadow-[0_0_100px_rgba(245,158,11,0.3)] max-w-lg w-full text-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,rgba(245,158,11,0.1)_20deg,transparent_40deg)] animate-[spin_10s_linear_infinite] pointer-events-none"></div>
+        
+        <div class="relative z-10 flex flex-col gap-4">
+          <div class="text-6xl mb-2 animate-bounce">🎉</div>
+          <h2 class="text-3xl font-black text-amber-400 text-shadow-retro uppercase tracking-wider">Loot Received</h2>
+          
+          <div class="pixel-box bg-slate-950/50 p-6 space-y-4">
+            <!-- Particles -->
+            <div class="flex items-center justify-center gap-3 text-amber-300">
+              <span class="text-2xl">✨</span>
+              <span class="text-xl font-bold">+{{ (summaryContent?.items?.length || 0) * 20 }} Particles</span>
+            </div>
+            
+            <!-- Items -->
+            <div v-if="summaryContent?.items?.length" class="space-y-2">
+              <p class="text-xs uppercase text-slate-500 font-bold tracking-widest">Items</p>
+              <div v-for="item in summaryContent.items" :key="item.id" class="flex items-center justify-center gap-2 text-slate-200 bg-slate-800/50 p-2 rounded">
+                <span class="text-amber-400">#{{ item.itemId }}</span>
+                <span class="text-slate-400">x1</span>
+                <span v-if="item.rarity" class="text-xs px-1 border rounded" :class="rarityColor(item.rarity)">{{ rarityName(item.rarity) }}</span>
+              </div>
+            </div>
+            
+            <!-- Equipment -->
+            <div v-if="summaryContent?.equipment?.length" class="space-y-2">
+              <p class="text-xs uppercase text-slate-500 font-bold tracking-widest">Equipment</p>
+              <div v-for="eq in summaryContent.equipment" :key="eq.id" class="flex items-center justify-center gap-2 text-slate-200 bg-slate-800/50 p-2 rounded">
+                <span class="text-emerald-400">⚔️ {{ eq.type }}</span>
+                <span class="text-slate-400">Lv.{{ eq.level }}</span>
+                <span v-if="eq.rarity" class="text-xs px-1 border rounded" :class="rarityColor(eq.rarity)">{{ rarityName(eq.rarity) }}</span>
+                <span v-if="eq.isFavorite" class="text-amber-400">★</span>
+              </div>
+            </div>
+            
+            <div v-if="!summaryContent?.items?.length && !summaryContent?.equipment?.length" class="text-slate-500 italic">
+              No items received.
+            </div>
+          </div>
+          
+          <button @click="exitToMatches" class="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg text-sm border-t border-amber-300">
+            Continue to Matches →
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -164,6 +215,7 @@ import { useAuthStore } from '@/features/auth/store';
 import BaseButton from '@/shared/ui/BaseButton.vue';
 import { useRosterStore } from '@/features/roster/store';
 import { useRewardsStore } from '@/features/rewards/store';
+import type { RewardContent } from '@/features/rewards/api';
 
 // Pixel Assets Definition
 const PIXEL_ASSETS = {
@@ -190,6 +242,10 @@ const isLoading = ref(false);
 let livePollHandle: number | null = null;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const roundStateMap = ref<Record<number, RoundState>>({});
+
+// Claim Summary State
+const showClaimSummary = ref(false);
+const summaryContent = ref<RewardContent | null>(null);
 
 // Asset Preloading
 const images: Record<string, HTMLImageElement> = {};
@@ -1413,17 +1469,43 @@ const isWinner = computed(() => {
   return Object.values(finalState.entities).some(e => playerIds.has(e.id) && e.alive);
 });
 
+// Helper: Rarity display
+const rarityName = (rarity: number): string => {
+  const names = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic'];
+  return names[rarity] || 'Unknown';
+};
+
+const rarityColor = (rarity: number): string => {
+  const colors = [
+    'bg-slate-700 text-slate-300',
+    'bg-green-900/50 text-green-400 border-green-700',
+    'bg-blue-900/50 text-blue-400 border-blue-700',
+    'bg-purple-900/50 text-purple-400 border-purple-700',
+    'bg-amber-900/50 text-amber-400 border-amber-700',
+    'bg-rose-900/50 text-rose-400 border-rose-700'
+  ];
+  return colors[rarity] || 'bg-slate-800 text-slate-400';
+};
+
 const claimAndExit = async () => {
-   try {
-     rewardsStore.isLoading = true; // Manual loading state in case store doesn't trigger
-     await rewardsStore.claimAll();
-     router.push('/matches');
-   } catch (e) {
-     console.error("Failed to claim rewards:", e);
-     alert("Failed to claim rewards. Please try again.");
-   } finally {
-     rewardsStore.isLoading = false;
-   }
+  try {
+    const content = await rewardsStore.claimAll();
+    summaryContent.value = content || null;
+    showClaimSummary.value = true;
+  } catch (e: any) {
+    console.error("Failed to claim rewards:", e);
+    let msg = "Failed to claim rewards.";
+    if (e?.response?.status === 401) msg = "Session expired. Please log in again.";
+    else if (e?.response?.status === 409) msg = "Rewards already claimed.";
+    else if (e?.response?.status >= 500) msg = "Server error. Please try again later.";
+    else if (!navigator.onLine) msg = "No internet connection.";
+    alert(msg);
+  }
+};
+
+const exitToMatches = () => {
+  showClaimSummary.value = false;
+  router.push('/matches');
 };
 
 // Data Fetching
@@ -1579,7 +1661,10 @@ function startLivePoll() {
   livePollHandle = window.setInterval(async () => {
     const status = await fetchMatchStatus();
     await fetchLogs(true);
-    if (status === 'completed') stopLivePoll();
+    if (status === 'completed') {
+      await rewardsStore.fetchRewards();
+      stopLivePoll();
+    }
   }, 2500);
 }
 
