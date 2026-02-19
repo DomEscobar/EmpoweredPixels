@@ -647,7 +647,7 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 					pool = "match_win"
 				}
 
-				if _, err := s.rewards.IssueReward(ctx, f.UserID, pool); err != nil {
+				if _, err := s.rewards.IssueReward(ctx, f.UserID, pool, &matchID); err != nil {
 					// log error but don't fail the match execution
 				}
 				rewardedUsers[f.UserID] = true

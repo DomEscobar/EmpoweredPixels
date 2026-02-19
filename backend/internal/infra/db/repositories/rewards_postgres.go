@@ -21,16 +21,16 @@ func NewRewardRepository(pool *pgxpool.Pool) *RewardRepository {
 
 func (r *RewardRepository) Create(ctx context.Context, reward *rewards.Reward) error {
 	const query = `
-		insert into rewards (id, user_id, reward_pool_id, claimed, created)
-		values ($1, $2, $3, $4, $5)`
+		insert into rewards (id, user_id, reward_pool_id, source_id, claimed, created)
+		values ($1, $2, $3, $4, $5, $6)`
 
-	_, err := r.pool.Exec(ctx, query, reward.ID, reward.UserID, reward.RewardPoolID, reward.Claimed, reward.Created)
+	_, err := r.pool.Exec(ctx, query, reward.ID, reward.UserID, reward.RewardPoolID, reward.SourceID, reward.Claimed, reward.Created)
 	return err
 }
 
 func (r *RewardRepository) ListUnclaimed(ctx context.Context, userID int64) ([]rewards.Reward, error) {
 	const query = `
-		select id, user_id, reward_pool_id, claimed, created
+		select id, user_id, reward_pool_id, source_id, claimed, created
 		from rewards
 		where user_id = $1 and claimed is null`
 
@@ -43,7 +43,7 @@ func (r *RewardRepository) ListUnclaimed(ctx context.Context, userID int64) ([]r
 	var result []rewards.Reward
 	for rows.Next() {
 		var reward rewards.Reward
-		if err := rows.Scan(&reward.ID, &reward.UserID, &reward.RewardPoolID, &reward.Claimed, &reward.Created); err != nil {
+		if err := rows.Scan(&reward.ID, &reward.UserID, &reward.RewardPoolID, &reward.SourceID, &reward.Claimed, &reward.Created); err != nil {
 			return nil, err
 		}
 		result = append(result, reward)
@@ -53,13 +53,13 @@ func (r *RewardRepository) ListUnclaimed(ctx context.Context, userID int64) ([]r
 
 func (r *RewardRepository) GetUnclaimed(ctx context.Context, userID int64, rewardID string, poolID string) (*rewards.Reward, error) {
 	const query = `
-		select id, user_id, reward_pool_id, claimed, created
+		select id, user_id, reward_pool_id, source_id, claimed, created
 		from rewards
 		where id = $1 and reward_pool_id = $2 and user_id = $3 and claimed is null`
 
 	var reward rewards.Reward
 	err := r.pool.QueryRow(ctx, query, rewardID, poolID, userID).Scan(
-		&reward.ID, &reward.UserID, &reward.RewardPoolID, &reward.Claimed, &reward.Created,
+		&reward.ID, &reward.UserID, &reward.RewardPoolID, &reward.SourceID, &reward.Claimed, &reward.Created,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil

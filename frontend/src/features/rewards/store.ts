@@ -18,6 +18,10 @@ export const useRewardsStore = defineStore("rewards", {
   }),
   getters: {
     rewardCount: (state) => state.rewards.length,
+    hasRewardForSource: (state) => (sourceId: string) => 
+      state.rewards.some(r => r.sourceId === sourceId),
+    getRewardsForSource: (state) => (sourceId: string) =>
+      state.rewards.filter(r => r.sourceId === sourceId),
   },
   actions: {
     async fetchRewards() {

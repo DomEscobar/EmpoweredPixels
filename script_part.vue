@@ -1,242 +1,12 @@
-<template>
-  <div class="relative w-full h-[100svh] overflow-hidden bg-slate-950 font-mono text-slate-200 select-none">
-    
-    <!-- Canvas (Background Layer) -->
-    <div class="absolute inset-0 z-0 bg-[#050505]">
-       <canvas
-          ref="canvasRef"
-          class="w-full h-full block cursor-grab active:cursor-grabbing pixelated"
-          @mousedown="startDrag"
-          @mousemove="onDrag"
-          @mouseup="endDrag"
-          @mouseleave="endDrag"
-          @wheel.prevent="onWheel"
-          @touchstart="onTouchStart"
-          @touchmove="onTouchMove"
-          @touchend="onTouchEnd"
-       ></canvas>
-    </div>
-
-    <!-- Global Vignette -->
-    <div class="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.7)_100%)]"></div>
-
-    <!-- Loading Overlay -->
-    <div v-if="isLoading" class="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-        <div class="flex flex-col items-center gap-4">
-            <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-            <div class="text-amber-500 font-bold tracking-widest animate-pulse text-shadow-retro">LOADING DUNGEON...</div>
-        </div>
-    </div>
-
-    <!-- Match Status (Top Left) -->
-    <div class="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-none max-w-[50%]">
-        <div class="pointer-events-auto flex items-center gap-3">
-             <button @click="$router.push('/matches')" class="px-3 py-2 bg-slate-900/90 border border-slate-700 text-slate-300 hover:text-white hover:border-amber-500/50 transition-colors text-xs font-bold uppercase tracking-wider backdrop-blur-md rounded shadow-lg">
-                ← Exit
-            </button>
-        </div>
-        
-        <div class="flex flex-wrap items-center gap-2">
-            <h1 class="text-amber-500 font-black text-xs sm:text-lg leading-none tracking-tight shadow-black drop-shadow-md text-shadow-retro">MATCH #{{ matchId?.substring(0,8) }}</h1>
-            
-            <div v-if="matchStatus === 'running'" class="flex items-center gap-1.5 px-2 py-0.5 bg-rose-900/40 border border-rose-500/40 rounded backdrop-blur-sm">
-               <span class="animate-pulse w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
-               <span class="text-[10px] text-rose-300 font-bold uppercase">LIVE</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Round Counter & Log Toggle (Top Right) -->
-    <div class="absolute top-4 right-4 z-10 pointer-events-none flex items-start gap-2">
-        <!-- Log Toggle -->
-        <button @click="showLogs = !showLogs" class="pointer-events-auto h-[3.25rem] w-[3.25rem] flex items-center justify-center bg-slate-900/80 border-2 border-slate-700 rounded-lg backdrop-blur-md shadow-xl text-2xl hover:text-white hover:border-amber-500 transition-colors" :class="{'text-amber-500 border-amber-500/50': showLogs, 'text-slate-500': !showLogs}">
-            📜
-        </button>
-
-        <!-- Round Counter -->
-        <div class="bg-slate-900/80 border-2 border-slate-700 px-4 py-2 backdrop-blur-md rounded-lg shadow-xl text-right min-w-[100px]">
-            <div class="text-[10px] text-slate-500 uppercase font-bold tracking-widest text-center mb-0.5">Step</div>
-            <div class="text-2xl sm:text-3xl font-black text-amber-500 leading-none text-center">
-                {{ currentIndex + 1 }} <span class="text-slate-600 text-base sm:text-lg">/ {{ orderedRounds.length }}</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Controls Bar (Bottom) -->
-    <div class="absolute bottom-6 left-4 right-4 z-20 flex flex-col gap-3 group transition-opacity hover:opacity-100" :class="{'opacity-0': isPlaying && !showControlsHover}">
-        
-        <!-- Timeline Bar -->
-        <div class="w-full h-3 bg-slate-900/80 border border-slate-700 rounded-full cursor-pointer relative overflow-hidden backdrop-blur-sm shadow-lg group/bar" @click="seekToPercent">
-            <!-- Progress Fill -->
-            <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-amber-700 to-amber-500 transition-all duration-100" :style="{ width: progressPercent + '%' }"></div>
-            <!-- Hover Tick -->
-            <div class="absolute top-0 bottom-0 w-0.5 bg-white opacity-0 group-hover/bar:opacity-100 transition-opacity pointer-events-none mix-blend-overlay"></div>
-        </div>
-
-        <!-- Buttons Row -->
-        <div class="flex items-center justify-center pointer-events-auto w-full">
-            
-            <div class="flex items-center gap-2 sm:gap-4 bg-slate-900/90 border border-slate-700 p-2 rounded-xl backdrop-blur-md shadow-2xl">
-                <!-- Play/Pause -->
-                <button @click="togglePlayback" class="w-10 h-10 flex items-center justify-center bg-amber-600 rounded-lg text-slate-900 font-black hover:bg-amber-500 active:scale-95 transition-all border-b-4 border-amber-800 active:border-b-0 active:translate-y-1 shadow-lg">
-                    <span v-if="isPlaying" class="text-lg">||</span>
-                    <span v-else class="text-lg pl-0.5">▶</span>
-                </button>
-                
-                <div class="w-px h-8 bg-slate-700 mx-1"></div>
-
-                <!-- Step Controls -->
-                <div class="flex items-center gap-1">
-                    <button @click="stepRound(-1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded font-bold transition-colors">
-                        ⏮
-                    </button>
-                    <button @click="stepRound(1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded font-bold transition-colors">
-                        ⏭
-                    </button>
-                </div>
-
-                <!-- Speed -->
-                <div class="flex items-center gap-2 bg-slate-950 rounded px-2 py-1 ml-2 border border-slate-800">
-                    <span class="text-[10px] font-bold text-slate-500">SPEED</span>
-                    <input type="range" min="0.5" max="4" step="0.5" v-model.number="playbackSpeed" class="w-16 accent-amber-500 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer" />
-                    <span class="text-[10px] font-mono font-bold text-amber-500 w-6 text-right">{{ playbackSpeed }}x</span>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Floating Combat Log (Drawer) -->
-    <transition name="slide-up">
-        <div v-if="showLogs" class="absolute bottom-24 right-4 z-30 w-full max-w-sm max-h-[40vh] bg-slate-900/95 border-2 border-slate-700 rounded-xl shadow-2xl backdrop-blur-xl flex flex-col font-mono text-xs overflow-hidden animate-in slide-in-from-bottom-4 fade-in duration-300">
-            <div class="flex items-center justify-between p-3 border-b border-slate-700 bg-slate-950/50">
-                <span class="text-amber-500 font-bold uppercase tracking-widest flex items-center gap-2">
-                    <span>⚔️</span> Combat Events
-                </span>
-                <button @click="showLogs = false" class="text-slate-500 hover:text-white px-2">✕</button>
-            </div>
-            <div class="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent" ref="logsContainer">
-                  <div v-for="(log, i) in combatLogs" :key="i" class="p-2 rounded bg-slate-950/50 border-l-2 border-slate-700 hover:bg-slate-800/50 transition-colors">
-                    <div class="opacity-80 break-words" v-html="log"></div>
-                  </div>
-                 <div v-if="combatLogs.length === 0" class="text-center py-6 text-slate-600 italic">No combat events recorded yet...</div>
-            </div>
-        </div>
-    </transition>
-
-    <!-- Post-Match Victory Overlay -->
-    <div v-if="matchStatus === 'completed' && orderedRounds.length && currentIndex >= orderedRounds.length - 1" class="absolute inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-in fade-in duration-700 pointer-events-auto">
-         <div class="bg-slate-900 border-4 border-amber-600 p-8 rounded-2xl shadow-[0_0_100px_rgba(245,158,11,0.3)] max-w-lg w-full text-center relative overflow-hidden group">
-             <!-- Rays Effect -->
-             <div class="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,rgba(245,158,11,0.1)_20deg,transparent_40deg)] animate-[spin_10s_linear_infinite] pointer-events-none"></div>
-             
-             <div class="relative z-10 flex flex-col gap-4">
-                 <img v-if="isWinner" :src="PIXEL_ASSETS.ICON_TROPHY" class="w-24 h-24 mx-auto animate-bounce pixelated drop-shadow-xl" />
-                 <img v-else :src="PIXEL_ASSETS.ICON_SKULL" class="w-20 h-20 mx-auto grayscale opacity-50 pixelated" />
-                 
-                 <h2 class="text-4xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-amber-300 to-amber-600 text-shadow-lg" :class="isWinner ? 'from-amber-300 to-amber-600' : 'from-slate-400 to-slate-700'">
-                    {{ isWinner ? 'VICTORY' : 'DEFEAT' }}
-                 </h2>
-
-                 <div class="w-full h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent my-2"></div>
-
-                 <!-- Rewards -->
-                 <div v-if="rewardsStore.hasRewardForSource(matchId)" class="flex flex-col gap-3 bg-black/40 p-4 rounded-xl border border-amber-500/30">
-                     <span class="text-[10px] uppercase font-bold text-amber-200/70 tracking-widest">Rewards Available</span>
-                     <div class="text-2xl font-black text-amber-400">+ {{ rewardsStore.getRewardsForSource(matchId).length * 20 }} <span class="text-sm text-amber-600">Particles</span></div>
-                 </div>
-
-                 <div class="flex flex-col gap-2 mt-2">
-                    <button @click="claimAndExit" :disabled="rewardsStore.isLoading" class="w-full py-4 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg hover:shadow-amber-500/20 active:scale-95 transition-all text-sm border-t border-amber-300 disabled:opacity-70 disabled:cursor-not-allowed">
-                        <span v-if="rewardsStore.isLoading" class="flex items-center justify-center gap-2">
-                        <span class="animate-spin">↻</span> Claiming...
-                        </span>
-                        <span v-else>{{ rewardsStore.hasRewardForSource(matchId) ? 'Claim Rewards & Exit' : 'Exit to Matches' }}</span>
-                    </button>
-
-                    <div class="flex gap-2">
-                        <button @click="replayMatch" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold uppercase tracking-wider rounded-xl transition-colors text-xs border border-slate-600">
-                            Replay Match
-                        </button>
-                        <button v-if="rewardsStore.hasRewardForSource(matchId)" @click="exitToMatches" class="flex-1 py-3 bg-rose-900/20 hover:bg-rose-900/40 text-rose-400 font-bold uppercase tracking-wider rounded-xl transition-colors text-xs border border-rose-500/30">
-                            Exit (No Loot)
-                        </button>
-                    </div>
-                 </div>
-             </div>
-         </div>
-    </div>
-
-    <!-- Claim Summary Modal -->
-    <div v-if="showClaimSummary" class="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-300 pointer-events-auto">
-      <div class="bg-slate-900 border-4 border-amber-600 p-8 rounded-2xl shadow-[0_0_100px_rgba(245,158,11,0.3)] max-w-lg w-full text-center relative overflow-hidden">
-        <div class="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,rgba(245,158,11,0.1)_20deg,transparent_40deg)] animate-[spin_10s_linear_infinite] pointer-events-none"></div>
-        
-        <div class="relative z-10 flex flex-col gap-4">
-          <div class="text-6xl mb-2 animate-bounce">🎉</div>
-          <h2 class="text-3xl font-black text-amber-400 text-shadow-retro uppercase tracking-wider">Loot Received</h2>
-          
-          <div class="pixel-box bg-slate-950/50 p-6 space-y-4">
-            <!-- Particles -->
-            <div class="flex items-center justify-center gap-3 text-amber-300">
-              <span class="text-2xl">✨</span>
-              <span class="text-xl font-bold">+{{ (summaryContent?.items?.length || 0) * 20 }} Particles</span>
-            </div>
-            
-            <!-- Items -->
-            <div v-if="summaryContent?.items?.length" class="space-y-2">
-              <p class="text-xs uppercase text-slate-500 font-bold tracking-widest">Items</p>
-              <div v-for="item in summaryContent.items" :key="item.id" class="flex items-center justify-center gap-2 text-slate-200 bg-slate-800/50 p-2 rounded">
-                <span class="text-amber-400">#{{ item.itemId }}</span>
-                <span class="text-slate-400">x1</span>
-                <span v-if="item.rarity" class="text-xs px-1 border rounded" :class="rarityColor(item.rarity)">{{ rarityName(item.rarity) }}</span>
-              </div>
-            </div>
-            
-            <!-- Equipment -->
-            <div v-if="summaryContent?.equipment?.length" class="space-y-2">
-              <p class="text-xs uppercase text-slate-500 font-bold tracking-widest">Equipment</p>
-              <div v-for="eq in summaryContent.equipment" :key="eq.id" class="flex items-center justify-center gap-2 text-slate-200 bg-slate-800/50 p-2 rounded">
-                <span class="text-emerald-400">⚔️ {{ eq.type }}</span>
-                <span class="text-slate-400">Lv.{{ eq.level }}</span>
-                <span v-if="eq.rarity" class="text-xs px-1 border rounded" :class="rarityColor(eq.rarity)">{{ rarityName(eq.rarity) }}</span>
-                <span v-if="eq.isFavorite" class="text-amber-400">★</span>
-              </div>
-            </div>
-            
-            <div v-if="!summaryContent?.items?.length && !summaryContent?.equipment?.length" class="text-slate-500 italic">
-              No items received.
-            </div>
-          </div>
-          
-          <div class="flex flex-col gap-2">
-            <button @click="exitToMatches" class="w-full py-4 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg text-sm border-t border-amber-300">
-                Continue to Matches →
-            </button>
-            <div class="flex gap-2">
-                <button @click="replayMatch" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold uppercase tracking-wider rounded-xl transition-colors text-xs border border-slate-600">
-                    Replay
-                </button>
-                <button @click="showClaimSummary = false" class="flex-1 py-3 bg-slate-900/50 hover:bg-slate-800 text-slate-500 font-bold uppercase tracking-wider rounded-xl transition-colors text-xs border border-slate-700">
-                    Close
-                </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick, computed, onUnmounted, reactive } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { request } from '@/shared/api/http';
 import { endpoints } from '@/shared/api/endpoints';
 import { useAuthStore } from '@/features/auth/store';
 import BaseButton from '@/shared/ui/BaseButton.vue';
 import { useRosterStore } from '@/features/roster/store';
 import { useRewardsStore } from '@/features/rewards/store';
-import type { RewardContent } from '@/features/rewards/api';
 
 // Pixel Assets Definition
 const PIXEL_ASSETS = {
@@ -255,7 +25,6 @@ const auth = useAuthStore();
 const roster = useRosterStore();
 const rewardsStore = useRewardsStore();
 const route = useRoute();
-const router = useRouter(); // Added router
 const matchId = ref(route.params.id as string);
 const matchStatus = ref<string | null>(null);
 const ticks = ref<any[]>([]);
@@ -263,10 +32,6 @@ const isLoading = ref(false);
 let livePollHandle: number | null = null;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const roundStateMap = ref<Record<number, RoundState>>({});
-
-// Claim Summary State
-const showClaimSummary = ref(false);
-const summaryContent = ref<RewardContent | null>(null);
 
 // Asset Preloading
 const images: Record<string, HTMLImageElement> = {};
@@ -317,8 +82,7 @@ type Particle = {
 };
 const particles = ref<Particle[]>([]);
 
-const currentIndex = ref(0);
-const selectedRound = computed(() => orderedRounds.value[currentIndex.value] || 0);
+const selectedRound = ref(0);
 const isPlaying = ref(false);
 const playbackSpeed = ref(1.0);
 let playbackHandle: number | null = null;
@@ -409,56 +173,6 @@ const statusBadgeClass = computed(() => {
 
 const orderedRounds = computed(() => ticks.value.map((round) => round.round));
 
-const combatLogs = computed(() => {
-  const round = roundStateMap.value[selectedRound.value];
-  if (!round) return [];
-  const logs = [] as string[];
-  
-  // Format Entity Name Helper
-  const getName = (id: string) => {
-    const ent = round.entities[id];
-    if (!ent) return id.substring(0,6);
-    // return ent.isPlayer ? `<span class="text-emerald-400">${id.substring(0,6)}</span>` : `<span class="text-rose-400">${id.substring(0,6)}</span>`;
-    return id.substring(0,6);
-  };
-
-  // Attacks
-  for (const a of round.events.attacks) {
-     logs.push(`<span class="text-amber-400 font-bold">${getName(a.attackerId)}</span> hit <span class="text-rose-400 font-bold">${getName(a.targetId)}</span> for ${a.damage}`);
-  }
-  
-  // Sunder
-  for (const s of round.events.sunder) {
-     logs.push(`<span class="text-rose-400 font-bold">${getName(s.targetId)}</span> sundered (${s.stacks} stacks, -${s.armorReduced} armor)`);
-  }
-  
-  // Flurry
-  for (const f of round.events.flurry) {
-     logs.push(`<span class="text-amber-400 font-bold">${getName(f.fighterId)}</span> entered FLURRY (+${Math.round(f.attackSpeedBonus * 100)}% speed)`);
-  }
-  
-  // Momentum
-  for (const m of round.events.momentum) {
-    if (m.momentum >= 100) {
-      logs.push(`<span class="text-blue-400 font-bold">${getName(m.fighterId)}</span> max momentum!`);
-    }
-  }
-
-  // Deaths
-  for (const d of round.events.deaths) {
-     logs.push(`<span class="text-purple-400 font-bold">${getName(d)}</span> was defeated.`);
-  }
-
-  if (!logs.length) {
-      // Check movement
-      const moves = Object.values(round.entities).filter(e => e.isMoving).length;
-      if (moves > 0) logs.push(`<span class="text-slate-500 italic">${moves} units repositioned.</span>`);
-      else logs.push('<span class="text-slate-600 italic">...steady...</span>');
-  }
-  
-  return logs;
-});
-
 const progressPercent = computed(() => {
   if (!orderedRounds.value.length) return 0;
   const idx = orderedRounds.value.indexOf(selectedRound.value);
@@ -515,50 +229,7 @@ const onDrag = (e: MouseEvent) => {
   camera.y += dy;
   camera.lastX = e.clientX;
   camera.lastY = e.clientY;
-};
-
-// Touch Controls (Pinch & Drag)
-let lastPinchDist = 0;
-
-const onTouchStart = (e: TouchEvent) => {
-  if (e.touches.length === 1) {
-    camera.isDragging = true;
-    camera.lastX = e.touches[0].clientX;
-    camera.lastY = e.touches[0].clientY;
-  } else if (e.touches.length === 2) {
-    camera.isDragging = false; // Stop dragging when pinching
-    const dx = e.touches[0].clientX - e.touches[1].clientX;
-    const dy = e.touches[0].clientY - e.touches[1].clientY;
-    lastPinchDist = Math.sqrt(dx * dx + dy * dy);
-  }
-};
-
-const onTouchMove = (e: TouchEvent) => {
-  e.preventDefault(); // Prevent page scroll
-  
-  if (e.touches.length === 1 && camera.isDragging) {
-    const dx = e.touches[0].clientX - camera.lastX;
-    const dy = e.touches[0].clientY - camera.lastY;
-    camera.x += dx;
-    camera.y += dy;
-    camera.lastX = e.touches[0].clientX;
-    camera.lastY = e.touches[0].clientY;
-  } else if (e.touches.length === 2) {
-    const dx = e.touches[0].clientX - e.touches[1].clientX;
-    const dy = e.touches[0].clientY - e.touches[1].clientY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    
-    if (lastPinchDist > 0) {
-      const delta = dist - lastPinchDist;
-      zoom(delta * 0.01); // Zoom sensitivity
-    }
-    lastPinchDist = dist;
-  }
-};
-
-const onTouchEnd = () => {
-  camera.isDragging = false;
-  lastPinchDist = 0;
+  // No need to call render here, visual loop handles it
 };
 
 const endDrag = () => { camera.isDragging = false; };
@@ -1412,12 +1083,13 @@ const visualLoop = (time: number) => {
       }
 
       if (progress >= 1) {
-         const nextIndex = currentIndex.value + 1;
+         const index = orderedRounds.value.indexOf(selectedRound.value);
+         const nextIndex = index + 1;
          if (nextIndex >= orderedRounds.value.length) {
             isPlaying.value = false;
             segmentStart = 0;
          } else {
-            currentIndex.value = nextIndex;
+            selectedRound.value = orderedRounds.value[nextIndex];
             segmentStart = time;
             scrollToLog(selectedRound.value);
          }
@@ -1434,9 +1106,11 @@ const renderSelectedRound = () => {
 };
 
 const stepRound = (direction: 1 | -1) => {
-  const nextIndex = currentIndex.value + direction;
+  const index = orderedRounds.value.indexOf(selectedRound.value);
+  if (index === -1) return;
+  const nextIndex = index + direction;
   if (nextIndex < 0 || nextIndex >= orderedRounds.value.length) return;
-  currentIndex.value = nextIndex;
+  selectedRound.value = orderedRounds.value[nextIndex];
   scrollToLog(selectedRound.value);
 };
 
@@ -1456,16 +1130,13 @@ const seekToPercent = (e: MouseEvent) => {
   const x = e.clientX - rect.left;
   const p = Math.max(0, Math.min(1, x / rect.width));
   const idx = Math.floor(p * (orderedRounds.value.length - 1));
-  currentIndex.value = idx;
+  selectedRound.value = orderedRounds.value[idx];
   scrollToLog(selectedRound.value);
 };
 
 const selectRound = (round: number) => {
-  const idx = orderedRounds.value.indexOf(round);
-  if (idx !== -1) {
-    currentIndex.value = idx;
-    isPlaying.value = false;
-  }
+  selectedRound.value = round;
+  isPlaying.value = false;
 };
 
 const togglePlayback = () => {
@@ -1473,8 +1144,8 @@ const togglePlayback = () => {
   if (isPlaying.value) {
     isPlaying.value = false;
   } else {
-    if (currentIndex.value >= orderedRounds.value.length - 1) {
-       currentIndex.value = 0;
+    if (selectedRound.value === orderedRounds.value[orderedRounds.value.length - 1]) {
+       selectedRound.value = orderedRounds.value[0];
     }
     isPlaying.value = true;
     segmentStart = 0; // Will be reset in loop
@@ -1491,68 +1162,19 @@ const isWinner = computed(() => {
   return Object.values(finalState.entities).some(e => playerIds.has(e.id) && e.alive);
 });
 
-// Helper: Rarity display
-const rarityName = (rarity: number): string => {
-  const names = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic'];
-  return names[rarity] || 'Unknown';
-};
-
-const rarityColor = (rarity: number): string => {
-  const colors = [
-    'bg-slate-700 text-slate-300',
-    'bg-green-900/50 text-green-400 border-green-700',
-    'bg-blue-900/50 text-blue-400 border-blue-700',
-    'bg-purple-900/50 text-purple-400 border-purple-700',
-    'bg-amber-900/50 text-amber-400 border-amber-700',
-    'bg-rose-900/50 text-rose-400 border-rose-700'
-  ];
-  return colors[rarity] || 'bg-slate-800 text-slate-400';
-};
-
 const claimAndExit = async () => {
-  const matchRewards = rewardsStore.getRewardsForSource(matchId.value);
-  if (matchRewards.length === 0) {
-    exitToMatches();
-    return;
-  }
-
-  try {
-    // For now, we still use claimAll but we could refine to claim specific IDs
-    const content = await rewardsStore.claimAll();
-    summaryContent.value = content || null;
-    showClaimSummary.value = true;
-  } catch (e: any) {
-    console.error("Failed to claim rewards:", e);
-    let msg = "Failed to claim rewards.";
-    if (e?.response?.status === 401) msg = "Session expired. Please log in again.";
-    else if (e?.response?.status === 409) msg = "Rewards already claimed.";
-    else if (e?.response?.status === 400) {
-       // Likely "invalid reward" because list empty, just exit
-       exitToMatches();
-       return;
-    }
-    else if (e?.response?.status >= 500) msg = "Server error. Please try again later.";
-    else if (!navigator.onLine) msg = "No internet connection.";
-    alert(msg);
-  }
-};
-
-const replayMatch = () => {
-  currentIndex.value = 0;
-  segmentStart = 0;
-  isPlaying.value = true;
-  showClaimSummary.value = false;
-};
-
-const exitToMatches = () => {
-  showClaimSummary.value = false;
-  router.push('/matches');
+   try {
+     await rewardsStore.claimAll();
+     window.location.href = '/matches';
+   } catch (e) {
+     console.error("Failed to claim rewards:", e);
+   }
 };
 
 // Data Fetching
-const fetchLogs = async (isBackground = false) => {
+const fetchLogs = async () => {
   if (!auth.token || !matchId.value) return;
-  if (!isBackground) isLoading.value = true;
+  isLoading.value = true;
   try {
     const data = await request<any[]>(`${endpoints.match}/${matchId.value}/roundticks`, { token: auth.token });
     const nextTicks = data || [];
@@ -1562,11 +1184,14 @@ const fetchLogs = async (isBackground = false) => {
     
     // Auto-advance if live
     if (matchStatus.value === 'running' && nextTicks.length > prevCount && nextTicks.length > 0) {
-      currentIndex.value = nextTicks.length - 1;
-      scrollToLog(selectedRound.value);
+      const lastRound = nextTicks[nextTicks.length - 1]?.round;
+      if (lastRound != null) {
+         selectedRound.value = lastRound;
+         scrollToLog(lastRound);
+      }
     }
   } catch (e) { console.error(e); } 
-  finally { if (!isBackground) isLoading.value = false; }
+  finally { isLoading.value = false; }
 };
 
 const fetchMatchStatus = async () => {
@@ -1698,11 +1323,8 @@ function startLivePoll() {
   if (livePollHandle) return;
   livePollHandle = window.setInterval(async () => {
     const status = await fetchMatchStatus();
-    await fetchLogs(true);
-    if (status === 'completed') {
-      await rewardsStore.fetchRewards();
-      stopLivePoll();
-    }
+    await fetchLogs();
+    if (status === 'completed') stopLivePoll();
   }, 2500);
 }
 
@@ -1722,9 +1344,9 @@ onMounted(async () => {
   
   if (orderedRounds.value.length) {
     if (matchStatus.value === 'completed') {
-       currentIndex.value = 0;
+       selectedRound.value = orderedRounds.value[0];
     } else {
-       currentIndex.value = orderedRounds.value.length - 1;
+       selectedRound.value = orderedRounds.value[orderedRounds.value.length - 1];
     }
   }
   

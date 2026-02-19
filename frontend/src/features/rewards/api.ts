@@ -4,6 +4,7 @@ import { request } from "@/shared/api/http";
 export interface Reward {
   id: string;
   poolId: string;
+  sourceId?: string;
 }
 
 export interface ItemDto {

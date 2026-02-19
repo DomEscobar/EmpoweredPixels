@@ -19,8 +19,9 @@ func NewHandler(service *rewardsusecase.Service) *Handler {
 }
 
 type rewardDto struct {
-	ID     string `json:"id"`
-	PoolID string `json:"poolId"`
+	ID       string  `json:"id"`
+	PoolID   string  `json:"poolId"`
+	SourceID *string `json:"sourceId,omitempty"`
 }
 
 type itemDto struct {
@@ -62,8 +63,9 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	result := make([]rewardDto, 0, len(rewards))
 	for _, reward := range rewards {
 		result = append(result, rewardDto{
-			ID:     reward.ID,
-			PoolID: reward.RewardPoolID,
+			ID:       reward.ID,
+			PoolID:   reward.RewardPoolID,
+			SourceID: reward.SourceID,
 		})
 	}
 

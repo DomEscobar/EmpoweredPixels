@@ -180,7 +180,7 @@ func (h *MCPHandler) handleJoinMatch(ctx context.Context, userID int64, args map
 
 func (h *MCPHandler) handleIssueStarterLoot(ctx context.Context, userID int64) (interface{}, error) {
 	// Create some starter equipment for the Alpha Bot via reward system
-	_, err := h.rewardService.IssueReward(ctx, userID, "starter_pack")
+	_, err := h.rewardService.IssueReward(ctx, userID, "starter_pack", nil)
 	if err != nil {
 		return nil, err
 	}

@@ -44,11 +44,12 @@ func (s *Service) List(ctx context.Context, userID int64) ([]rewards.Reward, err
 	return s.rewards.ListUnclaimed(ctx, userID)
 }
 
-func (s *Service) IssueReward(ctx context.Context, userID int64, poolID string) (*rewards.Reward, error) {
+func (s *Service) IssueReward(ctx context.Context, userID int64, poolID string, sourceID *string) (*rewards.Reward, error) {
 	reward := &rewards.Reward{
 		ID:           uuid.NewString(),
 		UserID:       userID,
 		RewardPoolID: poolID,
+		SourceID:     sourceID,
 		Created:      s.now(),
 		Claimed:      nil,
 	}
@@ -60,11 +61,12 @@ func (s *Service) IssueReward(ctx context.Context, userID int64, poolID string) 
 	return reward, nil
 }
 
-func (s *Service) IssueAndClaimReward(ctx context.Context, userID int64, poolID string) (*rewards.Reward, error) {
+func (s *Service) IssueAndClaimReward(ctx context.Context, userID int64, poolID string, sourceID *string) (*rewards.Reward, error) {
 	reward := &rewards.Reward{
 		ID:           uuid.NewString(),
 		UserID:       userID,
 		RewardPoolID: poolID,
+		SourceID:     sourceID,
 		Created:      s.now(),
 		Claimed:      func() *time.Time { t := s.now(); return &t }(),
 	}

@@ -275,8 +275,18 @@
                 </template>
                 <template v-else>
                   <router-link :to="'/matches/' + match.id" class="block">
-                    <button class="w-full rpg-btn-small bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 font-bold uppercase">
-                      {{ match.status === 'running' ? 'Watch' : 'Results' }}
+                    <button 
+                      class="w-full rpg-btn-small font-bold uppercase transition-all duration-300"
+                      :class="rewardsStore.hasRewardForSource(match.id) 
+                        ? 'bg-amber-600 border-amber-800 text-slate-900 animate-pulse hover:bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.4)]' 
+                        : 'bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700'"
+                    >
+                      <template v-if="rewardsStore.hasRewardForSource(match.id)">
+                        ✨ CLAIM LOOT
+                      </template>
+                      <template v-else>
+                        {{ match.status === 'running' ? 'Watch' : 'Results' }}
+                      </template>
                     </button>
                   </router-link>
                 </template>
@@ -419,6 +429,7 @@ import Skeleton from '@/shared/ui/Skeleton.vue';
 import EmptyState from '@/shared/ui/EmptyState.vue';
 import { useAuthStore } from '@/features/auth/store';
 import { useRosterStore } from '@/features/roster/store';
+import { useRewardsStore } from '@/features/rewards/store';
 import { PIXEL_ASSETS, getMatchStatusIcon, getMatchHeroImage } from '@/shared/utils/pixelAssets';
 import type { Match, MatchStatus } from '@/features/matches/api';
 import { 
@@ -435,6 +446,7 @@ import {
 const router = useRouter();
 const auth = useAuthStore();
 const roster = useRosterStore();
+const rewardsStore = useRewardsStore();
 
 interface MatchOption {
   isPrivate: boolean;
@@ -832,7 +844,7 @@ watch(browseStatus, () => fetchMatches());
 
 onMounted(async () => {
   await roster.fetchFighters();
-  
+  await rewardsStore.fetchRewards();
   try {
     const active = await getCurrentMatch(auth.token ?? '').catch(() => null);
     if (active && active.id) {
