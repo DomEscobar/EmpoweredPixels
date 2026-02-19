@@ -17,17 +17,9 @@ export interface MatchRegistration {
 export interface MatchOptions {
   isPrivate: boolean;
   maxPowerlevel?: number;
-  actionsPerRound: number;
   maxFightersPerUser?: number;
   botCount?: number;
   botPowerlevel?: number;
-  features: string[];
-  battlefield: string;
-  bounds: string;
-  positionGenerator: string;
-  moveOrder: string;
-  winCondition: string;
-  staleCondition: string;
   autoStart?: boolean;
 }
 

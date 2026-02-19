@@ -152,12 +152,6 @@ func (s *Service) CreateMatch(ctx context.Context, userID int64, options MatchOp
 		return nil, err
 	}
 
-	// Auto-join creator's first fighter if available
-	fighters, err := s.fighters.ListByUser(ctx, userID)
-	if err == nil && len(fighters) > 0 {
-		_ = s.Join(ctx, userID, match.ID, fighters[0].ID)
-	}
-
 	return match, nil
 }
 
