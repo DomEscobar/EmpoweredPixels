@@ -76,6 +76,11 @@ func (s *BattleSimulator) Run(matchID string, fighters []roster.Fighter, options
 			e.ActionGauge += growth
 		}
 
+		// Check if battle should end due to no alive entities
+		if len(alive) == 0 {
+			break
+		}
+
 		// Process actors who reached the threshold
 		// Sort by overflow to handle simultaneous turns fairly
 		sort.Slice(alive, func(i, j int) bool {
@@ -122,6 +127,15 @@ func (s *BattleSimulator) Run(matchID string, fighters []roster.Fighter, options
 			if attacker.ActionGauge < 0 {
 				attacker.ActionGauge = 0
 			}
+		}
+
+		// Check if all entities died during this tick - end immediately
+		alive = s.getAlive(entities)
+		if len(alive) == 0 {
+			if len(currentTickEvents) > 0 {
+				roundTicks = append(roundTicks, combat.RoundTick{Round: tickCounter, Ticks: currentTickEvents})
+			}
+			break
 		}
 
 		if len(currentTickEvents) > 0 {

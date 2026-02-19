@@ -572,7 +572,7 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 	// Convert MatchOptions to BattleOptions
 	battleOptions := BattleOptions{
 		MaxRounds: 1000, // Increased for more epic battles
-		MapSize:   30.0, // Default value
+		MapSize:   24.0, // Default value (matches frontend worldSize)
 	}
 	result, err := simulator.Run(matchID, fighters, battleOptions)
 	if err != nil {
