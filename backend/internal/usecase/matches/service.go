@@ -625,10 +625,66 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 
 		var winnerID string
 		maxKills := -1
+		
+		// Map to track who is dead
+		deadIDs := make(map[string]bool)
+		for _, rt := range result.RoundTicks {
+			for _, t := range rt.Ticks {
+				if t.Type == "died" {
+					var event struct{ FighterID string `json:"fighterId"` }
+					if err := json.Unmarshal(t.Payload, &event); err == nil {
+						deadIDs[event.FighterID] = true
+					}
+				}
+			}
+		}
+
+		// Priority 1: Last one standing (specifically among PLAYERS if possible)
 		for _, score := range result.Scores {
-			if score.Deaths == 0 && score.Kills > maxKills {
-				maxKills = score.Kills
-				winnerID = score.FighterID
+			isAlive := !deadIDs[score.FighterID]
+			if isAlive {
+				if score.Kills > maxKills {
+					maxKills = score.Kills
+					winnerID = score.FighterID
+				}
+			}
+		}
+
+		// Fallback: Pick top killer if everyone died or logic above found nobody
+		if winnerID == "" {
+			for _, score := range result.Scores {
+				if score.Kills > maxKills {
+					maxKills = score.Kills
+					winnerID = score.FighterID
+				}
+			}
+		}
+						if err := json.Unmarshal(t.Payload, &event); err == nil {
+							deadIDs[event.FighterID] = true
+						}
+					}
+				}
+			}
+
+			for _, score := range result.Scores {
+				isAlive := !deadIDs[score.FighterID]
+				if isAlive {
+					// Multiple could be alive if rounds limit reached
+					if score.Kills > maxKills {
+						maxKills = score.Kills
+						winnerID = score.FighterID
+					}
+				}
+			}
+		}
+
+		// Fallback: If everyone died or logic above found nobody, pick top killer
+		if winnerID == "" {
+			for _, score := range result.Scores {
+				if score.Kills > maxKills {
+					maxKills = score.Kills
+					winnerID = score.FighterID
+				}
 			}
 		}
 
@@ -640,6 +696,11 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		}
 
 		for _, f := range fighters {
+			// Skip rewards for bots (UserID 0)
+			if f.UserID == 0 {
+				continue
+			}
+
 			// Award Loot (per User)
 			if !rewardedUsers[f.UserID] {
 				pool := "match_participation"
