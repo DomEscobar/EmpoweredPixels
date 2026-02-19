@@ -622,8 +622,6 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 
 	// Award rewards and experience to all participants
 	if s.rewards != nil {
-		rewardedUsers := make(map[int64]bool)
-
 		var winnerID string
 		maxKills := -1
 
@@ -665,6 +663,31 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 
 		log.Printf("[DEBUG] Match %s completed. WinnerID determined: %s (MaxKills: %d)", matchID, winnerID, maxKills)
 
+		// Pre-calculate user reward pools (one pool per user, prioritizing wins)
+		userPools := make(map[int64]string)
+		for _, f := range fighters {
+			if f.UserID == 0 {
+				continue
+			}
+
+			pool := "match_participation"
+			if f.ID == winnerID {
+				pool = "match_win"
+			}
+
+			// If the user has multiple fighters, prioritize the win pool if any of them won
+			if userPools[f.UserID] != "match_win" {
+				userPools[f.UserID] = pool
+			}
+		}
+
+		for userID, pool := range userPools {
+			log.Printf("[DEBUG] Issuing reward pool %s to User %d for Match %s", pool, userID, matchID)
+			if _, err := s.rewards.IssueReward(ctx, userID, pool, &matchID); err != nil {
+				log.Printf("[ERROR] Failed to issue reward to user %d: %v", userID, err)
+			}
+		}
+
 		// Calculate Bot difficulty bonus
 		botBonusExp := 0
 		if options.BotCount != nil && options.BotPowerlevel != nil {
@@ -673,25 +696,6 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		}
 
 		for _, f := range fighters {
-			// Skip rewards for bots (UserID 0)
-			if f.UserID == 0 {
-				continue
-			}
-
-			// Award Loot (per User)
-			if !rewardedUsers[f.UserID] {
-				pool := "match_participation"
-				if f.ID == winnerID {
-					pool = "match_win"
-				}
-
-				log.Printf("[DEBUG] Issuing reward pool %s to User %d (Fighter %s) for Match %s", pool, f.UserID, f.ID, matchID)
-				if _, err := s.rewards.IssueReward(ctx, f.UserID, pool, &matchID); err != nil {
-					log.Printf("[ERROR] Failed to issue reward to user %d: %v", f.UserID, err)
-				}
-				rewardedUsers[f.UserID] = true
-			}
-
 			// Award Experience (per Fighter)
 			if s.roster != nil {
 				score, ok := scoresMapping[f.ID]

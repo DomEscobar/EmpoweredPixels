@@ -3,6 +3,7 @@ package rewards
 import (
 	"context"
 	"errors"
+	"log"
 	"math/rand"
 	"time"
 
@@ -54,7 +55,9 @@ func (s *Service) IssueReward(ctx context.Context, userID int64, poolID string, 
 		Claimed:      nil,
 	}
 
+	log.Printf("[DEBUG] Creating unclaimed reward %s for user %d (pool: %s, source: %v)", reward.ID, userID, poolID, sourceID)
 	if err := s.rewards.Create(ctx, reward); err != nil {
+		log.Printf("[ERROR] Failed to create reward record: %v", err)
 		return nil, err
 	}
 
