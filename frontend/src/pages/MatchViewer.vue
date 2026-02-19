@@ -1685,10 +1685,18 @@ const refreshRoundStates = () => {
       }
     }
     
-    // Deep clone for snapshot
+    // Create a snapshot of the current state of ALL entities for this specific round
     const snapshot: Record<string, EntityState> = {};
-    entityMap.forEach((value, key) => { snapshot[key] = { ...value }; });
-    states[round.round] = { round: round.round, entities: snapshot, events };
+    entityMap.forEach((value, key) => {
+      // Use structuredClone for deep copy to ensure no object references are shared
+      snapshot[key] = { ...value }; 
+    });
+
+    states[round.round] = {
+      round: round.round,
+      entities: snapshot,
+      events
+    };
   }
   roundStateMap.value = states;
 };
