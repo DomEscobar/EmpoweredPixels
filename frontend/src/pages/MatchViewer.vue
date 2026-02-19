@@ -55,9 +55,9 @@
 
         <!-- Round Counter -->
         <div class="bg-slate-900/80 border-2 border-slate-700 px-4 py-2 backdrop-blur-md rounded-lg shadow-xl text-right min-w-[100px]">
-            <div class="text-[10px] text-slate-500 uppercase font-bold tracking-widest text-center mb-0.5">Round</div>
+            <div class="text-[10px] text-slate-500 uppercase font-bold tracking-widest text-center mb-0.5">Step</div>
             <div class="text-2xl sm:text-3xl font-black text-amber-500 leading-none text-center">
-                {{ selectedRound }} <span class="text-slate-600 text-base sm:text-lg">/ {{ orderedRounds.length ? orderedRounds[orderedRounds.length-1] : 0 }}</span>
+                {{ currentIndex + 1 }} <span class="text-slate-600 text-base sm:text-lg">/ {{ orderedRounds.length }}</span>
             </div>
         </div>
     </div>
@@ -116,16 +116,16 @@
                 <button @click="showLogs = false" class="text-slate-500 hover:text-white px-2">✕</button>
             </div>
             <div class="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent" ref="logsContainer">
-                 <div v-for="(log, i) in combatLogs" :key="i" class="p-2 rounded bg-slate-950/50 border-l-2 border-slate-700 hover:bg-slate-800/50 transition-colors">
-                    <div class="opacity-80 break-words">{{ log }}</div>
-                 </div>
+                  <div v-for="(log, i) in combatLogs" :key="i" class="p-2 rounded bg-slate-950/50 border-l-2 border-slate-700 hover:bg-slate-800/50 transition-colors">
+                    <div class="opacity-80 break-words" v-html="log"></div>
+                  </div>
                  <div v-if="combatLogs.length === 0" class="text-center py-6 text-slate-600 italic">No combat events recorded yet...</div>
             </div>
         </div>
     </transition>
 
     <!-- Post-Match Victory Overlay -->
-    <div v-if="matchStatus === 'completed' && orderedRounds.length && selectedRound === orderedRounds[orderedRounds.length-1]" class="absolute inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-in fade-in duration-700 pointer-events-auto">
+    <div v-if="matchStatus === 'completed' && orderedRounds.length && currentIndex >= orderedRounds.length - 1" class="absolute inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-in fade-in duration-700 pointer-events-auto">
          <div class="bg-slate-900 border-4 border-amber-600 p-8 rounded-2xl shadow-[0_0_100px_rgba(245,158,11,0.3)] max-w-lg w-full text-center relative overflow-hidden group">
              <!-- Rays Effect -->
              <div class="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,rgba(245,158,11,0.1)_20deg,transparent_40deg)] animate-[spin_10s_linear_infinite] pointer-events-none"></div>
@@ -296,7 +296,8 @@ type Particle = {
 };
 const particles = ref<Particle[]>([]);
 
-const selectedRound = ref(0);
+const currentIndex = ref(0);
+const selectedRound = computed(() => orderedRounds.value[currentIndex.value] || 0);
 const isPlaying = ref(false);
 const playbackSpeed = ref(1.0);
 let playbackHandle: number | null = null;
@@ -1390,13 +1391,12 @@ const visualLoop = (time: number) => {
       }
 
       if (progress >= 1) {
-         const index = orderedRounds.value.indexOf(selectedRound.value);
-         const nextIndex = index + 1;
+         const nextIndex = currentIndex.value + 1;
          if (nextIndex >= orderedRounds.value.length) {
             isPlaying.value = false;
             segmentStart = 0;
          } else {
-            selectedRound.value = orderedRounds.value[nextIndex];
+            currentIndex.value = nextIndex;
             segmentStart = time;
             scrollToLog(selectedRound.value);
          }
@@ -1413,11 +1413,9 @@ const renderSelectedRound = () => {
 };
 
 const stepRound = (direction: 1 | -1) => {
-  const index = orderedRounds.value.indexOf(selectedRound.value);
-  if (index === -1) return;
-  const nextIndex = index + direction;
+  const nextIndex = currentIndex.value + direction;
   if (nextIndex < 0 || nextIndex >= orderedRounds.value.length) return;
-  selectedRound.value = orderedRounds.value[nextIndex];
+  currentIndex.value = nextIndex;
   scrollToLog(selectedRound.value);
 };
 
@@ -1437,13 +1435,16 @@ const seekToPercent = (e: MouseEvent) => {
   const x = e.clientX - rect.left;
   const p = Math.max(0, Math.min(1, x / rect.width));
   const idx = Math.floor(p * (orderedRounds.value.length - 1));
-  selectedRound.value = orderedRounds.value[idx];
+  currentIndex.value = idx;
   scrollToLog(selectedRound.value);
 };
 
 const selectRound = (round: number) => {
-  selectedRound.value = round;
-  isPlaying.value = false;
+  const idx = orderedRounds.value.indexOf(round);
+  if (idx !== -1) {
+    currentIndex.value = idx;
+    isPlaying.value = false;
+  }
 };
 
 const togglePlayback = () => {
@@ -1451,8 +1452,8 @@ const togglePlayback = () => {
   if (isPlaying.value) {
     isPlaying.value = false;
   } else {
-    if (selectedRound.value === orderedRounds.value[orderedRounds.value.length - 1]) {
-       selectedRound.value = orderedRounds.value[0];
+    if (currentIndex.value >= orderedRounds.value.length - 1) {
+       currentIndex.value = 0;
     }
     isPlaying.value = true;
     segmentStart = 0; // Will be reset in loop
@@ -1521,11 +1522,8 @@ const fetchLogs = async (isBackground = false) => {
     
     // Auto-advance if live
     if (matchStatus.value === 'running' && nextTicks.length > prevCount && nextTicks.length > 0) {
-      const lastRound = nextTicks[nextTicks.length - 1]?.round;
-      if (lastRound != null) {
-         selectedRound.value = lastRound;
-         scrollToLog(lastRound);
-      }
+      currentIndex.value = nextTicks.length - 1;
+      scrollToLog(selectedRound.value);
     }
   } catch (e) { console.error(e); } 
   finally { if (!isBackground) isLoading.value = false; }
@@ -1684,9 +1682,9 @@ onMounted(async () => {
   
   if (orderedRounds.value.length) {
     if (matchStatus.value === 'completed') {
-       selectedRound.value = orderedRounds.value[0];
+       currentIndex.value = 0;
     } else {
-       selectedRound.value = orderedRounds.value[orderedRounds.value.length - 1];
+       currentIndex.value = orderedRounds.value.length - 1;
     }
   }
   
