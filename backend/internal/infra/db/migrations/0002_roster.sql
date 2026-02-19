@@ -29,5 +29,5 @@ create table if not exists fighter_experiences (
 
 create table if not exists fighter_configurations (
   fighter_id uuid primary key references fighters(id) on delete cascade,
-  attunement_id uuid null
+  attunement_id text null
 );

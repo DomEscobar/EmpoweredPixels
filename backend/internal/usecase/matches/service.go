@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
@@ -662,6 +663,8 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 			}
 		}
 
+		log.Printf("[DEBUG] Match %s completed. WinnerID determined: %s (MaxKills: %d)", matchID, winnerID, maxKills)
+
 		// Calculate Bot difficulty bonus
 		botBonusExp := 0
 		if options.BotCount != nil && options.BotPowerlevel != nil {
@@ -682,8 +685,9 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 					pool = "match_win"
 				}
 
+				log.Printf("[DEBUG] Issuing reward pool %s to User %d (Fighter %s) for Match %s", pool, f.UserID, f.ID, matchID)
 				if _, err := s.rewards.IssueReward(ctx, f.UserID, pool, &matchID); err != nil {
-					// log error but don't fail the match execution
+					log.Printf("[ERROR] Failed to issue reward to user %d: %v", f.UserID, err)
 				}
 				rewardedUsers[f.UserID] = true
 			}
