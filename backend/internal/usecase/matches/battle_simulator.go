@@ -32,7 +32,7 @@ const (
 
 func (s *BattleSimulator) Run(matchID string, fighters []roster.Fighter, options BattleOptions) (*combat.MatchResult, error) {
 	if options.MaxRounds == 0 {
-		options.MaxRounds = 500 // Increased for tick-based
+		options.MaxRounds = 1000 // Increased for tick-based epic battles
 	}
 	if options.MapSize == 0 {
 		options.MapSize = 30.0
@@ -55,14 +55,24 @@ func (s *BattleSimulator) Run(matchID string, fighters []roster.Fighter, options
 		var currentTickEvents []combat.Tick
 		alive := s.getAlive(entities)
 
-		if len(alive) <= 1 {
+		// Termination check: check if more than one team is still alive
+		teamsAlive := make(map[string]bool)
+		for _, e := range alive {
+			team := "NO_TEAM"
+			if e.TeamID != nil {
+				team = *e.TeamID
+			}
+			teamsAlive[team] = true
+		}
+
+		if len(teamsAlive) <= 1 {
 			break
 		}
 
 		// Increase Action Gauge based on Agility
 		for _, e := range alive {
-			// Base growth + Agility scaling
-			growth := 5.0 + (float64(e.Stats.Agility) / 2.0)
+			// Base growth (buffed to 20) + Agility scaling
+			growth := 20.0 + (float64(e.Stats.Agility) / 1.5)
 			e.ActionGauge += growth
 		}
 
@@ -137,6 +147,7 @@ func (s *BattleSimulator) initializeEntities(fighters []roster.Fighter, mapSize 
 			MaxHP:        maxHP,
 			CurrentHP:    maxHP,
 			AttunementID: f.AttunementID,
+			TeamID:       f.TeamID,
 			X:            s.rng.Float64() * mapSize,
 			Y:            s.rng.Float64() * mapSize,
 			Stats: combat.Stats{
@@ -195,6 +206,12 @@ func (s *BattleSimulator) findNearestTarget(attacker *combat.Entity, alive []*co
 		if e.ID == attacker.ID {
 			continue
 		}
+
+		// Don't attack teammates
+		if attacker.TeamID != nil && e.TeamID != nil && *attacker.TeamID == *e.TeamID {
+			continue
+		}
+
 		d := s.distance(attacker, e)
 		if d < minDist {
 			minDist = d
@@ -226,10 +243,10 @@ func (s *BattleSimulator) selectSkill(e *combat.Entity) combat.Skill {
 
 func (s *BattleSimulator) moveTowards(attacker *combat.Entity, target *combat.Entity) []combat.Tick {
 	fromX, fromY := attacker.X, attacker.Y
-	
+
 	// Speed-based movement distance
 	moveDist := 3.0 + (float64(attacker.Stats.Speed) / 8.0)
-	
+
 	angle := math.Atan2(target.Y-attacker.Y, target.X-attacker.X)
 	attacker.X += math.Cos(angle) * moveDist
 	attacker.Y += math.Sin(angle) * moveDist

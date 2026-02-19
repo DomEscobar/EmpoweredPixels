@@ -115,9 +115,10 @@ func TestApplySquadBonuses(t *testing.T) {
 	modified := service.ApplySquadBonuses(fighters, state)
 
 	// At score 75, multiplier is 1.08 for damage, 1.04 for defense
-	expectedPower := int(float64(100) * 1.08)       // 108
-	expectedArmor := int(float64(50) * 1.04)        // 52
-	expectedCondition := int(float64(80) * 1.08)    // 86
+	expectedPower := 108
+	expectedArmor := 52
+	expectedCondition := 86
+	_ = expectedCondition
 
 	for _, f := range modified {
 		if f.Power != expectedPower {

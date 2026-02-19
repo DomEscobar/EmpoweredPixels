@@ -3,12 +3,14 @@ package matches
 import (
 	"testing"
 
-	"empoweredpixels/internal/domain/combat"
 	"empoweredpixels/internal/domain/roster"
 )
 
 func TestBattleSimulator_TurnPriority(t *testing.T) {
 	sim := NewBattleSimulator()
+
+	team1 := "Team1"
+	team2 := "Team2"
 
 	// High Agility vs Low Agility
 	fighters := []roster.Fighter{
@@ -18,6 +20,7 @@ func TestBattleSimulator_TurnPriority(t *testing.T) {
 			Agility: 100,
 			Speed:   10,
 			Power:   10,
+			TeamID:  &team1,
 		},
 		{
 			ID:      "slow",
@@ -25,6 +28,7 @@ func TestBattleSimulator_TurnPriority(t *testing.T) {
 			Agility: 0,
 			Speed:   10,
 			Power:   10,
+			TeamID:  &team2,
 		},
 	}
 

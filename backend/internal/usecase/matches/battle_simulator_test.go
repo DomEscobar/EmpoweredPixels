@@ -11,6 +11,9 @@ func TestBattleSimulator_Run(t *testing.T) {
 	sim := NewBattleSimulator()
 	matchID := uuid.NewString()
 
+	team1 := "Team1"
+	team2 := "Team2"
+
 	fighters := []roster.Fighter{
 		{
 			ID:       uuid.NewString(),
@@ -20,21 +23,23 @@ func TestBattleSimulator_Run(t *testing.T) {
 			Armor:    10,
 			Vitality: 12,
 			Speed:    5,
+			TeamID:   &team1,
 		},
 		{
-			ID:       uuid.NewString(),
-			Name:     "Ranger",
-			Level:    10,
-			Power:    8,
+			ID:        uuid.NewString(),
+			Name:      "Ranger",
+			Level:     10,
+			Power:     8,
 			Precision: 18,
-			Agility:  15,
-			Speed:    12,
-			Vitality: 8,
+			Agility:   15,
+			Speed:     12,
+			Vitality:  8,
+			TeamID:    &team2,
 		},
 	}
 
 	options := BattleOptions{
-		MaxRounds: 50,
+		MaxRounds: 200,
 		MapSize:   20.0,
 	}
 
@@ -51,10 +56,18 @@ func TestBattleSimulator_Run(t *testing.T) {
 		t.Error("Expected at least one round tick")
 	}
 
-	t.Logf("Simulated %d rounds", len(result.RoundTicks))
+	hasDeaths := false
 	for _, round := range result.RoundTicks {
 		for _, tick := range round.Ticks {
-			t.Logf("Round %d: %s", round.Round, tick.Type)
+			if tick.Type == "died" {
+				hasDeaths = true
+			}
 		}
 	}
+
+	if !hasDeaths {
+		t.Error("Expected at least one fighter to die in a 200-round match with buffed speed")
+	}
+
+	t.Logf("Simulated %d ticks", len(result.RoundTicks))
 }

@@ -477,6 +477,32 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		botCount = *options.BotCount
 	}
 	botFighters := generateBotFighters(botCount, powerlevel, "Bot")
+
+	// Assign bots to a bot team
+	botTeamID := "BOT_TEAM"
+	for i := range botFighters {
+		botFighters[i].TeamID = &botTeamID
+	}
+
+	// Ensure player fighters have their TeamID from registrations
+	registrations, err := s.registrations.ListByMatch(ctx, matchID)
+	if err == nil {
+		regMap := make(map[string]string)
+		for _, r := range registrations {
+			if r.TeamID != nil {
+				regMap[r.FighterID] = *r.TeamID
+			} else {
+				// If no team, put them on a "Players" team by default
+				regMap[r.FighterID] = "PLAYER_TEAM"
+			}
+		}
+		for i := range fighters {
+			if teamID, ok := regMap[fighters[i].ID]; ok {
+				fighters[i].TeamID = &teamID
+			}
+		}
+	}
+
 	// Add bots to the fighters list for the battle
 	fighters = append(fighters, botFighters...)
 
@@ -544,7 +570,7 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 	simulator := NewBattleSimulator()
 	// Convert MatchOptions to BattleOptions
 	battleOptions := BattleOptions{
-		MaxRounds: 100,  // Default value
+		MaxRounds: 1000, // Increased for more epic battles
 		MapSize:   30.0, // Default value
 	}
 	result, err := simulator.Run(matchID, fighters, battleOptions)
