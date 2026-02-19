@@ -418,6 +418,55 @@
         </div>
       </div>
     </BaseModal>
+
+    <!-- Quick Join Fighter Selection Modal -->
+    <BaseModal :show="showQuickJoinModal" @close="showQuickJoinModal = false">
+      <template #title>
+        <div class="flex items-center gap-3 text-blue-400">
+          <span class="text-2xl">⚡</span>
+          <span class="uppercase font-black text-xl tracking-wide">Quick Battle</span>
+        </div>
+      </template>
+      <div class="space-y-4 font-mono text-slate-200">
+        <div class="pixel-box-sm bg-slate-800/50 p-3 flex gap-2">
+          <span class="text-blue-400">ℹ️</span>
+          <p class="text-xs text-slate-400">
+            Join an open match or fight bots if none available
+          </p>
+        </div>
+
+        <div class="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+          <div
+            v-for="f in roster.fighters"
+            :key="f.id"
+            class="relative flex items-center gap-4 p-3 border-2 cursor-pointer transition-all duration-200 group bg-slate-900"
+            :class="quickJoinFighterId === f.id ? 'border-blue-500 bg-blue-900/20' : 'border-slate-800 hover:border-slate-600 hover:bg-slate-800'"
+            @click="quickJoinFighterId = f.id"
+          >
+            <div class="w-12 h-12 bg-black border-2 border-slate-700 flex items-center justify-center">
+              <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-10 h-10 pixelated object-cover" />
+            </div>
+            <div class="flex-1">
+              <h4 class="font-bold text-white uppercase tracking-wider" :class="quickJoinFighterId === f.id ? 'text-blue-300' : ''">{{ f.name }}</h4>
+              <div class="text-[10px] text-slate-500 uppercase mt-1">Lvl {{ f.level ?? 1 }} • {{ f.class ?? 'Warrior' }}</div>
+            </div>
+            <div v-if="quickJoinFighterId === f.id" class="text-blue-400 font-bold text-lg">
+              <<
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between gap-3 pt-6 border-t-2 border-slate-800 border-dashed">
+          <button type="button" @click="showQuickJoinModal = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300">Cancel</button>
+          <button :disabled="!quickJoinFighterId || isQuickJoining" @click="confirmQuickJoin" class="rpg-btn bg-blue-600 border-blue-900 text-white hover:bg-blue-500 font-black uppercase tracking-wider px-6 py-2">
+            <span v-if="isQuickJoining" class="flex items-center justify-center gap-2">
+              <span class="animate-spin">⚡</span> FINDING...
+            </span>
+            <span v-else>START</span>
+          </button>
+        </div>
+      </div>
+    </BaseModal>
   </div>
 </template>
 
@@ -477,8 +526,10 @@ const browseStatus = ref<MatchStatus | 'all'>('all');
 
 const showCreate = ref(false);
 const showJoinModal = ref(false);
+const showQuickJoinModal = ref(false);
 const joinTargetMatchId = ref<string | null>(null);
 const selectedFighterId = ref<string | null>(null);
+const quickJoinFighterId = ref<string | null>(null);
 const isJoining = ref(false);
 const isCreating = ref(false);
 
@@ -699,6 +750,33 @@ function openJoinModal(matchId: string) {
   showJoinModal.value = true;
 }
 
+async function confirmQuickJoin() {
+  if (!auth.token || !quickJoinFighterId.value) return;
+  isQuickJoining.value = true;
+  setStatus('FINDING BATTLE...', 'info');
+
+  try {
+    const fighter = roster.fighters.find(f => f.id === quickJoinFighterId.value);
+    if (!fighter) {
+      throw new Error('Fighter not found');
+    }
+    const match = await quickJoinMatch(auth.token, fighter.id);
+
+    currentMatchId.value = match.id;
+    myFighterIdInMatch.value = fighter.id;
+    currentMatch.value = match;
+    setStatus('JOINED BATTLE! PREPARE FOR COMBAT.', 'success');
+    showQuickJoinModal.value = false;
+    connectWebSocket();
+    startPolling();
+    await fetchMatches();
+  } catch (e: any) {
+    setStatus(e?.message || 'NO OPEN LOBBIES AVAILABLE.', 'warning');
+  } finally {
+    isQuickJoining.value = false;
+  }
+}
+
 async function confirmJoin() {
   if (!auth.token || !joinTargetMatchId.value || !selectedFighterId.value) return;
   isJoining.value = true;
@@ -806,26 +884,12 @@ function stopOnlinePlayersPolling() {
 }
 
 async function handleQuickJoin() {
-  if (!auth.token || roster.fighters.length === 0) return;
-  isQuickJoining.value = true;
-  setStatus('FINDING BATTLE...', 'info');
-
-  try {
-    const fighter = roster.fighters[0];
-    const match = await quickJoinMatch(auth.token, fighter.id);
-
-    currentMatchId.value = match.id;
-    myFighterIdInMatch.value = fighter.id;
-    currentMatch.value = match;
-    setStatus('JOINED BATTLE! PREPARE FOR COMBAT.', 'success');
-    connectWebSocket();
-    startPolling();
-    await fetchMatches();
-  } catch (e: any) {
-    setStatus(e?.message || 'NO OPEN LOBBIES AVAILABLE.', 'warning');
-  } finally {
-    isQuickJoining.value = false;
+  if (!auth.token || roster.fighters.length === 0) {
+    setStatus('RECRUIT A HERO FIRST', 'warning');
+    return;
   }
+  quickJoinFighterId.value = roster.fighters[0]?.id ?? null;
+  showQuickJoinModal.value = true;
 }
 
 watch(currentMatchId, (id) => {

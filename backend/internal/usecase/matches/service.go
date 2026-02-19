@@ -850,7 +850,43 @@ func (s *Service) QuickJoin(ctx context.Context, userID int64, fighterID string)
 		return &match, nil
 	}
 
-	return nil, errors.New("no open lobbies available")
+	// No open lobbies - create a bot match as fallback
+	botCount := 7
+	botPowerlevel := 50
+
+	options := MatchOptions{
+		BotCount:      &botCount,
+		BotPowerlevel: &botPowerlevel,
+		AutoStart:     true,
+	}
+
+	data, err := json.Marshal(options)
+	if err != nil {
+		return nil, err
+	}
+
+	newMatch := &matches.Match{
+		ID:            uuid.NewString(),
+		CreatorUserID: &userID,
+		Created:       s.now(),
+		Status:        matches.MatchStatusLobby,
+		Options:       data,
+	}
+
+	if err := s.matches.Create(ctx, newMatch); err != nil {
+		return nil, err
+	}
+
+	registration := &matches.MatchRegistration{
+		MatchID:   newMatch.ID,
+		FighterID: fighterID,
+		Date:      s.now(),
+	}
+	if err := s.registrations.Upsert(ctx, registration); err != nil {
+		return nil, err
+	}
+
+	return newMatch, nil
 }
 
 // GetOnlinePlayersCount returns the number of players currently online
