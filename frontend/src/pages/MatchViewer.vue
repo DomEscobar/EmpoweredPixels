@@ -146,12 +146,23 @@
                      <div class="text-2xl font-black text-amber-400">+ {{ rewardsStore.rewardCount * 20 }} <span class="text-sm text-amber-600">Particles</span></div>
                  </div>
 
-                 <button @click="claimAndExit" :disabled="rewardsStore.isLoading" class="w-full py-4 mt-2 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg hover:shadow-amber-500/20 active:scale-95 transition-all text-sm border-t border-amber-300 disabled:opacity-70 disabled:cursor-not-allowed">
-                    <span v-if="rewardsStore.isLoading" class="flex items-center justify-center gap-2">
-                      <span class="animate-spin">↻</span> Claiming...
-                    </span>
-                    <span v-else>Claim Rewards & Exit</span>
-                 </button>
+                 <div class="flex flex-col gap-2 mt-2">
+                    <button @click="claimAndExit" :disabled="rewardsStore.isLoading" class="w-full py-4 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg hover:shadow-amber-500/20 active:scale-95 transition-all text-sm border-t border-amber-300 disabled:opacity-70 disabled:cursor-not-allowed">
+                        <span v-if="rewardsStore.isLoading" class="flex items-center justify-center gap-2">
+                        <span class="animate-spin">↻</span> Claiming...
+                        </span>
+                        <span v-else>{{ rewardsStore.rewardCount > 0 ? 'Claim Rewards & Exit' : 'Exit to Matches' }}</span>
+                    </button>
+
+                    <div class="flex gap-2">
+                        <button @click="replayMatch" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold uppercase tracking-wider rounded-xl transition-colors text-xs border border-slate-600">
+                            Replay Match
+                        </button>
+                        <button v-if="rewardsStore.rewardCount > 0" @click="exitToMatches" class="flex-1 py-3 bg-rose-900/20 hover:bg-rose-900/40 text-rose-400 font-bold uppercase tracking-wider rounded-xl transition-colors text-xs border border-rose-500/30">
+                            Exit (No Loot)
+                        </button>
+                    </div>
+                 </div>
              </div>
          </div>
     </div>
@@ -198,9 +209,19 @@
             </div>
           </div>
           
-          <button @click="exitToMatches" class="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg text-sm border-t border-amber-300">
-            Continue to Matches →
-          </button>
+          <div class="flex flex-col gap-2">
+            <button @click="exitToMatches" class="w-full py-4 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg text-sm border-t border-amber-300">
+                Continue to Matches →
+            </button>
+            <div class="flex gap-2">
+                <button @click="replayMatch" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold uppercase tracking-wider rounded-xl transition-colors text-xs border border-slate-600">
+                    Replay
+                </button>
+                <button @click="showClaimSummary = false" class="flex-1 py-3 bg-slate-900/50 hover:bg-slate-800 text-slate-500 font-bold uppercase tracking-wider rounded-xl transition-colors text-xs border border-slate-700">
+                    Close
+                </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1489,6 +1510,11 @@ const rarityColor = (rarity: number): string => {
 };
 
 const claimAndExit = async () => {
+  if (rewardsStore.rewardCount === 0) {
+    exitToMatches();
+    return;
+  }
+
   try {
     const content = await rewardsStore.claimAll();
     summaryContent.value = content || null;
@@ -1498,10 +1524,22 @@ const claimAndExit = async () => {
     let msg = "Failed to claim rewards.";
     if (e?.response?.status === 401) msg = "Session expired. Please log in again.";
     else if (e?.response?.status === 409) msg = "Rewards already claimed.";
+    else if (e?.response?.status === 400) {
+       // Likely "invalid reward" because list empty, just exit
+       exitToMatches();
+       return;
+    }
     else if (e?.response?.status >= 500) msg = "Server error. Please try again later.";
     else if (!navigator.onLine) msg = "No internet connection.";
     alert(msg);
   }
+};
+
+const replayMatch = () => {
+  currentIndex.value = 0;
+  segmentStart = 0;
+  isPlaying.value = true;
+  showClaimSummary.value = false;
 };
 
 const exitToMatches = () => {
