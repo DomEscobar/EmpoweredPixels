@@ -372,11 +372,36 @@
               <input type="checkbox" v-model="options.autoStart" class="accent-emerald-600 w-5 h-5 cursor-pointer" />
             </label>
           </div>
+
+          <div class="p-4 bg-slate-900 border-2 border-amber-900/30">
+            <label class="text-[10px] font-bold uppercase text-slate-500 block mb-2">Select Your Champion</label>
+            <div class="grid grid-cols-2 gap-2 max-h-[200px] overflow-y-auto custom-scrollbar pr-2">
+              <div
+                v-for="f in roster.fighters"
+                :key="f.id"
+                type="button"
+                @click="createFighterId = f.id"
+                class="relative flex items-center gap-3 p-2 border-2 cursor-pointer transition-all duration-200 bg-slate-950"
+                :class="createFighterId === f.id ? 'border-amber-500 bg-amber-900/20' : 'border-slate-800 hover:border-slate-600 hover:bg-slate-800'"
+              >
+                <div class="w-8 h-8 bg-black border border-slate-700 flex items-center justify-center">
+                  <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-6 h-6 pixelated object-cover" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-xs font-bold text-white uppercase truncate">{{ f.name }}</div>
+                  <div class="text-[9px] text-slate-500 uppercase">Lvl {{ f.level ?? 1 }}</div>
+                </div>
+                <div v-if="createFighterId === f.id" class="text-amber-400 font-bold text-sm">
+                  ✓
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="flex justify-between gap-3 pt-4 border-t-2 border-slate-800 border-dashed">
           <button type="button" @click="showCreate = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300">Cancel</button>
-          <button type="submit" :disabled="isCreating" class="rpg-btn bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase tracking-wider px-8 py-2">
+          <button type="submit" :disabled="!createFighterId || isCreating" class="rpg-btn bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase tracking-wider px-8 py-2">
             Create
           </button>
         </div>
@@ -530,6 +555,7 @@ const showQuickJoinModal = ref(false);
 const joinTargetMatchId = ref<string | null>(null);
 const selectedFighterId = ref<string | null>(null);
 const quickJoinFighterId = ref<string | null>(null);
+const createFighterId = ref<string | null>(null);
 const isJoining = ref(false);
 const isCreating = ref(false);
 
@@ -801,6 +827,10 @@ async function confirmJoin() {
 
 async function handleCreate() {
   if (!auth.token) return;
+  if (!createFighterId.value) {
+    setStatus('SELECT A CHAMPION FIRST', 'warning');
+    return;
+  }
   isCreating.value = true;
   try {
     const match = await createMatch(auth.token, {
@@ -809,9 +839,12 @@ async function handleCreate() {
       botPowerlevel: options.value.botPowerlevel,
       autoStart: options.value.autoStart,
     });
+    
+    await joinMatch(auth.token, match.id, createFighterId.value);
+    
     showCreate.value = false;
     currentMatchId.value = match.id;
-    myFighterIdInMatch.value = roster.fighters[0]?.id ?? null;
+    myFighterIdInMatch.value = createFighterId.value;
     currentMatch.value = match;
     setStatus('CONTRACT SIGNED.', 'success');
     connectWebSocket();
@@ -905,6 +938,12 @@ watch(currentMatchId, (id) => {
 });
 
 watch(browseStatus, () => fetchMatches());
+
+watch(showCreate, (show) => {
+  if (show && roster.fighters.length > 0 && !createFighterId.value) {
+    createFighterId.value = roster.fighters[0].id;
+  }
+});
 
 onMounted(async () => {
   await roster.fetchFighters();
