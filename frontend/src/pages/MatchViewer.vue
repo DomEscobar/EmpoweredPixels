@@ -937,6 +937,16 @@ const drawEntity = (
   ctx.fillStyle = hpPercent > 0.5 ? '#10b981' : (hpPercent > 0.25 ? '#f59e0b' : '#ef4444');
   ctx.fillRect(barX, barY, barW * hpPercent, barH);
 
+  // HP Text
+  ctx.save();
+  ctx.font = `bold ${Math.round(8 * zoom)}px 'Courier New', monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fff';
+  ctx.shadowColor = '#000';
+  ctx.shadowBlur = 2;
+  ctx.fillText(`${Math.ceil(entity.hp)}/${entity.maxHp}`, centerX, barY - 2 * zoom);
+  ctx.restore();
+
   // --- MOMENTUM BAR ---
   const momentum = entity.momentum || 0;
   const maxMomentum = 100;

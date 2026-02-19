@@ -139,7 +139,7 @@ func (s *BattleSimulator) Run(matchID string, fighters []roster.Fighter, options
 func (s *BattleSimulator) initializeEntities(fighters []roster.Fighter, mapSize float64) []*combat.Entity {
 	entities := make([]*combat.Entity, len(fighters))
 	for i, f := range fighters {
-		maxHP := 100 + (f.Vitality * 12) // Slightly buffed vitality scaling
+		maxHP := 200 + (f.Vitality * 20) // Significantly buffed HP for longer battles
 		entities[i] = &combat.Entity{
 			ID:           f.ID,
 			Name:         f.Name,
