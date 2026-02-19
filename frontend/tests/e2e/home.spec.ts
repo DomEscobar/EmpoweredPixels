@@ -8,14 +8,20 @@ test.describe('Home & Dashboard E2E', () => {
   test.describe('Home Page', () => {
     test('should display landing page with correct hero section', async ({ page }) => {
       await expect(page.getByTestId('home-page')).toBeVisible();
-      await expect(page.locator('h1')).toContainText('Master the Pixels');
+      await expect(page.locator('h1')).toContainText('EMPOWERED');
+      await expect(page.locator('h1')).toContainText('PIXELS');
     });
 
-    test('should show feature tags', async ({ page }) => {
-      await expect(page.getByTestId('tag-empowered')).toHaveText('Empowered');
-      await expect(page.getByTestId('tag-competitive')).toHaveText('Competitive');
-      await expect(page.getByTestId('tag-strategic')).toHaveText('Strategic');
-      await expect(page.getByTestId('tag-realtime')).toHaveText('Realtime');
+    test('should display hero stats section', async ({ page }) => {
+      await expect(page.locator('.stat-card')).toHaveCount(4);
+    });
+
+    test('should show features section', async ({ page }) => {
+      await expect(page.locator('.feature-card')).toHaveCount(6);
+    });
+
+    test('should show leagues section', async ({ page }) => {
+      await expect(page.locator('.league-card')).toHaveCount(3);
     });
 
     test('should redirect authenticated user to dashboard', async ({ page }) => {

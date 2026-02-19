@@ -16,6 +16,7 @@ type UserRepository interface {
 type TokenRepository interface {
 	FindByUserID(ctx context.Context, userID int64) (*identity.Token, error)
 	FindByUserIDAndRefresh(ctx context.Context, userID int64, refresh string) (*identity.Token, error)
+	FindByValue(ctx context.Context, value string) (*identity.Token, error)
 	Upsert(ctx context.Context, token *identity.Token) error
 }
 

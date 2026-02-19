@@ -1,0 +1,78 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - link "EP EMPOWEREDPIXELS" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - img "EP" [ref=e9]
+        - generic [ref=e10]: EMPOWEREDPIXELS
+      - generic [ref=e11]:
+        - link "SIGN IN" [ref=e12] [cursor=pointer]:
+          - /url: /login
+          - button "SIGN IN" [ref=e13]
+        - link "GET STARTED" [ref=e14] [cursor=pointer]:
+          - /url: /register
+          - button "GET STARTED" [ref=e15]
+  - main [ref=e16]:
+    - generic [ref=e18]:
+      - generic [ref=e20]:
+        - generic [ref=e22]:
+          - heading "COMMAND CENTER" [level=1] [ref=e23]
+          - paragraph [ref=e24]: Welcome back, Commander. All systems operational.
+        - generic [ref=e27]: Online
+      - generic [ref=e28]:
+        - generic [ref=e31]:
+          - paragraph [ref=e32]: Active Roster
+          - paragraph [ref=e33]: "0"
+        - generic [ref=e37]:
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: Active Campaigns
+            - paragraph [ref=e41]: "0"
+          - generic [ref=e43]:
+            - generic [ref=e44]: LIVE
+            - generic [ref=e46]: Season 1
+        - generic [ref=e47]:
+          - generic [ref=e49]:
+            - paragraph [ref=e50]: Combat Record
+            - paragraph [ref=e51]: "0"
+          - generic [ref=e53]: Recent engagements
+        - generic [ref=e54]:
+          - generic [ref=e56]:
+            - paragraph [ref=e57]: Pending Rewards
+            - paragraph [ref=e58]: "0"
+          - paragraph [ref=e61]: No pending rewards
+      - generic [ref=e62]:
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - heading "BATTLE LOG" [level=3] [ref=e67]
+            - link "VIEW ALL" [ref=e68] [cursor=pointer]:
+              - /url: /matches
+          - generic [ref=e70]:
+            - paragraph [ref=e71]: No recent combat data
+            - link "JOIN BATTLE" [ref=e72] [cursor=pointer]:
+              - /url: /matches
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - heading "CHAMPION" [level=3] [ref=e76]
+            - generic [ref=e78]:
+              - paragraph [ref=e79]: No champions found
+              - link "RECRUIT" [ref=e80] [cursor=pointer]:
+                - /url: /roster
+          - generic [ref=e81]:
+            - heading "Quick Actions" [level=3] [ref=e83]
+            - generic [ref=e84]:
+              - link "BATTLE" [ref=e85] [cursor=pointer]:
+                - /url: /matches
+                - generic [ref=e86]: BATTLE
+              - link "ROSTER" [ref=e87] [cursor=pointer]:
+                - /url: /roster
+                - generic [ref=e88]: ROSTER
+              - link "VAULT" [ref=e89] [cursor=pointer]:
+                - /url: /inventory
+                - generic [ref=e90]: VAULT
+              - link "LEAGUES" [ref=e91] [cursor=pointer]:
+                - /url: /leagues
+                - generic [ref=e92]: LEAGUES
+```

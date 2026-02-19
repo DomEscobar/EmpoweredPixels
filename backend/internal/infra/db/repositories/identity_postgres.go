@@ -191,6 +191,30 @@ func (r *TokenRepository) FindByUserIDAndRefresh(ctx context.Context, userID int
 	return &token, nil
 }
 
+func (r *TokenRepository) FindByValue(ctx context.Context, value string) (*identity.Token, error) {
+	const query = `
+		select id, user_id, value, refresh_value, issued
+		from tokens
+		where value = $1`
+
+	token := identity.Token{}
+	err := r.pool.QueryRow(ctx, query, value).Scan(
+		&token.ID,
+		&token.UserID,
+		&token.Value,
+		&token.RefreshValue,
+		&token.Issued,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &token, nil
+}
+
 func (r *TokenRepository) Upsert(ctx context.Context, token *identity.Token) error {
 	const query = `
 		insert into tokens (id, user_id, value, refresh_value, issued)

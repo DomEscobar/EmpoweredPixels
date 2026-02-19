@@ -51,6 +51,7 @@ import (
 type Dependencies struct {
 	Config             config.Config
 	IdentityService    *identity.Service
+	TokenRepository    identity.TokenRepository
 	RosterService      *rosterusecase.Service
 	MatchService       *matchesusecase.Service
 	InventoryService   inventoryusecase.Service
@@ -80,7 +81,7 @@ func NewRouter(deps Dependencies) http.Handler {
 	authMiddleware := func(next http.Handler) http.Handler { return next }
 	if deps.Config.JWTSecret != "" {
 		authMiddleware = func(next http.Handler) http.Handler {
-			return middleware.WithUserID(next, []byte(deps.Config.JWTSecret))
+			return middleware.WithUserID(next, []byte(deps.Config.JWTSecret), deps.TokenRepository)
 		}
 	}
 

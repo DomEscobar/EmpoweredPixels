@@ -15,21 +15,21 @@ import (
 	"empoweredpixels/internal/infra/db/repositories"
 	"empoweredpixels/internal/infra/engine"
 	"empoweredpixels/internal/infra/jobs"
+	"empoweredpixels/internal/mcp"
+	attunementusecase "empoweredpixels/internal/usecase/attunement"
+	dailyusecase "empoweredpixels/internal/usecase/daily"
+	eventsusecase "empoweredpixels/internal/usecase/events"
 	identityusecase "empoweredpixels/internal/usecase/identity"
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
+	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
 	leaguesusecase "empoweredpixels/internal/usecase/leagues"
 	matchesusecase "empoweredpixels/internal/usecase/matches"
+	resonance "empoweredpixels/internal/usecase/resonance"
 	rewardsusecase "empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
 	shopusecase "empoweredpixels/internal/usecase/shop"
-	attunementusecase "empoweredpixels/internal/usecase/attunement"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
-	dailyusecase "empoweredpixels/internal/usecase/daily"
-	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
-	eventsusecase "empoweredpixels/internal/usecase/events"
-	resonance "empoweredpixels/internal/usecase/resonance"
-	"empoweredpixels/internal/mcp"
 )
 
 func main() {
@@ -157,21 +157,22 @@ func main() {
 	server := &http.Server{
 		Addr: cfg.HTTPAddress,
 		Handler: httpadapter.NewRouter(httpadapter.Dependencies{
-			Config:           cfg,
-			IdentityService:  identityService,
-			RosterService:    rosterService,
-			MatchService:     matchService,
-			InventoryService: inventoryService,
-			WeaponService:    weaponService,
-			SkillService:        nil,
-			ShopService:         shopService,
-			AttunementService:   attunementService,
-			DailyService:        dailyService,
-			LeagueService:       leagueService,
-			LeagueJob:        leagueJob,
-			RewardService:    rewardService,
-			SeasonService:    seasonService,
-			MatchHub:         matchHub,
+			Config:             cfg,
+			IdentityService:    identityService,
+			TokenRepository:    tokenRepo,
+			RosterService:      rosterService,
+			MatchService:       matchService,
+			InventoryService:   inventoryService,
+			WeaponService:      weaponService,
+			SkillService:       nil,
+			ShopService:        shopService,
+			AttunementService:  attunementService,
+			DailyService:       dailyService,
+			LeagueService:      leagueService,
+			LeagueJob:          leagueJob,
+			RewardService:      rewardService,
+			SeasonService:      seasonService,
+			MatchHub:           matchHub,
 			MCPHandler:         mcpHandler,
 			MCPAuditLogger:     mcpAuditLogger,
 			MCPFilter:          mcpFilter,

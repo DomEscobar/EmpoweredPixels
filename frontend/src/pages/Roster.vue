@@ -51,6 +51,13 @@
         </div>
       </header>
 
+      <!-- Error Alert -->
+      <div v-if="roster.error" class="pixel-box bg-red-900/90 border-red-500 p-4 flex items-center gap-3" data-testid="roster-error">
+        <span class="text-red-300 text-xl">⚠️</span>
+        <p class="text-red-100">{{ roster.error }}</p>
+        <button @click="roster.error = null" class="ml-auto text-red-300 hover:text-red-100">✕</button>
+      </div>
+
       <!-- Loading State -->
       <div v-if="roster.isLoading && !roster.fighters.length" class="pixel-box bg-slate-900/90 py-20 text-center">
         <div class="inline-block animate-spin text-4xl mb-4">⚔️</div>
@@ -501,10 +508,13 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useRosterStore } from '@/features/roster/store';
+import { useAuthStore } from '@/features/auth/store';
 import type { Fighter } from '@/features/roster/api';
 import FighterStats from '@/features/roster/FighterStats.vue';
 import ArmoryModal from '@/features/roster/ArmoryModal.vue';
 import VoxelFighter from '@/shared/ui/VoxelFighter.vue';
+
+const auth = useAuthStore();
 
 const PIXEL_ASSETS = {
   BG_DUNGEON: 'https://vibemedia.space/bg_dungeon_roster_7x8y9z_v1.png?prompt=dark%20dungeon%20stone%20floor%20tile%20texture%20seamless&style=pixel_game_asset&key=NOGON',
@@ -585,7 +595,7 @@ const closeCreateWizard = () => {
 
 const handleCreate = async () => {
   if (!newName.value.trim()) return;
-  
+  roster.error = null; // Clear previous errors
   try {
     const fighter = await roster.addFighter(newName.value);
     if (createAttunement.value && fighter) {
@@ -593,7 +603,7 @@ const handleCreate = async () => {
     }
     closeCreateWizard();
   } catch (e) {
-    // Error handled in store
+    // Error is displayed via roster.error binding
   }
 };
 

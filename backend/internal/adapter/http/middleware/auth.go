@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"empoweredpixels/internal/usecase/identity"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -12,7 +13,7 @@ type ctxKey string
 
 const userIDKey ctxKey = "userID"
 
-func WithUserID(next http.Handler, secret []byte) http.Handler {
+func WithUserID(next http.Handler, secret []byte, tokens identity.TokenRepository) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		auth := r.Header.Get("Authorization")
 		if auth == "" || !strings.HasPrefix(auth, "Bearer ") {
@@ -48,6 +49,14 @@ func WithUserID(next http.Handler, secret []byte) http.Handler {
 		if !ok {
 			next.ServeHTTP(w, r)
 			return
+		}
+
+		if tokens != nil {
+			dbToken, err := tokens.FindByValue(r.Context(), tokenString)
+			if err != nil || dbToken == nil {
+				next.ServeHTTP(w, r)
+				return
+			}
 		}
 
 		ctx := context.WithValue(r.Context(), userIDKey, userID)

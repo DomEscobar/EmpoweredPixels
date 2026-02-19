@@ -20,13 +20,16 @@ export const useFighterStore = defineStore("roster", {
   actions: {
     async fetchFighters() {
       const auth = useAuthStore();
-      if (!auth.token) return;
+      if (!auth.token) {
+        this.error = "Not authenticated";
+        return;
+      }
 
       this.isLoading = true;
       try {
         this.fighters = await getFighters(auth.token);
-      } catch (e) {
-        this.error = "Failed to load roster";
+      } catch (e: any) {
+        this.error = e.message || "Failed to load roster";
       } finally {
         this.isLoading = false;
       }
@@ -42,17 +45,19 @@ export const useFighterStore = defineStore("roster", {
         console.error("Failed to load equipment", e);
       }
     },
-    async addFighter(name: string): Promise<Fighter | undefined> {
+    async addFighter(name: string): Promise<Fighter> {
       const auth = useAuthStore();
-      if (!auth.token) return;
+      if (!auth.token) {
+        throw new Error("Not authenticated");
+      }
 
       this.isLoading = true;
       try {
         const newFighter = await createFighter(auth.token, name);
         this.fighters.push(newFighter);
         return newFighter;
-      } catch (e) {
-        this.error = "Failed to create fighter";
+      } catch (e: any) {
+        this.error = e.message || "Failed to create fighter";
         throw e;
       } finally {
         this.isLoading = false;
