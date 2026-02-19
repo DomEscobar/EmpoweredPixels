@@ -208,6 +208,13 @@ func (r *FighterRepository) UserHasFighter(ctx context.Context, userID int64) (b
 	return err == nil, err
 }
 
+func (r *FighterRepository) CountByUser(ctx context.Context, userID int64) (int, error) {
+	const query = `select count(*) from fighters where user_id = $1 and is_deleted = false`
+	var count int
+	err := r.pool.QueryRow(ctx, query, userID).Scan(&count)
+	return count, err
+}
+
 func (r *FighterRepository) Create(ctx context.Context, fighter *roster.Fighter) error {
 	const query = `
 		insert into fighters (id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, attunement_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted)

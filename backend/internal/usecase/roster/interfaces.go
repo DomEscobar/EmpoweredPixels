@@ -12,6 +12,7 @@ type FighterRepository interface {
 	GetByID(ctx context.Context, id string) (*roster.Fighter, error)
 	NameExists(ctx context.Context, name string) (bool, error)
 	UserHasFighter(ctx context.Context, userID int64) (bool, error)
+	CountByUser(ctx context.Context, userID int64) (int, error)
 	Create(ctx context.Context, fighter *roster.Fighter) error
 	Update(ctx context.Context, fighter *roster.Fighter) error
 	SoftDelete(ctx context.Context, userID int64, id string) error

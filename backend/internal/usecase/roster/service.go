@@ -69,20 +69,28 @@ func (s *Service) Create(ctx context.Context, userID int64, name string) (*roste
 		return nil, ErrFighterNameExists
 	}
 
-	hasFighter, err := s.fighters.UserHasFighter(ctx, userID)
+	// Allow up to 5 fighters per user
+	fighterCount, err := s.fighters.CountByUser(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
-	if hasFighter {
+	if fighterCount >= 5 {
 		return nil, ErrFighterExists
 	}
 
 	fighter := &roster.Fighter{
-		ID:      uuid.NewString(),
-		UserID:  userID,
-		Name:    name,
-		Level:   1,
-		Created: s.now(),
+		ID:       uuid.NewString(),
+		UserID:   userID,
+		Name:     name,
+		Level:    1,
+		Power:    10, // Base stats
+		Vitality: 10,
+		Accuracy: 10,
+		Agility:  10,
+		Armor:    5,
+		Speed:    10,
+		Vision:   15,
+		Created:  s.now(),
 	}
 
 	if err := s.fighters.Create(ctx, fighter); err != nil {
@@ -157,9 +165,11 @@ func (s *Service) UpdateExperience(ctx context.Context, experience *roster.Fight
 		fighter.Accuracy += levelsGained * 2
 		fighter.Agility += levelsGained * 2
 		fighter.Armor += levelsGained * 1
-
-		return s.fighters.Update(ctx, fighter)
 	}
 
-	return nil
+	// Sync XP fields on the fighter object for easier frontend consumption
+	fighter.XP = experience.Experience
+	fighter.XPToNextLevel = newLevel * newLevel * 50
+
+	return s.fighters.Update(ctx, fighter)
 }
