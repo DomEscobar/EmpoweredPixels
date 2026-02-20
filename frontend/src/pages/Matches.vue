@@ -790,13 +790,15 @@ async function confirmQuickJoin() {
 
     currentMatchId.value = match.id;
     myFighterIdInMatch.value = fighter.id;
-    currentMatch.value = match;
+    currentMatch.value = null;
     setStatus('JOINED BATTLE! PREPARE FOR COMBAT.', 'success');
     showQuickJoinModal.value = false;
+    await fetchCurrentMatch();
     connectWebSocket();
     startPolling();
     await fetchMatches();
   } catch (e: any) {
+    console.error('Quick join error:', e);
     setStatus(e?.message || 'NO OPEN LOBBIES AVAILABLE.', 'warning');
   } finally {
     isQuickJoining.value = false;
@@ -819,6 +821,7 @@ async function confirmJoin() {
     connectWebSocket();
     startPolling();
   } catch (e: any) {
+    console.error('Join match error:', e);
     setStatus(e?.message || 'FAILED TO JOIN.', 'error');
   } finally {
     isJoining.value = false;
@@ -867,7 +870,10 @@ async function handleLeave() {
   }
   if (!fighterId) fighterId = roster.fighters[0]?.id;
 
-  if (!fighterId) return;
+  if (!fighterId) {
+    setStatus('NO FIGHTER SELECTED. RECRUIT A HERO FIRST.', 'error');
+    return;
+  }
 
   try {
     await leaveMatch(auth.token, currentMatchId.value, fighterId);
@@ -875,6 +881,7 @@ async function handleLeave() {
     setStatus('ABANDONED QUEST.', 'warning');
     await fetchMatches();
   } catch (e: any) {
+    console.error('Leave match error:', e);
     setStatus(e?.message || 'FAILED TO FLEE.', 'error');
   }
 }
@@ -888,6 +895,7 @@ async function handleStart() {
     setStatus('BATTLE STARTED!', 'success');
     await fetchCurrentMatch();
   } catch (e: any) {
+    console.error('Start match error:', e);
     setStatus(e?.message || 'FAILED TO START.', 'error');
   } finally {
     isStarting.value = false;
