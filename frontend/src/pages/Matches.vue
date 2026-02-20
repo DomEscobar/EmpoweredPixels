@@ -107,7 +107,8 @@
                   <span class="text-red-500 font-bold animate-pulse text-xs uppercase tracking-widest">>> COMBAT ENGAGED <<</span>
                 </div>
                 <router-link :to="'/matches/' + currentMatchId" class="block">
-                  <button class="w-full rpg-btn bg-red-700 border-red-900 text-white hover:bg-red-600 font-bold uppercase tracking-wider py-3">
+                  <button class="w-full rpg-btn bg-red-700 border-red-900 text-white hover:bg-red-600 font-bold uppercase tracking-wider py-3"
+                          data-testid="spectate-match-button">
                     Spectate
                   </button>
                 </router-link>
@@ -115,9 +116,10 @@
 
               <template v-else-if="currentMatchStatus === 'completed'">
                 <div class="grid grid-cols-2 gap-2">
-                  <button @click="clearCurrentMatch" class="rpg-btn-small bg-slate-800 border-slate-600 text-slate-400 hover:bg-slate-700">Dismiss</button>
+                  <button @click="clearCurrentMatch" class="rpg-btn-small bg-slate-800 border-slate-600 text-slate-400 hover:bg-slate-700" data-testid="dismiss-match-button">Dismiss</button>
                   <router-link :to="'/matches/' + currentMatchId" class="block">
-                    <button class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600">Rewards</button>
+                    <button class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600"
+                            data-testid="claim-rewards-match-button">Rewards</button>
                   </router-link>
                 </div>
               </template>
@@ -333,12 +335,12 @@
     <!-- Create Modal -->
     <BaseModal :show="showCreate" @close="showCreate = false">
       <template #title>
-        <div class="flex items-center gap-3 text-amber-500">
+        <div class="flex items-center gap-3 text-amber-500" data-testid="create-match-modal-title">
           <img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-6 h-6 pixelated" />
           <span class="uppercase font-black text-xl tracking-wide">Draft Contract</span>
         </div>
       </template>
-      <form @submit.prevent="handleCreate" class="space-y-6 font-mono text-slate-200">
+      <form @submit.prevent="handleCreate" class="space-y-6 font-mono text-slate-200" data-testid="create-match-form">
         <div class="space-y-4">
           <div class="p-4 bg-slate-900 border-2 border-slate-700">
             <label class="flex items-center justify-between cursor-pointer group">
@@ -354,12 +356,14 @@
             <div class="bg-slate-900 p-3 border-2 border-slate-700">
               <label class="text-[10px] font-bold uppercase text-slate-500 block mb-2">Enemy Bots</label>
               <input type="number" v-model.number="options.botCount" min="0" max="10" 
-                class="w-full bg-black border border-slate-700 p-2 text-center text-amber-400 font-bold focus:outline-none focus:border-amber-500 rounded" />
+                class="w-full bg-black border border-slate-700 p-2 text-center text-amber-400 font-bold focus:outline-none focus:border-amber-500 rounded"
+                data-testid="bot-count-input" />
             </div>
             <div class="bg-slate-900 p-3 border-2 border-slate-700">
               <label class="text-[10px] font-bold uppercase text-slate-500 block mb-2">Difficulty Lvl</label>
               <input type="number" v-model.number="options.botPowerlevel" min="1" max="100" 
-                class="w-full bg-black border border-slate-700 p-2 text-center text-amber-400 font-bold focus:outline-none focus:border-amber-500 rounded" />
+                class="w-full bg-black border border-slate-700 p-2 text-center text-amber-400 font-bold focus:outline-none focus:border-amber-500 rounded"
+                data-testid="bot-power-input" />
             </div>
           </div>
 
@@ -383,6 +387,7 @@
                 @click="createFighterId = f.id"
                 class="relative flex items-center gap-3 p-2 border-2 cursor-pointer transition-all duration-200 bg-slate-950"
                 :class="createFighterId === f.id ? 'border-amber-500 bg-amber-900/20' : 'border-slate-800 hover:border-slate-600 hover:bg-slate-800'"
+                :data-testid="`create-match-fighter-${f.id}`"
               >
                 <div class="w-8 h-8 bg-black border border-slate-700 flex items-center justify-center">
                   <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-6 h-6 pixelated object-cover" />
@@ -400,8 +405,9 @@
         </div>
 
         <div class="flex justify-between gap-3 pt-4 border-t-2 border-slate-800 border-dashed">
-          <button type="button" @click="showCreate = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300">Cancel</button>
-          <button type="submit" :disabled="!createFighterId || isCreating" class="rpg-btn bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase tracking-wider px-8 py-2">
+          <button type="button" @click="showCreate = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300" data-testid="cancel-create-match-btn">Cancel</button>
+          <button type="submit" :disabled="!createFighterId || isCreating" class="rpg-btn bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase tracking-wider px-8 py-2"
+                  data-testid="confirm-create-match-btn">
             Create
           </button>
         </div>

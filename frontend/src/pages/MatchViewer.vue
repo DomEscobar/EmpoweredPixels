@@ -125,7 +125,9 @@
     </transition>
 
     <!-- Post-Match Victory Overlay -->
-    <div v-if="matchStatus === 'completed' && orderedRounds.length && currentIndex >= orderedRounds.length - 1" class="absolute inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-in fade-in duration-700 pointer-events-auto">
+    <div v-if="matchStatus === 'completed' && orderedRounds.length && currentIndex >= orderedRounds.length - 1" 
+         class="absolute inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-in fade-in duration-700 pointer-events-auto"
+         data-testid="match-outcome-overlay">
          <div class="bg-slate-900 border-4 border-amber-600 p-8 rounded-2xl shadow-[0_0_100px_rgba(245,158,11,0.3)] max-w-lg w-full text-center relative overflow-hidden group">
              <!-- Rays Effect -->
              <div class="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,rgba(245,158,11,0.1)_20deg,transparent_40deg)] animate-[spin_10s_linear_infinite] pointer-events-none"></div>
@@ -134,20 +136,23 @@
                  <img v-if="isWinner" :src="PIXEL_ASSETS.ICON_TROPHY" class="w-24 h-24 mx-auto animate-bounce pixelated drop-shadow-xl" />
                  <img v-else :src="PIXEL_ASSETS.ICON_SKULL" class="w-20 h-20 mx-auto grayscale opacity-50 pixelated" />
                  
-                 <h2 class="text-4xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-amber-300 to-amber-600 text-shadow-lg" :class="isWinner ? 'from-amber-300 to-amber-600' : 'from-slate-400 to-slate-700'">
+                 <h2 class="text-4xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-amber-300 to-amber-600 text-shadow-lg" :class="isWinner ? 'from-amber-300 to-amber-600' : 'from-slate-400 to-slate-700'"
+                     data-testid="match-outcome-title">
                     {{ isWinner ? 'VICTORY' : 'DEFEAT' }}
                  </h2>
 
                  <div class="w-full h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent my-2"></div>
 
                  <!-- Rewards -->
-                 <div v-if="rewardsStore.hasRewardForSource(matchId)" class="flex flex-col gap-3 bg-black/40 p-4 rounded-xl border border-amber-500/30">
+                 <div v-if="rewardsStore.hasRewardForSource(matchId)" class="flex flex-col gap-3 bg-black/40 p-4 rounded-xl border border-amber-500/30"
+                      data-testid="match-rewards-available">
                      <span class="text-[10px] uppercase font-bold text-amber-200/70 tracking-widest">Rewards Available</span>
                      <div class="text-2xl font-black text-amber-400">+ {{ rewardsStore.getRewardsForSource(matchId).length * 20 }} <span class="text-sm text-amber-600">Particles</span></div>
                  </div>
 
                  <div class="flex flex-col gap-2 mt-2">
-                    <button @click="claimAndExit" :disabled="rewardsStore.isLoading" class="w-full py-4 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg hover:shadow-amber-500/20 active:scale-95 transition-all text-sm border-t border-amber-300 disabled:opacity-70 disabled:cursor-not-allowed">
+                    <button @click="claimAndExit" :disabled="rewardsStore.isLoading" class="w-full py-4 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg hover:shadow-amber-500/20 active:scale-95 transition-all text-sm border-t border-amber-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                            data-testid="claim-and-exit-btn">
                         <span v-if="rewardsStore.isLoading" class="flex items-center justify-center gap-2">
                         <span class="animate-spin">↻</span> Claiming...
                         </span>
@@ -168,7 +173,8 @@
     </div>
 
     <!-- Claim Summary Modal -->
-    <div v-if="showClaimSummary" class="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-300 pointer-events-auto">
+    <div v-if="showClaimSummary" class="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-300 pointer-events-auto"
+         data-testid="claim-summary-modal">
       <div class="bg-slate-900 border-4 border-amber-600 p-8 rounded-2xl shadow-[0_0_100px_rgba(245,158,11,0.3)] max-w-lg w-full text-center relative overflow-hidden">
         <div class="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,rgba(245,158,11,0.1)_20deg,transparent_40deg)] animate-[spin_10s_linear_infinite] pointer-events-none"></div>
         
@@ -176,9 +182,9 @@
           <div class="text-6xl mb-2 animate-bounce">🎉</div>
           <h2 class="text-3xl font-black text-amber-400 text-shadow-retro uppercase tracking-wider">Loot Received</h2>
           
-          <div class="pixel-box bg-slate-950/50 p-6 space-y-4">
+          <div class="pixel-box bg-slate-950/50 p-6 space-y-4" data-testid="loot-content">
             <!-- Particles -->
-            <div class="flex items-center justify-center gap-3 text-amber-300">
+            <div class="flex items-center justify-center gap-3 text-amber-300" data-testid="loot-particles">
               <span class="text-2xl">✨</span>
               <span class="text-xl font-bold">+{{ (summaryContent?.items?.length || 0) * 20 }} Particles</span>
             </div>
@@ -210,7 +216,8 @@
           </div>
           
           <div class="flex flex-col gap-2">
-            <button @click="exitToMatches" class="w-full py-4 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg text-sm border-t border-amber-300">
+            <button @click="exitToMatches" class="w-full py-4 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-black uppercase tracking-widest rounded-xl shadow-lg text-sm border-t border-amber-300"
+                    data-testid="continue-to-matches-btn">
                 Continue to Matches →
             </button>
             <div class="flex gap-2">
