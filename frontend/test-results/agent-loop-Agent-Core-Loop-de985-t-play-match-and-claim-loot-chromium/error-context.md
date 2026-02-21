@@ -1,0 +1,71 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - link "EP EMPOWEREDPIXELS" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]:
+          - img "EP"
+        - generic [ref=e9]: EMPOWEREDPIXELS
+      - generic [ref=e10]:
+        - link "Command" [ref=e11] [cursor=pointer]:
+          - /url: /dashboard
+          - generic [ref=e12]: Command
+        - link "Roster" [ref=e13] [cursor=pointer]:
+          - /url: /roster
+          - generic [ref=e14]: Roster
+        - link "Battle" [ref=e15] [cursor=pointer]:
+          - /url: /matches
+          - generic [ref=e16]: Battle
+        - link "Vault" [ref=e17] [cursor=pointer]:
+          - /url: /inventory
+          - generic [ref=e18]: Vault
+        - link "Leagues" [ref=e19] [cursor=pointer]:
+          - /url: /leagues
+          - generic [ref=e20]: Leagues
+        - link "Attune" [ref=e21] [cursor=pointer]:
+          - /url: /attunement
+          - generic [ref=e22]: Attune
+        - link "Rankings" [ref=e23] [cursor=pointer]:
+          - /url: /leaderboard
+          - generic [ref=e24]: Rankings
+        - link "Shop" [ref=e25] [cursor=pointer]:
+          - /url: /shop
+          - generic [ref=e26]: Shop
+      - generic [ref=e27]:
+        - button "🎁 0d" [ref=e28]:
+          - generic [ref=e29]: 🎁
+          - generic [ref=e30]: 0d
+        - link "Gold 0" [ref=e31] [cursor=pointer]:
+          - /url: /shop
+          - img "Gold" [ref=e32]
+          - generic [ref=e33]: "0"
+        - button "Logout" [ref=e34]:
+          - img [ref=e36]
+        - generic [ref=e41]: Commander
+        - button "☰" [ref=e42] [cursor=pointer]:
+          - generic [ref=e43]: ☰
+  - main [ref=e44]:
+    - generic [ref=e45]:
+      - generic:
+        - button "← Exit" [ref=e49]
+        - generic:
+          - 'heading "MATCH #b34a685e" [level=1]'
+      - generic:
+        - button "📜" [ref=e50]
+        - generic:
+          - generic: Step
+          - generic: 1 / 36
+      - generic [ref=e55]:
+        - button "▶" [ref=e56]:
+          - generic [ref=e57]: ▶
+        - generic [ref=e59]:
+          - button "⏮" [ref=e60]
+          - button "⏭" [ref=e61]
+        - generic [ref=e62]:
+          - generic [ref=e63]: SPEED
+          - slider [ref=e64] [cursor=pointer]: "1"
+          - generic [ref=e65]: 1x
+```
