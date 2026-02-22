@@ -47,21 +47,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import("../../pages/MatchViewer.vue"),
   },
   {
-    path: "/shop",
-    name: "shop",
-    component: () => import("../../pages/Shop.vue"),
-  },
-  {
-    path: "/attunement",
-    name: "attunement",
-    component: () => import("../../pages/Attunement.vue"),
-  },
-  {
-    path: "/leaderboard",
-    name: "leaderboard",
-    component: () => import("../../pages/Leaderboard.vue"),
-  },
-  {
     path: "/squads",
     name: "squads",
     component: () => import("../../pages/Squads.vue"),

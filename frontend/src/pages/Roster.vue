@@ -99,8 +99,7 @@
         >
           <!-- Attunement Glow Header -->
           <div 
-            class="h-2 w-full"
-            :class="fighter.attunementId ? getAttunementBarColor(fighter.attunementId) : 'bg-slate-700'"
+            class="h-2 w-full bg-slate-700"
           ></div>
 
           <div class="p-4 space-y-4">
@@ -109,12 +108,9 @@
               <!-- Fighter Avatar -->
               <div class="relative">
                 <div
-                  :class="[
-                    'pixel-box-sm flex h-16 w-16 items-center justify-center text-3xl overflow-hidden',
-                    fighter.attunementId ? getAttunementBg(fighter.attunementId) : 'bg-slate-800'
-                  ]"
+                  class="pixel-box-sm flex h-16 w-16 items-center justify-center text-3xl overflow-hidden bg-slate-800"
                 >
-                  <VoxelFighter :seed="fighter.id" :attunement="fighter.attunementId" :animate="true" />
+                  <VoxelFighter :seed="fighter.id" :animate="true" />
                 </div>
                 <!-- Level Badge -->
                 <div class="absolute -bottom-1 -right-1 bg-amber-600 text-white text-xs font-bold px-1.5 py-0.5 border-2 border-slate-900">
@@ -131,9 +127,6 @@
                   <span class="pixel-badge bg-emerald-900/50 border-emerald-500/50 text-emerald-400 text-xs px-2 py-0.5 flex items-center gap-1">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                     Ready
-                  </span>
-                  <span v-if="fighter.attunementId" class="text-xs text-slate-500">
-                    {{ fighter.attunementId }}
                   </span>
                 </div>
                 
@@ -201,36 +194,6 @@
               </div>
             </div>
 
-            <!-- Attunement Quick Select -->
-            <div>
-              <div class="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                Attunement
-              </div>
-              <div class="flex gap-1">
-                <button
-                  v-for="att in attunements"
-                  :key="att.id"
-                  :class="[
-                    'pixel-box-sm flex h-8 w-8 items-center justify-center text-base transition-all',
-                    fighter.attunementId === att.id
-                      ? `${att.bgActive} border-2 ${att.borderActive}`
-                      : 'bg-slate-800/50 opacity-40 hover:opacity-100 hover:bg-slate-700'
-                  ]"
-                  :title="att.name"
-                  @click.stop="quickSetAttunement(fighter.id, att.id)"
-                >
-                  {{ att.icon }}
-                </button>
-                <button
-                  v-if="fighter.attunementId"
-                  class="ml-auto rpg-btn-small text-[10px] px-2"
-                  @click.stop="quickSetAttunement(fighter.id, null)"
-                >
-                  CLEAR
-                </button>
-              </div>
-            </div>
-
             <!-- Action Buttons -->
             <div class="flex gap-2 pt-2 border-t-2 border-slate-800">
               <button
@@ -289,13 +252,10 @@
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                       <div
-                        :class="[
-                          'pixel-box-sm flex h-12 w-12 items-center justify-center overflow-hidden',
-                          selectedFighter.attunementId ? getAttunementBg(selectedFighter.attunementId) : 'bg-slate-800'
-                        ]"
-                      >
-                        <VoxelFighter :seed="selectedFighter.id" :attunement="selectedFighter.attunementId" :animate="true" />
-                      </div>
+                      class="pixel-box-sm flex h-12 w-12 items-center justify-center overflow-hidden bg-slate-800"
+                    >
+                      <VoxelFighter :seed="selectedFighter.id" :animate="true" />
+                    </div>
                       <div>
                         <h2 class="text-xl font-bold text-amber-400 text-shadow-retro">
                           {{ selectedFighter.name }}
@@ -388,12 +348,9 @@
                   <div class="flex justify-center">
                     <div class="relative">
                       <div
-                        :class="[
-                          'pixel-box flex h-24 w-24 items-center justify-center transition-all overflow-hidden',
-                          createAttunement ? getAttunementBg(createAttunement) : 'bg-slate-800'
-                        ]"
+                        class="pixel-box flex h-24 w-24 items-center justify-center transition-all overflow-hidden bg-slate-800"
                       >
-                        <VoxelFighter :seed="previewSeed" :attunement="createAttunement" :animate="true" />
+                        <VoxelFighter :seed="previewSeed" :animate="true" />
                       </div>
                       <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap pixel-box-sm bg-slate-800 px-3 py-1 text-sm font-bold text-white">
                         {{ newName || 'Unnamed' }}
@@ -417,31 +374,6 @@
                     <p class="mt-1 text-[10px] text-slate-600">
                       {{ newName.length }}/24 characters
                     </p>
-                  </div>
-
-                  <!-- Attunement Selection -->
-                  <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Starting Attunement (Optional)</label>
-                    <div class="grid grid-cols-5 gap-2">
-                      <button
-                        v-for="att in attunements"
-                        :key="att.id"
-                        type="button"
-                        :class="[
-                          'pixel-box-sm flex flex-col items-center gap-1 p-3 transition-all',
-                          createAttunement === att.id
-                            ? `${att.bgActive} ${att.borderActive}`
-                            : 'bg-slate-800/60 hover:bg-slate-700'
-                        ]"
-                        :data-testid="`attunement-select-${att.id.toLowerCase()}`"
-                        @click="createAttunement = createAttunement === att.id ? null : att.id"
-                      >
-                        <span class="text-xl">{{ att.icon }}</span>
-                        <span class="text-[10px] font-bold" :class="createAttunement === att.id ? 'text-white' : 'text-slate-500'">
-                          {{ att.name }}
-                        </span>
-                      </button>
-                    </div>
                   </div>
 
                   <!-- Info Box -->
@@ -561,36 +493,11 @@ const roster = useRosterStore();
 const showCreate = ref(false);
 const showArmory = ref(false);
 const newName = ref('');
-const createAttunement = ref<string | null>(null);
 const selectedFighter = ref<Fighter | null>(null);
 const dismissTarget = ref<Fighter | null>(null);
 
 // Preview seed for new fighter
 const previewSeed = computed(() => newName.value || 'preview');
-
-const attunements = [
-  { id: 'Fire', name: 'Fire', icon: '🔥', bgActive: 'bg-orange-900/60', borderActive: 'border-orange-500' },
-  { id: 'Water', name: 'Water', icon: '💧', bgActive: 'bg-blue-900/60', borderActive: 'border-blue-500' },
-  { id: 'Earth', name: 'Earth', icon: '🪨', bgActive: 'bg-amber-900/60', borderActive: 'border-amber-600' },
-  { id: 'Wind', name: 'Wind', icon: '💨', bgActive: 'bg-teal-900/60', borderActive: 'border-teal-500' },
-  { id: 'Lightning', name: 'Lightning', icon: '⚡', bgActive: 'bg-yellow-900/60', borderActive: 'border-yellow-500' },
-];
-
-const getAttunementBg = (id: string | null | undefined) => {
-  if (!id) return 'bg-slate-800';
-  return attunements.find(a => a.id === id)?.bgActive || 'bg-slate-800';
-};
-
-const getAttunementBarColor = (id: string) => {
-  const colors: Record<string, string> = {
-    Fire: 'bg-linear-to-r from-orange-600 to-red-600',
-    Water: 'bg-linear-to-r from-blue-500 to-cyan-500',
-    Earth: 'bg-linear-to-r from-amber-600 to-stone-600',
-    Wind: 'bg-linear-to-r from-teal-500 to-emerald-500',
-    Lightning: 'bg-linear-to-r from-yellow-400 to-amber-500',
-  };
-  return colors[id] || 'bg-slate-700';
-};
 
 const getExpPercent = (fighter: Fighter) => {
   const next = fighter.levelExp || fighter.xpToNextLevel;
@@ -617,7 +524,6 @@ const getStatBars = (fighter: Fighter) => {
 
 const openCreateWizard = () => {
   newName.value = '';
-  createAttunement.value = null;
   showCreate.value = true;
 };
 
@@ -629,10 +535,7 @@ const handleCreate = async () => {
   if (!newName.value.trim()) return;
   roster.error = null; // Clear previous errors
   try {
-    const fighter = await roster.addFighter(newName.value);
-    if (createAttunement.value && fighter) {
-      await roster.updateAttunement(fighter.id, createAttunement.value);
-    }
+    await roster.addFighter(newName.value);
     closeCreateWizard();
   } catch (e) {
     // Error is displayed via roster.error binding
@@ -642,10 +545,6 @@ const handleCreate = async () => {
 const openFighterPanel = async (fighter: Fighter) => {
   selectedFighter.value = fighter;
   await roster.fetchFighterEquipment(fighter.id);
-};
-
-const quickSetAttunement = async (fighterId: string, attunementId: string | null) => {
-  await roster.updateAttunement(fighterId, attunementId);
 };
 
 const confirmDismiss = (fighter: Fighter) => {

@@ -74,13 +74,19 @@
               class="relative aspect-square pixel-box-sm bg-slate-950 transition-all hover:scale-105 active:scale-95 flex items-center justify-center overflow-hidden"
               :class="item.fighterId ? 'opacity-40 grayscale' : 'hover:border-amber-500'"
             >
-              <!-- Rarity Glow -->
-              <div class="absolute inset-0 opacity-10" :class="rarityColors[getRarityName(item.rarity)]"></div>
-              
-              <!-- Icon -->
-              <div class="text-3xl relative z-10">
-                {{ getWeaponIcon(item.type) }}
-              </div>
+               <!-- Rarity Glow -->
+               <div class="absolute inset-0 opacity-10" :class="rarityColors[getRarityName(item.rarity)]"></div>
+               
+                <!-- Icon -->
+                <div class="relative z-10 p-2">
+                   <img
+                     :src="getEquipmentImageUrl(item.type, item.id).url"
+                     class="w-12 h-12 pixelated"
+                     :alt="item.type"
+                     :data-testid="`armor-item-${item.id}`"
+                     @error="handleImageError"
+                   />
+                </div>
               
               <!-- Level & Enhancement -->
               <div class="absolute top-1 left-1 bg-black/80 px-1 text-[8px] font-bold text-white border border-slate-800">
@@ -110,21 +116,26 @@
         </div>
       </div>
 
-      <!-- Footer Info -->
-      <div class="p-4 bg-slate-900 border-t-4 border-slate-800 text-[10px] text-slate-500 flex justify-between">
-        <p>※ Items bound to other warriors cannot be re-equipped here.</p>
-        <p class="uppercase font-bold tracking-widest text-slate-400">
-          Inventory: {{ inventory.equipment.length }} Items
-        </p>
-      </div>
-    </div>
-  </div>
+       <!-- Footer Info -->
+       <div class="p-4 bg-slate-900 border-t-4 border-slate-800 text-[10px] text-slate-500 flex justify-between">
+         <p>※ Items bound to other warriors cannot be re-equipped here.</p>
+         <p class="uppercase font-bold tracking-widest text-slate-400">
+           Inventory: {{ inventory.equipment.length }} Items
+         </p>
+       </div>
+       
+       <!-- Toast Manager -->
+       <ToastManager ref="toastManager" />
+     </div>
+   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useInventoryStore } from '@/features/inventory/store';
 import { useRosterStore } from '@/features/roster/store';
+import { getEquipmentImageUrl } from '@/shared/utils/equipmentImages';
+import ToastManager from '@/shared/ui/ToastManager.vue';
 import type { Fighter } from '@/features/roster/api';
 
 const props = defineProps<{
@@ -133,8 +144,14 @@ const props = defineProps<{
 
 const emit = defineEmits(['close']);
 
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement;
+  img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M12 8v8M8 12h8"/></svg>';
+};
+
 const inventory = useInventoryStore();
 const roster = useRosterStore();
+const toastManager = ref<any>(null);
 
 const currentFilter = ref('ALL');
 const filterTypes = ['ALL', 'WEAPON', 'ARMOR', 'TRINKET'];
@@ -143,19 +160,26 @@ onMounted(() => {
   inventory.fetchInventory(1, 100);
 });
 
-const filteredItems = computed(() => {
-  let items = inventory.equipment;
-  
-  if (currentFilter.value !== 'ALL') {
-    items = items.filter(i => {
-        const t = i.type.toLowerCase();
-        if (currentFilter.value === 'WEAPON') return t.includes('sword') || t.includes('axe') || t.includes('bow') || t.includes('staff') || t.includes('blade');
-        return true; 
-    });
-  }
-  
-  return items;
-});
+ const filteredItems = computed(() => {
+   let items = inventory.equipment;
+   
+   if (currentFilter.value !== 'ALL') {
+     items = items.filter(i => {
+         const t = i.type.toLowerCase();
+         if (currentFilter.value === 'WEAPON') {
+           const weaponPatterns = ['wpn', 'sword', 'axe', 'bow', 'staff', 'dagger', 'spear', 'hammer', 'blade'];
+           return weaponPatterns.some(pattern => t.includes(pattern));
+         }
+         if (currentFilter.value === 'ARMOR') {
+           const armorPatterns = ['helmet', 'chest', 'gloves', 'boots', 'armor', 'shield', 'plate', 'mail', 'leather', 'cloth', 'gauntlet', 'greave'];
+           return armorPatterns.some(pattern => t.includes(pattern));
+         }
+         return true;
+     });
+   }
+   
+   return items;
+ });
 
 const handleEquip = async (itemId: string) => {
   const item = inventory.equipment.find(i => i.id === itemId);
@@ -165,7 +189,7 @@ const handleEquip = async (itemId: string) => {
     await roster.equipItemToFighter(props.fighter.id, itemId);
     emit('close');
   } catch (e) {
-    console.error("Equip failed", e);
+    toastManager.value?.addToast('Failed to equip item', 'error');
   }
 };
 
@@ -174,17 +198,6 @@ const getRarityName = (rarity: number) => {
   if (rarity === 3) return 'Epic';
   if (rarity === 2) return 'Rare';
   return 'Common';
-};
-
-const getWeaponIcon = (type: string) => {
-  const t = type.toLowerCase();
-  if (t.includes('axe')) return '🪓';
-  if (t.includes('sword')) return '⚔️';
-  if (t.includes('staff')) return '🪄';
-  if (t.includes('bow')) return '🏹';
-  if (t.includes('mask')) return '🎭';
-  if (t.includes('ring')) return '💍';
-  return '📦';
 };
 
 const rarityColors: Record<string, string> = {
@@ -199,7 +212,9 @@ const rarityTextColors: Record<string, string> = {
     'Rare': 'text-emerald-400',
     'Epic': 'text-purple-400',
     'Legendary': 'text-orange-400'
-};
+  };
+
+defineExpose({ handleImageError });
 </script>
 
 <style scoped>

@@ -244,7 +244,7 @@ func (h *Handler) ListByFighter(w http.ResponseWriter, r *http.Request, fighterI
 	items, err := h.service.ListByFighter(r.Context(), userID, fighterID)
 	if err != nil {
 		log.Printf("inventory list by fighter error: %v", err)
-		responses.Error(w, http.StatusInternalServerError, "server error")
+		responses.Error(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -254,6 +254,51 @@ func (h *Handler) ListByFighter(w http.ResponseWriter, r *http.Request, fighterI
 	}
 
 	responses.JSON(w, http.StatusOK, result)
+}
+
+func (h *Handler) Equip(w http.ResponseWriter, r *http.Request, equipmentID string, fighterID string) {
+	userID, ok := middleware.UserID(r.Context())
+	if !ok {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	if equipmentID == "" || fighterID == "" {
+		responses.Error(w, http.StatusBadRequest, "equipmentId and fighterId are required")
+		return
+	}
+
+	// Validate fighter exists and belongs to user
+	fighter, err := h.service.GetEquipment(r.Context(), userID, equipmentID)
+	if err != nil {
+		if err == inventoryusecase.ErrInvalidEquipment {
+			responses.Error(w, http.StatusNotFound, "equipment not found")
+			return
+		}
+		log.Printf("inventory equip validation error: %v", err)
+		responses.Error(w, http.StatusInternalServerError, "server error")
+		return
+	}
+
+	// Ensure equipment belongs to user
+	if fighter.UserID != userID {
+		responses.Error(w, http.StatusForbidden, "equipment does not belong to user")
+		return
+	}
+
+	// fighterID as pointer
+	fid := fighterID
+	if err := h.service.Equip(r.Context(), userID, equipmentID, &fid); err != nil {
+		if err == inventoryusecase.ErrInvalidEquipment {
+			responses.Error(w, http.StatusNotFound, "equipment not found")
+			return
+		}
+		log.Printf("inventory equip error: %v", err)
+		responses.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h *Handler) SetFavorite(w http.ResponseWriter, r *http.Request, id string, favorite bool) {

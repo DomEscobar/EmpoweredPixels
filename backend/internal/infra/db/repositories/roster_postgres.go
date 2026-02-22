@@ -35,7 +35,7 @@ func NewConfigurationRepository(pool *pgxpool.Pool) *ConfigurationRepository {
 
 func (r *FighterRepository) ListByUser(ctx context.Context, userID int64) ([]roster.Fighter, error) {
 	const query = `
-		select id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, attunement_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted
+		select id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted
 		from fighters
 		where user_id = $1 and is_deleted = false
 		order by created`
@@ -54,7 +54,7 @@ func (r *FighterRepository) ListByUser(ctx context.Context, userID int64) ([]ros
 			&fighter.Power, &fighter.ConditionPower, &fighter.Precision, &fighter.Ferocity,
 			&fighter.Accuracy, &fighter.Agility, &fighter.Armor, &fighter.Vitality,
 			&fighter.ParryChance, &fighter.HealingPower, &fighter.Speed, &fighter.Vision,
-			&fighter.WeaponID, &fighter.AttunementID,
+			&fighter.WeaponID,
 			&fighter.MatchesWon, &fighter.MatchesLost, &fighter.TotalMatches,
 			&fighter.TotalDamageDealt, &fighter.TotalDamageTaken,
 			&fighter.Created, &fighter.IsDeleted,
@@ -69,7 +69,7 @@ func (r *FighterRepository) ListByUser(ctx context.Context, userID int64) ([]ros
 
 func (r *FighterRepository) GetByUserAndID(ctx context.Context, userID int64, id string) (*roster.Fighter, error) {
 	const query = `
-		select id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, attunement_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted
+		select id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted
 		from fighters
 		where user_id = $1 and id = $2 and is_deleted = false`
 
@@ -79,7 +79,7 @@ func (r *FighterRepository) GetByUserAndID(ctx context.Context, userID int64, id
 		&fighter.Power, &fighter.ConditionPower, &fighter.Precision, &fighter.Ferocity,
 		&fighter.Accuracy, &fighter.Agility, &fighter.Armor, &fighter.Vitality,
 		&fighter.ParryChance, &fighter.HealingPower, &fighter.Speed, &fighter.Vision,
-		&fighter.WeaponID, &fighter.AttunementID,
+		&fighter.WeaponID,
 		&fighter.MatchesWon, &fighter.MatchesLost, &fighter.TotalMatches,
 		&fighter.TotalDamageDealt, &fighter.TotalDamageTaken,
 		&fighter.Created, &fighter.IsDeleted,
@@ -95,7 +95,7 @@ func (r *FighterRepository) GetByUserAndID(ctx context.Context, userID int64, id
 
 func (r *FighterRepository) ListByMatch(ctx context.Context, matchID string) ([]roster.Fighter, error) {
 	const query = `
-		select f.id, f.user_id, f.name, f.level, f.xp, f.xp_to_next_level, f.power, f.condition_power, f.precision, f.ferocity, f.accuracy, f.agility, f.armor, f.vitality, f.parry_chance, f.healing_power, f.speed, f.vision, f.weapon_id, f.attunement_id, f.matches_won, f.matches_lost, f.total_matches, f.total_damage_dealt, f.total_damage_taken, f.created, f.is_deleted
+		select f.id, f.user_id, f.name, f.level, f.xp, f.xp_to_next_level, f.power, f.condition_power, f.precision, f.ferocity, f.accuracy, f.agility, f.armor, f.vitality, f.parry_chance, f.healing_power, f.speed, f.vision, f.weapon_id, f.matches_won, f.matches_lost, f.total_matches, f.total_damage_dealt, f.total_damage_taken, f.created, f.is_deleted
 		from fighters f
 		join match_registrations mr on mr.fighter_id = f.id
 		where mr.match_id = $1 and f.is_deleted = false`
@@ -114,7 +114,7 @@ func (r *FighterRepository) ListByMatch(ctx context.Context, matchID string) ([]
 			&fighter.Power, &fighter.ConditionPower, &fighter.Precision, &fighter.Ferocity,
 			&fighter.Accuracy, &fighter.Agility, &fighter.Armor, &fighter.Vitality,
 			&fighter.ParryChance, &fighter.HealingPower, &fighter.Speed, &fighter.Vision,
-			&fighter.WeaponID, &fighter.AttunementID,
+			&fighter.WeaponID,
 			&fighter.MatchesWon, &fighter.MatchesLost, &fighter.TotalMatches,
 			&fighter.TotalDamageDealt, &fighter.TotalDamageTaken,
 			&fighter.Created, &fighter.IsDeleted,
@@ -129,7 +129,7 @@ func (r *FighterRepository) ListByMatch(ctx context.Context, matchID string) ([]
 
 func (r *FighterRepository) GetByID(ctx context.Context, id string) (*roster.Fighter, error) {
 	const query = `
-		select id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, attunement_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted
+		select id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted
 		from fighters
 		where id = $1`
 
@@ -139,7 +139,7 @@ func (r *FighterRepository) GetByID(ctx context.Context, id string) (*roster.Fig
 		&fighter.Power, &fighter.ConditionPower, &fighter.Precision, &fighter.Ferocity,
 		&fighter.Accuracy, &fighter.Agility, &fighter.Armor, &fighter.Vitality,
 		&fighter.ParryChance, &fighter.HealingPower, &fighter.Speed, &fighter.Vision,
-		&fighter.WeaponID, &fighter.AttunementID,
+		&fighter.WeaponID,
 		&fighter.MatchesWon, &fighter.MatchesLost, &fighter.TotalMatches,
 		&fighter.TotalDamageDealt, &fighter.TotalDamageTaken,
 		&fighter.Created, &fighter.IsDeleted,
@@ -158,7 +158,7 @@ func (r *FighterRepository) GetMultiple(ctx context.Context, fighterIDs []string
 		return []roster.Fighter{}, nil
 	}
 	const query = `
-		select id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, attunement_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted
+		select id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted
 		from fighters
 		where id = ANY($1) and is_deleted = false`
 
@@ -176,7 +176,7 @@ func (r *FighterRepository) GetMultiple(ctx context.Context, fighterIDs []string
 			&fighter.Power, &fighter.ConditionPower, &fighter.Precision, &fighter.Ferocity,
 			&fighter.Accuracy, &fighter.Agility, &fighter.Armor, &fighter.Vitality,
 			&fighter.ParryChance, &fighter.HealingPower, &fighter.Speed, &fighter.Vision,
-			&fighter.WeaponID, &fighter.AttunementID,
+			&fighter.WeaponID,
 			&fighter.MatchesWon, &fighter.MatchesLost, &fighter.TotalMatches,
 			&fighter.TotalDamageDealt, &fighter.TotalDamageTaken,
 			&fighter.Created, &fighter.IsDeleted,
@@ -217,8 +217,8 @@ func (r *FighterRepository) CountByUser(ctx context.Context, userID int64) (int,
 
 func (r *FighterRepository) Create(ctx context.Context, fighter *roster.Fighter) error {
 	const query = `
-		insert into fighters (id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, attunement_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted)
-		values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)`
+		insert into fighters (id, user_id, name, level, xp, xp_to_next_level, power, condition_power, precision, ferocity, accuracy, agility, armor, vitality, parry_chance, healing_power, speed, vision, weapon_id, matches_won, matches_lost, total_matches, total_damage_dealt, total_damage_taken, created, is_deleted)
+		values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)`
 
 	_, err := r.pool.Exec(ctx, query,
 		fighter.ID,
@@ -240,7 +240,6 @@ func (r *FighterRepository) Create(ctx context.Context, fighter *roster.Fighter)
 		fighter.Speed,
 		fighter.Vision,
 		fighter.WeaponID,
-		fighter.AttunementID,
 		fighter.MatchesWon,
 		fighter.MatchesLost,
 		fighter.TotalMatches,
@@ -271,8 +270,8 @@ func (r *FighterRepository) Update(ctx context.Context, fighter *roster.Fighter)
 		    parry_chance = $12, healing_power = $13, speed = $14, vision = $15,
 		    matches_won = $16, matches_lost = $17, total_matches = $18,
 		    total_damage_dealt = $19, total_damage_taken = $20,
-		    weapon_id = $21, attunement_id = $22
-		where id = $23`
+		    weapon_id = $21
+		where id = $22`
 
 	_, err := r.pool.Exec(ctx, query,
 		fighter.Level, fighter.XP, fighter.XPToNextLevel,
@@ -281,7 +280,7 @@ func (r *FighterRepository) Update(ctx context.Context, fighter *roster.Fighter)
 		fighter.ParryChance, fighter.HealingPower, fighter.Speed, fighter.Vision,
 		fighter.MatchesWon, fighter.MatchesLost, fighter.TotalMatches,
 		fighter.TotalDamageDealt, fighter.TotalDamageTaken,
-		fighter.WeaponID, fighter.AttunementID,
+		fighter.WeaponID,
 		fighter.ID,
 	)
 	return err
@@ -317,12 +316,12 @@ func (r *ExperienceRepository) Upsert(ctx context.Context, experience *roster.Fi
 
 func (r *ConfigurationRepository) GetByFighterID(ctx context.Context, fighterID string) (*roster.FighterConfiguration, error) {
 	const query = `
-		select fighter_id, attunement_id
+		select fighter_id
 		from fighter_configurations
 		where fighter_id = $1`
 
 	var config roster.FighterConfiguration
-	err := r.pool.QueryRow(ctx, query, fighterID).Scan(&config.FighterID, &config.AttunementID)
+	err := r.pool.QueryRow(ctx, query, fighterID).Scan(&config.FighterID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	}
@@ -334,11 +333,11 @@ func (r *ConfigurationRepository) GetByFighterID(ctx context.Context, fighterID 
 
 func (r *ConfigurationRepository) Upsert(ctx context.Context, configuration *roster.FighterConfiguration) error {
 	const query = `
-		insert into fighter_configurations (fighter_id, attunement_id)
-		values ($1, $2)
+		insert into fighter_configurations (fighter_id)
+		values ($1)
 		on conflict (fighter_id)
-		do update set attunement_id = excluded.attunement_id`
+		do nothing`
 
-	_, err := r.pool.Exec(ctx, query, configuration.FighterID, configuration.AttunementID)
+	_, err := r.pool.Exec(ctx, query, configuration.FighterID)
 	return err
 }

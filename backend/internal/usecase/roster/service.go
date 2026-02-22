@@ -17,17 +17,15 @@ var (
 )
 
 type Service struct {
-	fighters       FighterRepository
-	experiences    ExperienceRepository
-	configurations ConfigurationRepository
-	SquadService   *SquadService
-	now            func() time.Time
+	fighters     FighterRepository
+	experiences  ExperienceRepository
+	SquadService *SquadService
+	now          func() time.Time
 }
 
 func NewService(
 	fighters FighterRepository,
 	experiences ExperienceRepository,
-	configurations ConfigurationRepository,
 	squads SquadRepository,
 	now func() time.Time,
 ) *Service {
@@ -36,11 +34,10 @@ func NewService(
 	}
 
 	return &Service{
-		fighters:       fighters,
-		experiences:    experiences,
-		configurations: configurations,
-		SquadService:   NewSquadService(squads, fighters),
-		now:            now,
+		fighters:     fighters,
+		experiences:  experiences,
+		SquadService: NewSquadService(squads, fighters),
+		now:          now,
 	}
 }
 
@@ -116,23 +113,6 @@ func (s *Service) GetExperience(ctx context.Context, fighterID string) (*roster.
 		}, nil
 	}
 	return exp, nil
-}
-
-func (s *Service) GetConfiguration(ctx context.Context, fighterID string) (*roster.FighterConfiguration, error) {
-	config, err := s.configurations.GetByFighterID(ctx, fighterID)
-	if err != nil {
-		return nil, err
-	}
-	if config == nil {
-		return &roster.FighterConfiguration{
-			FighterID: fighterID,
-		}, nil
-	}
-	return config, nil
-}
-
-func (s *Service) UpdateConfiguration(ctx context.Context, configuration *roster.FighterConfiguration) error {
-	return s.configurations.Upsert(ctx, configuration)
 }
 
 func (s *Service) UpdateExperience(ctx context.Context, experience *roster.FighterExperience) error {

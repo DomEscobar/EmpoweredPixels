@@ -22,7 +22,6 @@ export interface Fighter {
   speed: number;
   vision: number;
   weaponId?: string;
-  attunementId?: string;
   class?: string;
   created: string;
   // Match Statistics
@@ -49,19 +48,6 @@ export async function deleteFighter(token: string, id: string) {
   return request<void>(`${endpoints.fighter}/${id}`, {
     method: "DELETE",
     token,
-  });
-}
-
-export interface FighterConfiguration {
-  fighterId: string;
-  attunementId: string | null;
-}
-
-export async function updateFighterConfiguration(token: string, fighterId: string, attunementId: string | null) {
-  return request<FighterConfiguration>(`${endpoints.fighter}/${fighterId}/configuration`, {
-    method: "POST",
-    token,
-    body: { fighterId, attunementId },
   });
 }
 

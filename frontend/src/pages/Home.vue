@@ -30,7 +30,7 @@
         </h1>
 
         <p class="hero-subtitle animate-fade-in-up text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mt-6 leading-relaxed" style="--delay: 0.2s">
-          Command legendary voxel warriors, master elemental attunements, and dominate the arena in this strategic auto-battler. Your destiny awaits.
+          Command legendary voxel warriors and dominate the arena in this strategic auto-battler. Your destiny awaits.
         </p>
 
         <div class="hero-cta mt-10 flex flex-col items-center gap-4 animate-fade-in-up" style="--delay: 0.3s">
@@ -85,10 +85,10 @@
 
       <div class="hero-fighters absolute inset-0 pointer-events-none">
         <div class="fighter-showcase-left">
-          <VoxelFighter seed="hero-fire" attunement="Fire" :animate="true" class="w-64 h-64 md:w-96 md:h-96 opacity-30" />
+          <VoxelFighter seed="hero-fire" :animate="true" class="w-64 h-64 md:w-96 md:h-96 opacity-30" />
         </div>
         <div class="fighter-showcase-right">
-          <VoxelFighter seed="hero-water" attunement="Water" :animate="true" class="w-64 h-64 md:w-96 md:h-96 opacity-30" />
+          <VoxelFighter seed="hero-water" :animate="true" class="w-64 h-64 md:w-96 md:h-96 opacity-30" />
         </div>
       </div>
     </section>
@@ -136,7 +136,7 @@
               Strategy Evolved
             </h2>
             <p class="text-lg text-slate-400 leading-relaxed mb-8">
-              Watch your squad of voxel warriors engage in epic auto-battles. Configure loadouts, master elemental synergies, and outsmart your opponents through strategic positioning and timing.
+              Watch your squad of voxel warriors engage in epic auto-battles. Configure loadouts and outsmart your opponents through strategic positioning and timing.
             </p>
             <div class="gameplay-highlights space-y-4">
               <div v-for="highlight in gameplayHighlights" :key="highlight.text" class="highlight-item flex items-start gap-4">
@@ -168,11 +168,11 @@
               </div>
               <div class="visual-body h-80 relative flex items-center justify-center">
                 <div class="battle-scene">
-                  <VoxelFighter seed="scene1" attunement="Fire" :animate="true" :is-attacking="true" class="w-32 h-32" />
+                  <VoxelFighter seed="scene1" :animate="true" :is-attacking="true" class="w-32 h-32" />
                   <div class="battle-vs">
                     VS
                   </div>
-                  <VoxelFighter seed="scene2" attunement="Water" :animate="true" class="w-32 h-32" />
+                  <VoxelFighter seed="scene2" :animate="true" class="w-32 h-32" />
                 </div>
               </div>
             </div>
@@ -334,12 +334,6 @@ const features = [
     icon: 'svg',
   },
   {
-    title: 'Elemental Attunement',
-    description: 'Master Fire, Water, Earth, Wind, and Lightning. Each element offers unique tactical advantages.',
-    iconColor: 'bg-blue-500/20 text-blue-400',
-    icon: 'svg',
-  },
-  {
     title: 'Strategic Auto-Battles',
     description: 'Configure loadouts and positioning, then watch your squad execute devastating combo chains.',
     iconColor: 'bg-purple-500/20 text-purple-400',
@@ -369,10 +363,6 @@ const gameplayHighlights = [
   {
     title: 'Smart Positioning',
     text: 'Place your fighters strategically to maximize damage and minimize incoming threats.',
-  },
-  {
-    title: 'Elemental Synergies',
-    text: 'Combine elements to create devastating combo chains and tactical advantages.',
   },
   {
     title: 'Loadout Customization',
@@ -416,7 +406,6 @@ const footerColumns = [
     links: [
       { text: 'Battles', to: '/matches' as const, href: undefined },
       { text: 'Leagues', to: '/leagues' as const, href: undefined },
-      { text: 'Leaderboards', to: '/leaderboard' as const, href: undefined },
     ],
   },
   {

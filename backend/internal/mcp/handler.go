@@ -124,7 +124,27 @@ func (h *MCPHandler) handleEquipFighter(ctx context.Context, userID int64, args 
 	if !ok {
 		return nil, errors.New("missing equipment_id")
 	}
-	err := h.inventoryService.Equip(ctx, userID, equipmentID, &fighterID)
+
+	// Pre-validation: Check if equipment exists and belongs to user
+	equipment, err := h.inventoryService.Get(ctx, userID, equipmentID)
+	if err != nil {
+		return nil, fmt.Errorf("equipment not found or access denied: %w", err)
+	}
+	if equipment == nil {
+		return nil, errors.New("equipment does not exist")
+	}
+
+	// Check if equipment is already bound to a fighter
+	if equipment.FighterID != nil && *equipment.FighterID != "" && *equipment.FighterID != fighterID {
+		return nil, fmt.Errorf("equipment already bound to fighter %s", *equipment.FighterID)
+	}
+
+	// Check if fighter already has this equipment equipped (to prevent duplicates)
+	if equipment.FighterID != nil && *equipment.FighterID == fighterID {
+		return fmt.Sprintf("Equipment %s already equipped to fighter %s", equipmentID, fighterID), nil
+	}
+
+	err = h.inventoryService.Equip(ctx, userID, equipmentID, &fighterID)
 	if err != nil {
 		return nil, err
 	}

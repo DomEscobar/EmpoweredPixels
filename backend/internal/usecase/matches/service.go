@@ -15,7 +15,6 @@ import (
 	"empoweredpixels/internal/domain/roster"
 	"empoweredpixels/internal/infra/engine"
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
-	"empoweredpixels/internal/usecase/resonance"
 	"empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 
@@ -45,17 +44,11 @@ type Service struct {
 	scores        ScoreRepository
 	fighters      FighterRepository
 	inventory     inventoryusecase.Service
-	resonance     *resonance.ResonanceService
 	rewards       *rewards.Service
 	roster        *rosterusecase.Service
 	engine        *engine.Client
 	hub           Hub
 	now           func() time.Time
-	achievements  AchievementRepository
-}
-
-type AchievementRepository interface {
-	UpdateMatchCount(ctx context.Context, userID int64, achievementType string, harmonyScore int) error
 }
 
 func NewService(
@@ -72,25 +65,6 @@ func NewService(
 	hub Hub,
 	now func() time.Time,
 ) *Service {
-	return NewServiceWithResonance(matches, teams, registrations, results, scores, fighters, inventory, nil, rewards, roster, engineClient, hub, now, nil)
-}
-
-func NewServiceWithResonance(
-	matches MatchRepository,
-	teams TeamRepository,
-	registrations RegistrationRepository,
-	results ResultRepository,
-	scores ScoreRepository,
-	fighters FighterRepository,
-	inventory inventoryusecase.Service,
-	resonanceService *resonance.ResonanceService,
-	rewards *rewards.Service,
-	roster *rosterusecase.Service,
-	engineClient *engine.Client,
-	hub Hub,
-	now func() time.Time,
-	achievements AchievementRepository,
-) *Service {
 	if now == nil {
 		now = time.Now
 	}
@@ -103,13 +77,11 @@ func NewServiceWithResonance(
 		scores:        scores,
 		fighters:      fighters,
 		inventory:     inventory,
-		resonance:     resonanceService,
 		rewards:       rewards,
 		roster:        roster,
 		engine:        engineClient,
 		hub:           hub,
 		now:           now,
-		achievements:  achievements,
 	}
 }
 
@@ -523,45 +495,6 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 		}
 	}
 
-	// Track resonance states for WebSocket broadcasting
-	resonanceStates := make(map[string]*resonance.ResonanceState)
-
-	// Apply resonance bonuses if resonance service is available
-	if s.resonance != nil {
-		// Group fighters by UserID
-		fightersByUser := make(map[int64][]int)
-		for i, f := range fighters {
-			fightersByUser[f.UserID] = append(fightersByUser[f.UserID], i)
-		}
-
-		// Calculate resonance per user and apply bonuses
-		for userID, fighterIndices := range fightersByUser {
-			// Get the user's active squad (or create a temporary one for resonance calculation)
-			// For now, we calculate resonance based on attunement composition directly
-			resonanceState, err := calculateUserResonance(ctx, userID, s.resonance)
-			if err == nil && resonanceState != nil {
-				// Store resonance state for broadcasting
-				for _, idx := range fighterIndices {
-					resonanceStates[fighters[idx].ID] = resonanceState
-				}
-
-				// Apply bonuses to all fighters of this user
-				for _, idx := range fighterIndices {
-					fighters[idx] = applyResonanceBonuses(fighters[idx], resonanceState)
-				}
-			}
-		}
-	}
-
-	// Broadcast resonance states to WebSocket clients if we have resonance data
-	if len(resonanceStates) > 0 && s.hub != nil {
-		resonancePayload := map[string]any{
-			"type":       "match.resonance_state",
-			"resonances": resonanceStates,
-		}
-		s.hub.Broadcast(matchID, resonancePayload)
-	}
-
 	simulator := NewBattleSimulator()
 	// Convert MatchOptions to BattleOptions
 	battleOptions := BattleOptions{
@@ -707,16 +640,6 @@ func (s *Service) ExecuteMatch(ctx context.Context, matchID string) error {
 					_ = s.roster.UpdateExperience(ctx, currentExp)
 				}
 			}
-		}
-	}
-
-	// Update achievements for resonance masters
-	if s.achievements != nil {
-		for _, fighter := range fighters {
-			// Update RESONANCE_MASTER achievement counter
-			// The achievement system checks for unlock conditions internally
-			// For now, pass harmonyScore of 0 - this will be enhanced when squad tracking is available
-			_ = s.achievements.UpdateMatchCount(ctx, fighter.UserID, "RESONANCE_MASTER", 0)
 		}
 	}
 
@@ -893,34 +816,6 @@ func (s *Service) GetOnlinePlayersCount(ctx context.Context) (int, error) {
 	return count, nil
 }
 
-// calculateUserResonance calculates the resonance state for a user based on attunement composition
-// This is a temporary implementation that doesn't require explicit squad references
-func calculateUserResonance(ctx context.Context, userID int64, resonanceService *resonance.ResonanceService) (*resonance.ResonanceState, error) {
-	if resonanceService == nil {
-		return nil, nil
-	}
-
-	// For now, return nil - proper implementation requires the user to have an active squad
-	// Future enhancement: create a temporary squad concept for resonance calculation
-	return nil, nil
-}
-
-// applyResonanceBonuses applies resonance bonuses to a fighter's stats
-func applyResonanceBonuses(fighter roster.Fighter, state *resonance.ResonanceState) roster.Fighter {
-	if state == nil || state.HarmonyScore == 0 {
-		return fighter
-	}
-
-	// Apply damage bonus to Power and ConditionPower
-	fighter.Power = int(float64(fighter.Power) * state.BonusDamage)
-	fighter.ConditionPower = int(float64(fighter.ConditionPower) * state.BonusDamage)
-
-	// Apply defense bonus to Armor
-	fighter.Armor = int(float64(fighter.Armor) * state.BonusDefense)
-
-	return fighter
-}
-
 // generateBotFighters creates bot fighters for a match
 func generateBotFighters(botCount int, powerlevel int, baseName string) []roster.Fighter {
 	if botCount <= 0 {
@@ -929,7 +824,6 @@ func generateBotFighters(botCount int, powerlevel int, baseName string) []roster
 
 	bots := make([]roster.Fighter, botCount)
 	botNames := []string{"Alpha", "Beta", "Gamma", "Delta", "Echo", "Foxtrot", "Omega", "Sigma"}
-	defaultAttunement := "fire" // Default attunement for bots
 
 	for i := 0; i < botCount; i++ {
 		// Scale stats based on powerlevel
@@ -953,7 +847,6 @@ func generateBotFighters(botCount int, powerlevel int, baseName string) []roster
 			UserID:         0, // Bot user ID
 			Name:           name,
 			Level:          1 + (powerlevel / 20),
-			AttunementID:   &defaultAttunement, // Default attunement
 			Power:          int(10*scale) + rand.Intn(10),
 			ConditionPower: int(8*scale) + rand.Intn(8),
 			Precision:      int(10*scale) + rand.Intn(10),

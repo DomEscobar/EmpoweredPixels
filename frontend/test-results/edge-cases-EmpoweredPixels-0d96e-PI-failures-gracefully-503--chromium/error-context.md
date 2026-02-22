@@ -1,0 +1,51 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e7]:
+        - link "Command" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard
+          - generic [ref=e9]: Command
+        - link "Roster" [ref=e10] [cursor=pointer]:
+          - /url: /roster
+          - generic [ref=e11]: Roster
+        - link "Battle" [ref=e12] [cursor=pointer]:
+          - /url: /matches
+          - generic [ref=e13]: Battle
+        - link "Vault" [ref=e14] [cursor=pointer]:
+          - /url: /inventory
+          - generic [ref=e15]: Vault
+        - link "Leagues" [ref=e16] [cursor=pointer]:
+          - /url: /leagues
+          - generic [ref=e17]: Leagues
+        - link "Attune" [ref=e18] [cursor=pointer]:
+          - /url: /attunement
+          - generic [ref=e19]: Attune
+        - link "Rankings" [ref=e20] [cursor=pointer]:
+          - /url: /leaderboard
+          - generic [ref=e21]: Rankings
+        - link "Shop" [ref=e22] [cursor=pointer]:
+          - /url: /shop
+          - generic [ref=e23]: Shop
+      - generic [ref=e25]:
+        - button "🎁 Daily" [ref=e26]:
+          - generic [ref=e27]: 🎁
+          - generic [ref=e28]: Daily
+        - link "Gold 0" [ref=e29] [cursor=pointer]:
+          - /url: /shop
+          - img "Gold" [ref=e30]
+          - generic [ref=e31]: "0"
+        - button "Sign Out" [ref=e32]:
+          - img [ref=e33]
+    - link "EP EMPOWEREDPIXELS" [ref=e37] [cursor=pointer]:
+      - /url: /dashboard
+      - img "EP" [ref=e39]
+      - generic [ref=e40]: EMPOWEREDPIXELS
+  - main [ref=e41]:
+    - generic [ref=e43]:
+      - heading "No Active Squad" [level=2] [ref=e44]
+      - paragraph [ref=e45]: Create a squad to build your combat team
+      - button "Create Squad" [ref=e46] [cursor=pointer]
+```

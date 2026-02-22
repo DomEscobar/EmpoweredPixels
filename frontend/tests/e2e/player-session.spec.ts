@@ -13,7 +13,7 @@ test('Player Session: Casual Exploration', async ({ page }) => {
 
     // 2. Navigation check
     console.log('Checking navigation menu...');
-    const navItems = ['Dashboard', 'Roster', 'Squads', 'Inventory', 'Shop', 'Leagues', 'Leaderboard'];
+    const navItems = ['Dashboard', 'Roster', 'Squads', 'Inventory', 'Leagues'];
     for (const item of navItems) {
         const link = page.locator(`text=${item}`);
         if (await link.isVisible()) {
@@ -21,18 +21,7 @@ test('Player Session: Casual Exploration', async ({ page }) => {
         }
     }
 
-    // 3. Visit Shop (casual player favorite)
-    console.log('Visiting Shop...');
-    await page.goto(`${URL}/shop`);
-    await page.waitForLoadState('networkidle');
-    await page.screenshot({ path: 'session_shop.png' });
-    
-    // Check for core shop elements
-    await expect(page.locator('text=Shop')).toBeVisible();
-    const bundles = page.locator('.bundle-card, [data-testid*="bundle"]');
-    console.log(`Visible bundles: ${await bundles.count()}`);
-
-    // 4. Visit Roster
+    // 3. Visit Roster
     console.log('Visiting Roster...');
     await page.goto(`${URL}/roster`);
     await page.waitForLoadState('networkidle');

@@ -3,69 +3,1443 @@
 ```yaml
 - generic [ref=e3]:
   - navigation [ref=e4]:
-    - generic [ref=e6]:
-      - link "EP EMPOWEREDPIXELS" [ref=e7] [cursor=pointer]:
-        - /url: /
-        - generic [ref=e8]:
-          - img "EP"
-        - generic [ref=e9]: EMPOWEREDPIXELS
-      - generic [ref=e10]:
-        - link "Command" [ref=e11] [cursor=pointer]:
+    - generic [ref=e5]:
+      - generic [ref=e7]:
+        - link "Command" [ref=e8] [cursor=pointer]:
           - /url: /dashboard
-          - generic [ref=e12]: Command
-        - link "Roster" [ref=e13] [cursor=pointer]:
+          - generic [ref=e9]: Command
+        - link "Roster" [ref=e10] [cursor=pointer]:
           - /url: /roster
-          - generic [ref=e14]: Roster
-        - link "Battle" [ref=e15] [cursor=pointer]:
+          - generic [ref=e11]: Roster
+        - link "Battle" [ref=e12] [cursor=pointer]:
           - /url: /matches
-          - generic [ref=e16]: Battle
-        - link "Vault" [ref=e17] [cursor=pointer]:
+          - generic [ref=e13]: Battle
+        - link "Vault" [ref=e14] [cursor=pointer]:
           - /url: /inventory
-          - generic [ref=e18]: Vault
-        - link "Leagues" [ref=e19] [cursor=pointer]:
+          - generic [ref=e15]: Vault
+        - link "Leagues" [ref=e16] [cursor=pointer]:
           - /url: /leagues
-          - generic [ref=e20]: Leagues
-        - link "Attune" [ref=e21] [cursor=pointer]:
+          - generic [ref=e17]: Leagues
+        - link "Attune" [ref=e18] [cursor=pointer]:
           - /url: /attunement
-          - generic [ref=e22]: Attune
-        - link "Rankings" [ref=e23] [cursor=pointer]:
+          - generic [ref=e19]: Attune
+        - link "Rankings" [ref=e20] [cursor=pointer]:
           - /url: /leaderboard
-          - generic [ref=e24]: Rankings
-        - link "Shop" [ref=e25] [cursor=pointer]:
+          - generic [ref=e21]: Rankings
+        - link "Shop" [ref=e22] [cursor=pointer]:
           - /url: /shop
-          - generic [ref=e26]: Shop
-      - generic [ref=e27]:
-        - button "🎁 0d" [ref=e28]:
-          - generic [ref=e29]: 🎁
-          - generic [ref=e30]: 0d
-        - link "Gold 0" [ref=e31] [cursor=pointer]:
+          - generic [ref=e23]: Shop
+      - generic [ref=e25]:
+        - button "🎁 Daily" [ref=e26]:
+          - generic [ref=e27]: 🎁
+          - generic [ref=e28]: Daily
+        - link "Gold 0" [ref=e29] [cursor=pointer]:
           - /url: /shop
-          - img "Gold" [ref=e32]
-          - generic [ref=e33]: "0"
-        - button "Logout" [ref=e34]:
-          - img [ref=e36]
-        - generic [ref=e41]: Commander
-        - button "☰" [ref=e42] [cursor=pointer]:
-          - generic [ref=e43]: ☰
-  - main [ref=e44]:
-    - generic [ref=e45]:
-      - generic:
-        - button "← Exit" [ref=e49]
-        - generic:
-          - 'heading "MATCH #b34a685e" [level=1]'
-      - generic:
-        - button "📜" [ref=e50]
-        - generic:
-          - generic: Step
-          - generic: 1 / 36
-      - generic [ref=e55]:
-        - button "▶" [ref=e56]:
-          - generic [ref=e57]: ▶
-        - generic [ref=e59]:
-          - button "⏮" [ref=e60]
-          - button "⏭" [ref=e61]
-        - generic [ref=e62]:
-          - generic [ref=e63]: SPEED
-          - slider [ref=e64] [cursor=pointer]: "1"
-          - generic [ref=e65]: 1x
+          - img "Gold" [ref=e30]
+          - generic [ref=e31]: "0"
+        - button "Sign Out" [ref=e32]:
+          - img [ref=e33]
+    - link "EP EMPOWEREDPIXELS" [ref=e37] [cursor=pointer]:
+      - /url: /dashboard
+      - img "EP" [ref=e39]
+      - generic [ref=e40]: EMPOWEREDPIXELS
+  - main [ref=e41]:
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - img [ref=e47]
+          - generic [ref=e48]:
+            - heading "QUEST BOARD" [level=1] [ref=e49]
+            - paragraph [ref=e50]: ">> Find your glory in the arena"
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - generic [ref=e54]: "Online:"
+            - generic [ref=e55]: "0"
+          - generic [ref=e56]:
+            - button "⚡ Quick Join" [ref=e57]:
+              - generic [ref=e58]: ⚡ Quick Join
+            - button "New" [ref=e59]:
+              - img [ref=e61]
+              - generic [ref=e62]: New
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - button "All (69)" [ref=e66]:
+              - text: All
+              - generic [ref=e67]: (69)
+            - button "Open (0)" [ref=e68]:
+              - text: Open
+              - generic [ref=e69]: (0)
+            - button "Live (1)" [ref=e70]:
+              - text: Live
+              - generic [ref=e71]: (1)
+            - button "Done (63)" [ref=e72]:
+              - text: Done
+              - generic [ref=e73]: (63)
+          - generic [ref=e74]:
+            - textbox "Search..." [ref=e75]
+            - generic: 🔍
+        - generic [ref=e76]:
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - img [ref=e80]
+              - generic [ref=e81]: running
+              - generic [ref=e82]: "#8251"
+            - generic [ref=e83]:
+              - heading "Battle in Progress" [level=3] [ref=e84]
+              - generic [ref=e85]:
+                - generic [ref=e86]:
+                  - generic [ref=e87]: 👥 Fighters
+                  - generic [ref=e88]: 1/2
+                - generic [ref=e89]:
+                  - generic [ref=e90]: 🤖 Bots
+                  - generic [ref=e91]: "1"
+              - link "Watch" [ref=e93] [cursor=pointer]:
+                - /url: /matches/82514961-fd44-4af8-9cff-8a06816bdb95
+                - button "Watch" [ref=e94]
+          - generic [ref=e95]:
+            - generic [ref=e96]:
+              - img [ref=e98]
+              - generic [ref=e99]: completed
+              - generic [ref=e100]: "#f977"
+            - generic [ref=e101]:
+              - heading "Match Complete" [level=3] [ref=e102]
+              - generic [ref=e103]:
+                - generic [ref=e104]:
+                  - generic [ref=e105]: 👥 Fighters
+                  - generic [ref=e106]: 1/2
+                - generic [ref=e107]:
+                  - generic [ref=e108]: 🤖 Bots
+                  - generic [ref=e109]: "1"
+                - generic [ref=e110]:
+                  - generic [ref=e111]: 💎 Rewards
+                  - generic [ref=e112]: "0"
+              - link "Results" [ref=e114] [cursor=pointer]:
+                - /url: /matches/f97746db-e601-4210-b8ae-51e0e771707e
+                - button "Results" [ref=e115]
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - img [ref=e119]
+              - generic [ref=e120]: completed
+              - generic [ref=e121]: "#ac67"
+            - generic [ref=e122]:
+              - heading "Match Complete" [level=3] [ref=e123]
+              - generic [ref=e124]:
+                - generic [ref=e125]:
+                  - generic [ref=e126]: 👥 Fighters
+                  - generic [ref=e127]: 5/2
+                - generic [ref=e128]:
+                  - generic [ref=e129]: 🤖 Bots
+                  - generic [ref=e130]: "0"
+                - generic [ref=e131]:
+                  - generic [ref=e132]: 💎 Rewards
+                  - generic [ref=e133]: "0"
+              - link "Results" [ref=e135] [cursor=pointer]:
+                - /url: /matches/ac67626f-1582-4eb7-8a37-d226c41dd30a
+                - button "Results" [ref=e136]
+          - generic [ref=e137]:
+            - generic [ref=e138]:
+              - img [ref=e140]
+              - generic [ref=e141]: cancelled
+              - generic [ref=e142]: "#a79a"
+            - generic [ref=e143]:
+              - heading "Match Complete" [level=3] [ref=e144]
+              - generic [ref=e145]:
+                - generic [ref=e146]:
+                  - generic [ref=e147]: 👥 Fighters
+                  - generic [ref=e148]: 1/2
+                - generic [ref=e149]:
+                  - generic [ref=e150]: 🤖 Bots
+                  - generic [ref=e151]: "0"
+              - link "Results" [ref=e153] [cursor=pointer]:
+                - /url: /matches/a79a89c2-c606-4d17-a019-f9bd951cd7f6
+                - button "Results" [ref=e154]
+          - generic [ref=e155]:
+            - generic [ref=e156]:
+              - img [ref=e158]
+              - generic [ref=e159]: completed
+              - generic [ref=e160]: "#4752"
+            - generic [ref=e161]:
+              - heading "Match Complete" [level=3] [ref=e162]
+              - generic [ref=e163]:
+                - generic [ref=e164]:
+                  - generic [ref=e165]: 👥 Fighters
+                  - generic [ref=e166]: 5/2
+                - generic [ref=e167]:
+                  - generic [ref=e168]: 🤖 Bots
+                  - generic [ref=e169]: "0"
+                - generic [ref=e170]:
+                  - generic [ref=e171]: 💎 Rewards
+                  - generic [ref=e172]: "0"
+              - link "Results" [ref=e174] [cursor=pointer]:
+                - /url: /matches/4752e523-7758-4f14-b617-40435d3b4187
+                - button "Results" [ref=e175]
+          - generic [ref=e176]:
+            - generic [ref=e177]:
+              - img [ref=e179]
+              - generic [ref=e180]: cancelled
+              - generic [ref=e181]: "#d21e"
+            - generic [ref=e182]:
+              - heading "Match Complete" [level=3] [ref=e183]
+              - generic [ref=e184]:
+                - generic [ref=e185]:
+                  - generic [ref=e186]: 👥 Fighters
+                  - generic [ref=e187]: 1/2
+                - generic [ref=e188]:
+                  - generic [ref=e189]: 🤖 Bots
+                  - generic [ref=e190]: "0"
+              - link "Results" [ref=e192] [cursor=pointer]:
+                - /url: /matches/d21e5e8f-326d-4117-8734-6748a12a19d4
+                - button "Results" [ref=e193]
+          - generic [ref=e194]:
+            - generic [ref=e195]:
+              - img [ref=e197]
+              - generic [ref=e198]: completed
+              - generic [ref=e199]: "#b34a"
+            - generic [ref=e200]:
+              - heading "Match Complete" [level=3] [ref=e201]
+              - generic [ref=e202]:
+                - generic [ref=e203]:
+                  - generic [ref=e204]: 👥 Fighters
+                  - generic [ref=e205]: 1/2
+                - generic [ref=e206]:
+                  - generic [ref=e207]: 🤖 Bots
+                  - generic [ref=e208]: "1"
+                - generic [ref=e209]:
+                  - generic [ref=e210]: 💎 Rewards
+                  - generic [ref=e211]: "0"
+              - link "Results" [ref=e213] [cursor=pointer]:
+                - /url: /matches/b34a685e-ed77-4f05-92f3-c844ab01083d
+                - button "Results" [ref=e214]
+          - generic [ref=e215]:
+            - generic [ref=e216]:
+              - img [ref=e218]
+              - generic [ref=e219]: completed
+              - generic [ref=e220]: "#43ad"
+            - generic [ref=e221]:
+              - heading "Match Complete" [level=3] [ref=e222]
+              - generic [ref=e223]:
+                - generic [ref=e224]:
+                  - generic [ref=e225]: 👥 Fighters
+                  - generic [ref=e226]: 1/2
+                - generic [ref=e227]:
+                  - generic [ref=e228]: 🤖 Bots
+                  - generic [ref=e229]: "1"
+                - generic [ref=e230]:
+                  - generic [ref=e231]: 💎 Rewards
+                  - generic [ref=e232]: "0"
+              - link "Results" [ref=e234] [cursor=pointer]:
+                - /url: /matches/43ad21c2-905d-4b67-ae06-7968148782fb
+                - button "Results" [ref=e235]
+          - generic [ref=e236]:
+            - generic [ref=e237]:
+              - img [ref=e239]
+              - generic [ref=e240]: completed
+              - generic [ref=e241]: "#0e04"
+            - generic [ref=e242]:
+              - heading "Match Complete" [level=3] [ref=e243]
+              - generic [ref=e244]:
+                - generic [ref=e245]:
+                  - generic [ref=e246]: 👥 Fighters
+                  - generic [ref=e247]: 1/2
+                - generic [ref=e248]:
+                  - generic [ref=e249]: 🤖 Bots
+                  - generic [ref=e250]: "1"
+                - generic [ref=e251]:
+                  - generic [ref=e252]: 💎 Rewards
+                  - generic [ref=e253]: "0"
+              - link "Results" [ref=e255] [cursor=pointer]:
+                - /url: /matches/0e04993a-dea9-40d4-9887-4626424256c8
+                - button "Results" [ref=e256]
+          - generic [ref=e257]:
+            - generic [ref=e258]:
+              - img [ref=e260]
+              - generic [ref=e261]: completed
+              - generic [ref=e262]: "#e0c5"
+            - generic [ref=e263]:
+              - heading "Match Complete" [level=3] [ref=e264]
+              - generic [ref=e265]:
+                - generic [ref=e266]:
+                  - generic [ref=e267]: 👥 Fighters
+                  - generic [ref=e268]: 1/2
+                - generic [ref=e269]:
+                  - generic [ref=e270]: 🤖 Bots
+                  - generic [ref=e271]: "1"
+                - generic [ref=e272]:
+                  - generic [ref=e273]: 💎 Rewards
+                  - generic [ref=e274]: "0"
+              - link "Results" [ref=e276] [cursor=pointer]:
+                - /url: /matches/e0c5f89b-c9db-411d-a15e-a10a4206911e
+                - button "Results" [ref=e277]
+          - generic [ref=e278]:
+            - generic [ref=e279]:
+              - img [ref=e281]
+              - generic [ref=e282]: completed
+              - generic [ref=e283]: "#0e27"
+            - generic [ref=e284]:
+              - heading "Match Complete" [level=3] [ref=e285]
+              - generic [ref=e286]:
+                - generic [ref=e287]:
+                  - generic [ref=e288]: 👥 Fighters
+                  - generic [ref=e289]: 1/2
+                - generic [ref=e290]:
+                  - generic [ref=e291]: 🤖 Bots
+                  - generic [ref=e292]: "1"
+                - generic [ref=e293]:
+                  - generic [ref=e294]: 💎 Rewards
+                  - generic [ref=e295]: "0"
+              - link "Results" [ref=e297] [cursor=pointer]:
+                - /url: /matches/0e272e12-aa44-46a7-b383-6d6955c4da76
+                - button "Results" [ref=e298]
+          - generic [ref=e299]:
+            - generic [ref=e300]:
+              - img [ref=e302]
+              - generic [ref=e303]: completed
+              - generic [ref=e304]: "#9849"
+            - generic [ref=e305]:
+              - heading "Match Complete" [level=3] [ref=e306]
+              - generic [ref=e307]:
+                - generic [ref=e308]:
+                  - generic [ref=e309]: 👥 Fighters
+                  - generic [ref=e310]: 1/2
+                - generic [ref=e311]:
+                  - generic [ref=e312]: 🤖 Bots
+                  - generic [ref=e313]: "1"
+                - generic [ref=e314]:
+                  - generic [ref=e315]: 💎 Rewards
+                  - generic [ref=e316]: "0"
+              - link "Results" [ref=e318] [cursor=pointer]:
+                - /url: /matches/984959fa-8f31-430d-b29b-64e1b8c94007
+                - button "Results" [ref=e319]
+          - generic [ref=e320]:
+            - generic [ref=e321]:
+              - img [ref=e323]
+              - generic [ref=e324]: completed
+              - generic [ref=e325]: "#fc86"
+            - generic [ref=e326]:
+              - heading "Match Complete" [level=3] [ref=e327]
+              - generic [ref=e328]:
+                - generic [ref=e329]:
+                  - generic [ref=e330]: 👥 Fighters
+                  - generic [ref=e331]: 1/2
+                - generic [ref=e332]:
+                  - generic [ref=e333]: 🤖 Bots
+                  - generic [ref=e334]: "1"
+                - generic [ref=e335]:
+                  - generic [ref=e336]: 💎 Rewards
+                  - generic [ref=e337]: "0"
+              - link "Results" [ref=e339] [cursor=pointer]:
+                - /url: /matches/fc867baf-da41-4673-8c11-24229330f3ed
+                - button "Results" [ref=e340]
+          - generic [ref=e341]:
+            - generic [ref=e342]:
+              - img [ref=e344]
+              - generic [ref=e345]: completed
+              - generic [ref=e346]: "#c495"
+            - generic [ref=e347]:
+              - heading "Match Complete" [level=3] [ref=e348]
+              - generic [ref=e349]:
+                - generic [ref=e350]:
+                  - generic [ref=e351]: 👥 Fighters
+                  - generic [ref=e352]: 1/2
+                - generic [ref=e353]:
+                  - generic [ref=e354]: 🤖 Bots
+                  - generic [ref=e355]: "1"
+                - generic [ref=e356]:
+                  - generic [ref=e357]: 💎 Rewards
+                  - generic [ref=e358]: "0"
+              - link "Results" [ref=e360] [cursor=pointer]:
+                - /url: /matches/c4952365-1de6-4089-b39d-5c41ef268bfa
+                - button "Results" [ref=e361]
+          - generic [ref=e362]:
+            - generic [ref=e363]:
+              - img [ref=e365]
+              - generic [ref=e366]: completed
+              - generic [ref=e367]: "#47c3"
+            - generic [ref=e368]:
+              - heading "Match Complete" [level=3] [ref=e369]
+              - generic [ref=e370]:
+                - generic [ref=e371]:
+                  - generic [ref=e372]: 👥 Fighters
+                  - generic [ref=e373]: 1/2
+                - generic [ref=e374]:
+                  - generic [ref=e375]: 🤖 Bots
+                  - generic [ref=e376]: "1"
+                - generic [ref=e377]:
+                  - generic [ref=e378]: 💎 Rewards
+                  - generic [ref=e379]: "0"
+              - link "Results" [ref=e381] [cursor=pointer]:
+                - /url: /matches/47c3b500-33c2-479e-8aef-0e5cf9e0632d
+                - button "Results" [ref=e382]
+          - generic [ref=e383]:
+            - generic [ref=e384]:
+              - img [ref=e386]
+              - generic [ref=e387]: completed
+              - generic [ref=e388]: "#c2e6"
+            - generic [ref=e389]:
+              - heading "Match Complete" [level=3] [ref=e390]
+              - generic [ref=e391]:
+                - generic [ref=e392]:
+                  - generic [ref=e393]: 👥 Fighters
+                  - generic [ref=e394]: 1/2
+                - generic [ref=e395]:
+                  - generic [ref=e396]: 🤖 Bots
+                  - generic [ref=e397]: "1"
+                - generic [ref=e398]:
+                  - generic [ref=e399]: 💎 Rewards
+                  - generic [ref=e400]: "0"
+              - link "Results" [ref=e402] [cursor=pointer]:
+                - /url: /matches/c2e64a2b-36f8-4ec4-9235-ecd86931e869
+                - button "Results" [ref=e403]
+          - generic [ref=e404]:
+            - generic [ref=e405]:
+              - img [ref=e407]
+              - generic [ref=e408]: completed
+              - generic [ref=e409]: "#9aad"
+            - generic [ref=e410]:
+              - heading "Match Complete" [level=3] [ref=e411]
+              - generic [ref=e412]:
+                - generic [ref=e413]:
+                  - generic [ref=e414]: 👥 Fighters
+                  - generic [ref=e415]: 1/2
+                - generic [ref=e416]:
+                  - generic [ref=e417]: 🤖 Bots
+                  - generic [ref=e418]: "1"
+                - generic [ref=e419]:
+                  - generic [ref=e420]: 💎 Rewards
+                  - generic [ref=e421]: "0"
+              - link "Results" [ref=e423] [cursor=pointer]:
+                - /url: /matches/9aad81e5-2b55-4b57-bcdb-0a4058fd3e1a
+                - button "Results" [ref=e424]
+          - generic [ref=e425]:
+            - generic [ref=e426]:
+              - img [ref=e428]
+              - generic [ref=e429]: completed
+              - generic [ref=e430]: "#46ce"
+            - generic [ref=e431]:
+              - heading "Match Complete" [level=3] [ref=e432]
+              - generic [ref=e433]:
+                - generic [ref=e434]:
+                  - generic [ref=e435]: 👥 Fighters
+                  - generic [ref=e436]: 1/2
+                - generic [ref=e437]:
+                  - generic [ref=e438]: 🤖 Bots
+                  - generic [ref=e439]: "1"
+                - generic [ref=e440]:
+                  - generic [ref=e441]: 💎 Rewards
+                  - generic [ref=e442]: "0"
+              - link "Results" [ref=e444] [cursor=pointer]:
+                - /url: /matches/46ce25e8-c720-4575-b86a-0d16e7df52d9
+                - button "Results" [ref=e445]
+          - generic [ref=e446]:
+            - generic [ref=e447]:
+              - img [ref=e449]
+              - generic [ref=e450]: completed
+              - generic [ref=e451]: "#e89d"
+            - generic [ref=e452]:
+              - heading "Match Complete" [level=3] [ref=e453]
+              - generic [ref=e454]:
+                - generic [ref=e455]:
+                  - generic [ref=e456]: 👥 Fighters
+                  - generic [ref=e457]: 1/2
+                - generic [ref=e458]:
+                  - generic [ref=e459]: 🤖 Bots
+                  - generic [ref=e460]: "1"
+                - generic [ref=e461]:
+                  - generic [ref=e462]: 💎 Rewards
+                  - generic [ref=e463]: "0"
+              - link "Results" [ref=e465] [cursor=pointer]:
+                - /url: /matches/e89db61c-c225-4def-be44-995da20ffdf1
+                - button "Results" [ref=e466]
+          - generic [ref=e467]:
+            - generic [ref=e468]:
+              - img [ref=e470]
+              - generic [ref=e471]: completed
+              - generic [ref=e472]: "#63b9"
+            - generic [ref=e473]:
+              - heading "Match Complete" [level=3] [ref=e474]
+              - generic [ref=e475]:
+                - generic [ref=e476]:
+                  - generic [ref=e477]: 👥 Fighters
+                  - generic [ref=e478]: 1/2
+                - generic [ref=e479]:
+                  - generic [ref=e480]: 🤖 Bots
+                  - generic [ref=e481]: "1"
+                - generic [ref=e482]:
+                  - generic [ref=e483]: 💎 Rewards
+                  - generic [ref=e484]: "0"
+              - link "Results" [ref=e486] [cursor=pointer]:
+                - /url: /matches/63b9ca96-490d-41f7-9fa9-7752661939e8
+                - button "Results" [ref=e487]
+          - generic [ref=e488]:
+            - generic [ref=e489]:
+              - img [ref=e491]
+              - generic [ref=e492]: completed
+              - generic [ref=e493]: "#d73d"
+            - generic [ref=e494]:
+              - heading "Match Complete" [level=3] [ref=e495]
+              - generic [ref=e496]:
+                - generic [ref=e497]:
+                  - generic [ref=e498]: 👥 Fighters
+                  - generic [ref=e499]: 1/2
+                - generic [ref=e500]:
+                  - generic [ref=e501]: 🤖 Bots
+                  - generic [ref=e502]: "1"
+                - generic [ref=e503]:
+                  - generic [ref=e504]: 💎 Rewards
+                  - generic [ref=e505]: "0"
+              - link "Results" [ref=e507] [cursor=pointer]:
+                - /url: /matches/d73d5d24-aca2-4cd9-bc19-7e6ab66aea86
+                - button "Results" [ref=e508]
+          - generic [ref=e509]:
+            - generic [ref=e510]:
+              - img [ref=e512]
+              - generic [ref=e513]: completed
+              - generic [ref=e514]: "#61bb"
+            - generic [ref=e515]:
+              - heading "Match Complete" [level=3] [ref=e516]
+              - generic [ref=e517]:
+                - generic [ref=e518]:
+                  - generic [ref=e519]: 👥 Fighters
+                  - generic [ref=e520]: 1/2
+                - generic [ref=e521]:
+                  - generic [ref=e522]: 🤖 Bots
+                  - generic [ref=e523]: "1"
+                - generic [ref=e524]:
+                  - generic [ref=e525]: 💎 Rewards
+                  - generic [ref=e526]: "0"
+              - link "Results" [ref=e528] [cursor=pointer]:
+                - /url: /matches/61bb1bd9-fb88-4216-8c66-bf2d6474af2b
+                - button "Results" [ref=e529]
+          - generic [ref=e530]:
+            - generic [ref=e531]:
+              - img [ref=e533]
+              - generic [ref=e534]: completed
+              - generic [ref=e535]: "#4391"
+            - generic [ref=e536]:
+              - heading "Match Complete" [level=3] [ref=e537]
+              - generic [ref=e538]:
+                - generic [ref=e539]:
+                  - generic [ref=e540]: 👥 Fighters
+                  - generic [ref=e541]: 1/2
+                - generic [ref=e542]:
+                  - generic [ref=e543]: 🤖 Bots
+                  - generic [ref=e544]: "1"
+                - generic [ref=e545]:
+                  - generic [ref=e546]: 💎 Rewards
+                  - generic [ref=e547]: "0"
+              - link "Results" [ref=e549] [cursor=pointer]:
+                - /url: /matches/43914fcc-97f1-426e-93f1-7a78d9f4095f
+                - button "Results" [ref=e550]
+          - generic [ref=e551]:
+            - generic [ref=e552]:
+              - img [ref=e554]
+              - generic [ref=e555]: completed
+              - generic [ref=e556]: "#2808"
+            - generic [ref=e557]:
+              - heading "Match Complete" [level=3] [ref=e558]
+              - generic [ref=e559]:
+                - generic [ref=e560]:
+                  - generic [ref=e561]: 👥 Fighters
+                  - generic [ref=e562]: 1/2
+                - generic [ref=e563]:
+                  - generic [ref=e564]: 🤖 Bots
+                  - generic [ref=e565]: "1"
+                - generic [ref=e566]:
+                  - generic [ref=e567]: 💎 Rewards
+                  - generic [ref=e568]: "0"
+              - link "Results" [ref=e570] [cursor=pointer]:
+                - /url: /matches/2808a21f-39e6-4724-8a78-8d4fc3d3260f
+                - button "Results" [ref=e571]
+          - generic [ref=e572]:
+            - generic [ref=e573]:
+              - img [ref=e575]
+              - generic [ref=e576]: completed
+              - generic [ref=e577]: "#d4b1"
+            - generic [ref=e578]:
+              - heading "Match Complete" [level=3] [ref=e579]
+              - generic [ref=e580]:
+                - generic [ref=e581]:
+                  - generic [ref=e582]: 👥 Fighters
+                  - generic [ref=e583]: 1/2
+                - generic [ref=e584]:
+                  - generic [ref=e585]: 🤖 Bots
+                  - generic [ref=e586]: "1"
+                - generic [ref=e587]:
+                  - generic [ref=e588]: 💎 Rewards
+                  - generic [ref=e589]: "0"
+              - link "Results" [ref=e591] [cursor=pointer]:
+                - /url: /matches/d4b18496-3f43-40ec-b186-92eaaf9c3b17
+                - button "Results" [ref=e592]
+          - generic [ref=e593]:
+            - generic [ref=e594]:
+              - img [ref=e596]
+              - generic [ref=e597]: completed
+              - generic [ref=e598]: "#4eba"
+            - generic [ref=e599]:
+              - heading "Match Complete" [level=3] [ref=e600]
+              - generic [ref=e601]:
+                - generic [ref=e602]:
+                  - generic [ref=e603]: 👥 Fighters
+                  - generic [ref=e604]: 1/2
+                - generic [ref=e605]:
+                  - generic [ref=e606]: 🤖 Bots
+                  - generic [ref=e607]: "1"
+                - generic [ref=e608]:
+                  - generic [ref=e609]: 💎 Rewards
+                  - generic [ref=e610]: "0"
+              - link "Results" [ref=e612] [cursor=pointer]:
+                - /url: /matches/4eba4ee0-e2b4-49e2-8f16-eacd7a0f09fb
+                - button "Results" [ref=e613]
+          - generic [ref=e614]:
+            - generic [ref=e615]:
+              - img [ref=e617]
+              - generic [ref=e618]: cancelled
+              - generic [ref=e619]: "#d993"
+            - generic [ref=e620]:
+              - heading "Match Complete" [level=3] [ref=e621]
+              - generic [ref=e622]:
+                - generic [ref=e623]:
+                  - generic [ref=e624]: 👥 Fighters
+                  - generic [ref=e625]: 1/2
+                - generic [ref=e626]:
+                  - generic [ref=e627]: 🤖 Bots
+                  - generic [ref=e628]: "7"
+              - link "Results" [ref=e630] [cursor=pointer]:
+                - /url: /matches/d993a8ab-d4d7-43bc-b399-8326738dd247
+                - button "Results" [ref=e631]
+          - generic [ref=e632]:
+            - generic [ref=e633]:
+              - img [ref=e635]
+              - generic [ref=e636]: completed
+              - generic [ref=e637]: "#a6e5"
+            - generic [ref=e638]:
+              - heading "Match Complete" [level=3] [ref=e639]
+              - generic [ref=e640]:
+                - generic [ref=e641]:
+                  - generic [ref=e642]: 👥 Fighters
+                  - generic [ref=e643]: 1/2
+                - generic [ref=e644]:
+                  - generic [ref=e645]: 🤖 Bots
+                  - generic [ref=e646]: "1"
+                - generic [ref=e647]:
+                  - generic [ref=e648]: 💎 Rewards
+                  - generic [ref=e649]: "0"
+              - link "Results" [ref=e651] [cursor=pointer]:
+                - /url: /matches/a6e56ba3-729e-4d4d-a1ca-473f291d27c7
+                - button "Results" [ref=e652]
+          - generic [ref=e653]:
+            - generic [ref=e654]:
+              - img [ref=e656]
+              - generic [ref=e657]: completed
+              - generic [ref=e658]: "#6b4d"
+            - generic [ref=e659]:
+              - heading "Match Complete" [level=3] [ref=e660]
+              - generic [ref=e661]:
+                - generic [ref=e662]:
+                  - generic [ref=e663]: 👥 Fighters
+                  - generic [ref=e664]: 1/2
+                - generic [ref=e665]:
+                  - generic [ref=e666]: 🤖 Bots
+                  - generic [ref=e667]: "1"
+                - generic [ref=e668]:
+                  - generic [ref=e669]: 💎 Rewards
+                  - generic [ref=e670]: "0"
+              - link "Results" [ref=e672] [cursor=pointer]:
+                - /url: /matches/6b4dad86-fa3f-409c-94cd-800f5dff19e1
+                - button "Results" [ref=e673]
+          - generic [ref=e674]:
+            - generic [ref=e675]:
+              - img [ref=e677]
+              - generic [ref=e678]: completed
+              - generic [ref=e679]: "#04d4"
+            - generic [ref=e680]:
+              - heading "Match Complete" [level=3] [ref=e681]
+              - generic [ref=e682]:
+                - generic [ref=e683]:
+                  - generic [ref=e684]: 👥 Fighters
+                  - generic [ref=e685]: 1/2
+                - generic [ref=e686]:
+                  - generic [ref=e687]: 🤖 Bots
+                  - generic [ref=e688]: "1"
+                - generic [ref=e689]:
+                  - generic [ref=e690]: 💎 Rewards
+                  - generic [ref=e691]: "0"
+              - link "Results" [ref=e693] [cursor=pointer]:
+                - /url: /matches/04d485bc-a086-4860-a6a8-cb5cce49d6ae
+                - button "Results" [ref=e694]
+          - generic [ref=e695]:
+            - generic [ref=e696]:
+              - img [ref=e698]
+              - generic [ref=e699]: completed
+              - generic [ref=e700]: "#4cab"
+            - generic [ref=e701]:
+              - heading "Match Complete" [level=3] [ref=e702]
+              - generic [ref=e703]:
+                - generic [ref=e704]:
+                  - generic [ref=e705]: 👥 Fighters
+                  - generic [ref=e706]: 1/2
+                - generic [ref=e707]:
+                  - generic [ref=e708]: 🤖 Bots
+                  - generic [ref=e709]: "1"
+                - generic [ref=e710]:
+                  - generic [ref=e711]: 💎 Rewards
+                  - generic [ref=e712]: "0"
+              - link "Results" [ref=e714] [cursor=pointer]:
+                - /url: /matches/4cab87c8-ee2b-4ed6-b777-70b4433fe453
+                - button "Results" [ref=e715]
+          - generic [ref=e716]:
+            - generic [ref=e717]:
+              - img [ref=e719]
+              - generic [ref=e720]: completed
+              - generic [ref=e721]: "#9752"
+            - generic [ref=e722]:
+              - heading "Match Complete" [level=3] [ref=e723]
+              - generic [ref=e724]:
+                - generic [ref=e725]:
+                  - generic [ref=e726]: 👥 Fighters
+                  - generic [ref=e727]: 1/2
+                - generic [ref=e728]:
+                  - generic [ref=e729]: 🤖 Bots
+                  - generic [ref=e730]: "1"
+                - generic [ref=e731]:
+                  - generic [ref=e732]: 💎 Rewards
+                  - generic [ref=e733]: "0"
+              - link "Results" [ref=e735] [cursor=pointer]:
+                - /url: /matches/9752893e-0267-4d43-ac24-68a76494ba05
+                - button "Results" [ref=e736]
+          - generic [ref=e737]:
+            - generic [ref=e738]:
+              - img [ref=e740]
+              - generic [ref=e741]: completed
+              - generic [ref=e742]: "#c1fb"
+            - generic [ref=e743]:
+              - heading "Match Complete" [level=3] [ref=e744]
+              - generic [ref=e745]:
+                - generic [ref=e746]:
+                  - generic [ref=e747]: 👥 Fighters
+                  - generic [ref=e748]: 1/2
+                - generic [ref=e749]:
+                  - generic [ref=e750]: 🤖 Bots
+                  - generic [ref=e751]: "1"
+                - generic [ref=e752]:
+                  - generic [ref=e753]: 💎 Rewards
+                  - generic [ref=e754]: "0"
+              - link "Results" [ref=e756] [cursor=pointer]:
+                - /url: /matches/c1fbfe74-4cf4-45a4-8a08-06e4fe2a5a57
+                - button "Results" [ref=e757]
+          - generic [ref=e758]:
+            - generic [ref=e759]:
+              - img [ref=e761]
+              - generic [ref=e762]: completed
+              - generic [ref=e763]: "#667e"
+            - generic [ref=e764]:
+              - heading "Match Complete" [level=3] [ref=e765]
+              - generic [ref=e766]:
+                - generic [ref=e767]:
+                  - generic [ref=e768]: 👥 Fighters
+                  - generic [ref=e769]: 1/2
+                - generic [ref=e770]:
+                  - generic [ref=e771]: 🤖 Bots
+                  - generic [ref=e772]: "1"
+                - generic [ref=e773]:
+                  - generic [ref=e774]: 💎 Rewards
+                  - generic [ref=e775]: "0"
+              - link "Results" [ref=e777] [cursor=pointer]:
+                - /url: /matches/667e5f0b-ab1c-4c0f-abea-634b0940aced
+                - button "Results" [ref=e778]
+          - generic [ref=e779]:
+            - generic [ref=e780]:
+              - img [ref=e782]
+              - generic [ref=e783]: completed
+              - generic [ref=e784]: "#982c"
+            - generic [ref=e785]:
+              - heading "Match Complete" [level=3] [ref=e786]
+              - generic [ref=e787]:
+                - generic [ref=e788]:
+                  - generic [ref=e789]: 👥 Fighters
+                  - generic [ref=e790]: 1/2
+                - generic [ref=e791]:
+                  - generic [ref=e792]: 🤖 Bots
+                  - generic [ref=e793]: "1"
+                - generic [ref=e794]:
+                  - generic [ref=e795]: 💎 Rewards
+                  - generic [ref=e796]: "0"
+              - link "Results" [ref=e798] [cursor=pointer]:
+                - /url: /matches/982cbd8a-77c2-45ce-9b47-287eb2c1998e
+                - button "Results" [ref=e799]
+          - generic [ref=e800]:
+            - generic [ref=e801]:
+              - img [ref=e803]
+              - generic [ref=e804]: completed
+              - generic [ref=e805]: "#5de9"
+            - generic [ref=e806]:
+              - heading "Match Complete" [level=3] [ref=e807]
+              - generic [ref=e808]:
+                - generic [ref=e809]:
+                  - generic [ref=e810]: 👥 Fighters
+                  - generic [ref=e811]: 1/2
+                - generic [ref=e812]:
+                  - generic [ref=e813]: 🤖 Bots
+                  - generic [ref=e814]: "1"
+                - generic [ref=e815]:
+                  - generic [ref=e816]: 💎 Rewards
+                  - generic [ref=e817]: "0"
+              - link "Results" [ref=e819] [cursor=pointer]:
+                - /url: /matches/5de9a87b-b4f7-4191-bc37-2c5d1704081b
+                - button "Results" [ref=e820]
+          - generic [ref=e821]:
+            - generic [ref=e822]:
+              - img [ref=e824]
+              - generic [ref=e825]: completed
+              - generic [ref=e826]: "#16fc"
+            - generic [ref=e827]:
+              - heading "Match Complete" [level=3] [ref=e828]
+              - generic [ref=e829]:
+                - generic [ref=e830]:
+                  - generic [ref=e831]: 👥 Fighters
+                  - generic [ref=e832]: 1/2
+                - generic [ref=e833]:
+                  - generic [ref=e834]: 🤖 Bots
+                  - generic [ref=e835]: "1"
+                - generic [ref=e836]:
+                  - generic [ref=e837]: 💎 Rewards
+                  - generic [ref=e838]: "0"
+              - link "Results" [ref=e840] [cursor=pointer]:
+                - /url: /matches/16fc4ccd-5db0-40af-bd0b-3ae9c3c25eef
+                - button "Results" [ref=e841]
+          - generic [ref=e842]:
+            - generic [ref=e843]:
+              - img [ref=e845]
+              - generic [ref=e846]: completed
+              - generic [ref=e847]: "#6799"
+            - generic [ref=e848]:
+              - heading "Match Complete" [level=3] [ref=e849]
+              - generic [ref=e850]:
+                - generic [ref=e851]:
+                  - generic [ref=e852]: 👥 Fighters
+                  - generic [ref=e853]: 1/2
+                - generic [ref=e854]:
+                  - generic [ref=e855]: 🤖 Bots
+                  - generic [ref=e856]: "1"
+                - generic [ref=e857]:
+                  - generic [ref=e858]: 💎 Rewards
+                  - generic [ref=e859]: "0"
+              - link "Results" [ref=e861] [cursor=pointer]:
+                - /url: /matches/67998e69-11e1-491c-bb7e-fb81e7307950
+                - button "Results" [ref=e862]
+          - generic [ref=e863]:
+            - generic [ref=e864]:
+              - img [ref=e866]
+              - generic [ref=e867]: completed
+              - generic [ref=e868]: "#a43f"
+            - generic [ref=e869]:
+              - heading "Match Complete" [level=3] [ref=e870]
+              - generic [ref=e871]:
+                - generic [ref=e872]:
+                  - generic [ref=e873]: 👥 Fighters
+                  - generic [ref=e874]: 1/2
+                - generic [ref=e875]:
+                  - generic [ref=e876]: 🤖 Bots
+                  - generic [ref=e877]: "1"
+                - generic [ref=e878]:
+                  - generic [ref=e879]: 💎 Rewards
+                  - generic [ref=e880]: "0"
+              - link "Results" [ref=e882] [cursor=pointer]:
+                - /url: /matches/a43f110d-74e4-4e2a-8c5f-b863f42dc523
+                - button "Results" [ref=e883]
+          - generic [ref=e884]:
+            - generic [ref=e885]:
+              - img [ref=e887]
+              - generic [ref=e888]: completed
+              - generic [ref=e889]: "#d9c5"
+            - generic [ref=e890]:
+              - heading "Match Complete" [level=3] [ref=e891]
+              - generic [ref=e892]:
+                - generic [ref=e893]:
+                  - generic [ref=e894]: 👥 Fighters
+                  - generic [ref=e895]: 1/2
+                - generic [ref=e896]:
+                  - generic [ref=e897]: 🤖 Bots
+                  - generic [ref=e898]: "1"
+                - generic [ref=e899]:
+                  - generic [ref=e900]: 💎 Rewards
+                  - generic [ref=e901]: "0"
+              - link "Results" [ref=e903] [cursor=pointer]:
+                - /url: /matches/d9c5d812-4980-4256-a8bd-cffda377f9ca
+                - button "Results" [ref=e904]
+          - generic [ref=e905]:
+            - generic [ref=e906]:
+              - img [ref=e908]
+              - generic [ref=e909]: completed
+              - generic [ref=e910]: "#8bfc"
+            - generic [ref=e911]:
+              - heading "Match Complete" [level=3] [ref=e912]
+              - generic [ref=e913]:
+                - generic [ref=e914]:
+                  - generic [ref=e915]: 👥 Fighters
+                  - generic [ref=e916]: 1/2
+                - generic [ref=e917]:
+                  - generic [ref=e918]: 🤖 Bots
+                  - generic [ref=e919]: "1"
+                - generic [ref=e920]:
+                  - generic [ref=e921]: 💎 Rewards
+                  - generic [ref=e922]: "0"
+              - link "Results" [ref=e924] [cursor=pointer]:
+                - /url: /matches/8bfc4e3c-dc60-4708-8f2f-de08354d126a
+                - button "Results" [ref=e925]
+          - generic [ref=e926]:
+            - generic [ref=e927]:
+              - img [ref=e929]
+              - generic [ref=e930]: completed
+              - generic [ref=e931]: "#72cf"
+            - generic [ref=e932]:
+              - heading "Match Complete" [level=3] [ref=e933]
+              - generic [ref=e934]:
+                - generic [ref=e935]:
+                  - generic [ref=e936]: 👥 Fighters
+                  - generic [ref=e937]: 1/2
+                - generic [ref=e938]:
+                  - generic [ref=e939]: 🤖 Bots
+                  - generic [ref=e940]: "1"
+                - generic [ref=e941]:
+                  - generic [ref=e942]: 💎 Rewards
+                  - generic [ref=e943]: "0"
+              - link "Results" [ref=e945] [cursor=pointer]:
+                - /url: /matches/72cf3085-ee17-4da1-a95b-b2b9d2261430
+                - button "Results" [ref=e946]
+          - generic [ref=e947]:
+            - generic [ref=e948]:
+              - img [ref=e950]
+              - generic [ref=e951]: completed
+              - generic [ref=e952]: "#a5a5"
+            - generic [ref=e953]:
+              - heading "Match Complete" [level=3] [ref=e954]
+              - generic [ref=e955]:
+                - generic [ref=e956]:
+                  - generic [ref=e957]: 👥 Fighters
+                  - generic [ref=e958]: 1/2
+                - generic [ref=e959]:
+                  - generic [ref=e960]: 🤖 Bots
+                  - generic [ref=e961]: "1"
+                - generic [ref=e962]:
+                  - generic [ref=e963]: 💎 Rewards
+                  - generic [ref=e964]: "0"
+              - link "Results" [ref=e966] [cursor=pointer]:
+                - /url: /matches/a5a5c30d-e3a9-4c41-8c01-0904ce395cc5
+                - button "Results" [ref=e967]
+          - generic [ref=e968]:
+            - generic [ref=e969]:
+              - img [ref=e971]
+              - generic [ref=e972]: completed
+              - generic [ref=e973]: "#5d3e"
+            - generic [ref=e974]:
+              - heading "Match Complete" [level=3] [ref=e975]
+              - generic [ref=e976]:
+                - generic [ref=e977]:
+                  - generic [ref=e978]: 👥 Fighters
+                  - generic [ref=e979]: 1/2
+                - generic [ref=e980]:
+                  - generic [ref=e981]: 🤖 Bots
+                  - generic [ref=e982]: "1"
+                - generic [ref=e983]:
+                  - generic [ref=e984]: 💎 Rewards
+                  - generic [ref=e985]: "0"
+              - link "Results" [ref=e987] [cursor=pointer]:
+                - /url: /matches/5d3e0ccb-0b26-45c7-a29c-7c9b73c3916d
+                - button "Results" [ref=e988]
+          - generic [ref=e989]:
+            - generic [ref=e990]:
+              - img [ref=e992]
+              - generic [ref=e993]: completed
+              - generic [ref=e994]: "#bf9a"
+            - generic [ref=e995]:
+              - heading "Match Complete" [level=3] [ref=e996]
+              - generic [ref=e997]:
+                - generic [ref=e998]:
+                  - generic [ref=e999]: 👥 Fighters
+                  - generic [ref=e1000]: 1/2
+                - generic [ref=e1001]:
+                  - generic [ref=e1002]: 🤖 Bots
+                  - generic [ref=e1003]: "1"
+                - generic [ref=e1004]:
+                  - generic [ref=e1005]: 💎 Rewards
+                  - generic [ref=e1006]: "0"
+              - link "Results" [ref=e1008] [cursor=pointer]:
+                - /url: /matches/bf9a3572-a128-4014-be73-d23374483d0a
+                - button "Results" [ref=e1009]
+          - generic [ref=e1010]:
+            - generic [ref=e1011]:
+              - img [ref=e1013]
+              - generic [ref=e1014]: completed
+              - generic [ref=e1015]: "#416d"
+            - generic [ref=e1016]:
+              - heading "Match Complete" [level=3] [ref=e1017]
+              - generic [ref=e1018]:
+                - generic [ref=e1019]:
+                  - generic [ref=e1020]: 👥 Fighters
+                  - generic [ref=e1021]: 1/2
+                - generic [ref=e1022]:
+                  - generic [ref=e1023]: 🤖 Bots
+                  - generic [ref=e1024]: "1"
+                - generic [ref=e1025]:
+                  - generic [ref=e1026]: 💎 Rewards
+                  - generic [ref=e1027]: "0"
+              - link "Results" [ref=e1029] [cursor=pointer]:
+                - /url: /matches/416d59c9-0048-4619-b701-01c738fbc38f
+                - button "Results" [ref=e1030]
+          - generic [ref=e1031]:
+            - generic [ref=e1032]:
+              - img [ref=e1034]
+              - generic [ref=e1035]: completed
+              - generic [ref=e1036]: "#b62c"
+            - generic [ref=e1037]:
+              - heading "Match Complete" [level=3] [ref=e1038]
+              - generic [ref=e1039]:
+                - generic [ref=e1040]:
+                  - generic [ref=e1041]: 👥 Fighters
+                  - generic [ref=e1042]: 1/2
+                - generic [ref=e1043]:
+                  - generic [ref=e1044]: 🤖 Bots
+                  - generic [ref=e1045]: "1"
+                - generic [ref=e1046]:
+                  - generic [ref=e1047]: 💎 Rewards
+                  - generic [ref=e1048]: "0"
+              - link "Results" [ref=e1050] [cursor=pointer]:
+                - /url: /matches/b62c5161-ba5b-4389-aac6-b7ed801f2a30
+                - button "Results" [ref=e1051]
+          - generic [ref=e1052]:
+            - generic [ref=e1053]:
+              - img [ref=e1055]
+              - generic [ref=e1056]: completed
+              - generic [ref=e1057]: "#cb88"
+            - generic [ref=e1058]:
+              - heading "Match Complete" [level=3] [ref=e1059]
+              - generic [ref=e1060]:
+                - generic [ref=e1061]:
+                  - generic [ref=e1062]: 👥 Fighters
+                  - generic [ref=e1063]: 1/2
+                - generic [ref=e1064]:
+                  - generic [ref=e1065]: 🤖 Bots
+                  - generic [ref=e1066]: "1"
+                - generic [ref=e1067]:
+                  - generic [ref=e1068]: 💎 Rewards
+                  - generic [ref=e1069]: "0"
+              - link "Results" [ref=e1071] [cursor=pointer]:
+                - /url: /matches/cb8850b0-022e-4d08-a0b1-505ff7eca1da
+                - button "Results" [ref=e1072]
+          - generic [ref=e1073]:
+            - generic [ref=e1074]:
+              - img [ref=e1076]
+              - generic [ref=e1077]: completed
+              - generic [ref=e1078]: "#9062"
+            - generic [ref=e1079]:
+              - heading "Match Complete" [level=3] [ref=e1080]
+              - generic [ref=e1081]:
+                - generic [ref=e1082]:
+                  - generic [ref=e1083]: 👥 Fighters
+                  - generic [ref=e1084]: 1/2
+                - generic [ref=e1085]:
+                  - generic [ref=e1086]: 🤖 Bots
+                  - generic [ref=e1087]: "1"
+                - generic [ref=e1088]:
+                  - generic [ref=e1089]: 💎 Rewards
+                  - generic [ref=e1090]: "0"
+              - link "Results" [ref=e1092] [cursor=pointer]:
+                - /url: /matches/906261b4-aa22-43e7-961c-48701acfcc3d
+                - button "Results" [ref=e1093]
+          - generic [ref=e1094]:
+            - generic [ref=e1095]:
+              - img [ref=e1097]
+              - generic [ref=e1098]: completed
+              - generic [ref=e1099]: "#c46a"
+            - generic [ref=e1100]:
+              - heading "Match Complete" [level=3] [ref=e1101]
+              - generic [ref=e1102]:
+                - generic [ref=e1103]:
+                  - generic [ref=e1104]: 👥 Fighters
+                  - generic [ref=e1105]: 1/2
+                - generic [ref=e1106]:
+                  - generic [ref=e1107]: 🤖 Bots
+                  - generic [ref=e1108]: "1"
+                - generic [ref=e1109]:
+                  - generic [ref=e1110]: 💎 Rewards
+                  - generic [ref=e1111]: "0"
+              - link "Results" [ref=e1113] [cursor=pointer]:
+                - /url: /matches/c46af632-da41-4950-b7a3-47be90865604
+                - button "Results" [ref=e1114]
+          - generic [ref=e1115]:
+            - generic [ref=e1116]:
+              - img [ref=e1118]
+              - generic [ref=e1119]: completed
+              - generic [ref=e1120]: "#d1eb"
+            - generic [ref=e1121]:
+              - heading "Match Complete" [level=3] [ref=e1122]
+              - generic [ref=e1123]:
+                - generic [ref=e1124]:
+                  - generic [ref=e1125]: 👥 Fighters
+                  - generic [ref=e1126]: 1/2
+                - generic [ref=e1127]:
+                  - generic [ref=e1128]: 🤖 Bots
+                  - generic [ref=e1129]: "1"
+                - generic [ref=e1130]:
+                  - generic [ref=e1131]: 💎 Rewards
+                  - generic [ref=e1132]: "0"
+              - link "Results" [ref=e1134] [cursor=pointer]:
+                - /url: /matches/d1eb18db-466f-4b14-a713-856fa8e4aed0
+                - button "Results" [ref=e1135]
+          - generic [ref=e1136]:
+            - generic [ref=e1137]:
+              - img [ref=e1139]
+              - generic [ref=e1140]: completed
+              - generic [ref=e1141]: "#d660"
+            - generic [ref=e1142]:
+              - heading "Match Complete" [level=3] [ref=e1143]
+              - generic [ref=e1144]:
+                - generic [ref=e1145]:
+                  - generic [ref=e1146]: 👥 Fighters
+                  - generic [ref=e1147]: 1/2
+                - generic [ref=e1148]:
+                  - generic [ref=e1149]: 🤖 Bots
+                  - generic [ref=e1150]: "1"
+                - generic [ref=e1151]:
+                  - generic [ref=e1152]: 💎 Rewards
+                  - generic [ref=e1153]: "0"
+              - link "Results" [ref=e1155] [cursor=pointer]:
+                - /url: /matches/d660f216-6268-46b0-9370-43489f41b00b
+                - button "Results" [ref=e1156]
+          - generic [ref=e1157]:
+            - generic [ref=e1158]:
+              - img [ref=e1160]
+              - generic [ref=e1161]: completed
+              - generic [ref=e1162]: "#8506"
+            - generic [ref=e1163]:
+              - heading "Match Complete" [level=3] [ref=e1164]
+              - generic [ref=e1165]:
+                - generic [ref=e1166]:
+                  - generic [ref=e1167]: 👥 Fighters
+                  - generic [ref=e1168]: 1/2
+                - generic [ref=e1169]:
+                  - generic [ref=e1170]: 🤖 Bots
+                  - generic [ref=e1171]: "1"
+                - generic [ref=e1172]:
+                  - generic [ref=e1173]: 💎 Rewards
+                  - generic [ref=e1174]: "0"
+              - link "Results" [ref=e1176] [cursor=pointer]:
+                - /url: /matches/850655f3-d905-4d22-b6d4-04bdca275fb5
+                - button "Results" [ref=e1177]
+          - generic [ref=e1178]:
+            - generic [ref=e1179]:
+              - img [ref=e1181]
+              - generic [ref=e1182]: completed
+              - generic [ref=e1183]: "#6a71"
+            - generic [ref=e1184]:
+              - heading "Match Complete" [level=3] [ref=e1185]
+              - generic [ref=e1186]:
+                - generic [ref=e1187]:
+                  - generic [ref=e1188]: 👥 Fighters
+                  - generic [ref=e1189]: 1/2
+                - generic [ref=e1190]:
+                  - generic [ref=e1191]: 🤖 Bots
+                  - generic [ref=e1192]: "1"
+                - generic [ref=e1193]:
+                  - generic [ref=e1194]: 💎 Rewards
+                  - generic [ref=e1195]: "0"
+              - link "Results" [ref=e1197] [cursor=pointer]:
+                - /url: /matches/6a713730-db7c-4f76-a07f-7cbfe8ccbfcd
+                - button "Results" [ref=e1198]
+          - generic [ref=e1199]:
+            - generic [ref=e1200]:
+              - img [ref=e1202]
+              - generic [ref=e1203]: completed
+              - generic [ref=e1204]: "#7fd3"
+            - generic [ref=e1205]:
+              - heading "Match Complete" [level=3] [ref=e1206]
+              - generic [ref=e1207]:
+                - generic [ref=e1208]:
+                  - generic [ref=e1209]: 👥 Fighters
+                  - generic [ref=e1210]: 1/2
+                - generic [ref=e1211]:
+                  - generic [ref=e1212]: 🤖 Bots
+                  - generic [ref=e1213]: "1"
+                - generic [ref=e1214]:
+                  - generic [ref=e1215]: 💎 Rewards
+                  - generic [ref=e1216]: "0"
+              - link "Results" [ref=e1218] [cursor=pointer]:
+                - /url: /matches/7fd33a12-6e1c-409e-a58a-c3797e589961
+                - button "Results" [ref=e1219]
+          - generic [ref=e1220]:
+            - generic [ref=e1221]:
+              - img [ref=e1223]
+              - generic [ref=e1224]: completed
+              - generic [ref=e1225]: "#d86b"
+            - generic [ref=e1226]:
+              - heading "Match Complete" [level=3] [ref=e1227]
+              - generic [ref=e1228]:
+                - generic [ref=e1229]:
+                  - generic [ref=e1230]: 👥 Fighters
+                  - generic [ref=e1231]: 1/2
+                - generic [ref=e1232]:
+                  - generic [ref=e1233]: 🤖 Bots
+                  - generic [ref=e1234]: "1"
+                - generic [ref=e1235]:
+                  - generic [ref=e1236]: 💎 Rewards
+                  - generic [ref=e1237]: "0"
+              - link "Results" [ref=e1239] [cursor=pointer]:
+                - /url: /matches/d86bad60-3709-4ace-b506-552b35a2a21e
+                - button "Results" [ref=e1240]
+          - generic [ref=e1241]:
+            - generic [ref=e1242]:
+              - img [ref=e1244]
+              - generic [ref=e1245]: completed
+              - generic [ref=e1246]: "#6789"
+            - generic [ref=e1247]:
+              - heading "Match Complete" [level=3] [ref=e1248]
+              - generic [ref=e1249]:
+                - generic [ref=e1250]:
+                  - generic [ref=e1251]: 👥 Fighters
+                  - generic [ref=e1252]: 1/2
+                - generic [ref=e1253]:
+                  - generic [ref=e1254]: 🤖 Bots
+                  - generic [ref=e1255]: "1"
+                - generic [ref=e1256]:
+                  - generic [ref=e1257]: 💎 Rewards
+                  - generic [ref=e1258]: "0"
+              - link "Results" [ref=e1260] [cursor=pointer]:
+                - /url: /matches/67896ed8-8a97-4cfe-90a3-91737b586531
+                - button "Results" [ref=e1261]
+          - generic [ref=e1262]:
+            - generic [ref=e1263]:
+              - img [ref=e1265]
+              - generic [ref=e1266]: completed
+              - generic [ref=e1267]: "#11cb"
+            - generic [ref=e1268]:
+              - heading "Match Complete" [level=3] [ref=e1269]
+              - generic [ref=e1270]:
+                - generic [ref=e1271]:
+                  - generic [ref=e1272]: 👥 Fighters
+                  - generic [ref=e1273]: 1/2
+                - generic [ref=e1274]:
+                  - generic [ref=e1275]: 🤖 Bots
+                  - generic [ref=e1276]: "5"
+                - generic [ref=e1277]:
+                  - generic [ref=e1278]: 💎 Rewards
+                  - generic [ref=e1279]: "0"
+              - link "Results" [ref=e1281] [cursor=pointer]:
+                - /url: /matches/11cb2200-074d-489b-8818-ad6c3e772bfb
+                - button "Results" [ref=e1282]
+          - generic [ref=e1283]:
+            - generic [ref=e1284]:
+              - img [ref=e1286]
+              - generic [ref=e1287]: completed
+              - generic [ref=e1288]: "#564a"
+            - generic [ref=e1289]:
+              - heading "Match Complete" [level=3] [ref=e1290]
+              - generic [ref=e1291]:
+                - generic [ref=e1292]:
+                  - generic [ref=e1293]: 👥 Fighters
+                  - generic [ref=e1294]: 1/2
+                - generic [ref=e1295]:
+                  - generic [ref=e1296]: 🤖 Bots
+                  - generic [ref=e1297]: "6"
+                - generic [ref=e1298]:
+                  - generic [ref=e1299]: 💎 Rewards
+                  - generic [ref=e1300]: "0"
+              - link "Results" [ref=e1302] [cursor=pointer]:
+                - /url: /matches/564ae953-21f8-4f76-969e-d03d8bda150a
+                - button "Results" [ref=e1303]
+          - generic [ref=e1304]:
+            - generic [ref=e1305]:
+              - img [ref=e1307]
+              - generic [ref=e1308]: completed
+              - generic [ref=e1309]: "#c2aa"
+            - generic [ref=e1310]:
+              - heading "Match Complete" [level=3] [ref=e1311]
+              - generic [ref=e1312]:
+                - generic [ref=e1313]:
+                  - generic [ref=e1314]: 👥 Fighters
+                  - generic [ref=e1315]: 1/2
+                - generic [ref=e1316]:
+                  - generic [ref=e1317]: 🤖 Bots
+                  - generic [ref=e1318]: "1"
+                - generic [ref=e1319]:
+                  - generic [ref=e1320]: 💎 Rewards
+                  - generic [ref=e1321]: "0"
+              - link "Results" [ref=e1323] [cursor=pointer]:
+                - /url: /matches/c2aac422-1163-4027-b760-01c5077de09d
+                - button "Results" [ref=e1324]
+          - generic [ref=e1325]:
+            - generic [ref=e1326]:
+              - img [ref=e1328]
+              - generic [ref=e1329]: completed
+              - generic [ref=e1330]: "#4e15"
+            - generic [ref=e1331]:
+              - heading "Match Complete" [level=3] [ref=e1332]
+              - generic [ref=e1333]:
+                - generic [ref=e1334]:
+                  - generic [ref=e1335]: 👥 Fighters
+                  - generic [ref=e1336]: 1/2
+                - generic [ref=e1337]:
+                  - generic [ref=e1338]: 🤖 Bots
+                  - generic [ref=e1339]: "1"
+                - generic [ref=e1340]:
+                  - generic [ref=e1341]: 💎 Rewards
+                  - generic [ref=e1342]: "0"
+              - link "Results" [ref=e1344] [cursor=pointer]:
+                - /url: /matches/4e15d21a-33d3-4c71-9c92-92c97650afe6
+                - button "Results" [ref=e1345]
+          - generic [ref=e1346]:
+            - generic [ref=e1347]:
+              - img [ref=e1349]
+              - generic [ref=e1350]: completed
+              - generic [ref=e1351]: "#cf18"
+            - generic [ref=e1352]:
+              - heading "Match Complete" [level=3] [ref=e1353]
+              - generic [ref=e1354]:
+                - generic [ref=e1355]:
+                  - generic [ref=e1356]: 👥 Fighters
+                  - generic [ref=e1357]: 1/2
+                - generic [ref=e1358]:
+                  - generic [ref=e1359]: 🤖 Bots
+                  - generic [ref=e1360]: "1"
+                - generic [ref=e1361]:
+                  - generic [ref=e1362]: 💎 Rewards
+                  - generic [ref=e1363]: "0"
+              - link "Results" [ref=e1365] [cursor=pointer]:
+                - /url: /matches/cf180157-3c47-4d5b-b14e-2f0a9078a8be
+                - button "Results" [ref=e1366]
+          - generic [ref=e1367]:
+            - generic [ref=e1368]:
+              - img [ref=e1370]
+              - generic [ref=e1371]: completed
+              - generic [ref=e1372]: "#ff81"
+            - generic [ref=e1373]:
+              - heading "Match Complete" [level=3] [ref=e1374]
+              - generic [ref=e1375]:
+                - generic [ref=e1376]:
+                  - generic [ref=e1377]: 👥 Fighters
+                  - generic [ref=e1378]: 1/2
+                - generic [ref=e1379]:
+                  - generic [ref=e1380]: 🤖 Bots
+                  - generic [ref=e1381]: "6"
+                - generic [ref=e1382]:
+                  - generic [ref=e1383]: 💎 Rewards
+                  - generic [ref=e1384]: "0"
+              - link "Results" [ref=e1386] [cursor=pointer]:
+                - /url: /matches/ff81b650-fa87-4aae-ae29-6c407aa8cd70
+                - button "Results" [ref=e1387]
+          - generic [ref=e1388]:
+            - generic [ref=e1389]:
+              - img [ref=e1391]
+              - generic [ref=e1392]: completed
+              - generic [ref=e1393]: "#dc00"
+            - generic [ref=e1394]:
+              - heading "Match Complete" [level=3] [ref=e1395]
+              - generic [ref=e1396]:
+                - generic [ref=e1397]:
+                  - generic [ref=e1398]: 👥 Fighters
+                  - generic [ref=e1399]: 1/2
+                - generic [ref=e1400]:
+                  - generic [ref=e1401]: 🤖 Bots
+                  - generic [ref=e1402]: "1"
+                - generic [ref=e1403]:
+                  - generic [ref=e1404]: 💎 Rewards
+                  - generic [ref=e1405]: "0"
+              - link "Results" [ref=e1407] [cursor=pointer]:
+                - /url: /matches/dc0090a5-01e0-415e-9df7-ef773b881f97
+                - button "Results" [ref=e1408]
+          - generic [ref=e1409]:
+            - generic [ref=e1410]:
+              - img [ref=e1412]
+              - generic [ref=e1413]: completed
+              - generic [ref=e1414]: "#6888"
+            - generic [ref=e1415]:
+              - heading "Match Complete" [level=3] [ref=e1416]
+              - generic [ref=e1417]:
+                - generic [ref=e1418]:
+                  - generic [ref=e1419]: 👥 Fighters
+                  - generic [ref=e1420]: 1/2
+                - generic [ref=e1421]:
+                  - generic [ref=e1422]: 🤖 Bots
+                  - generic [ref=e1423]: "1"
+                - generic [ref=e1424]:
+                  - generic [ref=e1425]: 💎 Rewards
+                  - generic [ref=e1426]: "0"
+              - link "Results" [ref=e1428] [cursor=pointer]:
+                - /url: /matches/68886385-77ba-485e-ad42-c93c8cd66f9e
+                - button "Results" [ref=e1429]
+          - generic [ref=e1430]:
+            - generic [ref=e1431]:
+              - img [ref=e1433]
+              - generic [ref=e1434]: completed
+              - generic [ref=e1435]: "#ec26"
+            - generic [ref=e1436]:
+              - heading "Match Complete" [level=3] [ref=e1437]
+              - generic [ref=e1438]:
+                - generic [ref=e1439]:
+                  - generic [ref=e1440]: 👥 Fighters
+                  - generic [ref=e1441]: 1/2
+                - generic [ref=e1442]:
+                  - generic [ref=e1443]: 🤖 Bots
+                  - generic [ref=e1444]: "5"
+                - generic [ref=e1445]:
+                  - generic [ref=e1446]: 💎 Rewards
+                  - generic [ref=e1447]: "0"
+              - link "Results" [ref=e1449] [cursor=pointer]:
+                - /url: /matches/ec26cda2-ca47-4d63-a55e-b23b13d45e73
+                - button "Results" [ref=e1450]
+          - generic [ref=e1451]:
+            - generic [ref=e1452]:
+              - img [ref=e1454]
+              - generic [ref=e1455]: completed
+              - generic [ref=e1456]: "#f1f8"
+            - generic [ref=e1457]:
+              - heading "Match Complete" [level=3] [ref=e1458]
+              - generic [ref=e1459]:
+                - generic [ref=e1460]:
+                  - generic [ref=e1461]: 👥 Fighters
+                  - generic [ref=e1462]: 1/2
+                - generic [ref=e1463]:
+                  - generic [ref=e1464]: 🤖 Bots
+                  - generic [ref=e1465]: "1"
+                - generic [ref=e1466]:
+                  - generic [ref=e1467]: 💎 Rewards
+                  - generic [ref=e1468]: "0"
+              - link "Results" [ref=e1470] [cursor=pointer]:
+                - /url: /matches/f1f82fa1-df99-4629-a0e5-6794656cd7ba
+                - button "Results" [ref=e1471]
+          - generic [ref=e1472]:
+            - generic [ref=e1473]:
+              - img [ref=e1475]
+              - generic [ref=e1476]: cancelled
+              - generic [ref=e1477]: "#7308"
+            - generic [ref=e1478]:
+              - heading "Match Complete" [level=3] [ref=e1479]
+              - generic [ref=e1480]:
+                - generic [ref=e1481]:
+                  - generic [ref=e1482]: 👥 Fighters
+                  - generic [ref=e1483]: 0/2
+                - generic [ref=e1484]:
+                  - generic [ref=e1485]: 🤖 Bots
+                  - generic [ref=e1486]: "3"
+              - link "Results" [ref=e1488] [cursor=pointer]:
+                - /url: /matches/73084620-da94-43dd-bfda-e784bb04a830
+                - button "Results" [ref=e1489]
+          - generic [ref=e1490]:
+            - generic [ref=e1491]:
+              - img [ref=e1493]
+              - generic [ref=e1494]: cancelled
+              - generic [ref=e1495]: "#c552"
+            - generic [ref=e1496]:
+              - heading "Match Complete" [level=3] [ref=e1497]
+              - generic [ref=e1498]:
+                - generic [ref=e1499]:
+                  - generic [ref=e1500]: 👥 Fighters
+                  - generic [ref=e1501]: 0/2
+                - generic [ref=e1502]:
+                  - generic [ref=e1503]: 🤖 Bots
+                  - generic [ref=e1504]: "3"
+              - link "Results" [ref=e1506] [cursor=pointer]:
+                - /url: /matches/c552ed8f-ac0f-4e59-9613-8121d6fe2edd
+                - button "Results" [ref=e1507]
 ```

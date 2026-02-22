@@ -22,7 +22,6 @@ type Fighter struct {
 	Speed          int     `json:"speed"`
 	Vision         int     `json:"vision"`
 	WeaponID       *string `json:"weaponId"`
-	AttunementID   *string `json:"attunementId"`
 	TeamID         *string `json:"teamId"` // Transient field for battle team tracking
 	// Match Statistics
 	MatchesWon       int       `json:"matchesWon"`
@@ -41,6 +40,5 @@ type FighterExperience struct {
 }
 
 type FighterConfiguration struct {
-	FighterID    string  `json:"fighterId"`
-	AttunementID *string `json:"attunementId"`
+	FighterID string `json:"fighterId"`
 }

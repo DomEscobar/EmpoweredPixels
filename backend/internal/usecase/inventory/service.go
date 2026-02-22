@@ -184,6 +184,10 @@ func (s *ServiceImpl) Equip(ctx context.Context, userID int64, equipmentID strin
 	if equip == nil {
 		return ErrInvalidEquipment
 	}
+	// Ensure equipment belongs to user
+	if equip.UserID != userID {
+		return ErrInvalidEquipment
+	}
 	return s.equipment.UpdateFighter(ctx, equipmentID, fighterID)
 }
 

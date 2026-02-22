@@ -58,18 +58,6 @@ test.describe('Leagues View - Comprehensive', () => {
     });
 });
 
-test.describe('Shop View - Comprehensive', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto('/'); // Ensure correct origin
-        await page.evaluate(() => localStorage.setItem('token', 'fake-jwt-token'));
-        await page.goto('/shop');
-    });
-
-    test('should display shop storefront', async ({ page }) => {
-        await expect(page.getByTestId('shop-page')).toBeVisible(); // Use data-testid
-    });
-});
-
 test.describe('Inventory View - Comprehensive', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/'); // Ensure correct origin

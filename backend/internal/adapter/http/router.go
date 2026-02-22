@@ -9,19 +9,15 @@ import (
 
 	"empoweredpixels/internal/adapter/http/handlers"
 	mcphandlers "empoweredpixels/internal/adapter/http/handlers"
-	attunementhandlers "empoweredpixels/internal/adapter/http/handlers/attunement"
 	dailyhandlers "empoweredpixels/internal/adapter/http/handlers/daily"
 	eventhandlers "empoweredpixels/internal/adapter/http/handlers/events"
 	guildhandlers "empoweredpixels/internal/adapter/http/handlers/guilds"
 	inventoryhandlers "empoweredpixels/internal/adapter/http/handlers/inventory"
-	leaderboardhandlers "empoweredpixels/internal/adapter/http/handlers/leaderboard"
 	leaguehandlers "empoweredpixels/internal/adapter/http/handlers/leagues"
 	matchhandlers "empoweredpixels/internal/adapter/http/handlers/matches"
-	resonancehandlers "empoweredpixels/internal/adapter/http/handlers/resonance"
 	rewardhandlers "empoweredpixels/internal/adapter/http/handlers/rewards"
 	rosterhandlers "empoweredpixels/internal/adapter/http/handlers/roster"
 	seasonhandlers "empoweredpixels/internal/adapter/http/handlers/seasons"
-	shophandlers "empoweredpixels/internal/adapter/http/handlers/shop"
 	skillhandlers "empoweredpixels/internal/adapter/http/handlers/skills"
 	weaponhandlers "empoweredpixels/internal/adapter/http/handlers/weapons"
 	"empoweredpixels/internal/adapter/http/middleware"
@@ -30,48 +26,40 @@ import (
 	"empoweredpixels/internal/config"
 	"empoweredpixels/internal/infra/jobs"
 	"empoweredpixels/internal/mcp"
-	attunementusecase "empoweredpixels/internal/usecase/attunement"
 	dailyusecase "empoweredpixels/internal/usecase/daily"
 	eventsusecase "empoweredpixels/internal/usecase/events"
 	guildsusecase "empoweredpixels/internal/usecase/guilds"
 	"empoweredpixels/internal/usecase/identity"
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
-	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
 	leaguesusecase "empoweredpixels/internal/usecase/leagues"
 	matchesusecase "empoweredpixels/internal/usecase/matches"
-	resonanceusecase "empoweredpixels/internal/usecase/resonance"
 	rewardsusecase "empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
-	shopusecase "empoweredpixels/internal/usecase/shop"
 	skillsusecase "empoweredpixels/internal/usecase/skills"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 )
 
 type Dependencies struct {
-	Config             config.Config
-	IdentityService    *identity.Service
-	TokenRepository    identity.TokenRepository
-	RosterService      *rosterusecase.Service
-	MatchService       *matchesusecase.Service
-	InventoryService   inventoryusecase.Service
-	WeaponService      *weaponsusecase.Service
-	SkillService       *skillsusecase.Service
-	LeagueService      *leaguesusecase.Service
-	LeagueJob          *jobs.LeagueJob
-	RewardService      *rewardsusecase.Service
-	SeasonService      *seasonsusecase.Service
-	ShopService        *shopusecase.Service
-	AttunementService  *attunementusecase.Service
-	DailyService       *dailyusecase.Service
-	LeaderboardService *leaderboardusecase.Service
-	EventService       *eventsusecase.Service
-	GuildService       *guildsusecase.Service
-	ResonanceService   *resonanceusecase.ResonanceService
-	MatchHub           *ws.MatchHub
-	MCPHandler         *mcp.MCPHandler
-	MCPAuditLogger     *mcp.AuditLogger
-	MCPFilter          *mcp.FairnessFilter
+	Config           config.Config
+	IdentityService  *identity.Service
+	TokenRepository  identity.TokenRepository
+	RosterService    *rosterusecase.Service
+	MatchService     *matchesusecase.Service
+	InventoryService inventoryusecase.Service
+	WeaponService    *weaponsusecase.Service
+	SkillService     *skillsusecase.Service
+	LeagueService    *leaguesusecase.Service
+	LeagueJob        *jobs.LeagueJob
+	RewardService    *rewardsusecase.Service
+	SeasonService    *seasonsusecase.Service
+	DailyService     *dailyusecase.Service
+	EventService     *eventsusecase.Service
+	GuildService     *guildsusecase.Service
+	MatchHub         *ws.MatchHub
+	MCPHandler       *mcp.MCPHandler
+	MCPAuditLogger   *mcp.AuditLogger
+	MCPFilter        *mcp.FairnessFilter
 }
 
 func NewRouter(deps Dependencies) http.Handler {
@@ -140,17 +128,6 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/roster/squad/active", squadHandler.SetActive).Methods("POST")
 	}
 
-	// Resonance routes
-	if deps.ResonanceService != nil {
-		resonanceHandler := resonancehandlers.NewResonanceHandler(deps.ResonanceService)
-		api.HandleFunc("/squads/{squadID}/resonance", func(w http.ResponseWriter, r *http.Request) {
-			resonanceHandler.GetSquadResonance(w, r)
-		}).Methods("GET")
-		api.HandleFunc("/squads/{squadID}/resonance/prefetch", func(w http.ResponseWriter, r *http.Request) {
-			resonanceHandler.PrefetchResonance(w, r)
-		}).Methods("POST")
-	}
-
 	if deps.MatchService != nil {
 		h := matchhandlers.NewHandler(deps.MatchService)
 		api.HandleFunc("/match/current", h.GetCurrentMatch).Methods("GET")
@@ -204,6 +181,9 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/equipment/{id}/favorite", func(w http.ResponseWriter, r *http.Request) {
 			h.SetFavorite(w, r, mux.Vars(r)["id"], false)
 		}).Methods("DELETE")
+		api.HandleFunc("/equipment/{id}/equip/{fighterId}", func(w http.ResponseWriter, r *http.Request) {
+			h.Equip(w, r, mux.Vars(r)["id"], mux.Vars(r)["fighterId"])
+		}).Methods("POST")
 	}
 
 	if deps.LeagueService != nil {
@@ -284,25 +264,6 @@ func NewRouter(deps Dependencies) http.Handler {
 		}).Methods("GET")
 	}
 
-	if deps.ShopService != nil {
-		h := shophandlers.NewHandler(deps.ShopService)
-		api.HandleFunc("/shop/items", h.GetShopItems).Methods("GET")
-		api.HandleFunc("/shop/gold", h.GetGoldPackages).Methods("GET")
-		api.HandleFunc("/shop/bundles", h.GetBundles).Methods("GET")
-		api.HandleFunc("/shop/item/{id}", h.GetShopItem).Methods("GET")
-		api.HandleFunc("/shop/purchase", h.Purchase).Methods("POST")
-		api.HandleFunc("/player/gold", h.GetPlayerGold).Methods("GET")
-		api.HandleFunc("/player/transactions", h.GetTransactions).Methods("GET")
-	}
-
-	if deps.AttunementService != nil {
-		h := attunementhandlers.NewHandler(deps.AttunementService)
-		api.HandleFunc("/attunements", h.GetAttunements).Methods("GET")
-		api.HandleFunc("/attunements/bonuses", h.GetBonuses).Methods("GET")
-		api.HandleFunc("/attunement/{element}", h.GetAttunement).Methods("GET")
-		api.HandleFunc("/attunement/award-xp", h.AwardXP).Methods("POST")
-	}
-
 	if deps.DailyService != nil {
 		h := dailyhandlers.NewHandler(deps.DailyService)
 		api.HandleFunc("/daily-reward", h.GetStatus).Methods("GET")
@@ -314,15 +275,6 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/events/current", h.GetCurrentEvents).Methods("GET")
 		api.HandleFunc("/events/status", h.GetEventStatus).Methods("GET")
 		api.HandleFunc("/events/next", h.GetNextEvent).Methods("GET")
-	}
-
-	if deps.LeaderboardService != nil {
-		h := leaderboardhandlers.NewHandler(deps.LeaderboardService)
-		api.HandleFunc("/leaderboard/{category}", h.GetLeaderboard).Methods("GET")
-		api.HandleFunc("/leaderboard/{category}/nearby", h.GetNearbyRanks).Methods("GET")
-		api.HandleFunc("/achievements", h.GetAchievements).Methods("GET")
-		api.HandleFunc("/player/achievements", h.GetPlayerAchievements).Methods("GET")
-		api.HandleFunc("/achievement/{id}/claim", h.ClaimAchievement).Methods("POST")
 	}
 
 	if deps.GuildService != nil {

@@ -8,7 +8,6 @@ import { generateFighterAppearance, type FighterAppearance } from '@/shared/util
 
 const props = defineProps<{
   seed: string;       // Fighter ID
-  attunement?: string | null;
   animate?: boolean;
   isAttacking?: boolean;
   facing?: 'left' | 'right' | 'front';
@@ -268,7 +267,7 @@ const render = (time: number) => {
   }
   
   // 1. Generate Look
-  const appearance = generateFighterAppearance(props.seed, props.attunement);
+  const appearance = generateFighterAppearance(props.seed);
   
   // 2. Clear & Draw
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
@@ -295,7 +294,7 @@ onUnmounted(() => {
   cancelAnimationFrame(animationHandle);
 });
 
-watch(() => [props.seed, props.attunement], () => {
+watch(() => [props.seed], () => {
    // Re-render immediately if props change
    render(performance.now());
 });

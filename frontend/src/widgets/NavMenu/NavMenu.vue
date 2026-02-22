@@ -43,12 +43,6 @@
             <span v-if="dailyStore.canClaim" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
           </button>
 
-          <!-- Gold Display -->
-          <router-link to="/shop" class="pixel-box-xs bg-amber-900/20 border-amber-600/30 flex items-center gap-2 px-2 py-1 hover:bg-amber-900/40 transition-colors">
-            <img :src="PIXEL_ASSETS.ICON_GOLD" alt="Gold" class="w-4 h-4 pixelated" />
-            <span class="text-xs font-bold text-amber-400">{{ formattedGold() }}</span>
-          </router-link>
-
           <!-- Logout -->
           <button class="pixel-box-xs bg-slate-800/80 border-slate-600/50 p-1.5 hover:bg-red-900/30 transition-colors" title="Sign Out" data-testid="logout-btn" @click="logout">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
@@ -80,7 +74,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/features/auth/store';
-import { useShopStore } from '@/features/shop/store';
+
 import { useDailyStore } from '@/features/daily/store';
 import DailyRewardModal from '@/features/daily/components/DailyRewardModal.vue';
 
@@ -93,51 +87,35 @@ const PIXEL_ASSETS = {
   ICON_MATCHES: 'https://vibemedia.space/icon_nav_swords_6m7n8o_v1.png?prompt=crossed%20swords%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
   ICON_INVENTORY: 'https://vibemedia.space/icon_nav_chest_9p0q1r_v1.png?prompt=treasure%20chest%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
   ICON_LEAGUES: 'https://vibemedia.space/icon_nav_trophy_2s3t4u_v1.png?prompt=golden%20trophy%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
-  ICON_SHOP: 'https://vibemedia.space/icon_nav_shop_5v6w7x_v1.png?prompt=gold%20coins%20pile%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
-  ICON_ATTUNEMENT: 'https://vibemedia.space/icon_nav_crystal_1a2b3c.png?prompt=magic%20crystal%20glowing%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
-  ICON_LEADERBOARD: 'https://vibemedia.space/icon_nav_ranking_4d5e6f.png?prompt=golden%20crown%20ranking%20pixel%20art%20icon%20small&style=pixel_game_asset&key=NOGON',
   ICON_GOLD: 'https://vibemedia.space/icon_gold_coin_nav_8f7e6d.png?prompt=golden%20coin%20with%20shine%20pixel%20art%20icon&style=pixel_game_asset&key=NOGON',
 };
 
 const auth = useAuthStore();
-const shop = useShopStore();
 const dailyStore = useDailyStore();
 const router = useRouter();
 const route = useRoute();
 const showDailyModal = ref(false);
 
-// All navigation items (8 primary)
+// All navigation items (5 primary)
 const allNavItems = [
   { name: 'Command', path: '/dashboard', icon: PIXEL_ASSETS.ICON_DASHBOARD },
   { name: 'Roster', path: '/roster', icon: PIXEL_ASSETS.ICON_ROSTER },
   { name: 'Battle', path: '/matches', icon: PIXEL_ASSETS.ICON_MATCHES },
   { name: 'Vault', path: '/inventory', icon: PIXEL_ASSETS.ICON_INVENTORY },
   { name: 'Leagues', path: '/leagues', icon: PIXEL_ASSETS.ICON_LEAGUES },
-  { name: 'Attune', path: '/attunement', icon: PIXEL_ASSETS.ICON_ATTUNEMENT },
-  { name: 'Rankings', path: '/leaderboard', icon: PIXEL_ASSETS.ICON_LEADERBOARD },
-  { name: 'Shop', path: '/shop', icon: PIXEL_ASSETS.ICON_SHOP },
 ];
 
-// Fetch gold balance and daily rewards when logged in
 onMounted(() => {
   if (auth.token) {
-    shop.fetchGoldBalance();
     dailyStore.fetchStatus();
   }
 });
 
 watch(() => auth.token, (newToken) => {
   if (newToken) {
-    shop.fetchGoldBalance();
     dailyStore.fetchStatus();
   }
 });
-
-const formattedGold = () => {
-  const balance = shop.goldBalance?.balance ?? 0;
-  if (balance >= 10000) return `${(balance / 1000).toFixed(1)}K`;
-  return balance.toLocaleString();
-};
 
 const isActive = (path: string) => {
   return route.path === path || route.path.startsWith(path + '/');

@@ -11,18 +11,15 @@ import (
 
 // Service handles daily reward business logic
 type Service struct {
-	repo     repositories.DailyRewardRepository
-	goldRepo repositories.PlayerGoldRepository
+	repo repositories.DailyRewardRepository
 }
 
 // NewService creates a new daily reward service
 func NewService(
 	repo repositories.DailyRewardRepository,
-	goldRepo repositories.PlayerGoldRepository,
 ) *Service {
 	return &Service{
-		repo:     repo,
-		goldRepo: goldRepo,
+		repo: repo,
 	}
 }
 
@@ -57,17 +54,9 @@ func (s *Service) Claim(ctx context.Context, userID int) (*daily.ClaimResult, er
 	var rewardValue int
 	switch reward.Type {
 	case "gold":
-		// Add gold to user
-		if err := s.goldRepo.AddGold(ctx, userID, reward.Value); err != nil {
-			return nil, fmt.Errorf("failed to add gold: %w", err)
-		}
 		rewardValue = reward.Value
 
 	case "item":
-		// For now, just give gold equivalent (item system integration later)
-		if err := s.goldRepo.AddGold(ctx, userID, reward.Value); err != nil {
-			return nil, fmt.Errorf("failed to add gold: %w", err)
-		}
 		rewardValue = reward.Value
 
 	case "boost":
@@ -77,9 +66,6 @@ func (s *Service) Claim(ctx context.Context, userID int) (*daily.ClaimResult, er
 	case "mystery":
 		// Random reward between 100-1000 gold or random item
 		mysteryGold := rand.Intn(900) + 100 // 100-1000
-		if err := s.goldRepo.AddGold(ctx, userID, mysteryGold); err != nil {
-			return nil, fmt.Errorf("failed to add mystery gold: %w", err)
-		}
 		rewardValue = mysteryGold
 	}
 

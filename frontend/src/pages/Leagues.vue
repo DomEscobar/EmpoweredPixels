@@ -302,51 +302,7 @@
             </div>
           </div>
 
-          <!-- Leaderboard Tab -->
-          <div v-if="activeDetailTab === 'leaderboard'" class="space-y-4">
-            <div v-if="!currentLeagueHighscores.length" class="text-center py-8 bg-slate-950/50 border border-slate-800">
-              <img :src="PIXEL_ASSETS.ICON_TROPHY" class="w-12 h-12 mx-auto opacity-20 pixelated mb-4" />
-              <p class="text-slate-600 uppercase text-xs">
-                Rankings will appear after battles
-              </p>
-            </div>
-            
-            <div v-else class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
-              <div 
-                v-for="(score, idx) in currentLeagueHighscores" 
-                :key="score.fighterId"
-                class="flex items-center gap-4 p-3 border"
-                :class="idx === 0 ? 'bg-amber-900/20 border-amber-700' : idx === 1 ? 'bg-slate-400/10 border-slate-600' : idx === 2 ? 'bg-orange-900/20 border-orange-800' : 'bg-slate-900 border-slate-800'"
-                :data-testid="'highscore-' + (idx + 1)"
-              >
-                <div 
-                  class="w-8 h-8 flex items-center justify-center text-sm font-black"
-                  :class="idx === 0 ? 'text-amber-400' : idx === 1 ? 'text-slate-300' : idx === 2 ? 'text-orange-400' : 'text-slate-500'"
-                >
-                  {{ idx + 1 }}
-                </div>
-                <div class="w-10 h-10 bg-black border-2 flex items-center justify-center" :class="idx === 0 ? 'border-amber-600' : 'border-slate-700'">
-                  <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-8 h-8 pixelated" />
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-bold uppercase text-sm" :class="idx === 0 ? 'text-amber-300' : 'text-slate-200'">
-                    {{ score.fighterName || score.fighterId.substring(0, 8) }}
-                  </h4>
-                  <div class="text-[10px] text-slate-600">
-                    {{ score.username }}
-                  </div>
-                </div>
-                <div class="text-right">
-                  <div class="text-lg font-black" :class="idx === 0 ? 'text-amber-400' : 'text-slate-300'">
-                    {{ score.score }}
-                  </div>
-                  <div class="text-[10px] text-slate-600 uppercase">
-                    Points
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
     </BaseModal>
@@ -385,7 +341,6 @@ const activeDetailTab = ref('participants');
 const detailTabs = [
   { id: 'participants', label: 'Warriors' },
   { id: 'matches', label: 'Battles' },
-  { id: 'leaderboard', label: 'Rankings' },
 ];
 
 const isSubscribed = (leagueId: number) => leaguesStore.isSubscribedToLeague(leagueId);
@@ -416,10 +371,7 @@ const currentLeagueMatches = computed(() => {
   return leaguesStore.leagueMatches[leaguesStore.selectedLeague.id] ?? [];
 });
 
-const currentLeagueHighscores = computed(() => {
-  if (!leaguesStore.selectedLeague) return [];
-  return leaguesStore.leagueHighscores[leaguesStore.selectedLeague.id] ?? [];
-});
+
 
 const currentLeagueWinner = computed(() => {
   if (!leaguesStore.selectedLeague) return null;
@@ -473,7 +425,6 @@ async function openLeagueDetail(league: League) {
   await Promise.all([
     leaguesStore.fetchLeagueDetail(league.id),
     leaguesStore.fetchLeagueMatches(league.id),
-    leaguesStore.fetchLeagueHighscores(league.id),
     leaguesStore.fetchLeagueWinner(league.id),
   ]);
 }
@@ -518,9 +469,6 @@ watch(activeDetailTab, async (tab) => {
   
   if (tab === 'matches' && !leaguesStore.leagueMatches[leagueId]?.length) {
     await leaguesStore.fetchLeagueMatches(leagueId);
-  }
-  if (tab === 'leaderboard' && !leaguesStore.leagueHighscores[leagueId]?.length) {
-    await leaguesStore.fetchLeagueHighscores(leagueId);
   }
 });
 

@@ -1,0 +1,40 @@
+
+> empoweredpixels-frontend@0.1.0 build
+> vue-tsc --noEmit && vite build
+
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 125 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                             0.47 kB │ gzip:  0.31 kB
+dist/assets/MatchViewer-EmM169Ys.css                                        1.29 kB │ gzip:  0.47 kB
+dist/assets/Leagues-CXXdkpR9.css                                            1.61 kB │ gzip:  0.47 kB
+dist/assets/Dashboard-F3beD0zZ.css                                          2.06 kB │ gzip:  0.65 kB
+dist/assets/Matches-But0f-yu.css                                            2.33 kB │ gzip:  0.89 kB
+dist/assets/Roster-DIgHw5jU.css                                             3.14 kB │ gzip:  0.94 kB
+dist/assets/Inventory-BMqW_eJb.css                                          4.09 kB │ gzip:  1.17 kB
+dist/assets/Home-D32mLHbR.css                                               6.37 kB │ gzip:  1.59 kB
+dist/assets/Squads-BissW0E3.css                                             8.46 kB │ gzip:  1.81 kB
+dist/assets/index-B2FV6zhE.css                                            101.08 kB │ gzip: 14.99 kB
+dist/assets/api-DuYvKx88.js                                                 0.86 kB │ gzip:  0.34 kB
+dist/assets/store-oIct9MDE.js                                               1.22 kB │ gzip:  0.52 kB
+dist/assets/BaseCard.vue_vue_type_script_setup_true_lang-BOaEW1Bs.js        1.39 kB │ gzip:  0.65 kB
+dist/assets/store-B5ATD9gY.js                                               2.09 kB │ gzip:  0.84 kB
+dist/assets/BaseModal.vue_vue_type_script_setup_true_lang-CIH05ZDq.js       2.30 kB │ gzip:  1.02 kB
+dist/assets/store-Cy9SLzbv.js                                               2.35 kB │ gzip:  0.80 kB
+dist/assets/Login-z3LPC-VQ.js                                               2.51 kB │ gzip:  1.16 kB
+dist/assets/Register-Bdu29WG9.js                                            3.36 kB │ gzip:  1.31 kB
+dist/assets/store-DoxumrLh.js                                               3.61 kB │ gzip:  1.00 kB
+dist/assets/VoxelFighter.vue_vue_type_script_setup_true_lang-vqxs0X17.js    4.33 kB │ gzip:  2.03 kB
+dist/assets/equipmentImages-CAGED0fu.js                                     6.16 kB │ gzip:  1.16 kB
+dist/assets/Squads-DPA1gA7l.js                                              9.67 kB │ gzip:  3.70 kB
+dist/assets/Inventory-DMgb2mr5.js                                          16.27 kB │ gzip:  5.26 kB
+dist/assets/Home-WVgYAFjW.js                                               16.33 kB │ gzip:  5.00 kB
+dist/assets/Dashboard-Bp_Q0BRE.js                                          19.29 kB │ gzip:  5.63 kB
+dist/assets/Leagues-DFtKTdyU.js                                            22.44 kB │ gzip:  6.31 kB
+dist/assets/Matches-3a5f9Gex.js                                            32.89 kB │ gzip:  9.65 kB
+dist/assets/MatchViewer-R9oO5NP6.js                                        33.02 kB │ gzip: 11.40 kB
+dist/assets/Roster-CWvQAn-G.js                                             34.04 kB │ gzip: 10.23 kB
+dist/assets/index-DqEG0FDj.js                                             123.26 kB │ gzip: 47.82 kB
+✓ built in 7.01s

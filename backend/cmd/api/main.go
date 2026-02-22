@@ -16,19 +16,15 @@ import (
 	"empoweredpixels/internal/infra/engine"
 	"empoweredpixels/internal/infra/jobs"
 	"empoweredpixels/internal/mcp"
-	attunementusecase "empoweredpixels/internal/usecase/attunement"
 	dailyusecase "empoweredpixels/internal/usecase/daily"
 	eventsusecase "empoweredpixels/internal/usecase/events"
 	identityusecase "empoweredpixels/internal/usecase/identity"
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
-	leaderboardusecase "empoweredpixels/internal/usecase/leaderboard"
 	leaguesusecase "empoweredpixels/internal/usecase/leagues"
 	matchesusecase "empoweredpixels/internal/usecase/matches"
-	resonance "empoweredpixels/internal/usecase/resonance"
 	rewardsusecase "empoweredpixels/internal/usecase/rewards"
 	rosterusecase "empoweredpixels/internal/usecase/roster"
 	seasonsusecase "empoweredpixels/internal/usecase/seasons"
-	shopusecase "empoweredpixels/internal/usecase/shop"
 	weaponsusecase "empoweredpixels/internal/usecase/weapons"
 )
 
@@ -62,12 +58,10 @@ func main() {
 
 	fighterRepo := repositories.NewFighterRepository(database.Pool)
 	experienceRepo := repositories.NewExperienceRepository(database.Pool)
-	configurationRepo := repositories.NewConfigurationRepository(database.Pool)
 	squadRepo := repositories.NewSquadRepository(database.Pool)
 	rosterService := rosterusecase.NewService(
 		fighterRepo,
 		experienceRepo,
-		configurationRepo,
 		squadRepo,
 		time.Now,
 	)
@@ -88,17 +82,7 @@ func main() {
 	engineClient := engine.NewClient(engine.Config{BaseURL: cfg.EngineURL})
 	matchHub := ws.NewMatchHub()
 
-	// Attunement service initialization
-	attunementRepo := repositories.NewAttunementRepository(database.Pool)
-	attunementService := attunementusecase.NewService(attunementRepo)
-
-	// Resonance service initialization
-	resonanceusecase := resonance.NewResonanceService(squadRepo, fighterRepo, attunementRepo)
-
-	// Resonance achievement repository initialization
-	resonanceAchievementRepo := repositories.NewResonanceAchievementRepository(database.Pool)
-
-	matchService := matchesusecase.NewServiceWithResonance(
+	matchService := matchesusecase.NewService(
 		matchRepo,
 		matchTeamRepo,
 		matchRegistrationRepo,
@@ -106,13 +90,11 @@ func main() {
 		matchScoreRepo,
 		fighterRepo,
 		inventoryService,
-		resonanceusecase,
 		rewardService,
 		rosterService,
 		engineClient,
 		matchHub,
 		time.Now,
-		resonanceAchievementRepo,
 	)
 
 	seasonSummaryRepo := repositories.NewSeasonSummaryRepository(database.Pool)
@@ -121,25 +103,14 @@ func main() {
 	weaponRepo := repositories.NewWeaponRepository(database.Pool)
 	weaponService := weaponsusecase.NewService(weaponRepo)
 
-	// Shop service initialization
-	shopRepo := repositories.NewShopRepository(database.Pool)
-	goldRepo := repositories.NewPlayerGoldRepository(database.Pool)
-	txRepo := repositories.NewTransactionRepository(database.Pool)
-	shopService := shopusecase.NewService(shopRepo, goldRepo, txRepo, weaponService, shopusecase.NewSimulatedPaymentProvider())
-
 	// Daily reward service initialization
 	dailyRepo := repositories.NewDailyRewardRepository(database.Pool)
-	dailyService := dailyusecase.NewService(dailyRepo, goldRepo)
-
-	// Leaderboard service initialization
-	leaderboardRepo := repositories.NewLeaderboardRepository(database.Pool)
-	achievementRepo := repositories.NewAchievementRepository(database.Pool)
-	leaderboardService := leaderboardusecase.NewService(leaderboardRepo, achievementRepo, userRepo, fighterRepo, goldRepo)
+	dailyService := dailyusecase.NewService(dailyRepo)
 
 	leagueRepo := repositories.NewLeagueRepository(database.Pool)
 	leagueSubRepo := repositories.NewLeagueSubscriptionRepository(database.Pool)
 	leagueMatchRepo := repositories.NewLeagueMatchRepository(database.Pool)
-	leagueService := leaguesusecase.NewService(leagueRepo, leagueSubRepo, leagueMatchRepo, fighterRepo, achievementRepo, time.Now)
+	leagueService := leaguesusecase.NewService(leagueRepo, leagueSubRepo, leagueMatchRepo, fighterRepo, time.Now)
 	leagueJob := jobs.NewLeagueJob(matchService, leagueRepo, leagueSubRepo, leagueMatchRepo, fighterRepo, 4*time.Hour)
 	leagueJob.Start()
 
@@ -157,28 +128,24 @@ func main() {
 	server := &http.Server{
 		Addr: cfg.HTTPAddress,
 		Handler: httpadapter.NewRouter(httpadapter.Dependencies{
-			Config:             cfg,
-			IdentityService:    identityService,
-			TokenRepository:    tokenRepo,
-			RosterService:      rosterService,
-			MatchService:       matchService,
-			InventoryService:   inventoryService,
-			WeaponService:      weaponService,
-			SkillService:       nil,
-			ShopService:        shopService,
-			AttunementService:  attunementService,
-			DailyService:       dailyService,
-			LeagueService:      leagueService,
-			LeagueJob:          leagueJob,
-			RewardService:      rewardService,
-			SeasonService:      seasonService,
-			MatchHub:           matchHub,
-			MCPHandler:         mcpHandler,
-			MCPAuditLogger:     mcpAuditLogger,
-			MCPFilter:          mcpFilter,
-			LeaderboardService: leaderboardService,
-			EventService:       eventService,
-			ResonanceService:   resonanceusecase,
+			Config:           cfg,
+			IdentityService:  identityService,
+			TokenRepository:  tokenRepo,
+			RosterService:    rosterService,
+			MatchService:     matchService,
+			InventoryService: inventoryService,
+			WeaponService:    weaponService,
+			SkillService:     nil,
+			DailyService:     dailyService,
+			LeagueService:    leagueService,
+			LeagueJob:        leagueJob,
+			RewardService:    rewardService,
+			SeasonService:    seasonService,
+			MatchHub:         matchHub,
+			MCPHandler:       mcpHandler,
+			MCPAuditLogger:   mcpAuditLogger,
+			MCPFilter:        mcpFilter,
+			EventService:     eventService,
 		}),
 		ReadHeaderTimeout: 5 * time.Second,
 	}

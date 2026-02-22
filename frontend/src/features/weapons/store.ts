@@ -34,6 +34,13 @@ export const useWeaponsStore = defineStore("weapons", {
       if (!auth.token) return;
 
       try {
+        // First unequip any existing weapon for this fighter to prevent multiple weapons
+        const weapon = this.weapons.find(w => w.fighterId === fighterId);
+        if (weapon) {
+          await this.unequipWeapon(weapon.id);
+        }
+        
+        // Now equip the new weapon
         await equipWeapon(auth.token, weaponId, fighterId);
         // Refresh weapons list to get updated isEquipped/fighterId states
         await this.fetchWeapons();

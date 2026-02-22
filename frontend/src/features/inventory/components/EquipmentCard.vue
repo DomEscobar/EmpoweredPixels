@@ -12,13 +12,13 @@
       ★
     </div>
 
-    <!-- Icon/Level/Enhancement -->
-    <div class="flex flex-col items-center justify-center p-3 relative z-10 h-full">
-      <div 
-        class="h-16 w-16 mb-2 flex items-center justify-center relative p-1"
-        :class="rarityIconBg"
-      >
-        <img :src="itemIcon" class="w-full h-full pixelated" :alt="item.type" />
+     <!-- Icon/Level/Enhancement -->
+     <div class="flex flex-col items-center justify-center p-3 relative z-10 h-full">
+       <div
+         class="h-16 w-16 mb-2 flex items-center justify-center relative p-1"
+         :class="rarityIconBg"
+       >
+         <img :src="itemIcon" class="w-full h-full pixelated" :alt="item.type" :data-testid="`equipment-card-image-${props.item.id}`" />
         
         <div 
           v-if="item.enhancement > 0"
@@ -75,6 +75,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { Equipment } from '../api';
+import { getEquipmentImageUrl } from '@/shared/utils/equipmentImages';
 
 const props = defineProps<{
   item: Equipment
@@ -86,11 +87,8 @@ defineEmits<{
   (e: 'toggle-favorite', item: Equipment): void;
 }>();
 
-const itemIcon = computed(() => {
-  const type = props.item.type.toLowerCase();
-  if (type.includes('wpn')) return 'https://vibemedia.space/wpn_steel_sword_123.png?prompt=pixel%20steel%20sword%20sprite&style=pixel_game_asset&key=NOGON';
-  if (type.includes('ring')) return 'https://vibemedia.space/ring_gold_456.png?prompt=pixel%20gold%20ring%20sprite&style=pixel_game_asset&key=NOGON';
-  return 'https://vibemedia.space/item_generic_789.png?prompt=pixel%20mystery%20item%20sprite&style=pixel_game_asset&key=NOGON';
+const itemIcon = computed<string>(() => {
+  return getEquipmentImageUrl(props.item.type, props.item.id).url;
 });
 
 const powerRating = computed(() => {

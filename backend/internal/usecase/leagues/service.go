@@ -20,7 +20,6 @@ type Service struct {
 	subscriptions SubscriptionRepository
 	matches       LeagueMatchRepository
 	fighters      FighterRepository
-	achievements  AchievementRepository
 	now           func() time.Time
 }
 
@@ -29,7 +28,6 @@ func NewService(
 	subscriptions SubscriptionRepository,
 	matches LeagueMatchRepository,
 	fighters FighterRepository,
-	achievements AchievementRepository,
 	now func() time.Time,
 ) *Service {
 	if now == nil {
@@ -41,7 +39,6 @@ func NewService(
 		subscriptions: subscriptions,
 		matches:       matches,
 		fighters:      fighters,
-		achievements:  achievements,
 		now:           now,
 	}
 }
@@ -79,14 +76,6 @@ func (s *Service) Subscribe(ctx context.Context, userID int64, leagueID int, fig
 
 	if err := s.subscriptions.Create(ctx, subscription); err != nil {
 		return err
-	}
-
-	// Trigger achievement progress in the background to avoid blocking enrollment
-	if s.achievements != nil {
-		go func() {
-			// Using Background context as the request context might be cancelled
-			_ = s.achievements.UpdateAchievementProgress(context.Background(), int(userID), "league_enrolled", 1)
-		}()
 	}
 
 	return nil
@@ -143,7 +132,7 @@ func (s *Service) Matches(ctx context.Context, leagueID int, page int, pageSize 
 	}
 	totalCount, err := s.matches.CountByLeague(ctx, leagueID)
 	if err != nil {
-		// If count fails, return items with totalCount = len(items) as fallback (like leaderboard service)
+		// If count fails, return items with totalCount = len(items) as fallback
 		totalCount = len(items)
 	}
 	return items, totalCount, nil

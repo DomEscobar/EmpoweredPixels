@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Fighter, getFighters, createFighter, deleteFighter, getFighterEquipment, Equipment, updateFighterConfiguration, equipItem, unequipItem } from "./api";
+import { Fighter, getFighters, createFighter, deleteFighter, getFighterEquipment, Equipment, equipItem, unequipItem } from "./api";
 import { useAuthStore } from "@/features/auth/store";
 import { useInventoryStore } from "@/features/inventory/store";
 
@@ -75,34 +75,34 @@ export const useFighterStore = defineStore("roster", {
         this.error = "Failed to delete fighter";
       }
     },
-    async updateAttunement(fighterId: string, attunementId: string | null) {
-      const auth = useAuthStore();
-      if (!auth.token) return;
-
-      try {
-        await updateFighterConfiguration(auth.token, fighterId, attunementId);
-        const fighter = this.fighters.find(f => f.id === fighterId);
-        if (fighter) {
-          fighter.attunementId = attunementId ?? undefined;
-        }
-      } catch (e) {
-        this.error = "Failed to update attunement";
-        console.error("Failed to update attunement", e);
-      }
-    },
     async equipItemToFighter(fighterId: string, equipmentId: string) {
       const auth = useAuthStore();
       const inventory = useInventoryStore();
-      if (!auth.token) return;
+      if (!auth.token) {
+        throw new Error("Not authenticated");
+      }
 
+      // Validate equipment exists in inventory before equip
+      const item = inventory.equipment.find(i => i.id === equipmentId);
+      if (!item) {
+        throw new Error("Equipment not found in inventory");
+      }
+      if (item.fighterId) {
+        throw new Error("Equipment is already bound to another fighter");
+      }
+
+      this.isLoading = true;
       try {
         await equipItem(auth.token, fighterId, equipmentId);
         await this.fetchFighterEquipment(fighterId);
         await this.fetchFighters(); // Power might change
         await inventory.fetchInventory(); // Item is now bound
       } catch (e: any) {
-        this.error = e.message || "Failed to equip item";
-        throw e;
+        const errorMsg = e.message || "Failed to equip item";
+        this.error = errorMsg;
+        throw new Error(errorMsg);
+      } finally {
+        this.isLoading = false;
       }
     },
     async unequipItemFromFighter(fighterId: string, equipmentId: string) {

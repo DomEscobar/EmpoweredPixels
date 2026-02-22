@@ -20,37 +20,20 @@ export interface FighterAppearance {
   headType: 'standard' | 'helmet';
 }
 
-export const generateFighterAppearance = (id: string, attunement?: string | null): FighterAppearance => {
+export const generateFighterAppearance = (id: string): FighterAppearance => {
   const rng = seededRandom(id);
   
   // 1. Skin Tones (Humanoid ranges + fantasy)
   const skinTones = ['#fca5a5', '#fcd34d', '#ad5e25', '#5f370e', '#e5e7eb', '#d1d5db', '#9ca3af'];
   const skin = skinTones[Math.floor(rng() * skinTones.length)];
 
-  // 2. Base Armor Colors (Default or overridden by Attunement)
-  let armorPrimary = '#3b82f6'; // Default Blue
-  let armorSecondary = '#1e3a8a';
-  
-  // Base pools for non-attuned
+  // 2. Base Armor Colors (Randomized)
   const primaryColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#6366f1'];
   const secondaryColors = ['#1e3a8a', '#991b1b', '#065f46', '#b45309', '#5b21b6', '#4338ca'];
 
-  if (attunement === 'Fire') {
-     armorPrimary = '#ef4444'; armorSecondary = '#991b1b';
-  } else if (attunement === 'Earth') {
-     armorPrimary = '#d97706'; armorSecondary = '#78350f';
-  } else if (attunement === 'Water') {
-     armorPrimary = '#3b82f6'; armorSecondary = '#1e3a8a';
-  } else if (attunement === 'Wind') {
-     armorPrimary = '#10b981'; armorSecondary = '#065f46';
-  } else if (attunement === 'Lightning') {
-     armorPrimary = '#eab308'; armorSecondary = '#854d0e';
-  } else {
-     // Randomize if no attunement
-     const idx = Math.floor(rng() * primaryColors.length);
-     armorPrimary = primaryColors[idx];
-     armorSecondary = secondaryColors[idx];
-  }
+  const idx = Math.floor(rng() * primaryColors.length);
+  const armorPrimary = primaryColors[idx];
+  const armorSecondary = secondaryColors[idx];
 
   // 3. Physical Variations
   const heightScale = 0.9 + rng() * 0.2; // 0.9x to 1.1x height
