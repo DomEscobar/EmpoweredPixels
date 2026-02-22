@@ -17,10 +17,17 @@
     "vue-router": "latest"
   },
   "devDependencies": {
+    "@eslint/js": "^9.18.0",
     "@playwright/test": "^1.49.0",
     "@tailwindcss/postcss": "latest",
+    "@typescript-eslint/eslint-plugin": "^8.56.0",
+    "@typescript-eslint/parser": "^8.56.0",
     "@vitejs/plugin-vue": "latest",
+    "@vue/eslint-config-typescript": "^14.7.0",
     "autoprefixer": "latest",
+    "eslint": "^9.18.0",
+    "eslint-plugin-vue": "^10.8.0",
+    "globals": "^17.3.0",
     "postcss": "latest",
     "tailwindcss": "latest",
     "typescript": "latest",

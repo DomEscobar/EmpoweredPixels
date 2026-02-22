@@ -7,7 +7,10 @@
           name="pixel-fade" 
           mode="out-in"
         >
-          <component :is="Component" class="flex-1" />
+          <component
+            :is="Component"
+            class="flex-1"
+          />
         </transition>
       </router-view>
     </main>

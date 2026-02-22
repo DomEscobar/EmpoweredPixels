@@ -1,5 +1,8 @@
 <template>
-  <div v-if="eventsStore.eventStatus?.has_active_event" class="pixel-box bg-gradient-to-r from-purple-900/50 to-amber-900/50 border-amber-500/50 p-4 mb-6">
+  <div
+    v-if="eventsStore.eventStatus?.has_active_event"
+    class="pixel-box bg-gradient-to-r from-purple-900/50 to-amber-900/50 border-amber-500/50 p-4 mb-6"
+  >
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
         <div class="text-4xl animate-pulse">
@@ -15,7 +18,9 @@
         </div>
       </div>
       <div class="text-right">
-        <div class="text-xs text-slate-400 uppercase">Ends in</div>
+        <div class="text-xs text-slate-400 uppercase">
+          Ends in
+        </div>
         <div class="text-2xl font-mono font-bold text-amber-400">
           {{ eventsStore.eventStatus.time_remaining }}
         </div>

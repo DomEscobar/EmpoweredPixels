@@ -26,7 +26,7 @@ test.describe('Squad Resonance Scenario', () => {
     // Step 3: Select or create a squad with known attunements
     // Look for existing squad or create one
     const createSquadButton = page.locator('button:has-text("Create Squad")')
-    let squadName = 'Test Harmonic Squad'
+    const squadName = 'Test Harmonic Squad'
 
     if (await createSquadButton.isVisible()) {
       await createSquadButton.click()

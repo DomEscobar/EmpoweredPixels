@@ -1,8 +1,8 @@
 <template>
   <div 
-    @click="openModal"
     class="pixel-box p-4 cursor-pointer transition-all hover:border-amber-500/50 group"
     :class="dailyStore.canClaim ? 'bg-amber-900/20 border-amber-500/50' : 'bg-slate-900/80'"
+    @click="openModal"
   >
     <div class="flex items-center gap-4">
       <!-- Icon -->
@@ -19,7 +19,10 @@
           Daily Reward
         </h3>
         <p class="text-sm text-slate-400">
-          <span v-if="dailyStore.canClaim" class="text-amber-400 font-bold">
+          <span
+            v-if="dailyStore.canClaim"
+            class="text-amber-400 font-bold"
+          >
             Ready to claim!
           </span>
           <span v-else-if="dailyStore.timeUntilReset">
@@ -50,7 +53,10 @@
   </div>
 
   <!-- Modal -->
-  <DailyRewardModal :show="showModal" @close="showModal = false" />
+  <DailyRewardModal
+    :show="showModal"
+    @close="showModal = false"
+  />
 </template>
 
 <script setup lang="ts">

@@ -29,7 +29,7 @@ export function useMatchResonance() {
   /**
    * Process resonance state message from WebSocket
    */
-  const onResonanceMessage = (payload: any) => {
+   const onResonanceMessage = (payload: { type: string; resonances: Map<string, ResonanceState> | Record<string, ResonanceState> }) => {
     if (payload.type === 'match.resonance_state' && payload.resonances) {
       resonanceMap.value.clear()
       

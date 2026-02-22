@@ -1,14 +1,25 @@
 <template>
-  <div class="flex min-h-[60vh] items-center justify-center" data-testid="login-page">
+  <div
+    class="flex min-h-[60vh] items-center justify-center"
+    data-testid="login-page"
+  >
     <BaseCard class-name="w-full max-w-md">
       <template #header>
         <div class="text-center">
-          <h1 class="text-2xl font-bold text-white">Welcome Back</h1>
-          <p class="text-sm text-slate-400 mt-1">Commander, your fighters await your orders.</p>
+          <h1 class="text-2xl font-bold text-white">
+            Welcome Back
+          </h1>
+          <p class="text-sm text-slate-400 mt-1">
+            Commander, your fighters await your orders.
+          </p>
         </div>
       </template>
       
-      <form class="space-y-4" @submit.prevent="submit" data-testid="login-form">
+      <form
+        class="space-y-4"
+        data-testid="login-form"
+        @submit.prevent="submit"
+      >
         <div class="space-y-1.5">
           <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Username or email</span>
           <input 
@@ -17,7 +28,7 @@
             placeholder="commander@example.com"
             required
             data-testid="email-input"
-          />
+          >
         </div>
         
         <div class="space-y-1.5">
@@ -29,20 +40,34 @@
             placeholder="••••••••"
             required
             data-testid="password-input"
-          />
+          >
         </div>
 
-        <div v-if="auth.error" class="rounded-md bg-red-500/10 p-3 text-sm text-red-400 border border-red-500/20" data-testid="login-error">
+        <div
+          v-if="auth.error"
+          class="rounded-md bg-red-500/10 p-3 text-sm text-red-400 border border-red-500/20"
+          data-testid="login-error"
+        >
           {{ auth.error }}
         </div>
 
-        <BaseButton class-name="w-full mt-2" :disabled="auth.isLoading" data-testid="login-submit">
+        <BaseButton
+          class-name="w-full mt-2"
+          :disabled="auth.isLoading"
+          data-testid="login-submit"
+        >
           {{ auth.isLoading ? "Authorizing..." : "Sign In" }}
         </BaseButton>
 
         <p class="text-center text-sm text-slate-500">
           Don't have an account? 
-          <router-link to="/register" class="text-indigo-400 hover:text-indigo-300 font-medium" data-testid="register-link">Join the Arena</router-link>
+          <router-link
+            to="/register"
+            class="text-indigo-400 hover:text-indigo-300 font-medium"
+            data-testid="register-link"
+          >
+            Join the Arena
+          </router-link>
         </p>
       </form>
     </BaseCard>

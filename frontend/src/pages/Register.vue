@@ -1,14 +1,25 @@
 <template>
-  <div class="flex min-h-[60vh] items-center justify-center" data-testid="register-page">
+  <div
+    class="flex min-h-[60vh] items-center justify-center"
+    data-testid="register-page"
+  >
     <BaseCard class-name="w-full max-w-md">
       <template #header>
         <div class="text-center">
-          <h1 class="text-2xl font-bold text-white">Join the Arena</h1>
-          <p class="text-sm text-slate-400 mt-1">Begin your journey as a Pixel Commander.</p>
+          <h1 class="text-2xl font-bold text-white">
+            Join the Arena
+          </h1>
+          <p class="text-sm text-slate-400 mt-1">
+            Begin your journey as a Pixel Commander.
+          </p>
         </div>
       </template>
       
-      <form class="space-y-4" @submit.prevent="submit" data-testid="register-form">
+      <form
+        class="space-y-4"
+        data-testid="register-form"
+        @submit.prevent="submit"
+      >
         <div class="space-y-1.5">
           <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Username</span>
           <input 
@@ -17,7 +28,7 @@
             placeholder="GhostCommander"
             required
             data-testid="username-input"
-          />
+          >
         </div>
 
         <div class="space-y-1.5">
@@ -29,7 +40,7 @@
             placeholder="commander@arena.com"
             required
             data-testid="email-input"
-          />
+          >
         </div>
         
         <div class="space-y-1.5">
@@ -41,24 +52,47 @@
             placeholder="••••••••"
             required
             data-testid="password-input"
-          />
+          >
         </div>
 
-        <div v-if="auth.error" class="rounded-md bg-red-500/10 p-3 text-sm text-red-400 border border-red-500/20" data-testid="register-error">
+        <div
+          v-if="auth.error"
+          class="rounded-md bg-red-500/10 p-3 text-sm text-red-400 border border-red-500/20"
+          data-testid="register-error"
+        >
           {{ auth.error }}
         </div>
 
-        <div v-if="success" class="rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-400 border border-emerald-500/20 text-center" data-testid="success-message">
-          Recruitment complete! You can now <router-link to="/login" class="underline font-bold">Sign In</router-link>.
+        <div
+          v-if="success"
+          class="rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-400 border border-emerald-500/20 text-center"
+          data-testid="success-message"
+        >
+          Recruitment complete! You can now <router-link
+            to="/login"
+            class="underline font-bold"
+          >
+            Sign In
+          </router-link>.
         </div>
 
-        <BaseButton class-name="w-full mt-2" :disabled="auth.isLoading" data-testid="register-submit">
+        <BaseButton
+          class-name="w-full mt-2"
+          :disabled="auth.isLoading"
+          data-testid="register-submit"
+        >
           {{ auth.isLoading ? "Recruiting..." : "Create Commander Account" }}
         </BaseButton>
 
         <p class="text-center text-sm text-slate-500">
           Already a Commander? 
-          <router-link to="/login" class="text-indigo-400 hover:text-indigo-300 font-medium" data-testid="login-link">Access HQ</router-link>
+          <router-link
+            to="/login"
+            class="text-indigo-400 hover:text-indigo-300 font-medium"
+            data-testid="login-link"
+          >
+            Access HQ
+          </router-link>
         </p>
       </form>
     </BaseCard>

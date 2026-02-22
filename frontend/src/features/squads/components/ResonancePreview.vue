@@ -128,7 +128,7 @@ interface Props {
   resonanceState?: ResonanceState
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const displayElements = computed(() => {
   if (!props.resonanceState) return []
@@ -142,8 +142,6 @@ const hasDissonance = computed(() => {
     props.resonanceState.pattern.DissonantPairs.length > 0
   )
 })
-
-const props = defineProps<Props>()
 
 function getElementColor(element: string): string {
   const colors: Record<string, string> = {

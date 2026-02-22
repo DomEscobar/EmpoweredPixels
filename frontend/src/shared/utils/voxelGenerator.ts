@@ -11,14 +11,14 @@ const seededRandom = (seed: string) => {
   };
 };
 
-export type FighterAppearance = {
+export interface FighterAppearance {
   skin: string;
   armorPrimary: string;
   armorSecondary: string;
   heightScale: number;
   buildScale: number;
   headType: 'standard' | 'helmet';
-};
+}
 
 export const generateFighterAppearance = (id: string, attunement?: string | null): FighterAppearance => {
   const rng = seededRandom(id);

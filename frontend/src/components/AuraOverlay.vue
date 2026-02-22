@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-interface ResonanceState {
+type ResonanceState = {
   squadID: string
   harmonyScore: number
   tierName: string
@@ -50,7 +50,7 @@ interface ResonanceState {
   auraColor: string
 }
 
-interface Props {
+type Props = {
   resonance?: ResonanceState
   showBadge?: boolean
   showBonusIndicators?: boolean

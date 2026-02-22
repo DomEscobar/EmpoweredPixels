@@ -69,7 +69,7 @@ export interface OnlinePlayersResponse {
   onlinePlayers: number;
 }
 
-export async function getMatches(token: string, page: number = 1, pageSize: number = 20, status?: string) {
+export async function getMatches(token: string, page = 1, pageSize = 20, status?: string) {
   return request<PagedResponse<Match>>(`${endpoints.match}/browse`, {
     method: "POST",
     token,
