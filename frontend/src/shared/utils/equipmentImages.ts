@@ -1,7 +1,7 @@
-export function getEquipmentImageUrl(type: string | null | undefined, itemId?: string): { url: string; testid: string } {
+export function getEquipmentImageUrl(type: string | null | undefined, itemId?: string, category?: string): { url: string; testid: string } {
   // Defensive check for null/undefined
   if (!type || typeof type !== 'string') {
-    const fallbackUrl = 'https://vibemedia.pace/item_generic_789.png?prompt=pixel%20mystery%20item%20sprite&style=pixel_game_asset&key=NOGON';
+    const fallbackUrl = 'https://vibemedia.space/item_generic_789.png?prompt=pixel%20mystery%20item%20sprite&style=pixel_game_asset&key=NOGON';
     return {
       url: fallbackUrl,
       testid: `equipment-image-${itemId || 'fallback'}`
@@ -76,25 +76,30 @@ export function getEquipmentImageUrl(type: string | null | undefined, itemId?: s
     const armorPatterns = ['helmet', 'chest', 'gloves', 'boots', 'armor', 'shield', 'plate', 'mail', 'leather', 'cloth'];
     const trinketPatterns = ['ring', 'necklace', 'amulet', 'trinket', 'charm', 'pendant'];
 
-    const isWeapon = wpnPatterns.some(pattern => t.includes(pattern));
-    const isArmor = armorPatterns.some(pattern => t.includes(pattern));
-    const isTrinket = trinketPatterns.some(pattern => t.includes(pattern));
+    const isWeapon = category === 'weapon' || wpnPatterns.some(pattern => t.includes(pattern));
+    const isArmor = category === 'armor' || armorPatterns.some(pattern => t.includes(pattern));
+    const isTrinket = category === 'trinket' || trinketPatterns.some(pattern => t.includes(pattern));
+
+    // Create a visual variation seed from itemId
+    const seed = itemId ? itemId.slice(-4) : '0000';
+    const displayType = category || t;
 
     if (isWeapon) {
-      const encodedType = encodeURIComponent(t.replace(/_/g, ' '));
-      url = `https://vibemedia.space/equipment/wpn_${t}_123.png?prompt=pixel%20${encodedType}%20sprite%20item%20${itemId || ''}&style=pixel_game_asset&key=NOGON`;
+      const encodedType = encodeURIComponent(displayType.replace(/_/g, ' '));
+      url = `https://vibemedia.space/equipment/wpn_${seed}_123.png?prompt=pixel%20${encodedType}%20weapon%20sprite%20variation%20${seed}&style=pixel_game_asset&key=NOGON`;
     } else if (isArmor) {
-      const encodedType = encodeURIComponent(t.replace(/_/g, ' '));
-      url = `https://vibemedia.space/equipment/arm_${t}_123.png?prompt=pixel%20${encodedType}%20sprite%20item%20${itemId || ''}&style=pixel_game_asset&key=NOGON`;
+      const encodedType = encodeURIComponent(displayType.replace(/_/g, ' '));
+      url = `https://vibemedia.space/equipment/arm_${seed}_123.png?prompt=pixel%20${encodedType}%20armor%20sprite%20variation%20${seed}&style=pixel_game_asset&key=NOGON`;
     } else if (isTrinket) {
-      const encodedType = encodeURIComponent(t.replace(/_/g, ' '));
-      url = `https://vibemedia.space/equipment/acc_${t}_123.png?prompt=pixel%20${encodedType}%20sprite%20item%20${itemId || ''}&style=pixel_game_asset&key=NOGON`;
+      const encodedType = encodeURIComponent(displayType.replace(/_/g, ' '));
+      url = `https://vibemedia.space/equipment/acc_${seed}_123.png?prompt=pixel%20${encodedType}%20accessory%20sprite%20variation%20${seed}&style=pixel_game_asset&key=NOGON`;
     } else {
-      // Final generic fallback - use type in the URL to differentiate
-      const encodedType = encodeURIComponent(t.replace(/_/g, ' '));
-      url = `https://vibemedia.space/equipment/unk_${t}_789.png?prompt=pixel%20${encodedType}%20sprite%20item%20${itemId || ''}&style=pixel_game_asset&key=NOGON`;
+      // Final generic fallback
+      const encodedType = encodeURIComponent(displayType.replace(/_/g, ' '));
+      url = `https://vibemedia.space/equipment/unk_${seed}_789.png?prompt=pixel%20${encodedType}%20item%20sprite%20variation%20${seed}&style=pixel_game_asset&key=NOGON`;
     }
   }
+
 
   // Append itemId seed parameter when provided to guarantee uniqueness
   if (itemId) {

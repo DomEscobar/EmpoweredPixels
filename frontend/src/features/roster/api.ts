@@ -54,6 +54,7 @@ export async function deleteFighter(token: string, id: string) {
 export interface Equipment {
   id: string;
   type: string;
+  category: string;
   level: number;
   rarity: number;
   enhancement: number;

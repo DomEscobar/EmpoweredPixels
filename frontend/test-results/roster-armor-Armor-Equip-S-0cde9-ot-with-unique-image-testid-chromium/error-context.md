@@ -53,11 +53,11 @@
       - heading "RECRUIT WARRIOR" [level=2] [ref=e52]
       - paragraph [ref=e53]: Create a new champion
     - generic [ref=e54]:
-      - generic [ref=e59]: Unique Test Warrior
+      - generic [ref=e59]: Unique Test 6253
       - generic [ref=e60]:
         - generic [ref=e61]: Fighter Name
-        - textbox "Enter a legendary name..." [ref=e62]: Unique Test Warrior
-        - paragraph [ref=e63]: 19/24 characters
+        - textbox "Enter a legendary name..." [ref=e62]: Unique Test 6253
+        - paragraph [ref=e63]: 16/24 characters
       - generic [ref=e64]:
         - generic [ref=e65]: Starting Attunement (Optional)
         - generic [ref=e66]:

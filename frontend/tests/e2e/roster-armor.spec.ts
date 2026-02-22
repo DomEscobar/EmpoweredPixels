@@ -11,7 +11,8 @@ test.describe('Armor Equip System', () => {
     const fighterCount = await page.locator('[data-testid^="fighter-card-"]').count();
     if (fighterCount === 0) {
       await page.locator('[data-testid="recruit-button"]').click();
-      await page.locator('[data-testid="new-fighter-name-input"]').fill('Armor Test Warrior');
+      const randomName = 'Test Warrior ' + Math.floor(Math.random() * 10000);
+      await page.locator('[data-testid="new-fighter-name-input"]').fill(randomName);
       await page.locator('[data-testid="confirm-recruit"]').click();
       await expect(page.locator('[data-testid="create-wizard"]')).not.toBeVisible();
     }
@@ -78,7 +79,8 @@ test.describe('Armor Equip System', () => {
     const fighterCount = await page.locator('[data-testid^="fighter-card-"]').count();
     if (fighterCount === 0) {
       await page.locator('[data-testid="recruit-button"]').click();
-      await page.locator('[data-testid="new-fighter-name-input"]').fill('Unique Test Warrior');
+      const randomName = 'Unique Test ' + Math.floor(Math.random() * 10000);
+      await page.locator('[data-testid="new-fighter-name-input"]').fill(randomName);
       await page.locator('[data-testid="confirm-recruit"]').click();
       await expect(page.locator('[data-testid="create-wizard"]')).not.toBeVisible();
     }
@@ -127,7 +129,8 @@ test.describe('Armor Equip System', () => {
     const fighterCount = await page.locator('[data-testid^="fighter-card-"]').count();
     if (fighterCount === 0) {
       await page.locator('[data-testid="recruit-button"]').click();
-      await page.locator('[data-testid="new-fighter-name-input"]').fill('Error Test Warrior');
+      const randomName = 'Error Test ' + Math.floor(Math.random() * 10000);
+      await page.locator('[data-testid="new-fighter-name-input"]').fill(randomName);
       await page.locator('[data-testid="confirm-recruit"]').click();
       await expect(page.locator('[data-testid="create-wizard"]')).not.toBeVisible();
     }

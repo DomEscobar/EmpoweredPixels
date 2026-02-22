@@ -88,7 +88,7 @@ defineEmits<{
 }>();
 
 const itemIcon = computed<string>(() => {
-  return getEquipmentImageUrl(props.item.type, props.item.id).url;
+  return getEquipmentImageUrl(props.item.type, props.item.id, props.item.category).url;
 });
 
 const powerRating = computed(() => {

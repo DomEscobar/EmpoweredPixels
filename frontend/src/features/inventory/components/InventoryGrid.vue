@@ -85,11 +85,18 @@ const filteredEquipment = computed(() => {
   if (activeFilter.value === 'all') return props.equipment;
   
   return props.equipment.filter(item => {
+    // Prefer backend category if available
+    if (item.category && item.category !== 'unknown') {
+        if (activeFilter.value === 'weapon') return item.category === 'weapon';
+        if (activeFilter.value === 'armor') return item.category === 'armor';
+        if (activeFilter.value === 'ring') return item.category === 'trinket';
+    }
+
     const type = item.type.toLowerCase();
-    // Backend item types follow patterns: "Wpn..", "Arm..", "Ring..", "Pot..", "Scroll.."
-    if (activeFilter.value === 'weapon') return type.startsWith('wpn');
-    if (activeFilter.value === 'armor') return type.startsWith('arm');
-    if (activeFilter.value === 'ring') return type.startsWith('ring');
+    // Fallback patterns for items without explicit category
+    if (activeFilter.value === 'weapon') return type.startsWith('wpn') || type.includes('sword') || type.includes('axe');
+    if (activeFilter.value === 'armor') return type.startsWith('arm') || type.includes('helmet') || type.includes('chest');
+    if (activeFilter.value === 'ring') return type.startsWith('ring') || type.includes('necklace');
     if (activeFilter.value === 'consumable') return type.startsWith('pot') || type.startsWith('scroll');
     return false;
   });

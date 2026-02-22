@@ -79,13 +79,13 @@
                
                 <!-- Icon -->
                 <div class="relative z-10 p-2">
-                   <img
-                     :src="getEquipmentImageUrl(item.type, item.id).url"
-                     class="w-12 h-12 pixelated"
-                     :alt="item.type"
-                     :data-testid="`armor-item-${item.id}`"
-                     @error="handleImageError"
-                   />
+                    <img
+                      :src="getEquipmentImageUrl(item.type, item.id, item.category).url"
+                      class="w-12 h-12 pixelated"
+                      :alt="item.type"
+                      :data-testid="`armor-item-${item.id}`"
+                      @error="handleImageError"
+                    />
                 </div>
               
               <!-- Level & Enhancement -->
@@ -165,6 +165,13 @@ onMounted(() => {
    
    if (currentFilter.value !== 'ALL') {
      items = items.filter(i => {
+         // Use backend category if available
+         if (i.category && i.category !== 'unknown') {
+             if (currentFilter.value === 'WEAPON') return i.category === 'weapon';
+             if (currentFilter.value === 'ARMOR') return i.category === 'armor';
+             if (currentFilter.value === 'TRINKET') return i.category === 'trinket';
+         }
+
          const t = i.type.toLowerCase();
          if (currentFilter.value === 'WEAPON') {
            const weaponPatterns = ['wpn', 'sword', 'axe', 'bow', 'staff', 'dagger', 'spear', 'hammer', 'blade'];
@@ -173,6 +180,10 @@ onMounted(() => {
          if (currentFilter.value === 'ARMOR') {
            const armorPatterns = ['helmet', 'chest', 'gloves', 'boots', 'armor', 'shield', 'plate', 'mail', 'leather', 'cloth', 'gauntlet', 'greave'];
            return armorPatterns.some(pattern => t.includes(pattern));
+         }
+         if (currentFilter.value === 'TRINKET') {
+            const trinketPatterns = ['ring', 'necklace', 'amulet', 'trinket', 'charm', 'pendant'];
+            return trinketPatterns.some(pattern => t.includes(pattern));
          }
          return true;
      });

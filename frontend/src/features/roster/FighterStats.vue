@@ -90,80 +90,81 @@
       </div>
     </section>
 
-    <!-- PRIMARY WEAPON SLOT (D4 influence - moody frames) -->
+    <!-- EQUIPMENT SLOTS (D4 influence - moody frames) -->
     <section class="ep-card-iron overhaul-weapon-panel p-6">
       <h4 class="ep-header-gold mb-6">
         Equipped Armament
       </h4>
         
-      <div class="flex flex-col md:flex-row gap-8 items-center">
-        <div class="relative group">
-          <!-- D4 Style Item Frame -->
-          <div class="w-32 h-32 bg-slate-950 border-2 border-slate-800 rounded flex items-center justify-center relative overflow-hidden">
-            <div v-if="equippedItem" class="absolute inset-0 bg-gradient-to-t from-purple-900/20 to-transparent"></div>
-             <div v-if="equippedItem" class="absolute inset-0 flex items-center justify-center z-10">
-                <img
-                  :src="getEquipmentImageUrl(equippedItem.type, equippedItem.id).url"
-                  class="w-20 h-20 pixelated"
-                  :alt="equippedItem.type"
-                  :data-testid="`armor-item-${equippedItem.id}`"
-                  @error="handleImageError"
-                />
-             </div>
-            <span v-else class="text-slate-800 text-5xl">⚔️</span>
-                      
-            <!-- Rarity Accent Corner -->
-            <div v-if="equippedItem" class="absolute top-0 left-0 w-8 h-8 -translate-x-4 -translate-y-4 rotate-45" :class="rarityColors[getRarityName(equippedItem.rarity)]"></div>
-          </div>
-        </div>
-
-        <div v-if="equippedItem" class="flex-1 space-y-4">
-          <div>
-            <h2 class="text-2xl font-bold text-white tracking-tight">
-              {{ equippedItem.type }}
-            </h2>
-            <p class="text-xs font-bold uppercase text-purple-400 opacity-80">
-              {{ getRarityName(equippedItem.rarity) }} {{ getItemCategory(equippedItem.type) }}
-            </p>
-          </div>
-                
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div v-for="wStat in itemStats" :key="wStat.label" class="bg-black/40 border border-slate-800/50 p-2 rounded">
-              <span class="block text-[10px] uppercase text-slate-500">{{ wStat.label }}</span>
-              <span class="text-sm font-bold text-amber-100">{{ wStat.value }}</span>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Weapon Slot -->
+        <div class="flex items-center gap-4">
+          <div class="relative group">
+            <div class="w-24 h-24 bg-slate-950 border-2 border-slate-800 rounded flex items-center justify-center relative overflow-hidden">
+              <div v-if="equippedWeapon" class="absolute inset-0 bg-gradient-to-t from-red-900/20 to-transparent"></div>
+              <div v-if="equippedWeapon" class="absolute inset-0 flex items-center justify-center z-10">
+                  <img
+                    :src="getEquipmentImageUrl(equippedWeapon.type, equippedWeapon.id).url"
+                    class="w-16 h-16 pixelated"
+                    :alt="equippedWeapon.type"
+                    :data-testid="`weapon-item-${equippedWeapon.id}`"
+                    @error="handleImageError"
+                  />
+              </div>
+              <span v-else class="text-slate-800 text-3xl">⚔️</span>
+              <div v-if="equippedWeapon" class="absolute top-0 left-0 w-6 h-6 -translate-x-3 -translate-y-3 rotate-45" :class="rarityColors[getRarityName(equippedWeapon.rarity)]"></div>
             </div>
           </div>
-
-          <div class="pt-4 border-t border-slate-800 flex gap-3">
-            <button 
-              class="px-6 py-2 bg-slate-800 hover:bg-red-900/40 text-xs font-bold uppercase tracking-widest text-slate-300 transition-all border border-slate-700"
-              data-testid="unequip-item-button"
-              @click="handleUnequip(equippedItem.id)"
-            >
-              Unequip
-            </button>
-            <button 
-              class="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-xs font-bold uppercase tracking-widest text-black transition-all border border-amber-400"
-              data-testid="upgrade-item-button"
-              @click="handleUpgrade"
-            >
-              Upgrade
-            </button>
+          <div v-if="equippedWeapon" class="flex-1 min-w-0">
+            <p class="text-[10px] text-slate-500 uppercase font-bold">Weapon</p>
+            <h5 class="text-sm font-bold text-white truncate">{{ equippedWeapon.type }}</h5>
+            <button class="text-[10px] text-red-400 hover:text-red-300 font-bold uppercase mt-1" @click="handleUnequip(equippedWeapon.id)">Unequip</button>
+          </div>
+          <div v-else class="flex-1">
+            <p class="text-[10px] text-slate-600 italic">No weapon equipped</p>
+            <button class="text-[10px] text-amber-500 font-bold uppercase mt-1" @click="$emit('openArmory')">Equip</button>
           </div>
         </div>
-            
-        <div v-else class="flex-1 text-center md:text-left py-8">
-          <p class="text-slate-500 italic mb-4">
-            No equipment currently bound to this fighter.
-          </p>
-          <button 
-            class="px-8 py-3 bg-slate-900 border border-slate-700 text-xs font-bold uppercase tracking-widest hover:border-amber-500 transition-all"
-            data-testid="open-armory-button"
-            @click="$emit('openArmory')"
-          >
-            Open Armory
-          </button>
+
+        <!-- Armor Slot -->
+        <div class="flex items-center gap-4">
+          <div class="relative group">
+            <div class="w-24 h-24 bg-slate-950 border-2 border-slate-800 rounded flex items-center justify-center relative overflow-hidden">
+              <div v-if="equippedArmor" class="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent"></div>
+              <div v-if="equippedArmor" class="absolute inset-0 flex items-center justify-center z-10">
+                  <img
+                    :src="getEquipmentImageUrl(equippedArmor.type, equippedArmor.id).url"
+                    class="w-16 h-16 pixelated"
+                    :alt="equippedArmor.type"
+                    :data-testid="`armor-item-${equippedArmor.id}`"
+                    @error="handleImageError"
+                  />
+              </div>
+              <span v-else class="text-slate-800 text-3xl">🛡️</span>
+              <div v-if="equippedArmor" class="absolute top-0 left-0 w-6 h-6 -translate-x-3 -translate-y-3 rotate-45" :class="rarityColors[getRarityName(equippedArmor.rarity)]"></div>
+            </div>
+          </div>
+          <div v-if="equippedArmor" class="flex-1 min-w-0">
+            <p class="text-[10px] text-slate-500 uppercase font-bold">Armor</p>
+            <h5 class="text-sm font-bold text-white truncate">{{ equippedArmor.type }}</h5>
+            <button class="text-[10px] text-red-400 hover:text-red-300 font-bold uppercase mt-1" @click="handleUnequip(equippedArmor.id)">Unequip</button>
+          </div>
+          <div v-else class="flex-1">
+            <p class="text-[10px] text-slate-600 italic">No armor equipped</p>
+            <button class="text-[10px] text-amber-500 font-bold uppercase mt-1" @click="$emit('openArmory')">Equip</button>
+          </div>
         </div>
+      </div>
+
+      <!-- Action Footer (Legacy Support) -->
+      <div v-if="equippedWeapon || equippedArmor" class="mt-6 pt-4 border-t border-slate-800 flex justify-end">
+          <button 
+            class="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-[10px] font-bold uppercase tracking-widest text-black transition-all border border-amber-400"
+            data-testid="upgrade-item-button"
+            @click="handleUpgrade"
+          >
+            Manage All in Inventory
+          </button>
       </div>
     </section>
     
@@ -236,22 +237,33 @@ const getExpDisplay = computed(() => {
 });
 
 // Primary item detection (weapon or armor)
-const equippedItem = computed(() => {
+const equippedWeapon = computed(() => {
   return props.equipment.find(item => 
-    (item.type.toLowerCase().includes('weapon') || 
-    item.type.toLowerCase().includes('axe') || 
-    item.type.toLowerCase().includes('sword') ||
-    item.type.toLowerCase().includes('staff') ||
-    item.type.toLowerCase().includes('bow') ||
-    item.type.toLowerCase().includes('helmet') ||
-    item.type.toLowerCase().includes('chest') ||
-    item.type.toLowerCase().includes('gloves') ||
-    item.type.toLowerCase().includes('boots') ||
-    item.type.toLowerCase().includes('armor') ||
-    item.type.toLowerCase().includes('shield')) &&
+    (item.category === 'weapon' || 
+     item.type.toLowerCase().includes('weapon') || 
+     item.type.toLowerCase().includes('axe') || 
+     item.type.toLowerCase().includes('sword') ||
+     item.type.toLowerCase().includes('staff') ||
+     item.type.toLowerCase().includes('bow')) &&
     item.fighterId === props.fighter.id
   );
 });
+
+const equippedArmor = computed(() => {
+  return props.equipment.find(item => 
+    (item.category === 'armor' || 
+     item.type.toLowerCase().includes('helmet') || 
+     item.type.toLowerCase().includes('chest') || 
+     item.type.toLowerCase().includes('gloves') || 
+     item.type.toLowerCase().includes('boots') || 
+     item.type.toLowerCase().includes('armor') || 
+     item.type.toLowerCase().includes('shield')) &&
+    item.fighterId === props.fighter.id
+  );
+});
+
+// For backward compatibility and stats display
+const equippedItem = computed(() => equippedWeapon.value || equippedArmor.value);
 
 const getItemCategory = (type: string) => {
   const t = type.toLowerCase();
@@ -275,13 +287,16 @@ const getRarityName = (rarity: number) => {
 };
 
 const itemStats = computed(() => {
-    if (!equippedItem.value) return [];
-    return [
-        { label: 'Level', value: equippedItem.value.level },
-        { label: 'Enhancement', value: `+${equippedItem.value.enhancement}` },
-        { label: 'Type', value: equippedItem.value.type },
-        { label: 'Rarity', value: getRarityName(equippedItem.value.rarity) }
-    ];
+    const stats = [];
+    if (equippedWeapon.value) {
+        stats.push({ label: 'Weapon', value: equippedWeapon.value.type });
+        stats.push({ label: 'W-Power', value: (equippedWeapon.value.level * 10) + (equippedWeapon.value.rarity * 20) });
+    }
+    if (equippedArmor.value) {
+        stats.push({ label: 'Armor', value: equippedArmor.value.type });
+        stats.push({ label: 'A-Defense', value: (equippedArmor.value.level * 10) + (equippedArmor.value.rarity * 20) });
+    }
+    return stats;
 });
 
 const statGroups = computed(() => ({
