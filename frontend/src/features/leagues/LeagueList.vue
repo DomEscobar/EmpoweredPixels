@@ -1,7 +1,7 @@
 <template>
   <div class="leagues-list" data-testid="leagues-list">
     <!-- Loading State -->
-    <div v-if="isLoading" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div v-if="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       <div v-for="i in 3" :key="i" class="h-80 bg-slate-900/50 border-4 border-slate-800 animate-pulse flex items-center justify-center">
         <span class="text-slate-700 uppercase font-bold text-xs">Loading Campaigns...</span>
       </div>
@@ -25,16 +25,20 @@
     </div>
 
     <!-- League Grid -->
-    <div v-else class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <div 
-        v-for="league in leagues" 
-        :key="league.id"
-        class="group rpg-card bg-slate-900 border-4 transition-all duration-200 flex flex-col relative overflow-hidden cursor-pointer"
-        :class="isSubscribed(league.id) 
-          ? 'border-emerald-600 hover:border-emerald-500 ring-2 ring-emerald-500/20' 
-          : 'border-slate-800 hover:border-amber-600/50'"
-        :data-testid="'league-card-' + league.id"
-      >
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div 
+         v-for="league in leagues" 
+         :key="league.id"
+         class="group rpg-card bg-slate-900 border-4 transition-all duration-200 flex flex-col relative overflow-hidden cursor-pointer p-4 sm:p-5"
+         :class="isSubscribed(league.id) 
+           ? 'border-emerald-600 hover:border-emerald-500 ring-2 ring-emerald-500/20' 
+           : 'border-slate-800 hover:border-amber-600/50'"
+         :data-testid="'league-card-' + league.id"
+         @touchstart="onCardTouchStart(league.id, $event)"
+         @touchmove="onCardTouchMove($event)"
+         @touchend="onCardTouchEnd(league.id, $event)"
+         :style="{ transform: cardTransforms[league.id] || '' }"
+       >
         <!-- Active Subscription Badge -->
         <div v-if="isSubscribed(league.id)" class="absolute top-0 right-0 z-20">
           <div class="bg-emerald-600 text-emerald-100 text-[10px] font-bold uppercase tracking-widest px-3 py-1 flex items-center gap-1">
@@ -54,7 +58,7 @@
           </div>
         </div>
 
-        <div class="p-5 flex flex-col flex-1 relative z-10">
+        <div class="flex-1 flex flex-col relative z-10">
           <div class="mb-4">
             <h3 class="text-xl font-black text-amber-100 uppercase leading-tight group-hover:text-amber-400 transition-colors">
               {{ league.name }}

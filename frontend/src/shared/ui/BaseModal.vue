@@ -8,7 +8,7 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+      <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" :class="containerClass">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" @click="$emit('close')"></div>
         
@@ -21,9 +21,9 @@
           leave-from-class="opacity-100 translate-y-0 sm:scale-100"
           leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
         >
-          <div v-if="show" class="relative w-full max-w-2xl transform overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl transition-all">
+          <div v-if="show" class="relative w-full transform overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl transition-all flex flex-col" :class="panelClass" :style="panelStyle">
             <!-- Header -->
-            <div class="flex items-center justify-between border-b border-slate-800 px-6 py-4">
+            <div class="flex items-center justify-between border-b border-slate-800 px-6 py-4 flex-shrink-0">
               <h3 class="text-xl font-bold text-white">
                 <slot name="title"></slot>
               </h3>
@@ -38,12 +38,12 @@
             </div>
             
             <!-- Body -->
-            <div class="px-6 py-4 max-h-[70vh] overflow-y-auto">
+            <div class="flex-1 overflow-y-auto px-6 py-4">
               <slot></slot>
             </div>
             
             <!-- Footer -->
-            <div v-if="$slots.footer" class="border-t border-slate-800 px-6 py-4">
+            <div v-if="$slots.footer" class="border-t border-slate-800 px-6 py-4 flex-shrink-0">
               <slot name="footer"></slot>
             </div>
           </div>
@@ -54,9 +54,41 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue';
+
+const props = defineProps<{
   show: boolean;
+  variant?: 'default' | 'bottom-sheet' | 'full-screen';
+  containerClass?: string;
+  panelClass?: string;
 }>();
+
+const containerClasses = computed(() => {
+  const base = '';
+  const variantClasses = {
+    'bottom-sheet': 'items-end',
+    'full-screen': 'p-0',
+    'default': ''
+  };
+  return [base, props.containerClass || ''].filter(Boolean).join(' ');
+});
+
+const panelClasses = computed(() => {
+  const base = 'relative transform overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl transition-all flex flex-col';
+  const variantClasses = {
+    'bottom-sheet': 'max-h-[90vh] w-full rounded-t-2xl',
+    'full-screen': 'max-w-full h-full rounded-none',
+    'default': 'max-w-2xl max-h-[90vh]'
+  };
+  return [base, variantClasses[props.variant || 'default'], props.panelClass || ''].filter(Boolean).join(' ');
+});
+
+const panelStyle = computed(() => {
+  if (props.variant === 'full-screen') {
+    return { height: '100%' };
+  }
+  return {};
+});
 
 defineEmits<{
   (e: 'close'): void;

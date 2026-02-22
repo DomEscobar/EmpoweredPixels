@@ -1,5 +1,6 @@
 import { endpoints } from "@/shared/api/endpoints";
 import { request } from "@/shared/api/http";
+import { MatchStatus } from "../matches/api";
 
 export interface LeagueOptions {
   description?: string;
@@ -27,6 +28,7 @@ export interface LeagueSubscription {
 export interface LeagueMatch {
   leagueId: number;
   matchId: string;
+  status?: MatchStatus;
 }
 
 export interface LeagueHighscore {
