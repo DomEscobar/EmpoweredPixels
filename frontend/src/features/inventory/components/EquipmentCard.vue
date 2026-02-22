@@ -40,7 +40,9 @@
           <span class="text-xs font-bold">{{ rarityName }} {{ item.type }}</span>
           <span class="text-[10px] text-white/60">LVL {{ item.level }}</span>
         </div>
-        <div v-if="item.enhancement > 0" class="enhance-text">+{{ item.enhancement }} Enhanced</div>
+        <div v-if="item.enhancement > 0" class="enhance-text">
+          +{{ item.enhancement }} Enhanced
+        </div>
       </div>
       
       <div class="tooltip-stats">
@@ -56,9 +58,13 @@
       </div>
 
       <div class="tooltip-actions">
-        <button @click.stop="$emit('enhance', item)" class="tip-btn enhance" data-testid="enhance-button">ENHANCE</button>
-        <button @click.stop="$emit('salvage', item)" class="tip-btn salvage" data-testid="salvage-button">SALVAGE</button>
-        <button @click.stop="$emit('toggle-favorite', item)" class="tip-btn favorite" data-testid="favorite-button">
+        <button class="tip-btn enhance" data-testid="enhance-button" @click.stop="$emit('enhance', item)">
+          ENHANCE
+        </button>
+        <button class="tip-btn salvage" data-testid="salvage-button" @click.stop="$emit('salvage', item)">
+          SALVAGE
+        </button>
+        <button class="tip-btn favorite" data-testid="favorite-button" @click.stop="$emit('toggle-favorite', item)">
           {{ item.isFavorite ? 'UNFAVORITE' : 'FAVORITE' }}
         </button>
       </div>

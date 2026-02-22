@@ -3,7 +3,9 @@
     <div class="package-header">
       <span v-if="isPopular" class="popular-badge">Most Popular</span>
       <span v-if="isBestValue" class="value-badge">Best Value</span>
-      <h3 class="package-name">{{ item.name }}</h3>
+      <h3 class="package-name">
+        {{ item.name }}
+      </h3>
     </div>
     
     <div class="gold-amount">
@@ -21,8 +23,8 @@
       <button 
         class="buy-button"
         :disabled="shopStore.purchaseInProgress"
-        @click="$emit('purchase', item.id)"
         :data-testid="`buy-gold-${item.id}`"
+        @click="$emit('purchase', item.id)"
       >
         {{ shopStore.purchaseInProgress ? 'Processing...' : 'Buy' }}
       </button>

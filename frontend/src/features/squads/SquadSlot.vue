@@ -4,8 +4,12 @@
       <!-- Empty State -->
       <div v-if="!fighter" class="slot-empty">
         <span class="slot-number">{{ slotIndex + 1 }}</span>
-        <div class="slot-icon">⚔️</div>
-        <p class="slot-placeholder">Empty</p>
+        <div class="slot-icon">
+          ⚔️
+        </div>
+        <p class="slot-placeholder">
+          Empty
+        </p>
       </div>
 
       <!-- Fighter State -->
@@ -16,8 +20,12 @@
           class="fighter-avatar"
         />
         <div class="fighter-info">
-          <h4 class="fighter-name">{{ fighter.name }}</h4>
-          <p class="fighter-level">Lv.{{ fighter.level }}</p>
+          <h4 class="fighter-name">
+            {{ fighter.name }}
+          </h4>
+          <p class="fighter-level">
+            Lv.{{ fighter.level }}
+          </p>
           <div class="fighter-stats">
             <span class="stat">
               <span class="stat-icon">⚡</span>

@@ -15,7 +15,6 @@
     <div class="pointer-events-none fixed inset-0 z-40 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]"></div>
 
     <div class="relative z-10 max-w-7xl mx-auto space-y-6">
-
       <!-- Header Banner -->
       <header class="pixel-box bg-slate-900/95 p-6" data-testid="roster-header">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -38,12 +37,16 @@
           <div class="flex items-center gap-4">
             <!-- Fighter Count -->
             <div class="pixel-box-sm bg-slate-800/80 px-4 py-2 text-center">
-              <div class="text-xs text-slate-500 uppercase tracking-wider">Warriors</div>
-              <div class="text-2xl font-bold text-white">{{ roster.fighters.length }}</div>
+              <div class="text-xs text-slate-500 uppercase tracking-wider">
+                Warriors
+              </div>
+              <div class="text-2xl font-bold text-white">
+                {{ roster.fighters.length }}
+              </div>
             </div>
 
             <!-- Recruit Button -->
-            <button @click="openCreateWizard" class="rpg-btn flex items-center gap-2" data-testid="recruit-button">
+            <button class="rpg-btn flex items-center gap-2" data-testid="recruit-button" @click="openCreateWizard">
               <img :src="PIXEL_ASSETS.ICON_PLUS" alt="" class="w-4 h-4 pixelated" />
               RECRUIT
             </button>
@@ -54,24 +57,34 @@
       <!-- Error Alert -->
       <div v-if="roster.error" class="pixel-box bg-red-900/90 border-red-500 p-4 flex items-center gap-3" data-testid="roster-error">
         <span class="text-red-300 text-xl">⚠️</span>
-        <p class="text-red-100">{{ roster.error }}</p>
-        <button @click="roster.error = null" class="ml-auto text-red-300 hover:text-red-100">✕</button>
+        <p class="text-red-100">
+          {{ roster.error }}
+        </p>
+        <button class="ml-auto text-red-300 hover:text-red-100" @click="roster.error = null">
+          ✕
+        </button>
       </div>
 
       <!-- Loading State -->
       <div v-if="roster.isLoading && !roster.fighters.length" class="pixel-box bg-slate-900/90 py-20 text-center">
-        <div class="inline-block animate-spin text-4xl mb-4">⚔️</div>
-        <p class="text-amber-400 text-shadow-retro animate-pulse">Summoning warriors...</p>
+        <div class="inline-block animate-spin text-4xl mb-4">
+          ⚔️
+        </div>
+        <p class="text-amber-400 text-shadow-retro animate-pulse">
+          Summoning warriors...
+        </p>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="!roster.fighters.length" class="pixel-box bg-slate-900/90 py-16 text-center" data-testid="roster-empty">
         <img :src="PIXEL_ASSETS.ICON_HELMET_EMPTY" alt="" class="w-20 h-20 pixelated mx-auto mb-4 opacity-50" />
-        <h2 class="text-xl font-bold text-slate-400 mb-2">No Warriors Yet</h2>
+        <h2 class="text-xl font-bold text-slate-400 mb-2">
+          No Warriors Yet
+        </h2>
         <p class="text-slate-500 text-sm mb-6">
           Thy arena awaits its first champion
         </p>
-        <button @click="openCreateWizard" class="rpg-btn" data-testid="recruit-first-button">
+        <button class="rpg-btn" data-testid="recruit-first-button" @click="openCreateWizard">
           RECRUIT FIRST WARRIOR
         </button>
       </div>
@@ -111,7 +124,9 @@
 
               <!-- Name + Status -->
               <div class="flex-1 min-w-0">
-                <h3 class="truncate text-lg font-bold text-white">{{ fighter.name }}</h3>
+                <h3 class="truncate text-lg font-bold text-white">
+                  {{ fighter.name }}
+                </h3>
                 <div class="mt-1 flex items-center gap-2">
                   <span class="pixel-badge bg-emerald-900/50 border-emerald-500/50 text-emerald-400 text-xs px-2 py-0.5 flex items-center gap-1">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
@@ -161,8 +176,12 @@
                 :key="stat.key"
                 class="pixel-box-sm bg-slate-800/60 p-1.5 text-center"
               >
-                <div class="text-[10px] text-slate-500 uppercase">{{ stat.label }}</div>
-                <div :class="['text-sm font-bold', stat.color]">{{ stat.value }}</div>
+                <div class="text-[10px] text-slate-500 uppercase">
+                  {{ stat.label }}
+                </div>
+                <div :class="['text-sm font-bold', stat.color]">
+                  {{ stat.value }}
+                </div>
               </div>
             </div>
 
@@ -184,12 +203,13 @@
 
             <!-- Attunement Quick Select -->
             <div>
-              <div class="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Attunement</div>
+              <div class="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Attunement
+              </div>
               <div class="flex gap-1">
                 <button
                   v-for="att in attunements"
                   :key="att.id"
-                  @click.stop="quickSetAttunement(fighter.id, att.id)"
                   :class="[
                     'pixel-box-sm flex h-8 w-8 items-center justify-center text-base transition-all',
                     fighter.attunementId === att.id
@@ -197,13 +217,14 @@
                       : 'bg-slate-800/50 opacity-40 hover:opacity-100 hover:bg-slate-700'
                   ]"
                   :title="att.name"
+                  @click.stop="quickSetAttunement(fighter.id, att.id)"
                 >
                   {{ att.icon }}
                 </button>
                 <button
                   v-if="fighter.attunementId"
-                  @click.stop="quickSetAttunement(fighter.id, null)"
                   class="ml-auto rpg-btn-small text-[10px] px-2"
+                  @click.stop="quickSetAttunement(fighter.id, null)"
                 >
                   CLEAR
                 </button>
@@ -213,16 +234,16 @@
             <!-- Action Buttons -->
             <div class="flex gap-2 pt-2 border-t-2 border-slate-800">
               <button
-                @click="openFighterPanel(fighter)"
                 class="rpg-btn flex-1 text-sm py-2"
                 :data-testid="`manage-fighter-${fighter.id}`"
+                @click="openFighterPanel(fighter)"
               >
                 MANAGE
               </button>
               <button
-                @click="confirmDismiss(fighter)"
                 class="rpg-btn-small bg-red-900/50 hover:bg-red-800/50 border-red-700 text-red-300 px-3"
                 :data-testid="`dismiss-fighter-${fighter.id}`"
+                @click="confirmDismiss(fighter)"
               >
                 <img :src="PIXEL_ASSETS.ICON_SKULL" alt="" class="w-4 h-4 pixelated" />
               </button>
@@ -276,13 +297,17 @@
                         <VoxelFighter :seed="selectedFighter.id" :attunement="selectedFighter.attunementId" :animate="true" />
                       </div>
                       <div>
-                        <h2 class="text-xl font-bold text-amber-400 text-shadow-retro">{{ selectedFighter.name }}</h2>
-                        <p class="text-sm text-slate-400">Level {{ selectedFighter.level }} Warrior</p>
+                        <h2 class="text-xl font-bold text-amber-400 text-shadow-retro">
+                          {{ selectedFighter.name }}
+                        </h2>
+                        <p class="text-sm text-slate-400">
+                          Level {{ selectedFighter.level }} Warrior
+                        </p>
                       </div>
                     </div>
                     <button
-                      @click="selectedFighter = null"
                       class="rpg-btn-small text-lg px-2 py-1"
+                      @click="selectedFighter = null"
                     >
                       ✕
                     </button>
@@ -294,8 +319,8 @@
                   <FighterStats
                     :fighter="selectedFighter"
                     :equipment="roster.equipment[selectedFighter.id] || []"
-                    @open-armory="showArmory = true"
                     :data-testid="`fighter-stats-${selectedFighter.id}`"
+                    @open-armory="showArmory = true"
                   />
                 </div>
               </aside>
@@ -348,13 +373,17 @@
                 <div class="p-4 border-b-4 border-slate-800 flex items-center gap-3">
                   <img :src="PIXEL_ASSETS.ICON_SCROLL" alt="" class="w-6 h-6 pixelated" />
                   <div>
-                    <h2 class="text-xl font-bold text-amber-400 text-shadow-retro">RECRUIT WARRIOR</h2>
-                    <p class="text-xs text-slate-500">Create a new champion</p>
+                    <h2 class="text-xl font-bold text-amber-400 text-shadow-retro">
+                      RECRUIT WARRIOR
+                    </h2>
+                    <p class="text-xs text-slate-500">
+                      Create a new champion
+                    </p>
                   </div>
                 </div>
 
                 <!-- Wizard Content -->
-                <form @submit.prevent="handleCreate" class="p-6 space-y-6">
+                <form class="p-6 space-y-6" @submit.prevent="handleCreate">
                   <!-- Fighter Preview -->
                   <div class="flex justify-center">
                     <div class="relative">
@@ -385,7 +414,9 @@
                       class="w-full pixel-box-sm bg-slate-800 px-4 py-3 text-lg text-white placeholder-slate-600 focus:border-amber-500 focus:outline-none"
                       data-testid="new-fighter-name-input"
                     />
-                    <p class="mt-1 text-[10px] text-slate-600">{{ newName.length }}/24 characters</p>
+                    <p class="mt-1 text-[10px] text-slate-600">
+                      {{ newName.length }}/24 characters
+                    </p>
                   </div>
 
                   <!-- Attunement Selection -->
@@ -396,7 +427,6 @@
                         v-for="att in attunements"
                         :key="att.id"
                         type="button"
-                        @click="createAttunement = createAttunement === att.id ? null : att.id"
                         :class="[
                           'pixel-box-sm flex flex-col items-center gap-1 p-3 transition-all',
                           createAttunement === att.id
@@ -404,6 +434,7 @@
                             : 'bg-slate-800/60 hover:bg-slate-700'
                         ]"
                         :data-testid="`attunement-select-${att.id.toLowerCase()}`"
+                        @click="createAttunement = createAttunement === att.id ? null : att.id"
                       >
                         <span class="text-xl">{{ att.icon }}</span>
                         <span class="text-[10px] font-bold" :class="createAttunement === att.id ? 'text-white' : 'text-slate-500'">
@@ -425,9 +456,9 @@
                   <div class="flex gap-3 pt-2">
                     <button
                       type="button"
-                      @click="closeCreateWizard"
                       class="rpg-btn-small flex-1"
                       data-testid="cancel-recruit"
+                      @click="closeCreateWizard"
                     >
                       CANCEL
                     </button>
@@ -467,7 +498,9 @@
             <div class="pixel-box bg-slate-900 w-full max-w-sm relative z-10 p-6" data-testid="dismiss-confirmation">
               <div class="flex items-center gap-3 mb-4">
                 <img :src="PIXEL_ASSETS.ICON_SKULL" alt="" class="w-8 h-8 pixelated" />
-                <h3 class="text-lg font-bold text-red-400 text-shadow-retro">DISMISS WARRIOR</h3>
+                <h3 class="text-lg font-bold text-red-400 text-shadow-retro">
+                  DISMISS WARRIOR
+                </h3>
               </div>
               
               <p class="text-slate-300 mb-2">
@@ -482,16 +515,16 @@
               
               <div class="flex gap-3">
                 <button
-                  @click="dismissTarget = null"
                   class="rpg-btn-small flex-1"
                   data-testid="cancel-dismiss"
+                  @click="dismissTarget = null"
                 >
                   CANCEL
                 </button>
                 <button
-                  @click="handleDismiss"
                   class="rpg-btn flex-1 bg-red-700 hover:bg-red-600 border-red-800"
                   data-testid="confirm-dismiss"
+                  @click="handleDismiss"
                 >
                   DISMISS
                 </button>
@@ -500,7 +533,6 @@
           </div>
         </Transition>
       </Teleport>
-
     </div>
   </div>
 </template>

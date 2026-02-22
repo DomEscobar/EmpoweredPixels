@@ -33,10 +33,10 @@
         <div class="mx-auto flex items-center justify-between h-10 px-2 max-w-7xl">
           <!-- Daily Reward -->
           <button 
-            @click="showDailyModal = true"
             class="pixel-box-xs flex items-center gap-2 px-2 py-1 transition-all relative"
             :class="dailyStore.canClaim ? 'bg-amber-600/20 border-amber-500/50 animate-pulse' : 'bg-slate-800/80 border-slate-600/50'"
             title="Daily Reward"
+            @click="showDailyModal = true"
           >
             <span class="text-sm">{{ dailyStore.nextReward?.icon || '🎁' }}</span>
             <span class="text-[10px] font-bold">Daily</span>
@@ -50,7 +50,7 @@
           </router-link>
 
           <!-- Logout -->
-          <button @click="logout" class="pixel-box-xs bg-slate-800/80 border-slate-600/50 p-1.5 hover:bg-red-900/30 transition-colors" title="Sign Out" data-testid="logout-btn">
+          <button class="pixel-box-xs bg-slate-800/80 border-slate-600/50 p-1.5 hover:bg-red-900/30 transition-colors" title="Sign Out" data-testid="logout-btn" @click="logout">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
               <polyline points="16 17 21 12 16 7"></polyline>

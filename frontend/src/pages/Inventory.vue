@@ -14,7 +14,6 @@
     <div class="pointer-events-none fixed inset-0 z-40 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]"></div>
 
     <div class="relative z-10 max-w-7xl mx-auto space-y-6">
-      
       <!-- Header Banner -->
       <header class="pixel-box bg-slate-900/95 p-6">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -40,8 +39,12 @@
             <div class="pixel-box-sm bg-slate-800/90 px-4 py-2 flex items-center gap-3">
               <img :src="PIXEL_ASSETS.ICON_CRYSTAL" alt="" class="w-6 h-6 pixelated" />
               <div>
-                <div class="text-[10px] uppercase text-slate-500 tracking-wider">Particles</div>
-                <div class="text-lg font-bold text-emerald-400">{{ inventoryStore.particles.toLocaleString() }}</div>
+                <div class="text-[10px] uppercase text-slate-500 tracking-wider">
+                  Particles
+                </div>
+                <div class="text-lg font-bold text-emerald-400">
+                  {{ inventoryStore.particles.toLocaleString() }}
+                </div>
               </div>
             </div>
 
@@ -49,7 +52,9 @@
             <div class="pixel-box-sm bg-slate-800/90 px-4 py-2 flex items-center gap-3">
               <img :src="PIXEL_ASSETS.ICON_COIN" alt="" class="w-6 h-6 pixelated" />
               <div>
-                <div class="text-[10px] uppercase text-slate-500 tracking-wider">Tokens</div>
+                <div class="text-[10px] uppercase text-slate-500 tracking-wider">
+                  Tokens
+                </div>
                 <div class="flex gap-2 text-sm font-bold">
                   <span class="text-slate-300" title="Common">{{ inventoryStore.commonTokens }}</span>
                   <span class="text-blue-400" title="Rare">{{ inventoryStore.rareTokens }}</span>
@@ -65,7 +70,9 @@
       <div class="pixel-box bg-slate-900/90 p-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <img :src="PIXEL_ASSETS.ICON_SWORD" alt="" class="w-5 h-5 pixelated" />
-          <h2 class="text-lg font-bold text-amber-300">EQUIPMENT</h2>
+          <h2 class="text-lg font-bold text-amber-300">
+            EQUIPMENT
+          </h2>
           <span class="pixel-badge bg-slate-700 text-slate-300 px-2 py-0.5 text-xs">
             {{ inventoryStore.totalEquipment }}
           </span>
@@ -84,21 +91,29 @@
 
       <!-- Loading State -->
       <div v-if="inventoryStore.isLoading" class="pixel-box bg-slate-900/90 py-16 text-center">
-        <div class="inline-block animate-spin text-4xl mb-4">⚙️</div>
-        <p class="text-amber-400 text-shadow-retro animate-pulse">Accessing vault...</p>
+        <div class="inline-block animate-spin text-4xl mb-4">
+          ⚙️
+        </div>
+        <p class="text-amber-400 text-shadow-retro animate-pulse">
+          Accessing vault...
+        </p>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="inventoryStore.equipment.length === 0" class="pixel-box bg-slate-900/90 py-16 text-center">
         <img :src="PIXEL_ASSETS.ICON_CHEST_EMPTY" alt="" class="w-16 h-16 pixelated mx-auto mb-4 opacity-50" />
-        <h3 class="text-lg font-bold text-slate-400">Vault is Empty</h3>
-        <p class="text-slate-500 text-sm mt-2">Win battles to earn equipment crates</p>
+        <h3 class="text-lg font-bold text-slate-400">
+          Vault is Empty
+        </h3>
+        <p class="text-slate-500 text-sm mt-2">
+          Win battles to earn equipment crates
+        </p>
       </div>
 
       <!-- Equipment Grid -->
       <InventoryGrid 
         :equipment="inventoryStore.equipment"
-        :isLoading="inventoryStore.isLoading"
+        :is-loading="inventoryStore.isLoading"
         @enhance="openEnhanceModal"
         @salvage="openSalvageModal"
         @toggle-favorite="inventoryStore.toggleFavorite($event.id, !$event.isFavorite)"
@@ -117,29 +132,41 @@
                 <img :src="PIXEL_ASSETS.ICON_ANVIL" alt="" class="w-6 h-6 pixelated" />
                 ENHANCE GEAR
               </h3>
-              <button class="text-slate-500 hover:text-white text-xl" @click="closeEnhanceModal">✕</button>
+              <button class="text-slate-500 hover:text-white text-xl" @click="closeEnhanceModal">
+                ✕
+              </button>
             </div>
 
             <div v-if="selectedItem" class="space-y-4">
               <!-- Current vs Next -->
               <div class="pixel-box-sm bg-slate-800/80 p-4 flex items-center justify-between">
                 <div class="text-center">
-                  <div class="text-xs text-slate-500 uppercase">Current</div>
+                  <div class="text-xs text-slate-500 uppercase">
+                    Current
+                  </div>
                   <div class="text-lg font-bold text-white">
                     Lvl {{ selectedItem.level }}
                     <span class="text-indigo-400 text-sm">(+{{ selectedItem.enhancement }})</span>
                   </div>
                 </div>
-                <div class="text-2xl text-amber-500 animate-pulse">→</div>
+                <div class="text-2xl text-amber-500 animate-pulse">
+                  →
+                </div>
                 <div class="text-center">
-                  <div class="text-xs text-slate-500 uppercase">Next</div>
-                  <div class="text-lg font-bold text-emerald-400">+{{ selectedItem.enhancement + 1 }}</div>
+                  <div class="text-xs text-slate-500 uppercase">
+                    Next
+                  </div>
+                  <div class="text-lg font-bold text-emerald-400">
+                    +{{ selectedItem.enhancement + 1 }}
+                  </div>
                 </div>
               </div>
 
               <!-- Cost -->
               <div v-if="enhanceCost" class="space-y-2">
-                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Required</h4>
+                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  Required
+                </h4>
                 <div class="grid grid-cols-2 gap-2">
                   <div class="pixel-box-sm bg-slate-800/60 p-3 flex items-center justify-between">
                     <span class="text-slate-400 text-sm">Particles</span>
@@ -193,7 +220,9 @@
                 <img :src="PIXEL_ASSETS.ICON_SKULL" alt="" class="w-6 h-6 pixelated" />
                 SALVAGE GEAR
               </h3>
-              <button class="text-slate-500 hover:text-white text-xl" @click="closeSalvageModal">✕</button>
+              <button class="text-slate-500 hover:text-white text-xl" @click="closeSalvageModal">
+                ✕
+              </button>
             </div>
 
             <div v-if="selectedItem" class="space-y-4">
@@ -224,7 +253,6 @@
           </div>
         </div>
       </Teleport>
-
     </div>
   </div>
 </template>

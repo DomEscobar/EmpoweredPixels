@@ -39,7 +39,7 @@
               <button class="rpg-btn-lg group relative overflow-hidden">
                 <span class="relative z-10 flex items-center gap-2">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                   Enter Command Center
                 </span>
@@ -52,7 +52,7 @@
               <button class="rpg-btn-lg group relative overflow-hidden">
                 <span class="relative z-10 flex items-center gap-2">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                   Start Your Journey
                 </span>
@@ -62,8 +62,8 @@
             <router-link to="/login" data-testid="watch-live-btn">
               <button class="rpg-btn-lg-secondary group flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
                 Watch Live Battles
               </button>
@@ -113,8 +113,12 @@
                 <component :is="feature.icon" class="w-8 h-8" />
               </div>
             </div>
-            <h3 class="text-xl font-bold text-white mb-3">{{ feature.title }}</h3>
-            <p class="text-slate-400 leading-relaxed">{{ feature.description }}</p>
+            <h3 class="text-xl font-bold text-white mb-3">
+              {{ feature.title }}
+            </h3>
+            <p class="text-slate-400 leading-relaxed">
+              {{ feature.description }}
+            </p>
           </div>
         </div>
       </div>
@@ -138,12 +142,16 @@
               <div v-for="highlight in gameplayHighlights" :key="highlight.text" class="highlight-item flex items-start gap-4">
                 <div class="highlight-icon bg-indigo-500/20 border border-indigo-500/30 p-2 rounded-lg">
                   <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
                 <div>
-                  <h4 class="font-bold text-white mb-1">{{ highlight.title }}</h4>
-                  <p class="text-slate-400 text-sm">{{ highlight.text }}</p>
+                  <h4 class="font-bold text-white mb-1">
+                    {{ highlight.title }}
+                  </h4>
+                  <p class="text-slate-400 text-sm">
+                    {{ highlight.text }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -161,7 +169,9 @@
               <div class="visual-body h-80 relative flex items-center justify-center">
                 <div class="battle-scene">
                   <VoxelFighter seed="scene1" attunement="Fire" :animate="true" :is-attacking="true" class="w-32 h-32" />
-                  <div class="battle-vs">VS</div>
+                  <div class="battle-vs">
+                    VS
+                  </div>
                   <VoxelFighter seed="scene2" attunement="Water" :animate="true" class="w-32 h-32" />
                 </div>
               </div>
@@ -194,16 +204,28 @@
               <div class="league-icon mb-6">
                 <component :is="league.icon" class="w-16 h-16 mx-auto" :class="league.iconColor" />
               </div>
-              <h3 class="text-2xl font-bold text-white mb-3">{{ league.name }}</h3>
-              <p class="text-slate-300 text-sm mb-4">{{ league.description }}</p>
+              <h3 class="text-2xl font-bold text-white mb-3">
+                {{ league.name }}
+              </h3>
+              <p class="text-slate-300 text-sm mb-4">
+                {{ league.description }}
+              </p>
               <div class="league-stats flex justify-center gap-4 text-sm">
                 <div>
-                  <div class="font-bold text-white">{{ league.players }}</div>
-                  <div class="text-slate-400">Players</div>
+                  <div class="font-bold text-white">
+                    {{ league.players }}
+                  </div>
+                  <div class="text-slate-400">
+                    Players
+                  </div>
                 </div>
                 <div>
-                  <div class="font-bold text-white">{{ league.matches }}</div>
-                  <div class="text-slate-400">Matches</div>
+                  <div class="font-bold text-white">
+                    {{ league.matches }}
+                  </div>
+                  <div class="text-slate-400">
+                    Matches
+                  </div>
                 </div>
               </div>
             </div>
@@ -232,7 +254,7 @@
             <button class="rpg-btn-xl group relative overflow-hidden">
               <span class="relative z-10 flex items-center gap-3">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
                 Begin Your Campaign
               </span>
@@ -245,7 +267,7 @@
             <button class="rpg-btn-xl group relative overflow-hidden">
               <span class="relative z-10 flex items-center gap-3">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
                 Return to Command
               </span>
@@ -260,7 +282,9 @@
       <div class="max-w-7xl mx-auto">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div v-for="column in footerColumns" :key="column.title">
-            <h4 class="font-bold text-white mb-4">{{ column.title }}</h4>
+            <h4 class="font-bold text-white mb-4">
+              {{ column.title }}
+            </h4>
             <ul class="space-y-2">
               <li v-for="link in column.links" :key="link.text">
                 <router-link v-if="link.to" :to="link.to" class="text-slate-400 hover:text-amber-400 transition-colors text-sm">
@@ -280,7 +304,9 @@
             </div>
             <span class="text-white font-bold">EmpoweredPixels</span>
           </div>
-          <p class="text-slate-500 text-sm">© 2024 EmpoweredPixels. All rights reserved.</p>
+          <p class="text-slate-500 text-sm">
+            © 2024 EmpoweredPixels. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

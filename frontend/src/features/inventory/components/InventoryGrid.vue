@@ -3,15 +3,17 @@
     <!-- Filtering Bar -->
     <div class="pixel-box-iron bg-slate-900/90 p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-4">
-        <h2 class="text-amber-400 font-bold tracking-wider">FILTER:</h2>
+        <h2 class="text-amber-400 font-bold tracking-wider">
+          FILTER:
+        </h2>
         <div class="flex gap-2">
           <button 
             v-for="filter in filters" 
             :key="filter.id"
-            @click="activeFilter = filter.id"
             class="filter-btn"
             :class="{ 'active': activeFilter === filter.id }"
             :data-testid="'filter-' + filter.id"
+            @click="activeFilter = filter.id"
           >
             {{ filter.label }}
           </button>
@@ -25,12 +27,18 @@
 
     <!-- Inventory Grid -->
     <div v-if="isLoading" class="flex flex-col items-center justify-center py-20">
-      <div class="animate-spin text-4xl mb-4">⚙️</div>
-      <p class="text-amber-400 animate-pulse">SCANNING VAULT...</p>
+      <div class="animate-spin text-4xl mb-4">
+        ⚙️
+      </div>
+      <p class="text-amber-400 animate-pulse">
+        SCANNING VAULT...
+      </p>
     </div>
 
     <div v-else-if="filteredEquipment.length === 0" class="pixel-box-iron bg-slate-900/60 py-20 text-center">
-      <p class="text-slate-500">NO ITEMS FOUND IN THIS SECTOR</p>
+      <p class="text-slate-500">
+        NO ITEMS FOUND IN THIS SECTOR
+      </p>
     </div>
 
     <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
@@ -38,10 +46,10 @@
         v-for="item in filteredEquipment" 
         :key="item.id" 
         :item="item"
+        data-testid="inventory-item"
         @enhance="$emit('enhance', item)"
         @salvage="$emit('salvage', item)"
         @toggle-favorite="$emit('toggle-favorite', item)"
-        data-testid="inventory-item"
       />
     </div>
   </div>

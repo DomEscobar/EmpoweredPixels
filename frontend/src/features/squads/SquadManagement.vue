@@ -3,7 +3,9 @@
     <!-- Header Section -->
     <section class="squad-header">
       <div class="header-content">
-        <h2 class="ep-header-gold">Squad Management</h2>
+        <h2 class="ep-header-gold">
+          Squad Management
+        </h2>
         <p class="header-subtitle">
           Select up to 3 fighters to form your combat team
         </p>
@@ -38,19 +40,19 @@
               {{ fighters[slot - 1]?.name }}
             </span>
           </div>
-          <SquadSlot
+            <SquadSlot
             v-if="fighters[slot - 1]"
-            :fighter="fighters[slot - 1]!"
+            :fighter="fighters[slot - 1]"
             :slot-index="slot - 1"
             :is-active="selectedSlot === slot - 1"
             class="slot-content"
           />
           <button
             v-else
-            @click="selectSlot(slot - 1)"
             class="slot-select-btn"
             :disabled="selectedSlot !== null"
             data-testid="slot-select-btn"
+            @click="selectSlot(slot - 1)"
           >
             Select Fighter
           </button>
@@ -63,14 +65,16 @@
         class="selected-fighter-panel"
         data-testid="fighter-select-list"
       >
-        <h3 class="ep-header-gold">Select a Fighter</h3>
+        <h3 class="ep-header-gold">
+          Select a Fighter
+        </h3>
         <div class="fighter-list">
           <button
             v-for="fighter in availableFighters"
             :key="fighter.id"
-            @click="addFighterToSlot(fighter)"
             class="fighter-select-btn"
             data-testid="fighter-select-btn"
+            @click="addFighterToSlot(fighter)"
           >
             <span class="fighter-name">{{ fighter.name }}</span>
             <span class="fighter-level">Lv.{{ fighter.level }}</span>
@@ -84,9 +88,9 @@
     <section class="squad-actions">
       <div class="actions-left">
         <button
-          @click="clearSlot"
           class="ep-button ep-button-secondary"
           :disabled="selectedSlot === null || !!fighters[selectedSlot]"
+          @click="clearSlot"
         >
           Clear Slot
         </button>
@@ -94,17 +98,17 @@
 
       <div class="actions-right">
         <button
-          @click="resetAllSlots"
           class="ep-button ep-button-secondary"
           :disabled="membersCount === 0"
+          @click="resetAllSlots"
         >
           Reset All
         </button>
 
         <button
-          @click="saveSquad"
           class="ep-button ep-button-primary"
           :disabled="isSubmitting || membersCount === 0"
+          @click="saveSquad"
         >
           <span v-if="isSubmitting">Saving...</span>
           <span v-else>{{ membersCount > 0 ? 'Save Squad' : 'Save Squad' }}</span>

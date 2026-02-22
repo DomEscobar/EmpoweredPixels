@@ -11,20 +11,28 @@
               <span class="text-3xl">🏆</span>
             </div>
             <div>
-              <h1 class="text-2xl md:text-3xl font-bold text-amber-400 text-shadow-retro">HALL OF FAME</h1>
-              <p class="text-slate-400 text-sm">Prove your worth. Claim your glory.</p>
+              <h1 class="text-2xl md:text-3xl font-bold text-amber-400 text-shadow-retro">
+                HALL OF FAME
+              </h1>
+              <p class="text-slate-400 text-sm">
+                Prove your worth. Claim your glory.
+              </p>
             </div>
           </div>
           
           <!-- User Rank Card -->
           <div v-if="leaderboardStore.userEntry" class="pixel-box-sm bg-amber-900/30 border-amber-500/50 px-4 py-2">
-            <div class="text-xs text-amber-400 uppercase">Your Rank</div>
+            <div class="text-xs text-amber-400 uppercase">
+              Your Rank
+            </div>
             <div class="flex items-center gap-2">
               <span class="text-2xl font-black text-white">#{{ leaderboardStore.userRank }}</span>
               <span v-if="leaderboardStore.userEntry.trend === 'up'" class="text-green-400">↑</span>
               <span v-else-if="leaderboardStore.userEntry.trend === 'down'" class="text-red-400">↓</span>
             </div>
-            <div class="text-xs text-slate-400">{{ formatScore(leaderboardStore.userEntry.score) }} pts</div>
+            <div class="text-xs text-slate-400">
+              {{ formatScore(leaderboardStore.userEntry.score) }} pts
+            </div>
           </div>
         </div>
       </header>
@@ -34,10 +42,10 @@
         <button
           v-for="(label, key) in CATEGORY_LABELS"
           :key="key"
-          @click="setCategory(key as LeaderboardCategory)"
           class="pixel-box-sm px-4 py-2 text-sm font-bold transition-all"
           :class="currentCategory === key ? 'bg-amber-600 text-white border-amber-400' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'"
           :data-testid="`category-tab-${key}`"
+          @click="setCategory(key)"
         >
           <span class="mr-1">{{ label.icon }}</span>
           {{ label.name }}
@@ -57,8 +65,12 @@
 
             <!-- Loading State -->
             <div v-if="leaderboardStore.isLoading" class="py-12 text-center" data-testid="leaderboard-loading">
-              <div class="animate-spin text-3xl mb-2">⚔️</div>
-              <p class="text-amber-400 animate-pulse">Loading rankings...</p>
+              <div class="animate-spin text-3xl mb-2">
+                ⚔️
+              </div>
+              <p class="text-amber-400 animate-pulse">
+                Loading rankings...
+              </p>
             </div>
 
             <!-- Entries List -->
@@ -83,7 +95,9 @@
 
                 <!-- Username -->
                 <div class="flex-1">
-                  <div class="font-bold text-white">{{ entry.username }}</div>
+                  <div class="font-bold text-white">
+                    {{ entry.username }}
+                  </div>
                   <div class="text-xs text-slate-500">
                     <span v-if="entry.trend === 'up'" class="text-green-400">↑ Rising</span>
                     <span v-else-if="entry.trend === 'down'" class="text-red-400">↓ Falling</span>
@@ -93,22 +107,30 @@
 
                 <!-- Score -->
                 <div class="text-right">
-                  <div class="font-black text-amber-400">{{ formatScore(entry.score) }}</div>
-                  <div class="text-xs text-slate-500">points</div>
+                  <div class="font-black text-amber-400">
+                    {{ formatScore(entry.score) }}
+                  </div>
+                  <div class="text-xs text-slate-500">
+                    points
+                  </div>
                 </div>
               </div>
 
               <!-- Empty State -->
               <div v-if="leaderboardStore.topEntries.length === 0" class="py-12 text-center text-slate-500" data-testid="leaderboard-empty">
                 <p>No rankings available yet.</p>
-                <p class="text-sm">Be the first to climb the ranks!</p>
+                <p class="text-sm">
+                  Be the first to climb the ranks!
+                </p>
               </div>
             </div>
           </div>
 
           <!-- Nearby Ranks -->
           <div v-if="leaderboardStore.nearbyRanks?.entries?.length" class="pixel-box bg-slate-900/90 p-4" data-testid="nearby-ranks">
-            <h3 class="text-sm font-bold text-slate-400 mb-3 uppercase tracking-wider">Nearby Competition</h3>
+            <h3 class="text-sm font-bold text-slate-400 mb-3 uppercase tracking-wider">
+              Nearby Competition
+            </h3>
             <div class="space-y-1">
               <div
                 v-for="entry in leaderboardStore.nearbyRanks.entries"
@@ -158,9 +180,15 @@
                 <div class="flex items-start gap-3">
                   <span class="text-2xl">{{ pa.achievement?.icon }}</span>
                   <div class="flex-1">
-                    <div class="font-bold text-amber-400 text-sm">{{ pa.achievement?.name }}</div>
-                    <div class="text-xs text-slate-400">{{ pa.achievement?.description }}</div>
-                    <div class="mt-1 text-xs text-green-400 font-bold">Click to claim {{ pa.achievement?.reward_gold }} gold!</div>
+                    <div class="font-bold text-amber-400 text-sm">
+                      {{ pa.achievement?.name }}
+                    </div>
+                    <div class="text-xs text-slate-400">
+                      {{ pa.achievement?.description }}
+                    </div>
+                    <div class="mt-1 text-xs text-green-400 font-bold">
+                      Click to claim {{ pa.achievement?.reward_gold }} gold!
+                    </div>
                   </div>
                 </div>
               </div>
@@ -173,8 +201,12 @@
                 <div class="flex items-start gap-3">
                   <span class="text-2xl">{{ pa.achievement?.icon }}</span>
                   <div class="flex-1">
-                    <div class="font-bold text-slate-300 text-sm">{{ pa.achievement?.name }}</div>
-                    <div class="text-xs text-slate-500">{{ pa.achievement?.description }}</div>
+                    <div class="font-bold text-slate-300 text-sm">
+                      {{ pa.achievement?.name }}
+                    </div>
+                    <div class="text-xs text-slate-500">
+                      {{ pa.achievement?.description }}
+                    </div>
                   </div>
                   <span class="text-green-500 text-xs">✓ Claimed</span>
                 </div>
@@ -202,10 +234,10 @@ const currentCategory = ref<LeaderboardCategory>('power');
 const unclaimedAchievements = computed(() => leaderboardStore.unclaimedAchievements);
 const completedAchievements = computed(() => leaderboardStore.completedAchievements);
 
-function setCategory(cat: LeaderboardCategory) {
-  currentCategory.value = cat;
-  leaderboardStore.fetchLeaderboard(cat);
-  leaderboardStore.fetchNearbyRanks(cat);
+function setCategory(cat: string) {
+  currentCategory.value = cat as LeaderboardCategory;
+  leaderboardStore.fetchLeaderboard(cat as LeaderboardCategory);
+  leaderboardStore.fetchNearbyRanks(cat as LeaderboardCategory);
 }
 
 function getEntryClass(entry: any, index: number) {

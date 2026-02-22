@@ -10,9 +10,13 @@
     <!-- Error State -->
     <div v-else-if="error" class="py-20 text-center border-4 border-dashed border-red-900/50 bg-red-950/20">
       <img :src="PIXEL_ASSETS.ICON_SKULL" class="w-16 h-16 mx-auto opacity-50 pixelated mb-4" />
-      <h3 class="text-red-400 uppercase font-bold tracking-widest">Connection Lost</h3>
-      <p class="text-slate-600 text-xs mt-2">{{ error }}</p>
-      <button @click="$emit('retry')" class="mt-4 rpg-btn-small bg-red-900 border-red-700 text-red-200 hover:bg-red-800">
+      <h3 class="text-red-400 uppercase font-bold tracking-widest">
+        Connection Lost
+      </h3>
+      <p class="text-slate-600 text-xs mt-2">
+        {{ error }}
+      </p>
+      <button class="mt-4 rpg-btn-small bg-red-900 border-red-700 text-red-200 hover:bg-red-800" @click="$emit('retry')">
         Retry
       </button>
     </div>
@@ -20,21 +24,25 @@
     <!-- Empty State -->
     <div v-else-if="!leagues.length" class="py-20 text-center border-4 border-dashed border-slate-800 bg-slate-900/20">
       <img :src="PIXEL_ASSETS.ICON_CROWN" class="w-16 h-16 mx-auto opacity-20 pixelated grayscale mb-4" />
-      <h3 class="text-slate-500 uppercase font-bold tracking-widest">No Active Campaigns</h3>
-      <p class="text-slate-600 text-xs mt-2">The war council has not declared any leagues</p>
+      <h3 class="text-slate-500 uppercase font-bold tracking-widest">
+        No Active Campaigns
+      </h3>
+      <p class="text-slate-600 text-xs mt-2">
+        The war council has not declared any leagues
+      </p>
     </div>
 
     <!-- League Grid -->
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div 
-         v-for="league in leagues" 
-         :key="league.id"
-         class="group rpg-card bg-slate-900 border-4 transition-all duration-200 flex flex-col relative overflow-hidden cursor-pointer"
-         :class="isSubscribed(league.id) 
-           ? 'border-emerald-600 hover:border-emerald-500 ring-2 ring-emerald-500/20' 
-           : 'border-slate-800 hover:border-amber-600/50'"
-         :data-testid="'league-card-' + league.id"
-       >
+      <div 
+        v-for="league in leagues" 
+        :key="league.id"
+        class="group rpg-card bg-slate-900 border-4 transition-all duration-200 flex flex-col relative overflow-hidden cursor-pointer"
+        :class="isSubscribed(league.id) 
+          ? 'border-emerald-600 hover:border-emerald-500 ring-2 ring-emerald-500/20' 
+          : 'border-slate-800 hover:border-amber-600/50'"
+        :data-testid="'league-card-' + league.id"
+      >
         <!-- Active Subscription Badge -->
         <div v-if="isSubscribed(league.id)" class="absolute top-0 right-0 z-20">
           <div class="bg-emerald-600 text-emerald-100 text-[10px] font-bold uppercase tracking-widest px-3 py-1 flex items-center gap-1">
@@ -59,7 +67,7 @@
             <h3 class="text-lg sm:text-xl font-black text-amber-100 uppercase leading-tight group-hover:text-amber-400 transition-colors">
               {{ league.name }}
             </h3>
-             <p class="text-[10px] sm:text-xs text-slate-500 mt-2 leading-relaxed line-clamp-2">
+            <p class="text-[10px] sm:text-xs text-slate-500 mt-2 leading-relaxed line-clamp-2">
               {{ getLeagueDescription(league) }}
             </p>
           </div>
@@ -67,12 +75,20 @@
           <!-- Stats Grid -->
           <div class="grid grid-cols-2 gap-3 mb-5">
             <div class="bg-slate-950/50 p-3 border border-slate-800">
-              <div class="text-[10px] text-slate-600 uppercase tracking-wider">Combatants</div>
-               <div class="text-base sm:text-lg font-black text-slate-200">{{ participantCount(league.id) || '—' }}</div>
+              <div class="text-[10px] text-slate-600 uppercase tracking-wider">
+                Combatants
+              </div>
+              <div class="text-base sm:text-lg font-black text-slate-200">
+                {{ participantCount(league.id) || '—' }}
+              </div>
             </div>
             <div class="bg-slate-950/50 p-3 border border-slate-800">
-              <div class="text-[10px] text-slate-600 uppercase tracking-wider">Tier</div>
-              <div class="text-lg font-black" :class="getTierColor(league)">{{ getLeagueTier(league) }}</div>
+              <div class="text-[10px] text-slate-600 uppercase tracking-wider">
+                Tier
+              </div>
+              <div class="text-lg font-black" :class="getTierColor(league)">
+                {{ getLeagueTier(league) }}
+              </div>
             </div>
           </div>
 
@@ -86,19 +102,27 @@
 
           <!-- Last Winner -->
           <div v-if="getLastWinner(league.id)" class="bg-slate-950/50 border border-slate-800 p-3 mb-5">
-            <div class="text-[10px] text-slate-600 uppercase tracking-wider mb-1">Last Victor</div>
+            <div class="text-[10px] text-slate-600 uppercase tracking-wider mb-1">
+              Last Victor
+            </div>
             <div class="flex items-center gap-2">
               <img :src="PIXEL_ASSETS.ICON_TROPHY" class="w-6 h-6 pixelated text-amber-400" />
               <div class="flex-1 min-w-0">
-                <div class="text-sm font-bold text-amber-300 truncate">{{ getLastWinner(league.id)?.fighterName }}</div>
-                <div class="text-[10px] text-slate-500">@{{ getLastWinner(league.id)?.username }}</div>
+                <div class="text-sm font-bold text-amber-300 truncate">
+                  {{ getLastWinner(league.id)?.fighterName }}
+                </div>
+                <div class="text-[10px] text-slate-500">
+                  @{{ getLastWinner(league.id)?.username }}
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Subscribed Fighters -->
           <div v-if="getMyFighters(league.id).length" class="mb-4">
-            <div class="text-[10px] text-emerald-600 uppercase tracking-wider mb-2">Your Champions</div>
+            <div class="text-[10px] text-emerald-600 uppercase tracking-wider mb-2">
+              Your Champions
+            </div>
             <div class="flex flex-wrap gap-2">
               <div 
                 v-for="sub in getMyFighters(league.id)" 
@@ -114,25 +138,25 @@
           <!-- Actions -->
           <div class="mt-auto space-y-2">
             <button 
-              @click.stop="$emit('view-detail', league)"
               class="w-full rpg-btn-small bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 font-bold uppercase"
               :data-testid="'view-detail-btn-' + league.id"
+              @click.stop="$emit('view-detail', league)"
             >
               View Campaign
             </button>
             <button 
               v-if="!isSubscribed(league.id)"
-              @click.stop="$emit('subscribe', league)"
               class="w-full rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase"
               :data-testid="'subscribe-btn-' + league.id"
+              @click.stop="$emit('subscribe', league)"
             >
               Enlist Fighter
             </button>
             <button 
               v-else
-              @click.stop="$emit('manage', league)"
               class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600 font-bold uppercase"
               :data-testid="'manage-btn-' + league.id"
+              @click.stop="$emit('manage', league)"
             >
               Manage Squad
             </button>

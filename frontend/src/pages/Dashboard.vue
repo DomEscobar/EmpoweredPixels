@@ -15,7 +15,6 @@
     <div class="pointer-events-none fixed inset-0 z-40 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]"></div>
 
     <div class="relative z-10 max-w-4xl mx-auto space-y-4 md:space-y-6">
-      
       <!-- Compact Header Banner -->
       <header class="pixel-box bg-slate-900/95 p-3 md:p-6" data-testid="dashboard-header">
         <div class="flex items-center justify-between gap-3">
@@ -38,7 +37,7 @@
           <!-- Status Indicator -->
           <div class="pixel-box-sm bg-emerald-900/30 border-emerald-500/50 px-2 md:px-4 py-1 md:py-2 flex items-center gap-1 md:gap-2 flex-shrink-0" data-testid="user-status">
             <div class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-             <span class="text-emerald-400 text-xs md:text-xs font-bold uppercase tracking-wider">Online</span>
+            <span class="text-emerald-400 text-xs md:text-xs font-bold uppercase tracking-wider">Online</span>
           </div>
         </div>
       </header>
@@ -48,254 +47,290 @@
 
       <!-- League Deadlines (New Integration) -->
       <div v-if="imminentLeagues.length > 0" class="pixel-box bg-linear-to-r from-red-900/40 to-amber-900/20 border-red-500/30 p-3 md:p-4 flex flex-col md:flex-row items-center justify-between gap-3">
-          <div class="flex items-center gap-2 md:gap-3 min-w-0">
-              <span class="text-xl md:text-2xl animate-pulse">⏰</span>
-              <div class="min-w-0">
-                  <h4 class="text-red-400 font-black text-[10px] md:text-xs uppercase tracking-[0.1em] md:tracking-[0.2em]">League Deadline Approaching</h4>
-                  <p class="text-slate-300 text-xs md:text-sm truncate">Competition entries closing soon for <span class="text-amber-400 font-bold">{{ imminentLeagues.map(l => l.name).join(', ') }}</span></p>
-              </div>
+        <div class="flex items-center gap-2 md:gap-3 min-w-0">
+          <span class="text-xl md:text-2xl animate-pulse">⏰</span>
+          <div class="min-w-0">
+            <h4 class="text-red-400 font-black text-[10px] md:text-xs uppercase tracking-[0.1em] md:tracking-[0.2em]">
+              League Deadline Approaching
+            </h4>
+            <p class="text-slate-300 text-xs md:text-sm truncate">
+              Competition entries closing soon for <span class="text-amber-400 font-bold">{{ imminentLeagues.map(l => l.name).join(', ') }}</span>
+            </p>
           </div>
-           <router-link to="/leagues" class="rpg-btn-small border-red-500/50 bg-red-950/50 hover:bg-red-900 text-red-200 text-sm md:text-xs px-3 md:px-3 py-2 w-full md:w-auto min-h-[44px]">
-               SECURE SPOT
-           </router-link>
+        </div>
+        <router-link to="/leagues" class="rpg-btn-small border-red-500/50 bg-red-950/50 hover:bg-red-900 text-red-200 text-sm md:text-xs px-3 md:px-3 py-2 w-full md:w-auto min-h-[44px]">
+          SECURE SPOT
+        </router-link>
       </div>
 
-       <!-- KPI Grid - Mobile Optimized with Trend Indicators -->
-        <div class="grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-4">
-          
-          <!-- Active Roster -->
-          <div class="pixel-box bg-slate-900/90 p-2 md:p-4 group hover:bg-slate-900/95 transition-all hover:scale-[1.02] min-h-[72px] md:min-h-0 touch-manipulation" data-testid="kpi-roster">
-            <div class="flex items-center gap-2 md:gap-3">
-              <div class="pixel-box-sm bg-indigo-900/50 border-indigo-500/50 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-[44px] md:min-h-[44px]">
-                <img :src="PIXEL_ASSETS.ICON_KNIGHT" alt="" class="w-6 h-6 md:w-8 md:h-8 pixelated" />
-              </div>
-              <div class="min-w-0 flex-1">
-                <p class="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider mb-0.5">Roster</p>
-                <div class="flex items-baseline gap-1">
-                  <p class="text-lg md:text-3xl font-bold text-white text-shadow-retro truncate">{{ rosterStore.fighters.length }}</p>
-                  <span class="text-[9px] text-emerald-400 font-bold hidden sm:inline">↑</span>
-                </div>
+      <!-- KPI Grid - Mobile Optimized with Trend Indicators -->
+      <div class="grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-4">
+        <!-- Active Roster -->
+        <div class="pixel-box bg-slate-900/90 p-2 md:p-4 group hover:bg-slate-900/95 transition-all hover:scale-[1.02] min-h-[72px] md:min-h-0 touch-manipulation" data-testid="kpi-roster">
+          <div class="flex items-center gap-2 md:gap-3">
+            <div class="pixel-box-sm bg-indigo-900/50 border-indigo-500/50 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-[44px] md:min-h-[44px]">
+              <img :src="PIXEL_ASSETS.ICON_KNIGHT" alt="" class="w-6 h-6 md:w-8 md:h-8 pixelated" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider mb-0.5">
+                Roster
+              </p>
+              <div class="flex items-baseline gap-1">
+                <p class="text-lg md:text-3xl font-bold text-white text-shadow-retro truncate">
+                  {{ rosterStore.fighters.length }}
+                </p>
+                <span class="text-[9px] text-emerald-400 font-bold hidden sm:inline">↑</span>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Active Campaigns -->
-          <div class="pixel-box bg-slate-900/90 p-2 md:p-4 group hover:bg-slate-900/95 transition-all hover:scale-[1.02] min-h-[72px] md:min-h-0 touch-manipulation" data-testid="kpi-campaigns">
-            <div class="flex items-center gap-2 md:gap-3">
-              <div class="pixel-box-sm bg-purple-900/50 border-purple-500/50 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-[44px] md:min-h-[44px]">
-                <img :src="PIXEL_ASSETS.ICON_FLAG" alt="" class="w-6 h-6 md:w-8 md:h-8 pixelated" />
-              </div>
-              <div class="min-w-0 flex-1">
-                <p class="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider mb-0.5">Campaigns</p>
-                <div class="flex items-baseline gap-1">
-                  <p class="text-lg md:text-3xl font-bold text-white text-shadow-retro truncate">{{ leaguesStore.activeLeagueCount }}</p>
-                  <span class="text-[9px] text-amber-400 font-bold animate-pulse hidden sm:inline">●</span>
-                </div>
-              </div>
+        <!-- Active Campaigns -->
+        <div class="pixel-box bg-slate-900/90 p-2 md:p-4 group hover:bg-slate-900/95 transition-all hover:scale-[1.02] min-h-[72px] md:min-h-0 touch-manipulation" data-testid="kpi-campaigns">
+          <div class="flex items-center gap-2 md:gap-3">
+            <div class="pixel-box-sm bg-purple-900/50 border-purple-500/50 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-[44px] md:min-h-[44px]">
+              <img :src="PIXEL_ASSETS.ICON_FLAG" alt="" class="w-6 h-6 md:w-8 md:h-8 pixelated" />
             </div>
-            <div class="mt-1 flex items-center text-[9px]">
-              <span class="flex items-center gap-1 text-emerald-400 font-bold">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                LIVE
-              </span>
-            </div>
-          </div>
-
-          <!-- Combat Record -->
-          <div class="pixel-box bg-slate-900/90 p-2 md:p-4 group hover:bg-slate-900/95 transition-all hover:scale-[1.02] min-h-[72px] md:min-h-0 touch-manipulation" data-testid="kpi-combat">
-            <div class="flex items-center gap-2 md:gap-3">
-              <div class="pixel-box-sm bg-pink-900/50 border-pink-500/50 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-[44px] md:min-h-[44px]">
-                <img :src="PIXEL_ASSETS.ICON_SWORDS" alt="" class="w-6 h-6 md:w-8 md:h-8 pixelated" />
-              </div>
-              <div class="min-w-0 flex-1">
-                <p class="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider mb-0.5">Battles</p>
-                <div class="flex items-baseline gap-1">
-                  <p class="text-lg md:text-3xl font-bold text-white text-shadow-retro truncate">{{ matchesStore.recentMatches.length }}</p>
-                  <span v-if="matchesStore.recentMatches.length > 0" class="text-[9px] text-amber-400 font-bold hidden sm:inline">↑</span>
-                </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider mb-0.5">
+                Campaigns
+              </p>
+              <div class="flex items-baseline gap-1">
+                <p class="text-lg md:text-3xl font-bold text-white text-shadow-retro truncate">
+                  {{ leaguesStore.activeLeagueCount }}
+                </p>
+                <span class="text-[9px] text-amber-400 font-bold animate-pulse hidden sm:inline">●</span>
               </div>
             </div>
           </div>
+          <div class="mt-1 flex items-center text-[9px]">
+            <span class="flex items-center gap-1 text-emerald-400 font-bold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              LIVE
+            </span>
+          </div>
+        </div>
 
-          <!-- Pending Rewards -->
-          <div 
-            class="pixel-box bg-slate-900/90 p-2 md:p-4 group transition-all hover:scale-[1.02] min-h-[72px] md:min-h-0 touch-manipulation"
-            :class="rewardsStore.rewardCount > 0 ? 'border-amber-500/50 animate-pulse' : ''"
-            data-testid="kpi-rewards"
-          >
+        <!-- Combat Record -->
+        <div class="pixel-box bg-slate-900/90 p-2 md:p-4 group hover:bg-slate-900/95 transition-all hover:scale-[1.02] min-h-[72px] md:min-h-0 touch-manipulation" data-testid="kpi-combat">
+          <div class="flex items-center gap-2 md:gap-3">
+            <div class="pixel-box-sm bg-pink-900/50 border-pink-500/50 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-[44px] md:min-h-[44px]">
+              <img :src="PIXEL_ASSETS.ICON_SWORDS" alt="" class="w-6 h-6 md:w-8 md:h-8 pixelated" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider mb-0.5">
+                Battles
+              </p>
+              <div class="flex items-baseline gap-1">
+                <p class="text-lg md:text-3xl font-bold text-white text-shadow-retro truncate">
+                  {{ matchesStore.recentMatches.length }}
+                </p>
+                <span v-if="matchesStore.recentMatches.length > 0" class="text-[9px] text-amber-400 font-bold hidden sm:inline">↑</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending Rewards -->
+        <div 
+          class="pixel-box bg-slate-900/90 p-2 md:p-4 group transition-all hover:scale-[1.02] min-h-[72px] md:min-h-0 touch-manipulation"
+          :class="rewardsStore.rewardCount > 0 ? 'border-amber-500/50 animate-pulse' : ''"
+          data-testid="kpi-rewards"
+        >
+          <div class="flex items-center gap-2 md:gap-3">
+            <div 
+              class="pixel-box-sm bg-amber-900/50 border-amber-500/50 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-[44px] md:min-h-[44px]"
+              :class="rewardsStore.rewardCount > 0 ? 'animate-pulse' : ''"
+            >
+              <img :src="PIXEL_ASSETS.ICON_CHEST" alt="" class="w-6 h-6 md:w-8 md:h-8 pixelated" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider mb-0.5">
+                Rewards
+              </p>
+              <div class="flex items-baseline gap-1">
+                <p class="text-lg md:text-3xl font-bold text-white text-shadow-retro truncate">
+                  {{ rewardsStore.rewardCount }}
+                </p>
+                <span v-if="rewardsStore.rewardCount > 0" class="text-[9px] text-emerald-400 font-bold hidden sm:inline">●</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content - Single Column on Mobile -->
+      <div class="space-y-4 md:space-y-6">
+        <!-- Combat Log - Enhanced Mobile -->
+        <div class="pixel-box bg-slate-900/90">
+          <!-- Header -->
+          <div class="p-2 md:p-4 border-b-4 border-slate-800 flex items-center justify-between">
             <div class="flex items-center gap-2 md:gap-3">
+              <img :src="PIXEL_ASSETS.ICON_SCROLL" alt="" class="w-5 h-5 md:w-5 md:h-5 pixelated" />
+              <h3 class="text-sm md:text-lg font-bold text-amber-300">
+                BATTLE LOG
+              </h3>
+              <span v-if="matchesStore.recentMatches.length > 0" class="text-[9px] bg-slate-800 px-1.5 py-0.5 rounded hidden sm:inline">{{ matchesStore.recentMatches.length }}</span>
+            </div>
+            <router-link to="/matches" class="rpg-btn-small text-sm min-h-[44px]" data-testid="battle-log-view-all">
+              VIEW ALL
+            </router-link>
+          </div>
+            
+          <!-- Content -->
+          <div class="p-2 md:p-4">
+            <div v-if="matchesStore.isLoading" class="py-6 md:py-12 text-center">
+              <div class="inline-block animate-spin text-2xl md:text-3xl mb-2">
+                ⚔️
+              </div>
+              <p class="text-amber-400 animate-pulse text-xs md:text-base">
+                Loading battles...
+              </p>
+            </div>
+              
+            <div v-else-if="matchesStore.recentMatches.length === 0" class="py-6 md:py-12 text-center">
+              <img :src="PIXEL_ASSETS.ICON_SCROLL_EMPTY" alt="" class="w-10 h-10 md:w-12 md:h-12 pixelated mx-auto mb-2 opacity-50" />
+              <p class="text-slate-400 text-xs md:text-sm mb-3">
+                No battles yet
+              </p>
+              <router-link to="/matches" class="rpg-btn-small inline-flex text-xs py-2 px-4 min-h-[44px]">
+                JOIN BATTLE
+              </router-link>
+            </div>
+              
+            <div v-else class="space-y-1.5 max-h-52 md:max-h-80 overflow-y-auto custom-scrollbar">
               <div 
-                class="pixel-box-sm bg-amber-900/50 border-amber-500/50 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-[44px] md:min-h-[44px]"
-                :class="rewardsStore.rewardCount > 0 ? 'animate-pulse' : ''"
+                v-for="match in matchesStore.recentMatches.slice(0, 5)" 
+                :key="match.id" 
+                class="pixel-box-sm bg-slate-800/60 p-2.5 flex items-center justify-between hover:bg-slate-800/80 hover:border-indigo-500/30 transition-all cursor-pointer min-h-[52px] active:scale-[0.98]"
+                @click="goToMatch(match.id)"
               >
-                <img :src="PIXEL_ASSETS.ICON_CHEST" alt="" class="w-6 h-6 md:w-8 md:h-8 pixelated" />
-              </div>
-              <div class="min-w-0 flex-1">
-                <p class="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider mb-0.5">Rewards</p>
-                <div class="flex items-baseline gap-1">
-                  <p class="text-lg md:text-3xl font-bold text-white text-shadow-retro truncate">{{ rewardsStore.rewardCount }}</p>
-                  <span v-if="rewardsStore.rewardCount > 0" class="text-[9px] text-emerald-400 font-bold hidden sm:inline">●</span>
+                <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div 
+                    class="w-2 h-2 rounded-full flex-shrink-0"
+                    :class="match.ended ? 'bg-slate-500' : 'bg-emerald-400 animate-pulse'"
+                  ></div>
+                  <div class="min-w-0">
+                    <p class="font-bold text-slate-200 text-xs truncate">
+                      Battle #{{ match.id.slice(0, 6) }}
+                    </p>
+                    <p class="text-[9px] text-slate-500 truncate">
+                      {{ formatRelativeTime(match.created) }}
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <span class="text-sm font-bold" :class="getMatchResult(match) === 'win' ? 'text-emerald-400' : getMatchResult(match) === 'loss' ? 'text-red-400' : 'text-amber-400'">
+                    {{ getMatchResultIcon(match) }}
+                  </span>
+                  <span 
+                    class="pixel-badge px-2 py-0.5 text-[9px] font-bold uppercase flex-shrink-0"
+                    :class="match.ended ? 'bg-slate-700 text-slate-300 border-slate-600' : 'bg-emerald-900/40 text-emerald-300 border-emerald-500/40'"
+                  >
+                    {{ match.ended ? 'ENDED' : 'LIVE' }}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-      <!-- Main Content - Single Column on Mobile -->
-      <div class="space-y-4 md:space-y-6">
-        
-          <!-- Combat Log - Enhanced Mobile -->
-          <div class="pixel-box bg-slate-900/90">
-            <!-- Header -->
-            <div class="p-2 md:p-4 border-b-4 border-slate-800 flex items-center justify-between">
-              <div class="flex items-center gap-2 md:gap-3">
-                <img :src="PIXEL_ASSETS.ICON_SCROLL" alt="" class="w-5 h-5 md:w-5 md:h-5 pixelated" />
-                <h3 class="text-sm md:text-lg font-bold text-amber-300">BATTLE LOG</h3>
-                <span v-if="matchesStore.recentMatches.length > 0" class="text-[9px] bg-slate-800 px-1.5 py-0.5 rounded hidden sm:inline">{{ matchesStore.recentMatches.length }}</span>
-              </div>
-               <router-link to="/matches" class="rpg-btn-small text-sm min-h-[44px]" data-testid="battle-log-view-all">
-                  VIEW ALL
-               </router-link>
-            </div>
+        <!-- Champion Card - Enhanced -->
+        <div class="pixel-box bg-slate-900/90" data-testid="champion-card">
+          <div class="p-2 md:p-4 border-b-4 border-slate-800 flex items-center gap-2 md:gap-3">
+            <img :src="PIXEL_ASSETS.ICON_CROWN" alt="" class="w-5 h-5 md:w-5 md:h-5 pixelated text-amber-400" />
+            <h3 class="text-sm md:text-lg font-bold text-amber-300">
+              CHAMPION
+            </h3>
+            <span v-if="topFighter" class="text-[9px] bg-indigo-900/60 border border-indigo-500/50 px-1.5 py-0.5 text-indigo-300 font-bold hidden sm:inline">ELITE</span>
+          </div>
             
-            <!-- Content -->
-            <div class="p-2 md:p-4">
-              <div v-if="matchesStore.isLoading" class="py-6 md:py-12 text-center">
-                <div class="inline-block animate-spin text-2xl md:text-3xl mb-2">⚔️</div>
-                <p class="text-amber-400 animate-pulse text-xs md:text-base">Loading battles...</p>
-              </div>
-              
-              <div v-else-if="matchesStore.recentMatches.length === 0" class="py-6 md:py-12 text-center">
-                <img :src="PIXEL_ASSETS.ICON_SCROLL_EMPTY" alt="" class="w-10 h-10 md:w-12 md:h-12 pixelated mx-auto mb-2 opacity-50" />
-                <p class="text-slate-400 text-xs md:text-sm mb-3">No battles yet</p>
-                <router-link to="/matches" class="rpg-btn-small inline-flex text-xs py-2 px-4 min-h-[44px]">
-                  JOIN BATTLE
-                </router-link>
-              </div>
-              
-              <div v-else class="space-y-1.5 max-h-52 md:max-h-80 overflow-y-auto custom-scrollbar">
-                <div 
-                  v-for="match in matchesStore.recentMatches.slice(0, 5)" 
-                  :key="match.id" 
-                  class="pixel-box-sm bg-slate-800/60 p-2.5 flex items-center justify-between hover:bg-slate-800/80 hover:border-indigo-500/30 transition-all cursor-pointer min-h-[52px] active:scale-[0.98]"
-                  @click="goToMatch(match.id)"
-                >
-                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                    <div 
-                      class="w-2 h-2 rounded-full flex-shrink-0"
-                      :class="match.ended ? 'bg-slate-500' : 'bg-emerald-400 animate-pulse'"
-                    ></div>
-                    <div class="min-w-0">
-                      <p class="font-bold text-slate-200 text-xs truncate">Battle #{{ match.id.slice(0, 6) }}</p>
-                      <p class="text-[9px] text-slate-500 truncate">{{ formatRelativeTime(match.created) }}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2 flex-shrink-0">
-                    <span class="text-sm font-bold" :class="getMatchResult(match) === 'win' ? 'text-emerald-400' : getMatchResult(match) === 'loss' ? 'text-red-400' : 'text-amber-400'">
-                      {{ getMatchResultIcon(match) }}
-                    </span>
-                    <span 
-                      class="pixel-badge px-2 py-0.5 text-[9px] font-bold uppercase flex-shrink-0"
-                      :class="match.ended ? 'bg-slate-700 text-slate-300 border-slate-600' : 'bg-emerald-900/40 text-emerald-300 border-emerald-500/40'"
-                    >
-                      {{ match.ended ? 'ENDED' : 'LIVE' }}
-                    </span>
-                  </div>
+          <div class="p-3 md:p-4">
+            <div v-if="topFighter" class="text-center">
+              <div class="relative inline-block mb-3">
+                <div class="pixel-box-sm w-16 h-16 md:w-24 md:h-24 mx-auto flex items-center justify-center bg-gradient-to-br from-indigo-900/80 to-purple-900/80 border-indigo-500/60">
+                  <img :src="PIXEL_ASSETS.ICON_WARRIOR" alt="" class="w-10 h-10 md:w-16 md:h-16 pixelated" />
+                </div>
+                <div class="absolute -bottom-2 -right-2 bg-gradient-to-br from-amber-600 to-amber-800 text-white text-[10px] px-1.5 py-1 font-bold border-2 border-slate-900 shadow-lg">
+                  LVL {{ topFighter.level }}
                 </div>
               </div>
+              <h4 class="text-sm md:text-lg font-bold text-white truncate max-w-full mb-2" data-testid="champion-name">
+                {{ topFighter.name }}
+              </h4>
+              <div class="flex flex-wrap gap-1.5 justify-center mb-3">
+                <span class="pixel-badge bg-slate-800 text-slate-300 px-2 py-1 text-[10px] border-slate-600 inline-flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-pink-500"></span>
+                  Power: {{ topFighter.power }}
+                </span>
+                <span class="pixel-badge bg-slate-800 text-slate-300 px-2 py-1 text-[10px] border-slate-600 inline-flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  Win Rate: 78%
+                </span>
+              </div>
+              <div class="w-full bg-slate-800/60 h-1.5 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-amber-600 to-amber-400" :style="{ width: `${Math.min(100, topFighter.level * 5)}%` }"></div>
+              </div>
+            </div>
+              
+            <div v-else class="py-4 md:py-8 text-center">
+              <p class="text-slate-500 text-xs md:text-sm mb-3">
+                No champions yet
+              </p>
+              <router-link to="/roster" class="rpg-btn-small inline-flex text-xs py-2 px-4 min-h-[44px]">
+                RECRUIT
+              </router-link>
             </div>
           </div>
+        </div>
 
-          <!-- Champion Card - Enhanced -->
-          <div class="pixel-box bg-slate-900/90" data-testid="champion-card">
-            <div class="p-2 md:p-4 border-b-4 border-slate-800 flex items-center gap-2 md:gap-3">
-              <img :src="PIXEL_ASSETS.ICON_CROWN" alt="" class="w-5 h-5 md:w-5 md:h-5 pixelated text-amber-400" />
-              <h3 class="text-sm md:text-lg font-bold text-amber-300">CHAMPION</h3>
-              <span v-if="topFighter" class="text-[9px] bg-indigo-900/60 border border-indigo-500/50 px-1.5 py-0.5 text-indigo-300 font-bold hidden sm:inline">ELITE</span>
-            </div>
-            
-            <div class="p-3 md:p-4">
-              <div v-if="topFighter" class="text-center">
-                <div class="relative inline-block mb-3">
-                  <div class="pixel-box-sm w-16 h-16 md:w-24 md:h-24 mx-auto flex items-center justify-center bg-gradient-to-br from-indigo-900/80 to-purple-900/80 border-indigo-500/60">
-                    <img :src="PIXEL_ASSETS.ICON_WARRIOR" alt="" class="w-10 h-10 md:w-16 md:h-16 pixelated" />
-                  </div>
-                  <div class="absolute -bottom-2 -right-2 bg-gradient-to-br from-amber-600 to-amber-800 text-white text-[10px] px-1.5 py-1 font-bold border-2 border-slate-900 shadow-lg">
-                    LVL {{ topFighter.level }}
-                  </div>
-                </div>
-                <h4 class="text-sm md:text-lg font-bold text-white truncate max-w-full mb-2" data-testid="champion-name">{{ topFighter.name }}</h4>
-                <div class="flex flex-wrap gap-1.5 justify-center mb-3">
-                  <span class="pixel-badge bg-slate-800 text-slate-300 px-2 py-1 text-[10px] border-slate-600 inline-flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-pink-500"></span>
-                    Power: {{ topFighter.power }}
-                  </span>
-                  <span class="pixel-badge bg-slate-800 text-slate-300 px-2 py-1 text-[10px] border-slate-600 inline-flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    Win Rate: 78%
-                  </span>
-                </div>
-                <div class="w-full bg-slate-800/60 h-1.5 rounded-full overflow-hidden">
-                  <div class="h-full bg-gradient-to-r from-amber-600 to-amber-400" :style="{ width: `${Math.min(100, topFighter.level * 5)}%` }"></div>
-                </div>
-              </div>
-              
-              <div v-else class="py-4 md:py-8 text-center">
-                <p class="text-slate-500 text-xs md:text-sm mb-3">No champions yet</p>
-                <router-link to="/roster" class="rpg-btn-small inline-flex text-xs py-2 px-4 min-h-[44px]">
-                  RECRUIT
-                </router-link>
-              </div>
-            </div>
+        <!-- Quick Actions - Compact -->
+        <div class="pixel-box bg-slate-900/90">
+          <div class="p-2 md:p-4 border-b-4 border-slate-800">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Quick Actions
+            </h3>
           </div>
-
-         <!-- Quick Actions - Compact -->
-         <div class="pixel-box bg-slate-900/90">
-            <div class="p-2 md:p-4 border-b-4 border-slate-800">
-              <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Quick Actions</h3>
-            </div>
            
-           <div class="p-2 md:p-4 grid grid-cols-2 gap-2">
-             <router-link 
-               to="/matches" 
-               class="pixel-box-sm bg-slate-800/60 p-2 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-indigo-500/50 transition-all group min-h-[64px]"
-               data-testid="quick-battle"
-             >
-               <img :src="PIXEL_ASSETS.ICON_SWORDS" alt="" class="w-5 h-5 pixelated mb-1 group-hover:scale-110 transition-transform" />
-               <span class="text-[10px] font-bold text-slate-300">BATTLE</span>
-             </router-link>
+          <div class="p-2 md:p-4 grid grid-cols-2 gap-2">
+            <router-link 
+              to="/matches" 
+              class="pixel-box-sm bg-slate-800/60 p-2 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-indigo-500/50 transition-all group min-h-[64px]"
+              data-testid="quick-battle"
+            >
+              <img :src="PIXEL_ASSETS.ICON_SWORDS" alt="" class="w-5 h-5 pixelated mb-1 group-hover:scale-110 transition-transform" />
+              <span class="text-[10px] font-bold text-slate-300">BATTLE</span>
+            </router-link>
              
-             <router-link 
-               to="/roster" 
-               class="pixel-box-sm bg-slate-800/60 p-2 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-purple-500/50 transition-all group min-h-[64px]"
-               data-testid="quick-roster"
-             >
-               <img :src="PIXEL_ASSETS.ICON_KNIGHT" alt="" class="w-5 h-5 pixelated mb-1 group-hover:scale-110 transition-transform" />
-               <span class="text-[10px] font-bold text-slate-300">ROSTER</span>
-             </router-link>
+            <router-link 
+              to="/roster" 
+              class="pixel-box-sm bg-slate-800/60 p-2 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-purple-500/50 transition-all group min-h-[64px]"
+              data-testid="quick-roster"
+            >
+              <img :src="PIXEL_ASSETS.ICON_KNIGHT" alt="" class="w-5 h-5 pixelated mb-1 group-hover:scale-110 transition-transform" />
+              <span class="text-[10px] font-bold text-slate-300">ROSTER</span>
+            </router-link>
              
-             <router-link 
-               to="/inventory" 
-               class="pixel-box-sm bg-slate-800/60 p-2 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-emerald-500/50 transition-all group min-h-[64px]"
-               data-testid="quick-vault"
-             >
-               <img :src="PIXEL_ASSETS.ICON_CHEST" alt="" class="w-5 h-5 pixelated mb-1 group-hover:scale-110 transition-transform" />
-               <span class="text-[10px] font-bold text-slate-300">VAULT</span>
-             </router-link>
+            <router-link 
+              to="/inventory" 
+              class="pixel-box-sm bg-slate-800/60 p-2 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-emerald-500/50 transition-all group min-h-[64px]"
+              data-testid="quick-vault"
+            >
+              <img :src="PIXEL_ASSETS.ICON_CHEST" alt="" class="w-5 h-5 pixelated mb-1 group-hover:scale-110 transition-transform" />
+              <span class="text-[10px] font-bold text-slate-300">VAULT</span>
+            </router-link>
              
-             <router-link 
-               to="/leagues" 
-               class="pixel-box-sm bg-slate-800/60 p-2 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-amber-500/50 transition-all group min-h-[64px]"
-               data-testid="quick-leagues"
-             >
-               <img :src="PIXEL_ASSETS.ICON_TROPHY" alt="" class="w-5 h-5 pixelated mb-1 group-hover:scale-110 transition-transform" />
-               <span class="text-[10px] font-bold text-slate-300">LEAGUES</span>
-             </router-link>
-           </div>
-         </div>
-
+            <router-link 
+              to="/leagues" 
+              class="pixel-box-sm bg-slate-800/60 p-2 flex flex-col items-center justify-center hover:bg-slate-800/80 hover:border-amber-500/50 transition-all group min-h-[64px]"
+              data-testid="quick-leagues"
+            >
+              <img :src="PIXEL_ASSETS.ICON_TROPHY" alt="" class="w-5 h-5 pixelated mb-1 group-hover:scale-110 transition-transform" />
+              <span class="text-[10px] font-bold text-slate-300">LEAGUES</span>
+            </router-link>
+          </div>
+        </div>
       </div>
-
     </div>
   </div>
 </template>

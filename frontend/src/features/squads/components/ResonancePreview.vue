@@ -46,7 +46,9 @@
 
     <!-- Harmony Score Gauge -->
     <div class="harmony-gauge">
-      <div class="gauge-label">Harmony Score</div>
+      <div class="gauge-label">
+        Harmony Score
+      </div>
       <div class="gauge-bar-container">
         <div
           class="gauge-bar-fill"
@@ -56,7 +58,9 @@
           }"
         ></div>
       </div>
-      <div class="gauge-value">{{ resonanceState?.harmonyScore || 0 }}/100</div>
+      <div class="gauge-value">
+        {{ resonanceState?.harmonyScore || 0 }}/100
+      </div>
     </div>
 
     <!-- Tier Name and Description -->

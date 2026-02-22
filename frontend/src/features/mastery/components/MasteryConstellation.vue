@@ -1,30 +1,37 @@
 <template>
   <div class="constellation-container">
     <div class="constellation-header">
-      <h1 class="title">Mastery Constellation</h1>
-      <div class="subtitle">Assign Soul-Shards to unlock your fighter's true potential.</div>
+      <h1 class="title">
+        Mastery Constellation
+      </h1>
+      <div class="subtitle">
+        Assign Soul-Shards to unlock your fighter's true potential.
+      </div>
     </div>
     
     <div class="constellation-grid">
       <!-- Background / Map Container -->
       <div class="map" :style="{ backgroundImage: `url(${bgUrl})` }">
-        
         <!-- Weapon Branch -->
         <div class="branch physical">
-          <div class="branch-label text-blue-400">Path of the Blade</div>
+          <div class="branch-label text-blue-400">
+            Path of the Blade
+          </div>
           <div class="nodes-row">
-            <div class="node-wrapper" v-for="(node, index) in weaponNodes" :key="node.id">
-              <div class="node" 
+            <div v-for="(node, index) in weaponNodes" :key="node.id" class="node-wrapper">
+              <div
+                class="node" 
                 :class="{ 
                   'node-end': node.isEnd, 
                   'node-unlocked': isUnlocked(node.id),
                   'node-locked': !isUnlocked(node.id) && !canUnlock(node.id, weaponNodes)
                 }" 
+                :data-testid="'node-' + node.id"
                 @click="unlockNode(node.id, weaponNodes)"
-                :data-testid="'node-' + node.id">
+              >
                 <img :src="swordIcon" :alt="node.title" />
                 <div class="node-tooltip">
-                  <strong>{{ node.title }}</strong><br/>
+                  <strong>{{ node.title }}</strong><br />
                   <span>{{ node.desc }}</span>
                   <div v-if="!isUnlocked(node.id)" class="text-xs mt-1" :class="canUnlock(node.id, weaponNodes) ? 'text-green-400' : 'text-red-400'">
                     {{ canUnlock(node.id, weaponNodes) ? 'Click to Unlock (1 Shard)' : 'Previous Node Required' }}
@@ -38,20 +45,24 @@
 
         <!-- Support Branch -->
         <div class="branch support">
-          <div class="branch-label text-emerald-400">Path of the Soul</div>
+          <div class="branch-label text-emerald-400">
+            Path of the Soul
+          </div>
           <div class="nodes-row">
-            <div class="node-wrapper" v-for="(node, index) in supportNodes" :key="node.id">
-              <div class="node" 
+            <div v-for="(node, index) in supportNodes" :key="node.id" class="node-wrapper">
+              <div
+                class="node" 
                 :class="{ 
                   'node-end': node.isEnd, 
                   'node-unlocked': isUnlocked(node.id),
                   'node-locked': !isUnlocked(node.id) && !canUnlock(node.id, supportNodes)
                 }" 
+                :data-testid="'node-' + node.id"
                 @click="unlockNode(node.id, supportNodes)"
-                :data-testid="'node-' + node.id">
+              >
                 <img :src="heartIcon" :alt="node.title" />
                 <div class="node-tooltip">
-                  <strong>{{ node.title }}</strong><br/>
+                  <strong>{{ node.title }}</strong><br />
                   <span>{{ node.desc }}</span>
                   <div v-if="!isUnlocked(node.id)" class="text-xs mt-1" :class="canUnlock(node.id, supportNodes) ? 'text-green-400' : 'text-red-400'">
                     {{ canUnlock(node.id, supportNodes) ? 'Click to Unlock (1 Shard)' : 'Previous Node Required' }}
@@ -65,20 +76,24 @@
 
         <!-- Utility Branch -->
         <div class="branch utility">
-          <div class="branch-label text-purple-400">Path of the Forge</div>
+          <div class="branch-label text-purple-400">
+            Path of the Forge
+          </div>
           <div class="nodes-row">
-            <div class="node-wrapper" v-for="(node, index) in utilityNodes" :key="node.id">
-              <div class="node" 
+            <div v-for="(node, index) in utilityNodes" :key="node.id" class="node-wrapper">
+              <div
+                class="node" 
                 :class="{ 
                   'node-end': node.isEnd, 
                   'node-unlocked': isUnlocked(node.id),
                   'node-locked': !isUnlocked(node.id) && !canUnlock(node.id, utilityNodes)
                 }" 
+                :data-testid="'node-' + node.id"
                 @click="unlockNode(node.id, utilityNodes)"
-                :data-testid="'node-' + node.id">
+              >
                 <img :src="cogIcon" :alt="node.title" />
                 <div class="node-tooltip">
-                  <strong>{{ node.title }}</strong><br/>
+                  <strong>{{ node.title }}</strong><br />
                   <span>{{ node.desc }}</span>
                   <div v-if="!isUnlocked(node.id)" class="text-xs mt-1" :class="canUnlock(node.id, utilityNodes) ? 'text-green-400' : 'text-red-400'">
                     {{ canUnlock(node.id, utilityNodes) ? 'Click to Unlock (1 Shard)' : 'Previous Node Required' }}
@@ -89,13 +104,16 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
 
     <div class="constellation-footer">
-      <div class="shards-count" data-testid="shards-count">Available Soul-Shards: <span>{{ currentShards }}</span></div>
-      <button class="reset-btn" @click="reset">Reset Constellation</button>
+      <div class="shards-count" data-testid="shards-count">
+        Available Soul-Shards: <span>{{ currentShards }}</span>
+      </div>
+      <button class="reset-btn" @click="reset">
+        Reset Constellation
+      </button>
     </div>
   </div>
 </template>

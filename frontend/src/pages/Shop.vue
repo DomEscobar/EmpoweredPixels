@@ -10,8 +10,8 @@
         v-for="tab in tabs" 
         :key="tab.id"
         :class="['tab', { active: activeTab === tab.id }]"
-        @click="activeTab = tab.id"
         :data-testid="`tab-${tab.id}`"
+        @click="activeTab = tab.id"
       >
         {{ tab.label }}
       </button>
@@ -21,7 +21,9 @@
       <!-- Gold Packages Tab -->
       <section v-if="activeTab === 'gold'" class="tab-content" data-testid="tab-gold">
         <h2>Gold Emporium</h2>
-        <p class="tab-description">Purchase gold for upgrades and items</p>
+        <p class="tab-description">
+          Purchase gold for upgrades and items
+        </p>
         
         <div v-if="shopStore.loading" class="gold-grid">
           <div v-for="i in 4" :key="i" class="skeleton-card">
@@ -50,8 +52,8 @@
             v-for="item in shopStore.goldPackages" 
             :key="item.id"
             :item="item"
-            @purchase="openPurchaseModal"
             :data-testid="`gold-package-${item.id}`"
+            @purchase="openPurchaseModal"
           />
         </div>
       </section>
@@ -59,7 +61,9 @@
       <!-- Bundles Tab -->
       <section v-if="activeTab === 'bundles'" class="tab-content" data-testid="tab-bundles">
         <h2>Equipment Bundles</h2>
-        <p class="tab-description">Curated bundles with guaranteed rarity items</p>
+        <p class="tab-description">
+          Curated bundles with guaranteed rarity items
+        </p>
         
         <div v-if="shopStore.loading" class="bundles-grid">
           <div v-for="i in 3" :key="i" class="skeleton-card">
@@ -88,8 +92,8 @@
             v-for="item in shopStore.bundles" 
             :key="item.id"
             :item="item"
-            @purchase="openPurchaseModal"
             :data-testid="`bundle-${item.id}`"
+            @purchase="openPurchaseModal"
           />
         </div>
       </section>
@@ -97,7 +101,9 @@
       <!-- History Tab -->
       <section v-if="activeTab === 'history'" class="tab-content" data-testid="tab-history">
         <h2>Purchase History</h2>
-        <p class="tab-description">Your recent transactions</p>
+        <p class="tab-description">
+          Your recent transactions
+        </p>
         
         <div v-if="shopStore.loading" class="transactions-list">
           <Skeleton v-for="i in 5" :key="i" height="64px" border-radius="8px" />

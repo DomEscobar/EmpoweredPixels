@@ -2,7 +2,9 @@
   <div class="attunement-page" data-testid="attunement-page">
     <header class="page-header">
       <h1>✨ Attunements</h1>
-      <p class="subtitle">Master the 6 elements to gain powerful bonuses</p>
+      <p class="subtitle">
+        Master the 6 elements to gain powerful bonuses
+      </p>
     </header>
 
     <div v-if="attunementStore.loading" class="loading">
@@ -27,7 +29,9 @@
           <span class="level-badge">Level {{ att.level }}</span>
         </div>
 
-        <p class="description">{{ getConfig(att.element).description }}</p>
+        <p class="description">
+          {{ getConfig(att.element).description }}
+        </p>
 
         <div class="progress-section">
           <div class="progress-bar">

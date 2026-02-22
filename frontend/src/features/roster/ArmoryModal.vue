@@ -8,13 +8,21 @@
       <!-- Header -->
       <div class="p-6 border-b-4 border-slate-800 flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <div class="text-3xl">⚔️</div>
+          <div class="text-3xl">
+            ⚔️
+          </div>
           <div>
-            <h2 class="text-2xl font-bold text-amber-400 text-shadow-retro">ARMORY</h2>
-            <p class="text-xs text-slate-500 uppercase tracking-[0.2em]">Select equipment for {{ fighter.name }}</p>
+            <h2 class="text-2xl font-bold text-amber-400 text-shadow-retro">
+              ARMORY
+            </h2>
+            <p class="text-xs text-slate-500 uppercase tracking-[0.2em]">
+              Select equipment for {{ fighter.name }}
+            </p>
           </div>
         </div>
-        <button @click="$emit('close')" class="rpg-btn-small">✕</button>
+        <button class="rpg-btn-small" @click="$emit('close')">
+          ✕
+        </button>
       </div>
 
       <!-- Filters & Stats -->
@@ -22,13 +30,13 @@
         <button 
           v-for="type in filterTypes" 
           :key="type"
-          @click="currentFilter = type"
           :class="[
             'px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest border transition-all whitespace-nowrap',
             currentFilter === type 
               ? 'bg-amber-600 border-amber-400 text-white' 
               : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-500'
           ]"
+          @click="currentFilter = type"
         >
           {{ type }}
         </button>
@@ -37,22 +45,30 @@
       <!-- Inventory Grid (Scrollable) -->
       <div class="flex-1 overflow-y-auto p-6">
         <div v-if="inventory.isLoading" class="flex flex-col items-center justify-center py-20">
-          <div class="text-4xl animate-spin mb-4">⚙️</div>
-          <p class="text-amber-500 font-mono italic">Searching storage...</p>
+          <div class="text-4xl animate-spin mb-4">
+            ⚙️
+          </div>
+          <p class="text-amber-500 font-mono italic">
+            Searching storage...
+          </p>
         </div>
 
         <div v-else-if="filteredItems.length === 0" class="flex flex-col items-center justify-center py-20 text-slate-500 border-2 border-dashed border-slate-800 rounded">
-          <div class="text-4xl mb-4 opacity-20">📦</div>
-          <p class="font-bold">Thy inventory is void of such items.</p>
+          <div class="text-4xl mb-4 opacity-20">
+            📦
+          </div>
+          <p class="font-bold">
+            Thy inventory is void of such items.
+          </p>
         </div>
 
         <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           <div
             v-for="item in filteredItems"
             :key="item.id"
-            @click="handleEquip(item.id)"
             class="group cursor-pointer"
             :data-testid="`inventory-item-${item.id}`"
+            @click="handleEquip(item.id)"
           >
             <div 
               class="relative aspect-square pixel-box-sm bg-slate-950 transition-all hover:scale-105 active:scale-95 flex items-center justify-center overflow-hidden"
@@ -62,7 +78,9 @@
               <div class="absolute inset-0 opacity-10" :class="rarityColors[getRarityName(item.rarity)]"></div>
               
               <!-- Icon -->
-              <div class="text-3xl relative z-10">{{ getWeaponIcon(item.type) }}</div>
+              <div class="text-3xl relative z-10">
+                {{ getWeaponIcon(item.type) }}
+              </div>
               
               <!-- Level & Enhancement -->
               <div class="absolute top-1 left-1 bg-black/80 px-1 text-[8px] font-bold text-white border border-slate-800">
@@ -74,14 +92,16 @@
               
               <!-- Binding Indicator -->
               <div v-if="item.fighterId" class="absolute inset-0 flex items-center justify-center">
-                 <div class="bg-black/80 p-1 text-[8px] uppercase font-bold text-red-500 border border-red-900 border-t-2 border-b-2 rotate-[-15deg]">
-                   BOUND
-                 </div>
+                <div class="bg-black/80 p-1 text-[8px] uppercase font-bold text-red-500 border border-red-900 border-t-2 border-b-2 rotate-[-15deg]">
+                  BOUND
+                </div>
               </div>
             </div>
             
             <div class="mt-2 text-[10px] text-center">
-              <div class="truncate font-bold text-slate-300">{{ item.type }}</div>
+              <div class="truncate font-bold text-slate-300">
+                {{ item.type }}
+              </div>
               <div :class="['font-bold uppercase tracking-tighter', rarityTextColors[getRarityName(item.rarity)]]">
                 {{ getRarityName(item.rarity) }}
               </div>
@@ -93,7 +113,9 @@
       <!-- Footer Info -->
       <div class="p-4 bg-slate-900 border-t-4 border-slate-800 text-[10px] text-slate-500 flex justify-between">
         <p>※ Items bound to other warriors cannot be re-equipped here.</p>
-        <p class="uppercase font-bold tracking-widest text-slate-400">Inventory: {{ inventory.equipment.length }} Items</p>
+        <p class="uppercase font-bold tracking-widest text-slate-400">
+          Inventory: {{ inventory.equipment.length }} Items
+        </p>
       </div>
     </div>
   </div>

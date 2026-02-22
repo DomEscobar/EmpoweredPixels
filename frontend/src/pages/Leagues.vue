@@ -21,8 +21,12 @@
         
         <div class="flex items-center gap-4">
           <div class="bg-slate-900 border-2 border-slate-700 px-4 py-2">
-            <div class="text-[10px] text-slate-500 uppercase tracking-wider">Active Campaigns</div>
-            <div class="text-2xl font-black text-emerald-400">{{ leaguesStore.activeLeagueCount }}</div>
+            <div class="text-[10px] text-slate-500 uppercase tracking-wider">
+              Active Campaigns
+            </div>
+            <div class="text-2xl font-black text-emerald-400">
+              {{ leaguesStore.activeLeagueCount }}
+            </div>
           </div>
         </div>
       </header>
@@ -30,12 +34,12 @@
       <!-- Leagues List Component -->
       <LeagueList
         :leagues="leaguesStore.leagues"
-        :isLoading="leaguesStore.isLoading"
+        :is-loading="leaguesStore.isLoading"
         :error="leaguesStore.error"
-        :isSubscribed="(id) => isSubscribed(id)"
-        :participantCount="(id) => leaguesStore.getParticipantCount(id)"
-        :getMyFighters="(id) => getMyFighters(id)"
-        :getLastWinner="(id) => leaguesStore.getLastWinner(id)"
+        :is-subscribed="(id) => isSubscribed(id)"
+        :participant-count="(id) => leaguesStore.getParticipantCount(id)"
+        :get-my-fighters="(id) => getMyFighters(id)"
+        :get-last-winner="(id) => leaguesStore.getLastWinner(id)"
         @subscribe="openSubscribeModal"
         @manage="openManageModal"
         @view-detail="openLeagueDetail"
@@ -44,7 +48,7 @@
     </div>
 
     <!-- Subscribe Modal -->
-    <BaseModal :show="showSubscribeModal" @close="showSubscribeModal = false" data-testid="subscribe-modal">
+    <BaseModal :show="showSubscribeModal" data-testid="subscribe-modal" @close="showSubscribeModal = false">
       <template #title>
         <div class="flex items-center gap-3 text-amber-500">
           <img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-6 h-6 pixelated" />
@@ -53,14 +57,22 @@
       </template>
       <div class="space-y-4 font-mono text-slate-200">
         <div v-if="selectedLeagueForAction" class="bg-slate-950 border-2 border-amber-900/50 p-4 mb-4">
-          <div class="text-[10px] text-amber-700 uppercase tracking-wider mb-1">Campaign</div>
-          <div class="text-lg font-black text-amber-400">{{ selectedLeagueForAction.name }}</div>
+          <div class="text-[10px] text-amber-700 uppercase tracking-wider mb-1">
+            Campaign
+          </div>
+          <div class="text-lg font-black text-amber-400">
+            {{ selectedLeagueForAction.name }}
+          </div>
         </div>
 
         <div v-if="!rosterStore.fighters.length" class="text-center py-8">
           <img :src="PIXEL_ASSETS.ICON_SKULL" class="w-12 h-12 mx-auto opacity-30 pixelated mb-4" />
-          <p class="text-slate-500 uppercase text-xs font-bold">No fighters available</p>
-          <p class="text-slate-600 text-xs mt-1">Recruit a champion in the Armory first</p>
+          <p class="text-slate-500 uppercase text-xs font-bold">
+            No fighters available
+          </p>
+          <p class="text-slate-600 text-xs mt-1">
+            Recruit a champion in the Armory first
+          </p>
         </div>
 
         <div v-else class="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
@@ -78,22 +90,24 @@
               <h4 class="font-bold text-white uppercase tracking-wider" :class="selectedFighterId === fighter.id ? 'text-amber-300' : ''">
                 {{ fighter.name }}
               </h4>
-              <div class="text-[10px] text-slate-500 uppercase mt-1">Lvl {{ fighter.level ?? 1 }}</div>
+              <div class="text-[10px] text-slate-500 uppercase mt-1">
+                Lvl {{ fighter.level ?? 1 }}
+              </div>
             </div>
-            <div v-if="selectedFighterId === fighter.id" class="text-amber-400 font-bold text-lg">
-              <<
-            </div>
+             <div v-if="selectedFighterId === fighter.id" class="text-amber-400 font-bold text-lg">
+               &lt;&lt;
+             </div>
           </div>
         </div>
 
         <div class="flex justify-between gap-3 pt-6 border-t-2 border-slate-800 border-dashed">
-          <button type="button" @click="showSubscribeModal = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300">
+          <button type="button" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300" @click="showSubscribeModal = false">
             Cancel
           </button>
           <button 
             :disabled="!selectedFighterId || leaguesStore.isSubscribing" 
-            @click="confirmSubscribe"
             class="rpg-btn bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase tracking-wider px-6 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            @click="confirmSubscribe"
           >
             {{ leaguesStore.isSubscribing ? 'Enlisting...' : 'Enlist' }}
           </button>
@@ -102,7 +116,7 @@
     </BaseModal>
 
     <!-- Manage Squad Modal -->
-    <BaseModal :show="showManageModal" @close="showManageModal = false" data-testid="manage-modal">
+    <BaseModal :show="showManageModal" data-testid="manage-modal" @close="showManageModal = false">
       <template #title>
         <div class="flex items-center gap-3 text-emerald-400">
           <img :src="PIXEL_ASSETS.ICON_SHIELD" class="w-6 h-6 pixelated" />
@@ -111,13 +125,19 @@
       </template>
       <div class="space-y-4 font-mono text-slate-200">
         <div v-if="selectedLeagueForAction" class="bg-slate-950 border-2 border-emerald-900/50 p-4 mb-4">
-          <div class="text-[10px] text-emerald-700 uppercase tracking-wider mb-1">Campaign</div>
-          <div class="text-lg font-black text-emerald-400">{{ selectedLeagueForAction.name }}</div>
+          <div class="text-[10px] text-emerald-700 uppercase tracking-wider mb-1">
+            Campaign
+          </div>
+          <div class="text-lg font-black text-emerald-400">
+            {{ selectedLeagueForAction.name }}
+          </div>
         </div>
 
         <!-- Current Subscriptions -->
         <div class="space-y-3">
-          <div class="text-[10px] text-slate-500 uppercase tracking-wider">Enlisted Champions</div>
+          <div class="text-[10px] text-slate-500 uppercase tracking-wider">
+            Enlisted Champions
+          </div>
           <div 
             v-for="sub in currentSubscriptions" 
             :key="sub.fighterId"
@@ -127,12 +147,14 @@
               <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-10 h-10 pixelated object-cover" />
             </div>
             <div class="flex-1">
-              <h4 class="font-bold text-emerald-300 uppercase tracking-wider">{{ getFighterName(sub.fighterId) }}</h4>
+              <h4 class="font-bold text-emerald-300 uppercase tracking-wider">
+                {{ getFighterName(sub.fighterId) }}
+              </h4>
             </div>
             <button 
-              @click="handleUnsubscribe(sub.fighterId)"
               :disabled="leaguesStore.isSubscribing"
               class="rpg-btn-small bg-red-900/50 border-red-800 text-red-300 hover:bg-red-900 hover:text-white"
+              @click="handleUnsubscribe(sub.fighterId)"
             >
               Withdraw
             </button>
@@ -141,21 +163,27 @@
 
         <!-- Add More -->
         <div v-if="availableFighters.length" class="pt-4 border-t border-slate-800">
-          <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-3">Enlist Additional Champion</div>
+          <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-3">
+            Enlist Additional Champion
+          </div>
           <div class="flex gap-3">
             <select 
               v-model="selectedFighterId" 
               class="flex-1 bg-slate-950 border-2 border-slate-700 p-2 text-amber-100 uppercase text-xs font-bold focus:outline-none focus:border-amber-500"
               data-testid="fighter-select"
             >
-              <option value="">Select Fighter</option>
-              <option v-for="f in availableFighters" :key="f.id" :value="f.id">{{ f.name }}</option>
+              <option value="">
+                Select Fighter
+              </option>
+              <option v-for="f in availableFighters" :key="f.id" :value="f.id">
+                {{ f.name }}
+              </option>
             </select>
             <button 
-              @click="confirmSubscribe"
               :disabled="!selectedFighterId || leaguesStore.isSubscribing"
               class="rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black disabled:opacity-50"
               data-testid="enlist-button"
+              @click="confirmSubscribe"
             >
               Enlist
             </button>
@@ -163,7 +191,7 @@
         </div>
 
         <div class="flex justify-end gap-3 pt-6 border-t-2 border-slate-800 border-dashed">
-          <button type="button" @click="showManageModal = false" class="rpg-btn-small bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 font-bold uppercase">
+          <button type="button" class="rpg-btn-small bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 font-bold uppercase" @click="showManageModal = false">
             Done
           </button>
         </div>
@@ -171,7 +199,7 @@
     </BaseModal>
 
     <!-- League Detail Modal -->
-    <BaseModal :show="showDetailModal" @close="closeDetailModal" data-testid="detail-modal">
+    <BaseModal :show="showDetailModal" data-testid="detail-modal" @close="closeDetailModal">
       <template #title>
         <div class="flex items-center gap-3 text-amber-500">
           <img :src="PIXEL_ASSETS.ICON_CROWN" class="w-6 h-6 pixelated" />
@@ -184,12 +212,12 @@
           <button 
             v-for="tab in detailTabs" 
             :key="tab.id"
-            @click="activeDetailTab = tab.id"
             class="px-4 py-3 text-xs uppercase font-bold tracking-wider transition-all border-b-2 -mb-[2px]"
             :class="activeDetailTab === tab.id 
               ? 'text-amber-400 border-amber-500 bg-amber-900/10' 
               : 'text-slate-500 border-transparent hover:text-slate-300'"
             :data-testid="'tab-' + tab.id"
+            @click="activeDetailTab = tab.id"
           >
             {{ tab.label }}
           </button>
@@ -198,7 +226,9 @@
         <!-- Loading -->
         <div v-if="leaguesStore.isLoadingDetail" class="py-12 text-center">
           <div class="w-8 h-8 border-4 border-amber-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p class="text-slate-500 uppercase text-xs">Gathering intelligence...</p>
+          <p class="text-slate-500 uppercase text-xs">
+            Gathering intelligence...
+          </p>
         </div>
 
         <div v-else-if="leaguesStore.selectedLeague">
@@ -210,7 +240,9 @@
             </div>
             
             <div v-if="!leaguesStore.selectedLeague.subscriptions?.length" class="text-center py-8 bg-slate-950/50 border border-slate-800">
-              <p class="text-slate-600 uppercase text-xs">No warriors have enlisted yet</p>
+              <p class="text-slate-600 uppercase text-xs">
+                No warriors have enlisted yet
+              </p>
             </div>
             
             <div v-else class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
@@ -227,7 +259,9 @@
                   <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-8 h-8 pixelated" />
                 </div>
                 <div class="flex-1">
-                  <h4 class="font-bold text-slate-200 uppercase text-sm">{{ getFighterName(sub.fighterId) || sub.fighterId.substring(0, 8) }}</h4>
+                  <h4 class="font-bold text-slate-200 uppercase text-sm">
+                    {{ getFighterName(sub.fighterId) || sub.fighterId.substring(0, 8) }}
+                  </h4>
                 </div>
                 <div v-if="isMyFighter(sub.fighterId)" class="text-emerald-400 text-[10px] uppercase font-bold">
                   YOURS
@@ -240,7 +274,9 @@
           <div v-if="activeDetailTab === 'matches'" class="space-y-4">
             <div v-if="!currentLeagueMatches.length" class="text-center py-8 bg-slate-950/50 border border-slate-800">
               <img :src="PIXEL_ASSETS.ICON_SWORDS" class="w-12 h-12 mx-auto opacity-20 pixelated mb-4" />
-              <p class="text-slate-600 uppercase text-xs">No battles recorded yet</p>
+              <p class="text-slate-600 uppercase text-xs">
+                No battles recorded yet
+              </p>
             </div>
             
             <div v-else class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
@@ -259,7 +295,9 @@
                     Battle #{{ match.matchId.substring(0, 8) }}
                   </h4>
                 </div>
-                <div class="text-slate-600 text-xs uppercase">View >></div>
+                <div class="text-slate-600 text-xs uppercase">
+                  View >>
+                </div>
               </router-link>
             </div>
           </div>
@@ -268,7 +306,9 @@
           <div v-if="activeDetailTab === 'leaderboard'" class="space-y-4">
             <div v-if="!currentLeagueHighscores.length" class="text-center py-8 bg-slate-950/50 border border-slate-800">
               <img :src="PIXEL_ASSETS.ICON_TROPHY" class="w-12 h-12 mx-auto opacity-20 pixelated mb-4" />
-              <p class="text-slate-600 uppercase text-xs">Rankings will appear after battles</p>
+              <p class="text-slate-600 uppercase text-xs">
+                Rankings will appear after battles
+              </p>
             </div>
             
             <div v-else class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
@@ -292,11 +332,17 @@
                   <h4 class="font-bold uppercase text-sm" :class="idx === 0 ? 'text-amber-300' : 'text-slate-200'">
                     {{ score.fighterName || score.fighterId.substring(0, 8) }}
                   </h4>
-                  <div class="text-[10px] text-slate-600">{{ score.username }}</div>
+                  <div class="text-[10px] text-slate-600">
+                    {{ score.username }}
+                  </div>
                 </div>
                 <div class="text-right">
-                  <div class="text-lg font-black" :class="idx === 0 ? 'text-amber-400' : 'text-slate-300'">{{ score.score }}</div>
-                  <div class="text-[10px] text-slate-600 uppercase">Points</div>
+                  <div class="text-lg font-black" :class="idx === 0 ? 'text-amber-400' : 'text-slate-300'">
+                    {{ score.score }}
+                  </div>
+                  <div class="text-[10px] text-slate-600 uppercase">
+                    Points
+                  </div>
                 </div>
               </div>
             </div>

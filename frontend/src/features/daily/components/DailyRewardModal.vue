@@ -10,43 +10,67 @@
         <h2 class="text-2xl font-black text-white text-shadow-retro uppercase tracking-wider">
           Daily Reward
         </h2>
-        <p class="text-amber-100 text-sm mt-1">Day {{ dailyStore.currentStreak + 1 }} of 7</p>
+        <p class="text-amber-100 text-sm mt-1">
+          Day {{ dailyStore.currentStreak + 1 }} of 7
+        </p>
       </div>
 
       <!-- Streak Tracker -->
       <div class="p-6 space-y-6">
         <!-- Streak Fire -->
         <div class="flex items-center justify-center gap-2">
-          <span v-for="day in 7" :key="day" 
+          <span
+            v-for="day in 7" :key="day" 
             class="text-2xl transition-all"
-            :class="day <= dailyStore.currentStreak ? 'grayscale-0 scale-110' : 'grayscale opacity-30'">
+            :class="day <= dailyStore.currentStreak ? 'grayscale-0 scale-110' : 'grayscale opacity-30'"
+          >
             🔥
           </span>
         </div>
 
         <!-- Reward Calendar -->
         <div class="grid grid-cols-7 gap-2">
-          <div v-for="reward in REWARD_SCHEDULE" :key="reward.day"
+          <div
+            v-for="reward in REWARD_SCHEDULE" :key="reward.day"
             class="pixel-box-sm p-2 text-center transition-all"
-            :class="getRewardClass(reward.day)">
-            <div class="text-2xl mb-1">{{ reward.icon }}</div>
-            <div class="text-xs font-bold truncate">{{ reward.name }}</div>
-            <div class="text-[10px] text-slate-400">{{ reward.description }}</div>
+            :class="getRewardClass(reward.day)"
+          >
+            <div class="text-2xl mb-1">
+              {{ reward.icon }}
+            </div>
+            <div class="text-xs font-bold truncate">
+              {{ reward.name }}
+            </div>
+            <div class="text-[10px] text-slate-400">
+              {{ reward.description }}
+            </div>
           </div>
         </div>
 
         <!-- Current Reward Highlight -->
         <div v-if="dailyStore.nextReward" class="pixel-box bg-gradient-to-br from-amber-900/50 to-slate-900 p-4 text-center">
-          <p class="text-slate-400 text-xs uppercase tracking-wider mb-2">Today's Reward</p>
-          <div class="text-5xl mb-2 animate-bounce">{{ dailyStore.nextReward.icon }}</div>
-          <h3 class="text-xl font-black text-amber-400">{{ dailyStore.nextReward.name }}</h3>
-          <p class="text-slate-300 text-sm">{{ dailyStore.nextReward.description }}</p>
+          <p class="text-slate-400 text-xs uppercase tracking-wider mb-2">
+            Today's Reward
+          </p>
+          <div class="text-5xl mb-2 animate-bounce">
+            {{ dailyStore.nextReward.icon }}
+          </div>
+          <h3 class="text-xl font-black text-amber-400">
+            {{ dailyStore.nextReward.name }}
+          </h3>
+          <p class="text-slate-300 text-sm">
+            {{ dailyStore.nextReward.description }}
+          </p>
         </div>
 
         <!-- Time Until Reset -->
         <div v-if="dailyStore.timeUntilReset && !dailyStore.canClaim" class="text-center">
-          <p class="text-slate-400 text-sm">Next reward in</p>
-          <p class="text-2xl font-mono text-amber-400 font-bold">{{ dailyStore.timeUntilReset }}</p>
+          <p class="text-slate-400 text-sm">
+            Next reward in
+          </p>
+          <p class="text-2xl font-mono text-amber-400 font-bold">
+            {{ dailyStore.timeUntilReset }}
+          </p>
         </div>
 
         <!-- Warning -->
@@ -59,27 +83,29 @@
 
       <!-- Actions -->
       <div class="p-4 border-t border-slate-800 flex gap-3">
-        <button @click="close" class="flex-1 rpg-btn-secondary">
+        <button class="flex-1 rpg-btn-secondary" @click="close">
           Close
         </button>
         <button 
           v-if="dailyStore.canClaim"
-          @click="handleClaim"
           :disabled="dailyStore.isClaiming"
-          class="flex-1 rpg-btn bg-amber-600 border-amber-800 hover:bg-amber-500 text-white font-bold">
+          class="flex-1 rpg-btn bg-amber-600 border-amber-800 hover:bg-amber-500 text-white font-bold"
+          @click="handleClaim"
+        >
           <span v-if="dailyStore.isClaiming">Claiming...</span>
           <span v-else>CLAIM REWARD 🎁</span>
         </button>
         <button 
           v-else
           disabled
-          class="flex-1 pixel-box-sm bg-slate-800 text-slate-500 cursor-not-allowed">
+          class="flex-1 pixel-box-sm bg-slate-800 text-slate-500 cursor-not-allowed"
+        >
           Already Claimed ✓
         </button>
       </div>
 
       <!-- Close X -->
-      <button @click="close" class="absolute top-2 right-2 text-white/50 hover:text-white">
+      <button class="absolute top-2 right-2 text-white/50 hover:text-white" @click="close">
         ✕
       </button>
     </div>
@@ -89,9 +115,15 @@
   <Teleport to="body">
     <div v-if="showSuccess" class="fixed inset-0 z-[60] pointer-events-none flex items-center justify-center">
       <div class="text-center animate-bounce">
-        <div class="text-8xl mb-4">{{ claimedReward?.icon }}</div>
-        <h3 class="text-4xl font-black text-amber-400 text-shadow-retro">{{ claimedReward?.name }}</h3>
-        <p class="text-2xl text-white mt-2">Claimed!</p>
+        <div class="text-8xl mb-4">
+          {{ claimedReward?.icon }}
+        </div>
+        <h3 class="text-4xl font-black text-amber-400 text-shadow-retro">
+          {{ claimedReward?.name }}
+        </h3>
+        <p class="text-2xl text-white mt-2">
+          Claimed!
+        </p>
       </div>
     </div>
   </Teleport>

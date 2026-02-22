@@ -27,18 +27,18 @@
           </div>
           <div class="flex gap-2 md:gap-3">
             <button 
-              @click="handleQuickJoin"
               :disabled="isQuickJoining || roster.fighters.length === 0"
               class="flex-1 md:flex-none rpg-btn bg-blue-600 border-blue-800 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed group relative px-4 md:px-6 py-3 font-bold uppercase tracking-wider flex items-center justify-center gap-2"
               data-testid="quick-join-button"
+              @click="handleQuickJoin"
             >
               <span v-if="isQuickJoining" class="animate-spin">⚡</span>
               <span v-else>⚡ Quick Join</span>
             </button>
             <button 
-              @click="showCreate = true"
               class="rpg-btn bg-emerald-700 border-emerald-900 text-white hover:bg-emerald-600 group relative px-4 md:px-6 py-3 font-bold uppercase tracking-wider flex items-center gap-2"
               data-testid="create-match-button"
+              @click="showCreate = true"
             >
               <span class="absolute inset-0 border-2 border-white/20 pointer-events-none"></span>
               <span class="hidden md:inline"><img :src="PIXEL_ASSETS.ICON_SCROLL" class="w-5 h-5 pixelated" /></span>
@@ -93,10 +93,10 @@
                   <span class="text-amber-400 font-bold">{{ currentMatch?.registrations?.length ?? 1 }}/{{ options.maxPlayers || 2 }}</span>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                  <button @click="handleLeave" class="rpg-btn-small bg-red-900/50 border-red-800 text-red-300 hover:bg-red-900 hover:text-white" data-testid="leave-match-button">
+                  <button class="rpg-btn-small bg-red-900/50 border-red-800 text-red-300 hover:bg-red-900 hover:text-white" data-testid="leave-match-button" @click="handleLeave">
                     Flee
                   </button>
-                  <button @click="handleStart" :disabled="isStarting" class="rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black" data-testid="begin-match-button">
+                  <button :disabled="isStarting" class="rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black" data-testid="begin-match-button" @click="handleStart">
                     BEGIN
                   </button>
                 </div>
@@ -107,8 +107,10 @@
                   <span class="text-red-500 font-bold animate-pulse text-xs uppercase tracking-widest">>> COMBAT ENGAGED <<</span>
                 </div>
                 <router-link :to="'/matches/' + currentMatchId" class="block">
-                  <button class="w-full rpg-btn bg-red-700 border-red-900 text-white hover:bg-red-600 font-bold uppercase tracking-wider py-3"
-                          data-testid="spectate-match-button">
+                  <button
+                    class="w-full rpg-btn bg-red-700 border-red-900 text-white hover:bg-red-600 font-bold uppercase tracking-wider py-3"
+                    data-testid="spectate-match-button"
+                  >
                     Spectate
                   </button>
                 </router-link>
@@ -116,10 +118,16 @@
 
               <template v-else-if="currentMatchStatus === 'completed'">
                 <div class="grid grid-cols-2 gap-2">
-                  <button @click="clearCurrentMatch" class="rpg-btn-small bg-slate-800 border-slate-600 text-slate-400 hover:bg-slate-700" data-testid="dismiss-match-button">Dismiss</button>
+                  <button class="rpg-btn-small bg-slate-800 border-slate-600 text-slate-400 hover:bg-slate-700" data-testid="dismiss-match-button" @click="clearCurrentMatch">
+                    Dismiss
+                  </button>
                   <router-link :to="'/matches/' + currentMatchId" class="block">
-                    <button class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600"
-                            data-testid="claim-rewards-match-button">Rewards</button>
+                    <button
+                      class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600"
+                      data-testid="claim-rewards-match-button"
+                    >
+                      Rewards
+                    </button>
                   </router-link>
                 </div>
               </template>
@@ -136,11 +144,11 @@
             <button
               v-for="stat in filterOptions"
               :key="stat.value"
-              @click="browseStatus = stat.value"
               class="px-3 md:px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-all whitespace-nowrap flex items-center gap-2"
               :class="browseStatus === stat.value 
                 ? 'bg-amber-600 text-slate-900 shadow-lg scale-105 z-10' 
                 : 'bg-slate-900 border-2 border-slate-700 text-slate-500 hover:text-amber-200 hover:border-amber-700'"
+              @click="browseStatus = stat.value"
             >
               {{ stat.label }}
               <span class="text-[10px] opacity-70">({{ getCountForStatus(stat.value) }})</span>
@@ -154,7 +162,7 @@
               class="w-full bg-slate-900 border-2 border-slate-700 p-2 pl-3 pr-8 text-amber-100 placeholder-slate-600 focus:outline-none focus:border-amber-500 uppercase text-xs font-bold rounded"
             />
             <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
-               🔍
+              🔍
             </div>
           </div>
         </div>
@@ -183,15 +191,15 @@
         >
           <button 
             v-if="browseStatus === 'lobby' && roster.fighters.length === 0"
-            @click="$router.push('/roster')" 
-            class="rpg-btn-small mt-4 bg-indigo-600 border-indigo-800 text-white hover:bg-indigo-500"
+            class="rpg-btn-small mt-4 bg-indigo-600 border-indigo-800 text-white hover:bg-indigo-500" 
+            @click="$router.push('/roster')"
           >
             RECRUIT HERO
           </button>
           <button 
             v-else-if="browseStatus === 'lobby'"
-            @click="showCreate = true" 
-            class="rpg-btn-small mt-4 bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600"
+            class="rpg-btn-small mt-4 bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600" 
+            @click="showCreate = true"
           >
             CREATE MATCH
           </button>
@@ -253,23 +261,23 @@
                 <template v-if="(match.status ?? 'lobby') === 'lobby'">
                   <button 
                     v-if="currentMatchId !== match.id"
-                    @click="openJoinModal(match.id)"
                     class="w-full rpg-btn-small bg-indigo-900 border-indigo-700 text-indigo-200 hover:bg-indigo-800 hover:text-white font-bold uppercase"
                     :data-testid="`join-match-${match.id}`"
+                    @click="openJoinModal(match.id)"
                   >
-                   Join Party
+                    Join Party
                   </button>
                   <template v-else>
                     <button 
-                      @click="handleStart"
                       :disabled="isStarting"
                       class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600 font-bold uppercase"
+                      @click="handleStart"
                     >
                       {{ isStarting ? 'Starting...' : 'Start Battle' }}
                     </button>
                     <button 
-                      @click="handleLeave"
                       class="w-full rpg-btn-small bg-slate-800 border-slate-700 text-red-400 hover:bg-slate-700 hover:text-red-300 font-bold uppercase text-xs"
+                      @click="handleLeave"
                     >
                       Leave
                     </button>
@@ -298,14 +306,20 @@
             <!-- Match Preview Tooltip -->
             <transition name="fade">
               <div v-if="hoveredMatchId === match.id && match.status === 'lobby'" class="absolute inset-0 bg-slate-900/95 z-20 p-4 flex flex-col">
-                <h4 class="text-amber-400 font-bold uppercase text-sm mb-3">Match Preview</h4>
+                <h4 class="text-amber-400 font-bold uppercase text-sm mb-3">
+                  Match Preview
+                </h4>
                 <div class="flex-1 space-y-2 overflow-y-auto custom-scrollbar">
                   <div v-for="reg in match.registrations" :key="reg.fighterId" class="bg-slate-800 p-2 rounded text-xs">
                     <div class="flex items-center gap-2">
                       <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-6 h-6 pixelated" />
                       <div>
-                        <div class="text-slate-200 font-bold">{{ reg.fighterName || 'Unknown' }}</div>
-                        <div class="text-slate-500">Lvl {{ reg.fighterLevel || 1 }} • PWR {{ reg.fighterPower || 0 }}</div>
+                        <div class="text-slate-200 font-bold">
+                          {{ reg.fighterName || 'Unknown' }}
+                        </div>
+                        <div class="text-slate-500">
+                          Lvl {{ reg.fighterLevel || 1 }} • PWR {{ reg.fighterPower || 0 }}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -323,10 +337,10 @@
     <!-- Mobile FAB -->
     <button
       v-if="!currentMatchId"
-      @click="handleQuickJoin"
       :disabled="isQuickJoining || roster.fighters.length === 0"
       class="fixed bottom-6 right-6 z-50 md:hidden w-14 h-14 rounded-full bg-blue-600 border-4 border-blue-800 shadow-xl flex items-center justify-center text-white animate-bounce-slow"
       data-testid="mobile-fab"
+      @click="handleQuickJoin"
     >
       <span v-if="isQuickJoining" class="animate-spin text-xl">⚡</span>
       <span v-else class="text-2xl">⚔️</span>
@@ -340,7 +354,7 @@
           <span class="uppercase font-black text-xl tracking-wide">Draft Contract</span>
         </div>
       </template>
-      <form @submit.prevent="handleCreate" class="space-y-6 font-mono text-slate-200" data-testid="create-match-form">
+      <form class="space-y-6 font-mono text-slate-200" data-testid="create-match-form" @submit.prevent="handleCreate">
         <div class="space-y-4">
           <div class="p-4 bg-slate-900 border-2 border-slate-700">
             <label class="flex items-center justify-between cursor-pointer group">
@@ -348,22 +362,26 @@
                 <span class="font-bold text-amber-100 uppercase tracking-wide group-hover:text-amber-400">Private Event</span>
                 <p class="text-[10px] text-slate-500 uppercase mt-1">Requires invitation code</p>
               </div>
-              <input type="checkbox" v-model="options.isPrivate" class="accent-amber-600 w-5 h-5 cursor-pointer" />
+              <input v-model="options.isPrivate" type="checkbox" class="accent-amber-600 w-5 h-5 cursor-pointer" />
             </label>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div class="bg-slate-900 p-3 border-2 border-slate-700">
               <label class="text-[10px] font-bold uppercase text-slate-500 block mb-2">Enemy Bots</label>
-              <input type="number" v-model.number="options.botCount" min="0" max="10" 
+              <input
+                v-model.number="options.botCount" type="number" min="0" max="10" 
                 class="w-full bg-black border border-slate-700 p-2 text-center text-amber-400 font-bold focus:outline-none focus:border-amber-500 rounded"
-                data-testid="bot-count-input" />
+                data-testid="bot-count-input"
+              />
             </div>
             <div class="bg-slate-900 p-3 border-2 border-slate-700">
               <label class="text-[10px] font-bold uppercase text-slate-500 block mb-2">Difficulty Lvl</label>
-              <input type="number" v-model.number="options.botPowerlevel" min="1" max="100" 
+              <input
+                v-model.number="options.botPowerlevel" type="number" min="1" max="100" 
                 class="w-full bg-black border border-slate-700 p-2 text-center text-amber-400 font-bold focus:outline-none focus:border-amber-500 rounded"
-                data-testid="bot-power-input" />
+                data-testid="bot-power-input"
+              />
             </div>
           </div>
 
@@ -373,7 +391,7 @@
                 <span class="font-bold text-emerald-100 uppercase tracking-wide group-hover:text-emerald-400">Auto-Start</span>
                 <p class="text-[10px] text-slate-500 uppercase mt-1">Begin battle immediately when ready</p>
               </div>
-              <input type="checkbox" v-model="options.autoStart" class="accent-emerald-600 w-5 h-5 cursor-pointer" />
+              <input v-model="options.autoStart" type="checkbox" class="accent-emerald-600 w-5 h-5 cursor-pointer" />
             </label>
           </div>
 
@@ -384,17 +402,21 @@
                 v-for="f in roster.fighters"
                 :key="f.id"
                 type="button"
-                @click="createFighterId = f.id"
                 class="relative flex items-center gap-3 p-2 border-2 cursor-pointer transition-all duration-200 bg-slate-950"
                 :class="createFighterId === f.id ? 'border-amber-500 bg-amber-900/20' : 'border-slate-800 hover:border-slate-600 hover:bg-slate-800'"
                 :data-testid="`create-match-fighter-${f.id}`"
+                @click="createFighterId = f.id"
               >
                 <div class="w-8 h-8 bg-black border border-slate-700 flex items-center justify-center">
                   <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-6 h-6 pixelated object-cover" />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <div class="text-xs font-bold text-white uppercase truncate">{{ f.name }}</div>
-                  <div class="text-[9px] text-slate-500 uppercase">Lvl {{ f.level ?? 1 }}</div>
+                  <div class="text-xs font-bold text-white uppercase truncate">
+                    {{ f.name }}
+                  </div>
+                  <div class="text-[9px] text-slate-500 uppercase">
+                    Lvl {{ f.level ?? 1 }}
+                  </div>
                 </div>
                 <div v-if="createFighterId === f.id" class="text-amber-400 font-bold text-sm">
                   ✓
@@ -405,9 +427,13 @@
         </div>
 
         <div class="flex justify-between gap-3 pt-4 border-t-2 border-slate-800 border-dashed">
-          <button type="button" @click="showCreate = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300" data-testid="cancel-create-match-btn">Cancel</button>
-          <button type="submit" :disabled="!createFighterId || isCreating" class="rpg-btn bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase tracking-wider px-8 py-2"
-                  data-testid="confirm-create-match-btn">
+          <button type="button" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300" data-testid="cancel-create-match-btn" @click="showCreate = false">
+            Cancel
+          </button>
+          <button
+            type="submit" :disabled="!createFighterId || isCreating" class="rpg-btn bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase tracking-wider px-8 py-2"
+            data-testid="confirm-create-match-btn"
+          >
             Create
           </button>
         </div>
@@ -432,18 +458,24 @@
               <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-10 h-10 pixelated object-cover" />
             </div>
             <div class="flex-1">
-              <h4 class="font-bold text-white uppercase tracking-wider" :class="selectedFighterId === f.id ? 'text-indigo-300' : ''">{{ f.name }}</h4>
-              <div class="text-[10px] text-slate-500 uppercase mt-1">Lvl {{ f.level ?? 1 }} • {{ f.class ?? 'Warrior' }}</div>
+              <h4 class="font-bold text-white uppercase tracking-wider" :class="selectedFighterId === f.id ? 'text-indigo-300' : ''">
+                {{ f.name }}
+              </h4>
+              <div class="text-[10px] text-slate-500 uppercase mt-1">
+                Lvl {{ f.level ?? 1 }} • {{ f.class ?? 'Warrior' }}
+              </div>
             </div>
-            <div v-if="selectedFighterId === f.id" class="text-indigo-400 font-bold text-lg">
-              <<
-            </div>
+             <div v-if="selectedFighterId === f.id" class="text-indigo-400 font-bold text-lg">
+               &lt;&lt;
+             </div>
           </div>
         </div>
 
         <div class="flex justify-between gap-3 pt-6 border-t-2 border-slate-800 border-dashed">
-          <button type="button" @click="showJoinModal = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300">Retreat</button>
-          <button :disabled="!selectedFighterId || isJoining" @click="confirmJoin" class="rpg-btn bg-indigo-600 border-indigo-900 text-white hover:bg-indigo-500 font-black uppercase tracking-wider px-6 py-2">
+          <button type="button" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300" @click="showJoinModal = false">
+            Retreat
+          </button>
+          <button :disabled="!selectedFighterId || isJoining" class="rpg-btn bg-indigo-600 border-indigo-900 text-white hover:bg-indigo-500 font-black uppercase tracking-wider px-6 py-2" @click="confirmJoin">
             Ready
           </button>
         </div>
@@ -478,18 +510,24 @@
               <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-10 h-10 pixelated object-cover" />
             </div>
             <div class="flex-1">
-              <h4 class="font-bold text-white uppercase tracking-wider" :class="quickJoinFighterId === f.id ? 'text-blue-300' : ''">{{ f.name }}</h4>
-              <div class="text-[10px] text-slate-500 uppercase mt-1">Lvl {{ f.level ?? 1 }} • {{ f.class ?? 'Warrior' }}</div>
+              <h4 class="font-bold text-white uppercase tracking-wider" :class="quickJoinFighterId === f.id ? 'text-blue-300' : ''">
+                {{ f.name }}
+              </h4>
+              <div class="text-[10px] text-slate-500 uppercase mt-1">
+                Lvl {{ f.level ?? 1 }} • {{ f.class ?? 'Warrior' }}
+              </div>
             </div>
-            <div v-if="quickJoinFighterId === f.id" class="text-blue-400 font-bold text-lg">
-              <<
-            </div>
+             <div v-if="quickJoinFighterId === f.id" class="text-blue-400 font-bold text-lg">
+               &lt;&lt;
+             </div>
           </div>
         </div>
 
         <div class="flex justify-between gap-3 pt-6 border-t-2 border-slate-800 border-dashed">
-          <button type="button" @click="showQuickJoinModal = false" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300">Cancel</button>
-          <button :disabled="!quickJoinFighterId || isQuickJoining" @click="confirmQuickJoin" class="rpg-btn bg-blue-600 border-blue-900 text-white hover:bg-blue-500 font-black uppercase tracking-wider px-6 py-2">
+          <button type="button" class="px-4 py-2 text-xs uppercase font-bold text-slate-500 hover:text-slate-300" @click="showQuickJoinModal = false">
+            Cancel
+          </button>
+          <button :disabled="!quickJoinFighterId || isQuickJoining" class="rpg-btn bg-blue-600 border-blue-900 text-white hover:bg-blue-500 font-black uppercase tracking-wider px-6 py-2" @click="confirmQuickJoin">
             <span v-if="isQuickJoining" class="flex items-center justify-center gap-2">
               <span class="animate-spin">⚡</span> FINDING...
             </span>

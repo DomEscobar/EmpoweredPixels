@@ -4,11 +4,15 @@
       <span class="rarity-badge" :style="{ backgroundColor: rarityColor }">
         {{ rarityName }}
       </span>
-      <h3 class="bundle-name">{{ item.name }}</h3>
+      <h3 class="bundle-name">
+        {{ item.name }}
+      </h3>
     </div>
     
     <div class="bundle-content">
-      <p class="bundle-description">{{ item.description }}</p>
+      <p class="bundle-description">
+        {{ item.description }}
+      </p>
       
       <div v-if="item.gold_amount" class="bonus-gold">
         <span class="bonus-icon">+</span>
@@ -31,8 +35,8 @@
       <button 
         class="buy-button"
         :disabled="isDisabled"
-        @click="$emit('purchase', item.id)"
         :data-testid="`buy-bundle-${item.id}`"
+        @click="$emit('purchase', item.id)"
       >
         {{ buttonText }}
       </button>

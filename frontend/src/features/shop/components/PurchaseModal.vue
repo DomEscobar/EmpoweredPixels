@@ -1,16 +1,20 @@
 <template>
-  <div v-if="isOpen" class="modal-overlay" @click.self="close" data-testid="purchase-modal">
+  <div v-if="isOpen" class="modal-overlay" data-testid="purchase-modal" @click.self="close">
     <div class="modal-content">
       <div class="modal-header" data-testid="modal-header">
         <h2>Confirm Purchase</h2>
-        <button class="close-button" @click="close">&times;</button>
+        <button class="close-button" @click="close">
+          &times;
+        </button>
       </div>
 
       <div v-if="item" class="modal-body" data-testid="modal-body">
         <div class="item-preview" :style="{ borderColor: rarityColor }" data-testid="item-preview">
           <h3>{{ item.name }}</h3>
           <p>{{ item.description }}</p>
-          <div class="price-tag">{{ formattedPrice }}</div>
+          <div class="price-tag">
+            {{ formattedPrice }}
+          </div>
         </div>
 
         <div class="balance-info" data-testid="balance-info">
@@ -31,12 +35,14 @@
         </div>
 
         <div class="modal-actions" data-testid="modal-actions">
-          <button class="cancel-button" @click="close" data-testid="cancel-button">Cancel</button>
+          <button class="cancel-button" data-testid="cancel-button" @click="close">
+            Cancel
+          </button>
           <button 
             class="confirm-button"
             :disabled="!canPurchase || shopStore.purchaseInProgress"
-            @click="confirmPurchase"
             data-testid="confirm-button"
+            @click="confirmPurchase"
           >
             <span v-if="shopStore.purchaseInProgress">Processing...</span>
             <span v-else>Confirm Purchase</span>

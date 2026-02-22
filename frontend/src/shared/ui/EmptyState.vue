@@ -1,8 +1,14 @@
 <template>
   <div class="empty-state">
-    <div class="empty-icon">{{ icon }}</div>
-    <h3 class="empty-title">{{ title }}</h3>
-    <p class="empty-message">{{ message }}</p>
+    <div class="empty-icon">
+      {{ icon }}
+    </div>
+    <h3 class="empty-title">
+      {{ title }}
+    </h3>
+    <p class="empty-message">
+      {{ message }}
+    </p>
     <slot></slot>
   </div>
 </template>

@@ -7,14 +7,20 @@
 
     <div v-else-if="error" class="error-container">
       <p>{{ error }}</p>
-      <button @click="loadSquad" class="ep-button ep-button-primary">Retry</button>
+      <button class="ep-button ep-button-primary" @click="loadSquad">
+        Retry
+      </button>
     </div>
 
     <div v-else-if="squad" class="squad-content">
       <!-- View Mode -->
       <section v-if="squad.isActive" class="squad-view">
-        <h2 class="ep-header-gold">{{ squad.name }}</h2>
-        <p class="squad-status">Active Squad</p>
+        <h2 class="ep-header-gold">
+          {{ squad.name }}
+        </h2>
+        <p class="squad-status">
+          Active Squad
+        </p>
 
         <div class="squad-slots-display">
           <div
@@ -32,9 +38,9 @@
 
         <div class="squad-actions-view">
           <button
-            @click="openEdit"
             class="ep-button ep-button-secondary"
             data-testid="edit-squad-btn"
+            @click="openEdit"
           >
             Edit Squad
           </button>
@@ -42,30 +48,44 @@
 
         <!-- Eligible Leagues Section (New Integration) -->
         <div class="eligible-leagues-section mt-10 pt-10 border-t border-slate-800">
-           <div class="flex items-center justify-between mb-6">
-              <h3 class="text-amber-500 font-bold uppercase tracking-widest text-lg">Eligible Competitions</h3>
-              <span class="text-[10px] text-slate-500 font-mono">BASED ON CURRENT COMPOSITION</span>
-           </div>
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-amber-500 font-bold uppercase tracking-widest text-lg">
+              Eligible Competitions
+            </h3>
+            <span class="text-[10px] text-slate-500 font-mono">BASED ON CURRENT COMPOSITION</span>
+          </div>
            
-           <div v-if="eligibleLeagues.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div v-for="league in eligibleLeagues" :key="league.id" 
-                   class="bg-black/40 border border-slate-800 p-4 rounded-lg flex items-center justify-between group hover:border-amber-500/50 transition-all">
-                  <div class="flex items-center gap-4">
-                      <div class="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center text-xl">🏆</div>
-                      <div>
-                          <h4 class="text-slate-200 font-bold text-sm">{{ league.name }}</h4>
-                          <p class="text-[10px] text-slate-500 uppercase">{{ league.options?.tier || 'General' }} • Active</p>
-                      </div>
-                  </div>
-                  <router-link :to="`/leagues?id=${league.id}`" 
-                               class="text-[10px] bg-amber-600/10 hover:bg-amber-600 text-amber-500 hover:text-black border border-amber-500/50 px-3 py-1.5 rounded font-black transition-all">
-                      REGISTER
-                  </router-link>
+          <div v-if="eligibleLeagues.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div
+              v-for="league in eligibleLeagues" :key="league.id" 
+              class="bg-black/40 border border-slate-800 p-4 rounded-lg flex items-center justify-between group hover:border-amber-500/50 transition-all"
+            >
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center text-xl">
+                  🏆
+                </div>
+                <div>
+                  <h4 class="text-slate-200 font-bold text-sm">
+                    {{ league.name }}
+                  </h4>
+                  <p class="text-[10px] text-slate-500 uppercase">
+                    {{ league.options?.tier || 'General' }} • Active
+                  </p>
+                </div>
               </div>
-           </div>
-           <div v-else class="text-center py-6 bg-slate-900/50 rounded-lg border border-dashed border-slate-800">
-              <p class="text-slate-500 text-sm italic">Adjust your squad composition to unlock new league eligibilities.</p>
-           </div>
+              <router-link
+                :to="`/leagues?id=${league.id}`" 
+                class="text-[10px] bg-amber-600/10 hover:bg-amber-600 text-amber-500 hover:text-black border border-amber-500/50 px-3 py-1.5 rounded font-black transition-all"
+              >
+                REGISTER
+              </router-link>
+            </div>
+          </div>
+          <div v-else class="text-center py-6 bg-slate-900/50 rounded-lg border border-dashed border-slate-800">
+            <p class="text-slate-500 text-sm italic">
+              Adjust your squad composition to unlock new league eligibilities.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -77,14 +97,16 @@
 
     <!-- No Squad -->
     <div v-else class="no-squad">
-      <h2 class="ep-header-gold">No Active Squad</h2>
+      <h2 class="ep-header-gold">
+        No Active Squad
+      </h2>
       <p class="no-squad-text">
         Create a squad to build your combat team
       </p>
       <button
-        @click="openEdit"
         class="ep-button ep-button-primary"
         data-testid="create-squad-btn"
+        @click="openEdit"
       >
         Create Squad
       </button>
