@@ -1,7 +1,7 @@
 <template>
   <div class="leagues-list" data-testid="leagues-list">
     <!-- Loading State -->
-    <div v-if="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    <div v-if="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div v-for="i in 3" :key="i" class="h-80 bg-slate-900/50 border-4 border-slate-800 animate-pulse flex items-center justify-center">
         <span class="text-slate-700 uppercase font-bold text-xs">Loading Campaigns...</span>
       </div>
@@ -25,19 +25,15 @@
     </div>
 
     <!-- League Grid -->
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div 
          v-for="league in leagues" 
          :key="league.id"
-         class="group rpg-card bg-slate-900 border-4 transition-all duration-200 flex flex-col relative overflow-hidden cursor-pointer p-4 sm:p-5"
+         class="group rpg-card bg-slate-900 border-4 transition-all duration-200 flex flex-col relative overflow-hidden cursor-pointer"
          :class="isSubscribed(league.id) 
            ? 'border-emerald-600 hover:border-emerald-500 ring-2 ring-emerald-500/20' 
            : 'border-slate-800 hover:border-amber-600/50'"
          :data-testid="'league-card-' + league.id"
-         @touchstart="onCardTouchStart(league.id, $event)"
-         @touchmove="onCardTouchMove($event)"
-         @touchend="onCardTouchEnd(league.id, $event)"
-         :style="{ transform: cardTransforms[league.id] || '' }"
        >
         <!-- Active Subscription Badge -->
         <div v-if="isSubscribed(league.id)" class="absolute top-0 right-0 z-20">
@@ -60,10 +56,10 @@
 
         <div class="flex-1 flex flex-col relative z-10">
           <div class="mb-4">
-            <h3 class="text-xl font-black text-amber-100 uppercase leading-tight group-hover:text-amber-400 transition-colors">
+            <h3 class="text-lg sm:text-xl font-black text-amber-100 uppercase leading-tight group-hover:text-amber-400 transition-colors">
               {{ league.name }}
             </h3>
-            <p class="text-xs text-slate-500 mt-2 leading-relaxed line-clamp-2">
+             <p class="text-[10px] sm:text-xs text-slate-500 mt-2 leading-relaxed line-clamp-2">
               {{ getLeagueDescription(league) }}
             </p>
           </div>
@@ -72,7 +68,7 @@
           <div class="grid grid-cols-2 gap-3 mb-5">
             <div class="bg-slate-950/50 p-3 border border-slate-800">
               <div class="text-[10px] text-slate-600 uppercase tracking-wider">Combatants</div>
-              <div class="text-lg font-black text-slate-200">{{ participantCount(league.id) || '—' }}</div>
+               <div class="text-base sm:text-lg font-black text-slate-200">{{ participantCount(league.id) || '—' }}</div>
             </div>
             <div class="bg-slate-950/50 p-3 border border-slate-800">
               <div class="text-[10px] text-slate-600 uppercase tracking-wider">Tier</div>
