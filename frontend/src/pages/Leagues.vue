@@ -27,137 +27,20 @@
         </div>
       </header>
 
-      <!-- Loading State -->
-      <div v-if="leaguesStore.isLoading" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div v-for="i in 3" :key="i" class="h-80 bg-slate-900/50 border-4 border-slate-800 animate-pulse flex items-center justify-center">
-          <span class="text-slate-700 uppercase font-bold text-xs">Loading Campaigns...</span>
-        </div>
-      </div>
-
-      <!-- Error State -->
-      <div v-else-if="leaguesStore.error" class="py-20 text-center border-4 border-dashed border-red-900/50 bg-red-950/20">
-        <img :src="PIXEL_ASSETS.ICON_SKULL" class="w-16 h-16 mx-auto opacity-50 pixelated mb-4" />
-        <h3 class="text-red-400 uppercase font-bold tracking-widest">Connection Lost</h3>
-        <p class="text-slate-600 text-xs mt-2">{{ leaguesStore.error }}</p>
-        <button @click="leaguesStore.fetchLeagues()" class="mt-4 rpg-btn-small bg-red-900 border-red-700 text-red-200 hover:bg-red-800">
-          Retry
-        </button>
-      </div>
-
-      <!-- Empty State -->
-      <div v-else-if="!leaguesStore.leagues.length" class="py-20 text-center border-4 border-dashed border-slate-800 bg-slate-900/20">
-        <img :src="PIXEL_ASSETS.ICON_CROWN" class="w-16 h-16 mx-auto opacity-20 pixelated grayscale mb-4" />
-        <h3 class="text-slate-500 uppercase font-bold tracking-widest">No Active Campaigns</h3>
-        <p class="text-slate-600 text-xs mt-2">The war council has not declared any leagues</p>
-      </div>
-
-      <!-- League Grid -->
-      <div v-else class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div 
-          v-for="league in leaguesStore.leagues" 
-          :key="league.id"
-          class="group rpg-card bg-slate-900 border-4 transition-all duration-200 flex flex-col relative overflow-hidden cursor-pointer"
-          :class="isSubscribed(league.id) 
-            ? 'border-emerald-600 hover:border-emerald-500 ring-2 ring-emerald-500/20' 
-            : 'border-slate-800 hover:border-amber-600/50'"
-          @click="openLeagueDetail(league)"
-          :data-testid="'league-card-' + league.id"
-        >
-          <!-- Active Subscription Badge -->
-          <div v-if="isSubscribed(league.id)" class="absolute top-0 right-0 z-20">
-            <div class="bg-emerald-600 text-emerald-100 text-[10px] font-bold uppercase tracking-widest px-3 py-1 flex items-center gap-1">
-              <span class="w-2 h-2 bg-emerald-300 rounded-full animate-pulse"></span>
-              ACTIVE
-            </div>
-          </div>
-
-          <!-- Card Top Decoration -->
-          <div class="h-2 transition-colors" :class="isSubscribed(league.id) ? 'bg-emerald-600' : 'bg-slate-800 group-hover:bg-amber-600/50'"></div>
-          
-          <!-- League Icon Banner -->
-          <div class="relative h-24 bg-gradient-to-b from-slate-800 to-slate-900 flex items-center justify-center overflow-hidden">
-            <div class="absolute inset-0 opacity-10" :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_DUNGEON}')`, backgroundSize: '64px' }"></div>
-            <div class="w-16 h-16 bg-slate-950 border-4 border-amber-700 flex items-center justify-center relative z-10 transform group-hover:scale-110 transition-transform">
-              <img :src="getLeagueIcon(league)" class="w-10 h-10 pixelated" />
-            </div>
-          </div>
-
-          <div class="p-5 flex flex-col flex-1 relative z-10">
-            <div class="mb-4">
-              <h3 class="text-xl font-black text-amber-100 uppercase leading-tight group-hover:text-amber-400 transition-colors">
-                {{ league.name }}
-              </h3>
-              <p class="text-xs text-slate-500 mt-2 leading-relaxed line-clamp-2">
-                {{ getLeagueDescription(league) }}
-              </p>
-            </div>
-
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-2 gap-3 mb-5">
-              <div class="bg-slate-950/50 p-3 border border-slate-800">
-                <div class="text-[10px] text-slate-600 uppercase tracking-wider">Combatants</div>
-                <div class="text-lg font-black text-slate-200">{{ leaguesStore.getParticipantCount(league.id) || '—' }}</div>
-              </div>
-              <div class="bg-slate-950/50 p-3 border border-slate-800">
-                <div class="text-[10px] text-slate-600 uppercase tracking-wider">Tier</div>
-                <div class="text-lg font-black" :class="getTierColor(league)">{{ getLeagueTier(league) }}</div>
-              </div>
-            </div>
-
-            <!-- Prize Pool -->
-            <div class="bg-amber-900/20 border border-amber-800/30 p-3 mb-5">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] text-amber-700 uppercase tracking-wider">Spoils of War</span>
-                <span class="text-amber-400 font-black">{{ getLeaguePrize(league) }}</span>
-              </div>
-            </div>
-
-            <!-- Subscribed Fighters -->
-            <div v-if="getMyFighters(league.id).length" class="mb-4">
-              <div class="text-[10px] text-emerald-600 uppercase tracking-wider mb-2">Your Champions</div>
-              <div class="flex flex-wrap gap-2">
-                <div 
-                  v-for="sub in getMyFighters(league.id)" 
-                  :key="sub.fighterId"
-                  class="bg-emerald-900/30 border border-emerald-700/50 px-2 py-1 text-xs text-emerald-300 font-bold flex items-center gap-1"
-                >
-                  <img :src="PIXEL_ASSETS.ICON_FIGHTER" class="w-4 h-4 pixelated" />
-                  {{ getFighterName(sub.fighterId) }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="mt-auto space-y-2">
-              <button 
-                @click.stop="openLeagueDetail(league)"
-                class="w-full rpg-btn-small bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700 font-bold uppercase"
-              >
-                View Campaign
-              </button>
-              <button 
-                v-if="!isSubscribed(league.id)"
-                @click.stop="openSubscribeModal(league)"
-                class="w-full rpg-btn-small bg-amber-600 border-amber-800 text-slate-900 hover:bg-amber-500 font-black uppercase"
-                :data-testid="'subscribe-btn-' + league.id"
-              >
-                Enlist Fighter
-              </button>
-              <button 
-                v-else
-                @click.stop="openManageModal(league)"
-                class="w-full rpg-btn-small bg-emerald-700 border-emerald-900 text-emerald-100 hover:bg-emerald-600 font-bold uppercase"
-                :data-testid="'manage-btn-' + league.id"
-              >
-                Manage Squad
-              </button>
-            </div>
-          </div>
-
-          <!-- BG Texture -->
-          <div class="absolute inset-0 opacity-5 pointer-events-none" :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_DUNGEON}')`, backgroundSize: '64px' }"></div>
-        </div>
-      </div>
+      <!-- Leagues List Component -->
+      <LeagueList
+        :leagues="leaguesStore.leagues"
+        :isLoading="leaguesStore.isLoading"
+        :error="leaguesStore.error"
+        :isSubscribed="(id) => isSubscribed(id)"
+        :participantCount="(id) => leaguesStore.getParticipantCount(id)"
+        :getMyFighters="(id) => getMyFighters(id)"
+        :getLastWinner="(id) => leaguesStore.getLastWinner(id)"
+        @subscribe="openSubscribeModal"
+        @manage="openManageModal"
+        @view-detail="openLeagueDetail"
+        @retry="leaguesStore.fetchLeagues"
+      />
     </div>
 
     <!-- Subscribe Modal -->
@@ -427,6 +310,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import BaseModal from '@/shared/ui/BaseModal.vue';
+import LeagueList from '@/features/leagues/LeagueList.vue';
 import { useLeaguesStore } from '@/features/leagues/store';
 import { useRosterStore } from '@/features/roster/store';
 import type { League } from '@/features/leagues/api';
@@ -491,6 +375,11 @@ const currentLeagueHighscores = computed(() => {
   return leaguesStore.leagueHighscores[leaguesStore.selectedLeague.id] ?? [];
 });
 
+const currentLeagueWinner = computed(() => {
+  if (!leaguesStore.selectedLeague) return null;
+  return leaguesStore.getLastWinner(leaguesStore.selectedLeague.id);
+});
+
 function getLeagueIcon(league: League) {
   const tier = league.options?.tier?.toLowerCase() ?? '';
   if (tier === 'mythic') return PIXEL_ASSETS.ICON_CROWN;
@@ -539,6 +428,7 @@ async function openLeagueDetail(league: League) {
     leaguesStore.fetchLeagueDetail(league.id),
     leaguesStore.fetchLeagueMatches(league.id),
     leaguesStore.fetchLeagueHighscores(league.id),
+    leaguesStore.fetchLeagueWinner(league.id),
   ]);
 }
 
@@ -593,7 +483,10 @@ onMounted(async () => {
   await leaguesStore.fetchLeagues();
   
   for (const league of leaguesStore.leagues) {
-    await leaguesStore.fetchAllSubscriptions(league.id);
+    await Promise.all([
+      leaguesStore.fetchAllSubscriptions(league.id),
+      leaguesStore.fetchLeagueWinner(league.id),
+    ]);
   }
 });
 </script>

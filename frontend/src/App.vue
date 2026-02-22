@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-slate-950 text-slate-100 selection:bg-amber-500/30 font-mono flex flex-col">
     <NavMenu />
-    <main class="flex-1 flex flex-col">
+    <main class="flex-1 flex flex-col pb-16 md:pb-20">
       <router-view v-slot="{ Component }">
         <transition 
           name="pixel-fade" 

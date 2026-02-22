@@ -75,6 +75,43 @@ func (r *LeagueRepository) GetByID(ctx context.Context, id int) (*leagues.League
 	return &league, nil
 }
 
+func (r *LeagueRepository) Create(ctx context.Context, league *leagues.League) error {
+	const query = `
+		insert into leagues (name, options, is_deactivated)
+		values ($1, $2, $3)
+		returning id`
+
+	return r.pool.QueryRow(ctx, query, league.Name, league.Options, league.IsDeactivated).Scan(&league.ID)
+}
+
+func (r *LeagueRepository) Update(ctx context.Context, league *leagues.League) error {
+	const query = `
+		update leagues
+		set name = $1, options = $2, is_deactivated = $3
+		where id = $4`
+
+	result, err := r.pool.Exec(ctx, query, league.Name, league.Options, league.IsDeactivated, league.ID)
+	if err != nil {
+		return err
+	}
+	if result.RowsAffected() == 0 {
+		return errors.New("league not found")
+	}
+	return nil
+}
+
+func (r *LeagueRepository) Delete(ctx context.Context, id int) error {
+	const query = `delete from leagues where id = $1`
+	result, err := r.pool.Exec(ctx, query, id)
+	if err != nil {
+		return err
+	}
+	if result.RowsAffected() == 0 {
+		return errors.New("league not found")
+	}
+	return nil
+}
+
 func (r *LeagueSubscriptionRepository) ListByLeague(ctx context.Context, leagueID int) ([]leagues.LeagueSubscription, error) {
 	const query = `
 		select league_id, fighter_id, created
@@ -222,6 +259,18 @@ func (r *LeagueMatchRepository) CountByLeague(ctx context.Context, leagueID int)
 	var count int
 	err := r.pool.QueryRow(ctx, query, leagueID).Scan(&count)
 	return count, err
+}
+
+func (r *LeagueMatchRepository) Delete(ctx context.Context, leagueID int, matchID string) error {
+	const query = `delete from league_matches where league_id = $1 and match_id = $2`
+	result, err := r.pool.Exec(ctx, query, leagueID, matchID)
+	if err != nil {
+		return err
+	}
+	if result.RowsAffected() == 0 {
+		return errors.New("league match not found")
+	}
+	return nil
 }
 
 func (r *LeagueMatchRepository) GetHighScores(ctx context.Context, leagueID int, lastMatches int) ([]leagues.LeagueHighscore, error) {

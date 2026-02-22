@@ -34,3 +34,8 @@ type LeagueWinner struct {
 	Username    string
 	MatchID     string
 }
+
+const (
+	ScoreFormulaKills   = 10
+	ScoreFormulaAssists = 5
+)

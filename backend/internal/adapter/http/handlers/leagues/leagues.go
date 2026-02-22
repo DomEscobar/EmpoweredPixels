@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
+
 	"empoweredpixels/internal/adapter/http/middleware"
 	"empoweredpixels/internal/adapter/http/responses"
 	"empoweredpixels/internal/domain/leagues"
@@ -24,6 +26,9 @@ type Service interface {
 	Matches(ctx context.Context, leagueID int, page int, pageSize int) ([]leagues.LeagueMatch, int, error)
 	GetLastWinner(ctx context.Context, leagueID int) (*leagues.LeagueWinner, error)
 	GetHighScores(ctx context.Context, leagueID int, lastMatches int) ([]leagues.LeagueHighscore, error)
+	CreateLeague(ctx context.Context, name string, options []byte, isDeactivated bool) (*leagues.League, error)
+	UpdateLeague(ctx context.Context, id int, name string, options []byte, isDeactivated bool) (*leagues.League, error)
+	DeleteLeague(ctx context.Context, id int) error
 }
 
 type Handler struct {
@@ -34,10 +39,23 @@ func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
 }
 
+type createLeagueDto struct {
+	Name     string          `json:"name"`
+	Options  json.RawMessage `json:"options"`
+	IsActive bool            `json:"isActive"`
+}
+
+type updateLeagueDto struct {
+	Name     *string          `json:"name"`
+	Options  *json.RawMessage `json:"options"`
+	IsActive *bool            `json:"isActive"`
+}
+
 type leagueDto struct {
-	ID      int             `json:"id"`
-	Name    string          `json:"name"`
-	Options json.RawMessage `json:"options"`
+	ID       int             `json:"id"`
+	Name     string          `json:"name"`
+	Options  json.RawMessage `json:"options"`
+	IsActive bool            `json:"isActive"`
 }
 
 type leagueDetailDto struct {
@@ -55,8 +73,9 @@ type leagueSubscriptionDto struct {
 }
 
 type leagueMatchDto struct {
-	LeagueID int    `json:"leagueId"`
-	MatchID  string `json:"matchId"`
+	LeagueID int        `json:"leagueId"`
+	MatchID  string     `json:"matchId"`
+	Started  *time.Time `json:"started"`
 }
 
 type leagueHighscoreDto struct {
@@ -269,6 +288,7 @@ func (h *Handler) Matches(w http.ResponseWriter, r *http.Request, id string) {
 		items = append(items, leagueMatchDto{
 			LeagueID: match.LeagueID,
 			MatchID:  match.MatchID,
+			Started:  match.Started,
 		})
 	}
 
@@ -318,10 +338,122 @@ func (h *Handler) Highscores(w http.ResponseWriter, r *http.Request, id string) 
 
 func mapLeague(league leagues.League) leagueDto {
 	return leagueDto{
-		ID:      league.ID,
-		Name:    league.Name,
-		Options: league.Options,
+		ID:       league.ID,
+		Name:     league.Name,
+		Options:  league.Options,
+		IsActive: !league.IsDeactivated,
 	}
+}
+
+func (h *Handler) CreateLeague(w http.ResponseWriter, r *http.Request) {
+	var payload createLeagueDto
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		responses.Error(w, http.StatusBadRequest, "invalid payload")
+		return
+	}
+
+	// Convert isActive to isDeactivated (inverse)
+	isDeactivated := !payload.IsActive
+
+	// Use options as provided (json.RawMessage is already []byte)
+	optionsBytes := payload.Options
+	if optionsBytes == nil {
+		optionsBytes = []byte("{}")
+	}
+
+	league, err := h.service.CreateLeague(r.Context(), payload.Name, optionsBytes, isDeactivated)
+	if err != nil {
+		log.Printf("league create error: %v", err)
+		responses.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	responses.JSON(w, http.StatusCreated, mapLeague(*league))
+}
+
+func (h *Handler) UpdateLeague(w http.ResponseWriter, r *http.Request) {
+	idStr := mux.Vars(r)["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, "invalid league id")
+		return
+	}
+
+	var payload updateLeagueDto
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		responses.Error(w, http.StatusBadRequest, "invalid payload")
+		return
+	}
+
+	// Get current league to merge fields
+	current, err := h.service.Get(r.Context(), id)
+	if err != nil {
+		log.Printf("league get for update error: %v", err)
+		responses.Error(w, http.StatusInternalServerError, "server error")
+		return
+	}
+	if current == nil {
+		responses.Error(w, http.StatusNotFound, "league not found")
+		return
+	}
+
+	// Apply updates
+	name := current.Name
+	if payload.Name != nil {
+		if *payload.Name == "" {
+			responses.Error(w, http.StatusBadRequest, "name cannot be empty")
+			return
+		}
+		name = *payload.Name
+	}
+
+	options := current.Options
+	if payload.Options != nil {
+		// payload.Options is *json.RawMessage, dereference and handle nil
+		opt := *payload.Options
+		if opt == nil {
+			options = []byte("{}")
+		} else {
+			options = opt
+		}
+	}
+
+	isActive := !current.IsDeactivated
+	if payload.IsActive != nil {
+		isActive = *payload.IsActive
+	}
+	isDeactivated := !isActive
+
+	league, err := h.service.UpdateLeague(r.Context(), id, name, options, isDeactivated)
+	if err != nil {
+		log.Printf("league update error: %v", err)
+		responses.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, mapLeague(*league))
+}
+
+func (h *Handler) DeleteLeague(w http.ResponseWriter, r *http.Request) {
+	idStr := mux.Vars(r)["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, "invalid league id")
+		return
+	}
+
+	if err := h.service.DeleteLeague(r.Context(), id); err != nil {
+		log.Printf("league delete error: %v", err)
+		switch err {
+		case leaguesusecase.ErrInvalidLeague:
+			responses.Error(w, http.StatusNotFound, err.Error())
+		default:
+			responses.Error(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func mapSubscriptions(subs []leagues.LeagueSubscription) []leagueSubscriptionDto {

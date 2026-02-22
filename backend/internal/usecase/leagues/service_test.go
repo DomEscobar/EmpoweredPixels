@@ -10,31 +10,51 @@ import (
 )
 
 type MockLeagueRepo struct{}
+
 func (m *MockLeagueRepo) List(ctx context.Context) ([]leagues.League, error) { return nil, nil }
 func (m *MockLeagueRepo) GetByID(ctx context.Context, id int) (*leagues.League, error) {
 	return &leagues.League{ID: id, Name: "Test League"}, nil
+}
+func (m *MockLeagueRepo) Create(ctx context.Context, league *leagues.League) error {
+	league.ID = 1 // assign test ID
+	return nil
+}
+func (m *MockLeagueRepo) Update(ctx context.Context, league *leagues.League) error {
+	return nil
+}
+func (m *MockLeagueRepo) Delete(ctx context.Context, id int) error {
+	return nil
 }
 
 type MockSubscriptionRepo struct {
 	createdSub *leagues.LeagueSubscription
 }
-func (m *MockSubscriptionRepo) ListByLeague(ctx context.Context, leagueID int) ([]leagues.LeagueSubscription, error) { return nil, nil }
-func (m *MockSubscriptionRepo) ListByLeagueAndUser(ctx context.Context, leagueID int, userID int64) ([]leagues.LeagueSubscription, error) { return nil, nil }
+
+func (m *MockSubscriptionRepo) ListByLeague(ctx context.Context, leagueID int) ([]leagues.LeagueSubscription, error) {
+	return nil, nil
+}
+func (m *MockSubscriptionRepo) ListByLeagueAndUser(ctx context.Context, leagueID int, userID int64) ([]leagues.LeagueSubscription, error) {
+	return nil, nil
+}
 func (m *MockSubscriptionRepo) Create(ctx context.Context, sub *leagues.LeagueSubscription) error {
 	m.createdSub = sub
 	return nil
 }
-func (m *MockSubscriptionRepo) Delete(ctx context.Context, sub *leagues.LeagueSubscription) error { return nil }
+func (m *MockSubscriptionRepo) Delete(ctx context.Context, sub *leagues.LeagueSubscription) error {
+	return nil
+}
 
 type MockFighterRepo struct{}
+
 func (m *MockFighterRepo) GetByUserAndID(ctx context.Context, userID int64, id string) (*roster.Fighter, error) {
 	return &roster.Fighter{ID: id, UserID: userID}, nil
 }
 
 type MockAchievementRepo struct {
-	updatedKey string
+	updatedKey    string
 	updatedUserID int
 }
+
 func (m *MockAchievementRepo) UpdateAchievementProgress(ctx context.Context, userID int, key string, progress int) error {
 	m.updatedUserID = userID
 	m.updatedKey = key

@@ -234,6 +234,10 @@ func NewRouter(deps Dependencies) http.Handler {
 				runLeagueJob(w, r, mux.Vars(r)["id"], deps.LeagueJob)
 			}).Methods("POST")
 		}
+		// Admin endpoints for league management
+		api.HandleFunc("/admin/league", h.CreateLeague).Methods("POST")
+		api.HandleFunc("/admin/league/{id}", h.UpdateLeague).Methods("POST", "PUT")
+		api.HandleFunc("/admin/league/{id}", h.DeleteLeague).Methods("DELETE")
 	}
 
 	if deps.RewardService != nil {

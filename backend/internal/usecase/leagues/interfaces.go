@@ -10,6 +10,9 @@ import (
 type LeagueRepository interface {
 	List(ctx context.Context) ([]leagues.League, error)
 	GetByID(ctx context.Context, id int) (*leagues.League, error)
+	Create(ctx context.Context, league *leagues.League) error
+	Update(ctx context.Context, league *leagues.League) error
+	Delete(ctx context.Context, id int) error
 }
 
 type SubscriptionRepository interface {
@@ -24,10 +27,14 @@ type LeagueMatchRepository interface {
 	CountByLeague(ctx context.Context, leagueID int) (int, error)
 	GetLastWinner(ctx context.Context, leagueID int) (*leagues.LeagueWinner, error)
 	GetHighScores(ctx context.Context, leagueID int, lastMatches int) ([]leagues.LeagueHighscore, error)
+	Create(ctx context.Context, leagueID int, matchID string) error
+	UpdateStarted(ctx context.Context, leagueID int, matchID string, started *time.Time) error
+	Delete(ctx context.Context, leagueID int, matchID string) error
 }
 
 type FighterRepository interface {
 	GetByUserAndID(ctx context.Context, userID int64, id string) (*roster.Fighter, error)
+	GetByID(ctx context.Context, id string) (*roster.Fighter, error)
 }
 
 type AchievementRepository interface {

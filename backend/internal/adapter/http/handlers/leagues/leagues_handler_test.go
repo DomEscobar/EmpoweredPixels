@@ -75,6 +75,27 @@ func (m *MockService) GetLastWinner(ctx context.Context, leagueID int) (*domainl
 	return args.Get(0).(*domainleagues.LeagueWinner), args.Error(1)
 }
 
+func (m *MockService) CreateLeague(ctx context.Context, name string, options []byte, isDeactivated bool) (*domainleagues.League, error) {
+	args := m.Called(ctx, name, options, isDeactivated)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*domainleagues.League), args.Error(1)
+}
+
+func (m *MockService) UpdateLeague(ctx context.Context, id int, name string, options []byte, isDeactivated bool) (*domainleagues.League, error) {
+	args := m.Called(ctx, id, name, options, isDeactivated)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*domainleagues.League), args.Error(1)
+}
+
+func (m *MockService) DeleteLeague(ctx context.Context, id int) error {
+	args := m.Called(ctx, id)
+	return args.Error(0)
+}
+
 func TestHandler_Highscores_DefaultLastMatches(t *testing.T) {
 	mockService := new(MockService)
 	handler := NewHandler(mockService)

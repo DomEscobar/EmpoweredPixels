@@ -5,6 +5,7 @@ import {
   LeagueSubscription,
   LeagueMatch,
   LeagueHighscore,
+  LeagueWinner,
   getLeagues,
   getLeagueDetail,
   getUserSubscriptions,
@@ -13,6 +14,7 @@ import {
   unsubscribeFromLeague,
   getLeagueMatches,
   getLeagueHighscores,
+  getLastWinner,
 } from "./api";
 import { useAuthStore } from "@/features/auth/store";
 
@@ -22,6 +24,7 @@ interface LeaguesState {
   allSubscriptions: Record<number, LeagueSubscription[]>;
   leagueMatches: Record<number, LeagueMatch[]>;
   leagueHighscores: Record<number, LeagueHighscore[]>;
+  leagueWinners: Record<number, LeagueWinner | null>;
   selectedLeague: LeagueDetail | null;
   isLoading: boolean;
   isLoadingDetail: boolean;
@@ -36,6 +39,7 @@ export const useLeaguesStore = defineStore("leagues", {
     allSubscriptions: {},
     leagueMatches: {},
     leagueHighscores: {},
+    leagueWinners: {},
     selectedLeague: null,
     isLoading: false,
     isLoadingDetail: false,
@@ -165,6 +169,19 @@ export const useLeaguesStore = defineStore("leagues", {
       }
     },
 
+    async fetchLeagueWinner(leagueId: number) {
+      const auth = useAuthStore();
+      if (!auth.token) return;
+
+      try {
+        const winner = await getLastWinner(auth.token, leagueId);
+        this.leagueWinners[leagueId] = winner;
+      } catch (e) {
+        console.error(`Failed to load winner for league ${leagueId}`, e);
+        this.leagueWinners[leagueId] = null;
+      }
+    },
+
     clearSelectedLeague() {
       this.selectedLeague = null;
     },
@@ -185,6 +202,9 @@ export const useLeaguesStore = defineStore("leagues", {
     },
     getParticipantCount: (state) => (leagueId: number) => {
       return state.allSubscriptions[leagueId]?.length ?? 0;
+    },
+    getLastWinner: (state) => (leagueId: number) => {
+      return state.leagueWinners[leagueId] ?? null;
     },
   },
 });

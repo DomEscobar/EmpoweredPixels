@@ -2,6 +2,7 @@ package leagues
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -154,4 +155,104 @@ func (s *Service) GetLastWinner(ctx context.Context, leagueID int) (*leagues.Lea
 
 func (s *Service) GetHighScores(ctx context.Context, leagueID int, lastMatches int) ([]leagues.LeagueHighscore, error) {
 	return s.matches.GetHighScores(ctx, leagueID, lastMatches)
+}
+
+func (s *Service) CreateLeague(ctx context.Context, name string, options []byte, isDeactivated bool) (*leagues.League, error) {
+	if name == "" {
+		return nil, errors.New("league name is required")
+	}
+	// Validate options JSON if present
+	if len(options) > 0 {
+		var opts map[string]interface{}
+		if err := json.Unmarshal(options, &opts); err != nil {
+			return nil, errors.New("invalid options JSON")
+		}
+		// Validate tier if present
+		if tier, ok := opts["tier"]; ok {
+			validTiers := map[string]bool{
+				"standard":  true,
+				"epic":      true,
+				"rare":      true,
+				"legendary": true,
+				"mythic":    true,
+			}
+			if tierStr, ok := tier.(string); !ok || !validTiers[tierStr] {
+				return nil, errors.New("invalid tier")
+			}
+		}
+	}
+
+	league := &leagues.League{
+		Name:          name,
+		Options:       options,
+		IsDeactivated: isDeactivated,
+	}
+
+	if err := s.leagues.Create(ctx, league); err != nil {
+		return nil, err
+	}
+
+	return league, nil
+}
+
+func (s *Service) UpdateLeague(ctx context.Context, id int, name string, options []byte, isDeactivated bool) (*leagues.League, error) {
+	// Check if league exists
+	existing, err := s.leagues.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if existing == nil {
+		return nil, ErrInvalidLeague
+	}
+
+	if name == "" {
+		return nil, errors.New("league name is required")
+	}
+
+	// Validate options JSON if present
+	if len(options) > 0 {
+		var opts map[string]interface{}
+		if err := json.Unmarshal(options, &opts); err != nil {
+			return nil, errors.New("invalid options JSON")
+		}
+		// Validate tier if present
+		if tier, ok := opts["tier"]; ok {
+			validTiers := map[string]bool{
+				"standard":  true,
+				"epic":      true,
+				"rare":      true,
+				"legendary": true,
+				"mythic":    true,
+			}
+			if tierStr, ok := tier.(string); !ok || !validTiers[tierStr] {
+				return nil, errors.New("invalid tier")
+			}
+		}
+	}
+
+	league := &leagues.League{
+		ID:            id,
+		Name:          name,
+		Options:       options,
+		IsDeactivated: isDeactivated,
+	}
+
+	if err := s.leagues.Update(ctx, league); err != nil {
+		return nil, err
+	}
+
+	return league, nil
+}
+
+func (s *Service) DeleteLeague(ctx context.Context, id int) error {
+	// Verify league exists
+	existing, err := s.leagues.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	if existing == nil {
+		return ErrInvalidLeague
+	}
+
+	return s.leagues.Delete(ctx, id)
 }

@@ -12,6 +12,7 @@ export interface League {
   id: number;
   name: string;
   options: LeagueOptions | null;
+  isActive: boolean;
 }
 
 export interface LeagueDetail extends League {
@@ -33,6 +34,13 @@ export interface LeagueHighscore {
   fighterName: string;
   username: string;
   score: number;
+}
+
+export interface LeagueWinner {
+  fighterId: string;
+  fighterName: string;
+  username: string;
+  matchId: string;
 }
 
 export interface PagedResult<T> {
@@ -88,4 +96,8 @@ export async function getLeagueHighscores(token: string, leagueId: number, lastM
     token,
     body: { lastMatches },
   });
+}
+
+export async function getLastWinner(token: string, leagueId: number) {
+  return request<LeagueWinner>(`${endpoints.league}/${leagueId}/winner`, { token });
 }
