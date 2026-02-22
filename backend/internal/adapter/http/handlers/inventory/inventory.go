@@ -27,6 +27,7 @@ type currencyBalanceDto struct {
 type equipmentDto struct {
 	ID          string  `json:"id"`
 	Type        string  `json:"type"`
+	Category    string  `json:"category"`
 	UserID      int64   `json:"userId"`
 	FighterID   *string `json:"fighterId"`
 	IsFavorite  bool    `json:"isFavorite"`
