@@ -38,6 +38,12 @@ This workspace defines our fully autonomous game studio. Agents collaborate with
 - All DoD requirements apply: tests, `data-testid`, `docs/ARCHITECTURE.md` updates.
 - See `forge-bridge/README.md` for relay setup.
 
+**Specialist: opencode-agency (The Engine Room)**
+- Automated full-stack coding agency for heavy lifting and refactoring.
+- Orchestration: Executed via `opencode run`.
+- Reporting: Posts to `telemetry` (subscribers: `main`, `guardian`).
+- Location: `/root/.opencode`
+
 ---
 
 ## Communication Protocol

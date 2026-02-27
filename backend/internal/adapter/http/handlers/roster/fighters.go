@@ -253,6 +253,16 @@ func (h *FighterHandler) GetExperience(w http.ResponseWriter, r *http.Request, i
 	})
 }
 
+func (h *FighterHandler) GetConfiguration(w http.ResponseWriter, r *http.Request, id string) {
+	// Stub implementation - TODO: Implement actual configuration retrieval
+	responses.Error(w, http.StatusNotImplemented, "not implemented")
+}
+
+func (h *FighterHandler) UpdateConfiguration(w http.ResponseWriter, r *http.Request, id string) {
+	// Stub implementation - TODO: Implement actual configuration update
+	responses.Error(w, http.StatusNotImplemented, "not implemented")
+}
+
 const timeLayout = "2006-01-02T15:04:05Z07:00"
 
 func calculateLevel(exp int) (level int, current int, next int) {

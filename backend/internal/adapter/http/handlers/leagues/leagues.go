@@ -26,7 +26,6 @@ type Service interface {
 	SubscriptionsForUser(ctx context.Context, leagueID int, userID int64) ([]leagues.LeagueSubscription, error)
 	Matches(ctx context.Context, leagueID int, page int, pageSize int) ([]leagues.LeagueMatch, int, error)
 	GetLastWinner(ctx context.Context, leagueID int) (*leagues.LeagueWinner, error)
-	GetHighScores(ctx context.Context, leagueID int, lastMatches int) ([]leagues.LeagueHighscore, error)
 	CreateLeague(ctx context.Context, name string, options []byte, isDeactivated bool) (*leagues.League, error)
 	UpdateLeague(ctx context.Context, id int, name string, options []byte, isDeactivated bool) (*leagues.League, error)
 	DeleteLeague(ctx context.Context, id int) error
@@ -77,13 +76,6 @@ type leagueMatchDto struct {
 	LeagueID int        `json:"leagueId"`
 	MatchID  string     `json:"matchId"`
 	Started  *time.Time `json:"started"`
-}
-
-type leagueHighscoreDto struct {
-	FighterID   string `json:"fighterId"`
-	FighterName string `json:"fighterName"`
-	Username    string `json:"username"`
-	Score       int    `json:"score"`
 }
 
 type pagingOptions struct {
@@ -301,41 +293,6 @@ func (h *Handler) Matches(w http.ResponseWriter, r *http.Request, id string) {
 	})
 }
 
-func (h *Handler) Highscores(w http.ResponseWriter, r *http.Request, id string) {
-	leagueID, err := strconv.Atoi(id)
-	if err != nil {
-		responses.Error(w, http.StatusBadRequest, "invalid league")
-		return
-	}
-
-	// Parse lastMatches query parameter (default 50)
-	lastMatchesStr := r.URL.Query().Get("lastMatches")
-	lastMatches := 50
-	if lastMatchesStr != "" {
-		if lm, err := strconv.Atoi(lastMatchesStr); err == nil && lm > 0 {
-			lastMatches = lm
-		}
-	}
-
-	highscores, err := h.service.GetHighScores(r.Context(), leagueID, lastMatches)
-	if err != nil {
-		log.Printf("league highscores error: %v", err)
-		responses.Error(w, http.StatusInternalServerError, "server error")
-		return
-	}
-
-	result := make([]leagueHighscoreDto, 0, len(highscores))
-	for _, hs := range highscores {
-		result = append(result, leagueHighscoreDto{
-			FighterID:   hs.FighterID,
-			FighterName: hs.FighterName,
-			Username:    hs.Username,
-			Score:       hs.Score,
-		})
-	}
-
-	responses.JSON(w, http.StatusOK, result)
-}
 
 func mapLeague(league leagues.League) leagueDto {
 	return leagueDto{

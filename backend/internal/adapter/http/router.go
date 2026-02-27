@@ -8,10 +8,8 @@ import (
 	"github.com/gorilla/mux"
 
 	"empoweredpixels/internal/adapter/http/handlers"
-	mcphandlers "empoweredpixels/internal/adapter/http/handlers"
 	dailyhandlers "empoweredpixels/internal/adapter/http/handlers/daily"
 	eventhandlers "empoweredpixels/internal/adapter/http/handlers/events"
-	guildhandlers "empoweredpixels/internal/adapter/http/handlers/guilds"
 	inventoryhandlers "empoweredpixels/internal/adapter/http/handlers/inventory"
 	leaguehandlers "empoweredpixels/internal/adapter/http/handlers/leagues"
 	matchhandlers "empoweredpixels/internal/adapter/http/handlers/matches"
@@ -28,7 +26,6 @@ import (
 	"empoweredpixels/internal/mcp"
 	dailyusecase "empoweredpixels/internal/usecase/daily"
 	eventsusecase "empoweredpixels/internal/usecase/events"
-	guildsusecase "empoweredpixels/internal/usecase/guilds"
 	"empoweredpixels/internal/usecase/identity"
 	inventoryusecase "empoweredpixels/internal/usecase/inventory"
 	leaguesusecase "empoweredpixels/internal/usecase/leagues"
@@ -55,7 +52,6 @@ type Dependencies struct {
 	SeasonService    *seasonsusecase.Service
 	DailyService     *dailyusecase.Service
 	EventService     *eventsusecase.Service
-	GuildService     *guildsusecase.Service
 	MatchHub         *ws.MatchHub
 	MCPHandler       *mcp.MCPHandler
 	MCPAuditLogger   *mcp.AuditLogger
@@ -80,6 +76,10 @@ func NewRouter(deps Dependencies) http.Handler {
 	r.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		handlers.Health().ServeHTTP(w, r)
 	}).Methods("GET")
+
+	// Version endpoint
+	r.HandleFunc("/version", handlers.NewHandler().GetVersion).Methods("GET")
+	r.HandleFunc("/api/version", handlers.NewHandler().GetVersion).Methods("GET")
 
 	// API Routes
 	api := r.PathPrefix("/api").Subrouter()
@@ -206,9 +206,6 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/league/{id}/matches", func(w http.ResponseWriter, r *http.Request) {
 			h.Matches(w, r, mux.Vars(r)["id"])
 		}).Methods("POST")
-		api.HandleFunc("/league/{id}/highscores", func(w http.ResponseWriter, r *http.Request) {
-			h.Highscores(w, r, mux.Vars(r)["id"])
-		}).Methods("GET")
 		if deps.LeagueJob != nil {
 			api.HandleFunc("/league/{id}/run", func(w http.ResponseWriter, r *http.Request) {
 				runLeagueJob(w, r, mux.Vars(r)["id"], deps.LeagueJob)
@@ -277,24 +274,16 @@ func NewRouter(deps Dependencies) http.Handler {
 		api.HandleFunc("/events/next", h.GetNextEvent).Methods("GET")
 	}
 
-	if deps.GuildService != nil {
-		h := guildhandlers.NewHandler(deps.GuildService)
-		api.HandleFunc("/guilds", h.List).Methods("GET")
-		api.HandleFunc("/guilds", h.Create).Methods("POST")
-		api.HandleFunc("/guilds/{id}", h.Get).Methods("GET")
-		api.HandleFunc("/guilds/{id}/join", h.RequestJoin).Methods("POST")
-	}
-
 	if deps.MatchHub != nil {
 		r.Handle("/ws/match", deps.MatchHub)
 	}
 
 	if deps.MCPHandler != nil {
-		mcpH := mcphandlers.NewMCPHandler(deps.MCPHandler)
+		mcpH := handlers.NewMCPHandler(deps.MCPHandler)
 		api.HandleFunc("/mcp/tool", mcpH.Call).Methods("POST")
 
 		if deps.MCPAuditLogger != nil && deps.MCPFilter != nil {
-			restH := mcphandlers.NewMCPRESTHandler(deps.MCPHandler, deps.MCPAuditLogger, deps.MCPFilter)
+			restH := handlers.NewMCPRESTHandler(deps.MCPHandler, deps.MCPAuditLogger, deps.MCPFilter)
 			r.HandleFunc("/mcp/gameState", restH.GameState).Methods("GET")
 			r.HandleFunc("/mcp/action", restH.SubmitAction).Methods("POST")
 			r.HandleFunc("/mcp/player/stats", restH.PlayerStats).Methods("GET")

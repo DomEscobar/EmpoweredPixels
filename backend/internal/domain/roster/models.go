@@ -23,6 +23,7 @@ type Fighter struct {
 	Vision         int     `json:"vision"`
 	WeaponID       *string `json:"weaponId"`
 	TeamID         *string `json:"teamId"` // Transient field for battle team tracking
+	AttunementID   *string `json:"attunementId"`
 	// Match Statistics
 	MatchesWon       int       `json:"matchesWon"`
 	MatchesLost      int       `json:"matchesLost"`

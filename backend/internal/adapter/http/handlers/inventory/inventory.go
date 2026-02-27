@@ -270,7 +270,7 @@ func (h *Handler) Equip(w http.ResponseWriter, r *http.Request, equipmentID stri
 	}
 
 	// Validate fighter exists and belongs to user
-	fighter, err := h.service.GetEquipment(r.Context(), userID, equipmentID)
+	fighter, _, err := h.service.GetEquipment(r.Context(), userID, equipmentID)
 	if err != nil {
 		if err == inventoryusecase.ErrInvalidEquipment {
 			responses.Error(w, http.StatusNotFound, "equipment not found")

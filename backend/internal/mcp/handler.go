@@ -126,7 +126,7 @@ func (h *MCPHandler) handleEquipFighter(ctx context.Context, userID int64, args 
 	}
 
 	// Pre-validation: Check if equipment exists and belongs to user
-	equipment, err := h.inventoryService.Get(ctx, userID, equipmentID)
+	equipment, _, err := h.inventoryService.GetEquipment(ctx, userID, equipmentID)
 	if err != nil {
 		return nil, fmt.Errorf("equipment not found or access denied: %w", err)
 	}
