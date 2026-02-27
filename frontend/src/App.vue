@@ -1,3 +1,28 @@
+<!--
+  EmpoweredPixels - Full-Stack Pixel Art Game
+  
+  APPLICATION PURPOSE:
+  A comprehensive gaming platform featuring fighter management, combat simulation,
+  competitive leagues, and an in-game economy. The system provides user authentication,
+  roster management, matchmaking, real-time battle replays, seasonal progression,
+  leaderboards, daily rewards, and a virtual shop for gold packages and bundles.
+  
+  FRONTEND ROLE:
+  Root Vue 3 component that serves as the single-page application entry point.
+  Manages global layout with persistent navigation and dynamic route rendering.
+  Implements the "Ethereal Iron" theme with dark slate palette and gold accents.
+  
+  ARCHITECTURE:
+  - Frontend: Vue 3 (Composition API), Vite, Tailwind CSS v4, Pinia (state)
+  - Backend: Go (Clean Architecture), PostgreSQL, WebSocket real-time hub
+  - UI Style: Pixel-art aesthetic with high-readability dark mode interface
+  
+  COMPONENT RESPONSIBILITIES:
+  - Render NavMenu (persistent navigation)
+  - Display router-view with transition effects (pixel-fade)
+  - Provide footer spacing for mobile/desktop layouts
+  - Set global typography (monospace font, custom scrollbars)
+-->
 <template>
   <div class="min-h-screen bg-slate-950 text-slate-100 selection:bg-amber-500/30 font-mono flex flex-col">
     <NavMenu />
