@@ -1,0 +1,75 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e7]:
+      - link "Command" [ref=e8] [cursor=pointer]:
+        - /url: /dashboard
+        - generic [ref=e9]: Command
+      - link "Roster" [ref=e10] [cursor=pointer]:
+        - /url: /roster
+        - generic [ref=e11]: Roster
+      - link "Battle" [ref=e12] [cursor=pointer]:
+        - /url: /matches
+        - generic [ref=e13]: Battle
+      - link "Vault" [ref=e14] [cursor=pointer]:
+        - /url: /inventory
+        - generic [ref=e15]: Vault
+      - link "Leagues" [ref=e16] [cursor=pointer]:
+        - /url: /leagues
+        - generic [ref=e17]: Leagues
+      - link "Attune" [ref=e18] [cursor=pointer]:
+        - /url: /attunement
+        - generic [ref=e19]: Attune
+      - link "Rankings" [ref=e20] [cursor=pointer]:
+        - /url: /leaderboard
+        - generic [ref=e21]: Rankings
+      - link "Shop" [ref=e22] [cursor=pointer]:
+        - /url: /shop
+        - generic [ref=e23]: Shop
+    - link "EP EMPOWEREDPIXELS" [ref=e25] [cursor=pointer]:
+      - /url: /dashboard
+      - img "EP" [ref=e27]
+      - generic [ref=e28]: EMPOWEREDPIXELS
+  - main [ref=e29]:
+    - generic [ref=e31]:
+      - generic [ref=e33]:
+        - generic [ref=e35]:
+          - heading "TREASURY VAULT" [level=1] [ref=e36]
+          - paragraph [ref=e37]: Manage thy equipment and resources
+        - generic [ref=e38]:
+          - generic [ref=e40]:
+            - generic [ref=e41]: Particles
+            - generic [ref=e42]: "0"
+          - generic [ref=e44]:
+            - generic [ref=e45]: Tokens
+            - generic [ref=e46]:
+              - generic "Common" [ref=e47]: "0"
+              - generic "Rare" [ref=e48]: "0"
+              - generic "Fabled" [ref=e49]: "0"
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - heading "EQUIPMENT" [level=2] [ref=e52]
+          - generic [ref=e53]: "0"
+        - generic [ref=e54]:
+          - button "FILTER" [disabled] [ref=e55] [cursor=pointer]
+          - button "↻ REFRESH" [ref=e56] [cursor=pointer]:
+            - generic [ref=e57]: ↻
+            - text: REFRESH
+      - generic [ref=e58]:
+        - heading "Vault is Empty" [level=3] [ref=e59]
+        - paragraph [ref=e60]: Win battles to earn equipment crates
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - heading "FILTER:" [level=2] [ref=e64]
+            - generic [ref=e65]:
+              - button "ALL" [ref=e66] [cursor=pointer]
+              - button "WEAPONS" [ref=e67] [cursor=pointer]
+              - button "ARMOR" [ref=e68] [cursor=pointer]
+              - button "CONSUMABLES" [ref=e69] [cursor=pointer]
+              - button "RINGS" [ref=e70] [cursor=pointer]
+          - generic [ref=e71]: "ITEMS: 0 / 0"
+        - paragraph [ref=e73]: NO ITEMS FOUND IN THIS SECTOR
+```

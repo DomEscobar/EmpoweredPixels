@@ -63,6 +63,8 @@ import EquipmentCard from './EquipmentCard.vue';
 const props = defineProps<{
   equipment: Equipment[];
   isLoading: boolean;
+  search?: string;
+  sortBy?: string;
 }>();
 
 defineEmits<{
@@ -81,10 +83,65 @@ const filters = [
   { id: 'ring', label: 'RINGS' }
 ];
 
+// Rarity helper
+const rarityLevels = [
+  { id: 0, name: 'Broken' },
+  { id: 1, name: 'Common' },
+  { id: 2, name: 'Uncommon' },
+  { id: 3, name: 'Rare' },
+  { id: 4, name: 'Epic' },
+  { id: 5, name: 'Legendary' },
+  { id: 6, name: 'Mythic' },
+  { id: 7, name: 'Divine' }
+];
+
+const rarityName = (level: number): string => {
+  const found = rarityLevels.find(r => r.id === level);
+  return found?.name || `Rarity ${level}`;
+};
+
 const filteredEquipment = computed(() => {
-  if (activeFilter.value === 'all') return props.equipment;
+  let items = [...props.equipment];
   
-  return props.equipment.filter(item => {
+  // 1. Search Filter (keyword)
+  if (props.search && props.search.trim()) {
+    const query = props.search.toLowerCase().trim();
+    items = items.filter(item => {
+      // Search in item ID, type, or rarity
+      return (
+        item.type.toLowerCase().includes(query) ||
+        item.id.toLowerCase().includes(query) ||
+        rarityName(item.rarity).toLowerCase().includes(query)
+      );
+    });
+  }
+  
+  // 2. Sort Order
+  if (props.sortBy) {
+    switch (props.sortBy) {
+      case 'level-desc':
+        items.sort((a, b) => b.level - a.level);
+        break;
+      case 'rarity-desc':
+        items.sort((a, b) => b.rarity - a.rarity);
+        break;
+      case 'power-desc':
+        // Approximate power by rarity + level + enhancement
+        const power = (item: Equipment) => (item.rarity * 10) + item.level + (item.enhancement * 2);
+        items.sort((a, b) => power(b) - power(a));
+        break;
+      case 'recent':
+      default:
+        // Sort by ID (assuming newer items have higher IDs or are added at end)
+        items.sort((a, b) => b.id.localeCompare(a.id));
+        break;
+    }
+  }
+  
+  // 3. Category Filter
+  if (activeFilter.value === 'all') return items;
+  
+  return items.filter(item => {
     // Prefer backend category if available
     if (item.category && item.category !== 'unknown') {
         if (activeFilter.value === 'weapon') return item.category === 'weapon';

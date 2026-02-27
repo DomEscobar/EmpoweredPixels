@@ -59,6 +59,7 @@
                   <span class="text-slate-300" title="Common">{{ inventoryStore.commonTokens }}</span>
                   <span class="text-blue-400" title="Rare">{{ inventoryStore.rareTokens }}</span>
                   <span class="text-purple-400" title="Fabled">{{ inventoryStore.fabledTokens }}</span>
+                  <span class="text-amber-500" title="Mythic">{{ inventoryStore.mythicTokens }}</span>
                 </div>
               </div>
             </div>
@@ -66,26 +67,46 @@
         </div>
       </header>
 
-      <!-- Controls Bar -->
-      <div class="pixel-box bg-slate-900/90 p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <img :src="PIXEL_ASSETS.ICON_SWORD" alt="" class="w-5 h-5 pixelated" />
-          <h2 class="text-lg font-bold text-amber-300">
-            EQUIPMENT
-          </h2>
-          <span class="pixel-badge bg-slate-700 text-slate-300 px-2 py-0.5 text-xs">
-            {{ inventoryStore.totalEquipment }}
-          </span>
-        </div>
-        <div class="flex gap-2">
-          <button class="rpg-btn-small opacity-50 cursor-not-allowed" disabled>
-            <img :src="PIXEL_ASSETS.ICON_SCROLL" alt="" class="w-4 h-4 pixelated mr-1" />
-            FILTER
-          </button>
-          <button class="rpg-btn-small" @click="fetchData">
-            <span class="mr-1">↻</span>
-            REFRESH
-          </button>
+      <!-- Controls Bar & Filters -->
+      <div class="pixel-box bg-slate-900/95 p-4 space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <!-- Left: Title & Search -->
+          <div class="flex items-center gap-4 flex-1">
+            <div class="flex items-center gap-2">
+              <img :src="PIXEL_ASSETS.ICON_SWORD" alt="" class="w-5 h-5 pixelated" />
+              <h2 class="text-lg font-bold text-amber-300 uppercase tracking-tight">
+                Equipment
+              </h2>
+            </div>
+            
+            <div class="relative flex-1 max-w-md group">
+              <input 
+                v-model="searchQuery"
+                type="text" 
+                placeholder="Search vault items..."
+                class="w-full bg-slate-950 border-2 border-slate-800 focus:border-amber-500/50 p-2 pl-9 text-sm text-slate-300 font-mono transition-all outline-none"
+              />
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 opacity-30 group-focus-within:opacity-100 italic">🔍</span>
+            </div>
+          </div>
+
+          <!-- Right: Sort & Actions -->
+          <div class="flex items-center gap-2">
+            <select 
+              v-model="sortBy"
+              class="bg-slate-950 border-2 border-slate-800 p-2 text-xs text-slate-400 font-mono outline-none"
+            >
+              <option value="recent">RECENTLY ADDED</option>
+              <option value="level-desc">LEVEL (HI-LO)</option>
+              <option value="rarity-desc">RARITY (HI-LO)</option>
+              <option value="power-desc">POWER (HI-LO)</option>
+            </select>
+            
+            <button class="rpg-btn-small" @click="fetchData">
+              <span class="mr-1">↻</span>
+              REFRESH
+            </button>
+          </div>
         </div>
       </div>
 
@@ -114,6 +135,8 @@
       <InventoryGrid 
         :equipment="inventoryStore.equipment"
         :is-loading="inventoryStore.isLoading"
+        :search="searchQuery"
+        :sort-by="sortBy"
         @enhance="openEnhanceModal"
         @salvage="openSalvageModal"
         @toggle-favorite="inventoryStore.toggleFavorite($event.id, !$event.isFavorite)"
@@ -286,6 +309,9 @@ const enhanceCost = ref<{ particles: number; tokens: number; tokenType: string }
 const enhanceError = ref<string | null>(null);
 const isEnhancing = ref(false);
 const isSalvaging = ref(false);
+
+const searchQuery = ref('');
+const sortBy = ref('rarity-desc');
 
 const canAffordParticles = computed(() => {
    if (!enhanceCost.value) return false;

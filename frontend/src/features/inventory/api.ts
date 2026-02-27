@@ -10,6 +10,7 @@ export interface Equipment {
   rarity: number;
   enhancement: number;
   isFavorite?: boolean;
+  category?: string; // Optional category field for enhanced filtering
 }
 
 export interface InventoryPageResponse {
