@@ -1,5 +1,94 @@
 <template>
-  <nav class="fixed bottom-0 left-0 right-0 z-60">
+  <!-- Mobile Menu Button (Hamburger) -->
+  <button 
+    v-if="auth.token"
+    class="fixed top-4 left-4 z-50 md:hidden pixel-box-xs bg-slate-900/90 border-slate-700 p-2"
+    @click="showDrawer = true"
+    aria-label="Open menu"
+  >
+    <svg v-if="!showDrawer" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+    <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+
+  <!-- Mobile Drawer Overlay -->
+  <div 
+    v-if="showDrawer" 
+    class="fixed inset-0 bg-black/60 z-50 md:hidden"
+    @click="showDrawer = false"
+  ></div>
+
+  <!-- Mobile Navigation Drawer -->
+  <aside 
+    v-if="auth.token"
+    class="fixed top-0 left-0 h-full w-72 bg-slate-900/98 border-r-4 border-slate-700 z-50 transform transition-transform duration-300 md:hidden flex flex-col"
+    :class="showDrawer ? 'translate-x-0' : '-translate-x-full'"
+    :style="{ backgroundImage: `url('${PIXEL_ASSETS.BG_NAV}')`, backgroundSize: '64px 64px', imageRendering: 'pixelated' }"
+  >
+    <!-- Drawer Header -->
+    <div class="p-4 border-b-2 border-slate-800 bg-slate-950/90">
+      <div class="flex items-center justify-between">
+        <div class="pixel-logo-box flex items-center gap-2 px-3 py-2 bg-slate-800/80 border border-slate-600">
+          <img :src="PIXEL_ASSETS.ICON_LOGO" alt="EP" class="w-6 h-6 pixelated" />
+          <span class="text-sm font-bold text-amber-400 tracking-wider">EMPOWERED<span class="text-white">PIXELS</span></span>
+        </div>
+        <button @click="showDrawer = false" class="text-slate-400 hover:text-white text-xl">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Drawer Navigation Items -->
+    <nav class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+      <div class="space-y-2">
+        <router-link 
+          v-for="item in allNavItems" 
+          :key="item.path" 
+          :to="item.path"
+          class="flex items-center gap-3 px-4 py-3 pixel-box-sm transition-all"
+          :class="isActive(item.path) ? 'bg-amber-600/20 border-amber-500/50' : 'bg-slate-800/60 border-slate-700/50 hover:bg-slate-700/60'"
+          @click="showDrawer = false"
+        >
+          <img :src="item.icon" alt="" class="w-6 h-6 pixelated" />
+          <span class="font-bold text-slate-200">{{ item.name }}</span>
+        </router-link>
+      </div>
+    </nav>
+
+    <!-- Drawer Footer -->
+    <div class="p-4 border-t-2 border-slate-800 bg-slate-950/90 space-y-3">
+      <!-- Daily Reward Button -->
+      <button 
+        class="w-full pixel-box-sm flex items-center justify-center gap-2 px-4 py-3 transition-all relative"
+        :class="dailyStore.canClaim ? 'bg-amber-600/20 border-amber-500/50 animate-pulse' : 'bg-slate-800/60 border-slate-700/50'"
+        title="Daily Reward"
+        @click="showDailyModal = true"
+      >
+        <span class="text-xl">{{ dailyStore.nextReward?.icon || '🎁' }}</span>
+        <span class="font-bold">Daily Reward</span>
+        <span v-if="dailyStore.canClaim" class="absolute top-1 right-2 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
+      </button>
+
+      <!-- Logout Button -->
+      <button class="w-full pixel-box-sm bg-slate-800/60 border-slate-700/50 p-3 hover:bg-red-900/30 transition-colors flex items-center justify-center gap-2" title="Sign Out" @click="logout">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 hover:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span class="font-bold text-slate-300">Sign Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Desktop Bottom Navigation -->
+  <nav v-if="auth.token" class="fixed bottom-0 left-0 right-0 z-40 hidden md:block">
     <!-- Main Bottom Navigation Bar -->
     <div 
       class="pixel-nav-bottom bg-slate-900/95 border-t-4 border-slate-700"
@@ -11,7 +100,7 @@
     >
       <div class="mx-auto px-1">
         <!-- Primary Navigation Items -->
-        <div class="grid grid-cols-8 gap-0.5 h-16">
+        <div class="grid grid-cols-5 gap-0.5 h-16">
           <router-link 
             v-for="item in allNavItems" 
             :key="item.path" 
@@ -26,10 +115,7 @@
       </div>
 
       <!-- User Controls Bar (Secondary) -->
-      <div 
-        v-if="auth.token"
-        class="pixel-nav-bottom-secondary bg-slate-950/90 border-t-2 border-slate-800"
-      >
+      <div class="pixel-nav-bottom-secondary bg-slate-950/90 border-t-2 border-slate-800">
         <div class="mx-auto flex items-center justify-between h-10 px-2 max-w-7xl">
           <!-- Daily Reward -->
           <button 
@@ -95,6 +181,7 @@ const dailyStore = useDailyStore();
 const router = useRouter();
 const route = useRoute();
 const showDailyModal = ref(false);
+const showDrawer = ref(false);
 
 // All navigation items (5 primary)
 const allNavItems = [
@@ -190,5 +277,28 @@ const logout = () => {
   .bottom-nav-item {
     padding-bottom: calc(env(safe-area-inset-bottom) / 4);
   }
+}
+
+/* Custom scrollbar for drawer */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.8);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.9);
+}
+
+/* Prevent body scroll when drawer open */
+body.drawer-open {
+  overflow: hidden;
 }
 </style>

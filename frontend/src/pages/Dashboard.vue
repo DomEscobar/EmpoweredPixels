@@ -133,28 +133,49 @@
 
         <!-- Pending Rewards -->
         <div 
-          class="pixel-box bg-slate-900/90 p-2 md:p-4 group transition-all hover:scale-[1.02] min-h-[72px] md:min-h-0 touch-manipulation"
+          class="pixel-box bg-slate-900/90 p-2 md:p-4 group transition-all hover:scale-[1.02] min-h-[72px] md:min-h-auto touch-manipulation"
           :class="rewardsStore.rewardCount > 0 ? 'border-amber-500/50 animate-pulse' : ''"
           data-testid="kpi-rewards"
         >
-          <div class="flex items-center gap-2 md:gap-3">
-            <div 
-              class="pixel-box-sm bg-amber-900/50 border-amber-500/50 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-[44px] md:min-h-[44px]"
-              :class="rewardsStore.rewardCount > 0 ? 'animate-pulse' : ''"
-            >
-              <img :src="PIXEL_ASSETS.ICON_CHEST" alt="" class="w-6 h-6 md:w-8 md:h-8 pixelated" />
-            </div>
-            <div class="min-w-0 flex-1">
-              <p class="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider mb-0.5">
-                Rewards
-              </p>
-              <div class="flex items-baseline gap-1">
-                <p class="text-lg md:text-3xl font-bold text-white text-shadow-retro truncate">
-                  {{ rewardsStore.rewardCount }}
+          <div class="flex flex-col gap-2">
+            <!-- Header with count -->
+            <div class="flex items-center gap-2 md:gap-3">
+              <div 
+                class="pixel-box-sm bg-amber-900/50 border-amber-500/50 flex items-center justify-center min-w-[44px] min-h-[44px]"
+                :class="rewardsStore.rewardCount > 0 ? 'animate-pulse' : ''"
+              >
+                <img :src="PIXEL_ASSETS.ICON_CHEST" alt="" class="w-6 h-6 pixelated" />
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider mb-0.5">
+                  Rewards Pending
                 </p>
-                <span v-if="rewardsStore.rewardCount > 0" class="text-[9px] text-emerald-400 font-bold hidden sm:inline">●</span>
+                <div class="flex items-baseline gap-1">
+                  <p class="text-lg md:text-2xl font-bold text-white text-shadow-retro truncate">
+                    {{ rewardsStore.rewardCount }}
+                  </p>
+                  <span v-if="rewardsStore.rewardCount > 0" class="text-[9px] text-emerald-400 font-bold hidden sm:inline">●</span>
+                </div>
               </div>
             </div>
+
+            <!-- Claim All Button (mobile & desktop) -->
+            <button
+              v-if="rewardsStore.rewardCount > 0 && !rewardsStore.isLoading"
+              class="rpg-btn w-full py-2 md:py-2.5 text-sm min-h-[44px]"
+              :disabled="rewardsStore.isLoading"
+              @click="claimAllRewards"
+              data-testid="claim-all-rewards-btn"
+            >
+              <span class="mr-2">🎁</span>CLAIM ALL
+            </button>
+            <button
+              v-else-if="rewardsStore.isLoading"
+              class="rpg-btn w-full bg-slate-700 border-slate-600 py-2 md:py-2.5 text-sm cursor-wait min-h-[44px]"
+              disabled
+            >
+              <span class="animate-spin mr-2">⚙️</span>CLAIMING...
+            </button>
           </div>
         </div>
       </div>

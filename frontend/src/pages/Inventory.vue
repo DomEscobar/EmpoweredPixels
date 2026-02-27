@@ -15,47 +15,48 @@
 
     <div class="relative z-10 max-w-7xl mx-auto space-y-6">
       <!-- Header Banner -->
-      <header class="pixel-box bg-slate-900/95 p-6">
+      <header class="pixel-box bg-slate-900/95 p-4 md:p-6">
+        <!-- Mobile: stacked layout -->
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3 md:gap-4">
             <img 
               :src="PIXEL_ASSETS.ICON_CHEST" 
               alt="" 
-              class="w-12 h-12 pixelated"
+              class="w-10 h-10 md:w-12 md:h-12 pixelated"
             />
             <div>
-              <h1 class="text-2xl md:text-3xl font-bold text-amber-400 text-shadow-retro tracking-wide">
+              <h1 class="text-xl md:text-3xl font-bold text-amber-400 text-shadow-retro tracking-wide">
                 TREASURY VAULT
               </h1>
-              <p class="text-slate-400 text-sm mt-1">
+              <p class="text-slate-400 text-xs md:text-sm mt-1">
                 Manage thy equipment and resources
               </p>
             </div>
           </div>
 
-          <!-- Resource Counters -->
-          <div class="flex flex-wrap gap-3">
+          <!-- Resource Counters - Mobile: grid, Desktop: flex -->
+          <div class="grid grid-cols-2 gap-2 md:flex md:flex-wrap md:gap-3">
             <!-- Particles -->
-            <div class="pixel-box-sm bg-slate-800/90 px-4 py-2 flex items-center gap-3">
-              <img :src="PIXEL_ASSETS.ICON_CRYSTAL" alt="" class="w-6 h-6 pixelated" />
+            <div class="pixel-box-sm bg-slate-800/90 px-3 py-2 md:px-4 md:py-2 flex items-center gap-2 md:gap-3 touch-target">
+              <img :src="PIXEL_ASSETS.ICON_CRYSTAL" alt="" class="w-5 h-5 md:w-6 md:h-6 pixelated" />
               <div>
-                <div class="text-[10px] uppercase text-slate-500 tracking-wider">
+                <div class="text-[8px] md:text-[10px] uppercase text-slate-500 tracking-wider">
                   Particles
                 </div>
-                <div class="text-lg font-bold text-emerald-400">
+                <div class="text-base md:text-lg font-bold text-emerald-400">
                   {{ inventoryStore.particles.toLocaleString() }}
                 </div>
               </div>
             </div>
 
             <!-- Tokens -->
-            <div class="pixel-box-sm bg-slate-800/90 px-4 py-2 flex items-center gap-3">
-              <img :src="PIXEL_ASSETS.ICON_COIN" alt="" class="w-6 h-6 pixelated" />
+            <div class="pixel-box-sm bg-slate-800/90 px-3 py-2 md:px-4 md:py-2 flex items-center gap-2 md:gap-3 touch-target">
+              <img :src="PIXEL_ASSETS.ICON_COIN" alt="" class="w-5 h-5 md:w-6 md:h-6 pixelated" />
               <div>
-                <div class="text-[10px] uppercase text-slate-500 tracking-wider">
+                <div class="text-[8px] md:text-[10px] uppercase text-slate-500 tracking-wider">
                   Tokens
                 </div>
-                <div class="flex gap-2 text-sm font-bold">
+                <div class="flex gap-1 md:gap-2 text-xs md:text-sm font-bold">
                   <span class="text-slate-300" title="Common">{{ inventoryStore.commonTokens }}</span>
                   <span class="text-blue-400" title="Rare">{{ inventoryStore.rareTokens }}</span>
                   <span class="text-purple-400" title="Fabled">{{ inventoryStore.fabledTokens }}</span>
@@ -68,43 +69,45 @@
       </header>
 
       <!-- Controls Bar & Filters -->
-      <div class="pixel-box bg-slate-900/95 p-4 space-y-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <!-- Left: Title & Search -->
-          <div class="flex items-center gap-4 flex-1">
-            <div class="flex items-center gap-2">
-              <img :src="PIXEL_ASSETS.ICON_SWORD" alt="" class="w-5 h-5 pixelated" />
-              <h2 class="text-lg font-bold text-amber-300 uppercase tracking-tight">
-                Equipment
-              </h2>
-            </div>
-            
-            <div class="relative flex-1 max-w-md group">
-              <input 
-                v-model="searchQuery"
-                type="text" 
-                placeholder="Search vault items..."
-                class="w-full bg-slate-950 border-2 border-slate-800 focus:border-amber-500/50 p-2 pl-9 text-sm text-slate-300 font-mono transition-all outline-none"
-              />
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 opacity-30 group-focus-within:opacity-100 italic">🔍</span>
-            </div>
+      <div class="pixel-box bg-slate-900/95 p-3 md:p-4 space-y-3 md:space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+          <!-- Title (hidden on mobile, shown in header) -->
+          <div class="hidden md:flex items-center gap-2">
+            <img :src="PIXEL_ASSETS.ICON_SWORD" alt="" class="w-5 h-5 pixelated" />
+            <h2 class="text-lg font-bold text-amber-300 uppercase tracking-tight">
+              Equipment
+            </h2>
           </div>
 
-          <!-- Right: Sort & Actions -->
-          <div class="flex items-center gap-2">
+          <!-- Search - full width on mobile -->
+          <div class="relative flex-1 w-full md:max-w-md group">
+            <input 
+              v-model="searchQuery"
+              type="text" 
+              placeholder="Search vault items..."
+              class="w-full bg-slate-950 border-2 border-slate-800 focus:border-amber-500/50 p-3 pl-10 text-sm text-slate-300 font-mono transition-all outline-none touch-manipulation"
+            />
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg opacity-40 group-focus-within:opacity-100">🔍</span>
+          </div>
+
+          <!-- Sort & Refresh - stacked on mobile, row on desktop -->
+          <div class="flex gap-2 w-full md:w-auto">
             <select 
               v-model="sortBy"
-              class="bg-slate-950 border-2 border-slate-800 p-2 text-xs text-slate-400 font-mono outline-none"
+              class="flex-1 md:flex-initial bg-slate-950 border-2 border-slate-800 p-3 text-xs text-slate-400 font-mono outline-none touch-manipulation"
             >
-              <option value="recent">RECENTLY ADDED</option>
-              <option value="level-desc">LEVEL (HI-LO)</option>
-              <option value="rarity-desc">RARITY (HI-LO)</option>
-              <option value="power-desc">POWER (HI-LO)</option>
+              <option value="recent">RECENT</option>
+              <option value="level-desc">LEVEL</option>
+              <option value="rarity-desc">RARITY</option>
+              <option value="power-desc">POWER</option>
             </select>
             
-            <button class="rpg-btn-small" @click="fetchData">
-              <span class="mr-1">↻</span>
-              REFRESH
+            <button 
+              class="rpg-btn-small px-3 py-3 touch-manipulation"
+              @click="fetchData"
+              :disabled="inventoryStore.isLoading"
+            >
+              <span class="text-lg" :class="{ 'animate-spin': inventoryStore.isLoading }">↻</span>
             </button>
           </div>
         </div>
